@@ -4,6 +4,7 @@ description: "The fifth international construction exhibition starts 9 November 
 date: 2026-09-09
 category: "construction"
 tags: ["BUILDPRO", "2026"]
+event: buildpro-expo
 ---
 ### The 2026 expo structure
 

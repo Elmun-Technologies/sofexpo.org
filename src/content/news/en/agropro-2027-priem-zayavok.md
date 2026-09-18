@@ -4,6 +4,7 @@ description: "The agro-industrial exhibition runs 2–4 March 2027 in Samarkand 
 date: 2026-09-02
 category: "agriculture"
 tags: ["AGROPRO", "2027"]
+event: agropro-expo
 ---
 ### Dates and season logic
 

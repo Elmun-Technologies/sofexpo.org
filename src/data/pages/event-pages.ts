@@ -252,7 +252,7 @@ export const eventPages: Record<string, EventPages> = {
       },
       exhibitors: {
         path: "/events/foodera-expo/exhibitors/",
-        image: "/images/venue-hall.jpg",
+        image: "/images/hero-hall.jpg",
         meta: {
           ru: {
             title:
@@ -878,7 +878,7 @@ eventPages["buildpro-expo"] = {
   },
   exhibitors: {
     path: "/events/buildpro-expo/exhibitors/",
-    image: "/images/venue-hall.jpg",
+    image: "/images/hero-hall.jpg",
     meta: {
       ru: {
         title: "Экспонентам BUILD PRO 2026: застройка, техника, перевод",

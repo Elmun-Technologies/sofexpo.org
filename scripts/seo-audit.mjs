@@ -47,6 +47,20 @@ for (const file of files) {
   const htmlRaw = readFileSync(file, 'utf8');
   const html = htmlRaw.replace(/<script[\s\S]*?<\/script>/g, '');
 
+  for (const src of new Set([...html.matchAll(/<img[^]+?src="([^"]+)"/g)].map((m) => m[1]))) {
+    if (/^(https?:|data:)/.test(src)) continue;
+    const rel = src.replace(/^\/+/, '').split('?')[0];
+    if (!existsSync(join(ROOT, rel))) warn(url, `img src not found on disk: /${rel}`);
+  }
+
+  {
+    const ogImg = html.match(/property="og:image" content="([^"]+)"/)?.[1];
+    if (ogImg && /^https?:\/\//.test(ogImg)) {
+      const rel = ogImg.replace(/^https?:\/\/[^/]+/, '').replace(/^\/+/, '');
+      if (rel && !existsSync(join(ROOT, rel))) warn(url, `og:image missing on disk: /${rel}`);
+    }
+  }
+
   const title = (html.match(/<title[^>]*>([\s\S]*?)<\/title>/) ?? [])[1]?.replace(/\s+/g, ' ').trim() ?? '';
   if (!title) warn(url, 'missing <title>');
   if (title) {

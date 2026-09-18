@@ -4,6 +4,7 @@ description: "С 20 по 22 октября 2026 года в SOF EXPO Samarkand �
 date: 2026-09-16
 category: "food"
 tags: ["FOODERA", "2026"]
+event: foodera-expo
 ---
 ### Что открылось
 

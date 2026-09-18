@@ -100,9 +100,9 @@ so a spec page prints as a clean sheet.
 | `CtaBand.astro` | `kicker, title, text, primary?, secondary?, dark = true` | the conversion band |
 | `LeadForm.astro` | `eventName?, directions?, areas?, subtitle?, note?, compact?, id` | static form: composes a `mailto:` link (no backend) + `form__ok` confirmation state, `role="status"` |
 | 
-| `PostCard.astro` / `PostBody.astro` / `PostDetail.astro` | `post, path, locale, variant?, priority?` / `layout: 'prose' \| 'sidebar'` | editorial cluster; the detail title is the plain headline (no brand suffix) |
+| `PostCard.astro` / `PostBody.astro` / `PostDetail.astro` | `post, path, locale, variant?, priority?` / `layout: 'prose' \| 'sidebar'` | editorial cluster; the detail title is the plain headline (no brand suffix). Media is never optional in the markup: `data.hero` → poster of the linked event → `/images/hero-hall.jpg` |
 | `EventSections.astro` | `event, section: 'exhibitors' \| 'visitors' \| 'program', tone?` | per-event data views |
-| `EventPage.astro` | `event, page, locale` | composes `hero` + `before` + sections + `after` + JSON-LD |
+| `EventPage.astro` | `event, page, locale` | composes `hero` + `EventNav` + `before` + sections + `after` + auto editorial rail + `CtaBand` + JSON-LD |
 | `Header.astro` / `Footer.astro` | `locale, path?` | mega-dropdown nav, topbar actions, 4 footer columns, legal row |
 | `Icon.astro` | `name, size = 22, label?` | 113 inline SVG glyphs (24-grid, stroke 1.6); an unknown name falls back to a neutral tile, so a typo never breaks a build |
 
@@ -149,6 +149,12 @@ block), otherwise the page opens with content, not a repeat of the header.
   event cluster.
 - Alt text describes the frame ("Главный зал: экспозиция и переговорные зоны"), never repeats
   the page title; the audit rejects empty `alt`.
+- Every `src` must exist on disk. Rule 13 of the audit checks `<img>` and `og:image` against
+  `dist/`, so a card cannot ship a filename someone invented.
+- **Редакционная полоса события.** `EventPage` выбирает до трёх материалов из `articles` и
+  `news` с тем же `data.event` (топ-3 по дате) и рендерит их тем же `PostCard` в секции
+  `tone="sand"` перед финальным CTA. Полоса появляется на всех четырёх страницах события,
+  и новый текст попадает в неё сам — достаточно указать `event: <slug>` во фронтоматтере.
 - `og/default.jpg` (1 200×630, 90 KB) and the favicon PNGs are generated:
   `node scripts/build-assets.mjs` re-renders them from `public/images/venue-exterior.jpg` +
   `public/favicon.svg` with sharp — never edit them by hand.

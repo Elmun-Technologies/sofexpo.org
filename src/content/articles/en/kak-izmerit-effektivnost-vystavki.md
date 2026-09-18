@@ -23,7 +23,7 @@ B2B decisions are made on trust, not clicks. An exhibition shortens the sales cy
 #### Planning that produces a result
 
 1. **A numeric goal.** "Five dealers" beats "raise awareness".
-2. **Invitations before the doors open.** 20–40 confirmed meetings change the outcome two to three times.
+2. **Invitations before the doors open.** Meetings confirmed in advance produce most of the contracts: by the time you arrive, the buyer has already reserved the slot.
 3. **The right team.** One person closes, another collects contacts — not the same person doing both.
 4. **Materials with data.** Price, specification and a case in one folder; without them the talk ends in "we will think".
 5. **48-hour follow-up.** A contact handled on day two converts roughly twice as well as one handled after a week.

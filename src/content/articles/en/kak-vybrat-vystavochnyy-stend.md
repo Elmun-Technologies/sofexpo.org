@@ -27,11 +27,11 @@ A standard 9 m² stand works when you have:
 * two meeting seats and a laptop with a deck (services, IT, logistics);
 * the goal of collecting contacts rather than demonstrating equipment.
 
-Nine square metres take a table, two chairs, a showcase, light structures and up to a dozen samples. Anything that has to move does not fit.
+Nine square metres take a table, two chairs, a showcase, light structures and samples you can handle. Anything that has to move — a running mechanism, a flow, sound — will not read on this area.
 
 #### When you need 18 m²
 
-A premium stand pays off when the product must run live: a coffee machine, a high-pressure unit, a facade fragment, a technology you can try. The second reason is position — near the entrance, near the stage, at a crossing. Traffic between a stand at the entrance and one in the far corner of the same hall can differ two to three times in stops.
+A premium stand pays off when the product must run live: a coffee machine, a high-pressure unit, a facade fragment, a technology you can try. The second reason is position — near the entrance, near the stage, at a crossing. The difference between a stand by the entrance and one in the far corner of the same hall is the number of stops: aisles and the stage area get noticed, so agree the location before you sign, not after.
 
 #### When to take raw space
 

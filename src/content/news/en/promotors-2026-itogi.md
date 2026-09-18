@@ -4,6 +4,7 @@ description: "Drift, SPL tuning, retro cars and non-motorized racing took place 
 date: 2026-09-14
 category: "automotive"
 tags: ["PROMOTORS", "итоги"]
+event: promotors-show-samarkand
 ---
 ### Two days, six disciplines, a UZS 20 million prize fund
 

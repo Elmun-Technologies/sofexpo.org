@@ -4,6 +4,7 @@ description: "Девятого ноября 2026 года стартует пя�
 date: 2026-09-09
 category: "construction"
 tags: ["BUILDPRO", "2026"]
+event: buildpro-expo
 ---
 ### Структура экспозиции 2026
 

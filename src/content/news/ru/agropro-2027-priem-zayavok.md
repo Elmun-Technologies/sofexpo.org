@@ -4,6 +4,7 @@ description: "Международная агровыставка пройдёт
 date: 2026-09-02
 category: "agriculture"
 tags: ["AGROPRO", "2027"]
+event: agropro-expo
 ---
 ### Даты и логика сезона
 

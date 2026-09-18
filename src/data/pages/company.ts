@@ -987,7 +987,7 @@ export const companyPages: PageDef[] = [
           kicker: "Правовая информация",
           title: "Политика конфиденциальности",
           lead: "Мы собираем минимум данных и только для того, чтобы обработать вашу заявку. Ниже — что именно, зачем и как удалить.",
-          image: "/images/venue-hall.jpg",
+          image: "/images/hero-hall.jpg",
           imageAlt: "Зал центра",
         },
         {
@@ -1032,7 +1032,7 @@ export const companyPages: PageDef[] = [
           kicker: "Legal",
           title: "Privacy policy",
           lead: "We collect the minimum needed to handle your request. Below is what, why and how to delete it.",
-          image: "/images/venue-hall.jpg",
+          image: "/images/hero-hall.jpg",
           imageAlt: "Centre hall",
         },
         {

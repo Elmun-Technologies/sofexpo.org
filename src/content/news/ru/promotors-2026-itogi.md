@@ -4,6 +4,7 @@ description: "12–13 сентября 2026 года в Самарканде п�
 date: 2026-09-14
 category: "automotive"
 tags: ["PROMOTORS", "итоги"]
+event: promotors-show-samarkand
 ---
 ### Два дня, шесть номинаций, призовой фонд 20 млн сумов
 

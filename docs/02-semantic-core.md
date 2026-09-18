@@ -110,7 +110,12 @@ one sourced sentence used by the hero and the announcement strip; the invented
 `10:00 — 18:00` opening line in the event hero became «N days · Samarkand, Dzhambay
 district»; the fake 08:00/22:00 build window in the venue copy was rewritten without times.
 Anything still awaiting client confirmation is flagged in data with
-`needsVerification: true` (office hours, floor load, ceiling height) — never silent. `public/files/*.pdf` are named like the real documents and marked
+`needsVerification: true` (office hours, floor load, ceiling height) — never silent.
+**The rule covers editorial copy too**: three unsourced numbers that had slipped into the
+long-reads («по данным внутренней статистики…», «12 образцов на одном стенде», «в 1,5–2 раза
+выше конверсия») were replaced with qualitative phrasing — «стенд, который работает как
+переговорная» instead of a multiplier. A guide may explain how to measure something; it may
+not invent the result. `public/files/*.pdf` are named like the real documents and marked
 as placeholders in `public/files/README.md`; the FOODERA early-bird discount is not claimed
 because the 31 Aug deadline has passed.
 
@@ -132,9 +137,11 @@ because the 31 Aug deadline has passed.
     `favicon.svg`, `og/default.jpg` missing from `dist`
 12. sitemap honesty: a `<loc>` with no built page, a duplicated `<loc>`, an indexable page
     missing from the sitemap, or a `noindex` page still listed in it
+13. every `<img src>` and `og:image` resolving to a real file in `dist/` — added after the
+    editorial rail shipped `/images/no-image.jpg`, a file that only existed in the author's head
 
-Current state: **146 pages (72 RU / 72 EN + gate + 404), 167 distinct internal targets,
-0 findings.**
+Current state: **152 pages (75 RU / 75 EN + gate + 404), 173 distinct internal targets,
+0 findings.** Run `npm run check` (= build + this audit) before any commit.
 
 ## 7. Feeds and discovery
 

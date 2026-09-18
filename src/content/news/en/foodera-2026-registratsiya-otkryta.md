@@ -4,6 +4,7 @@ description: "Booth applications are accepted for the food and beverage exhibiti
 date: 2026-09-16
 category: "food"
 tags: ["FOODERA", "2026"]
+event: foodera-expo
 ---
 ### What is open
 

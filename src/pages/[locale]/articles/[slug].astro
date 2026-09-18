@@ -3,17 +3,17 @@
 import type { GetStaticPaths } from 'astro';
 import { locales } from '@/i18n/config';
 import { getCollection, render } from 'astro:content';
-import { isRootHost } from '@/data/hosts';
+import { ownsPost, type PostKind } from '@/lib/contentOwnership';
 import PostDetail from '@/components/PostDetail.astro';
 
 export const getStaticPaths = (async () => {
-  // editorial stays on the centre host: an exhibition hostname links to these pages absolutely
-  if (!isRootHost) return [];
+  // each host builds only the pieces it publishes (the per-host editorial rule, docs/05)
   const entries = await getCollection('articles', ({ data }) => !data.draft);
   const out: { params: { locale: string; slug: string }; props: { entry: (typeof entries)[number] } }[] = [];
   for (const entry of entries) {
     const [locale, ...rest] = entry.id.split('/');
     if (!(locales as readonly string[]).includes(locale)) continue;
+    if (!ownsPost('articles', rest.join('/'))) continue;
     out.push({ params: { locale, slug: rest.join('/') }, props: { entry } });
   }
   return out;

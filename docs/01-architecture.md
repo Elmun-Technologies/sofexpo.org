@@ -6,18 +6,18 @@ up to six hostnames from the same build (docs/05-subdomains.md).
 
 ## 1. Decisions and why
 
-| Decision | Value | Reason |
-| --- | --- | --- |
-| Rendering | Astro 7, `output: 'static'` | Every page is a plain HTML file: fastest Core Web Vitals, cheapest hosting, crawlable without JS. No hydration = no framework budget. |
-| Client JS | ~1.5 KB total (countdown, search, menu, form) | Only three behaviours need JS; everything else is CSS. No React/Svelte runtime. |
-| Styling | Hand-written CSS with design tokens (`src/styles/global.css`) | Full control of the "photo-led, no fluff" look; no utility-class dependency. One stylesheet for the whole site (27 KB / 8.8 KB gzip), cached across all 152 pages; component-scoped styles are added per chunk (`Blocks.astro`, `PostDetail.astro`). |
-| Fonts | Self-hosted `@fontsource-variable/onest` + `unbounded` | No third-party request, no CLS from remote fonts, works offline in the sandbox preview. |
-| i18n | `src/pages/[locale]/…` with explicit `/ru/` and `/en/` prefixes | Prefixed URLs keep hreflang/canonical unambiguous, per-locale sitemaps/RSS, and let `/` serve a bilingual gate. |
-| Default locale | `en` (`astro.config.mjs` → `i18n.defaultLocale`) | International buyers (organizers, foreign exhibitors) are the money audience; RU is fully mirrored, not a fallback. |
-| Root `/` | Bilingual gate page (indexable, not a redirect) | A redirect would waste the brand query ("sof expo samarkand") for the most important URL; the gate ranks and hands the user to `/ru/` or `/en/`. |
-| Trailing slash | `'ignore'` in config, `localize()` always emits `/path/` | Canonical URLs always carry the slash, so `/ru/about` and `/ru/about/` never split equity in our markup. |
-| Content model | Typed TS data (`src/data/**`) + 1 shared block renderer | Copy is authored per page in both locales, so structure and text differ everywhere while the renderer stays single-sourced. |
-| SEO gate | `npm run audit:seo` (`scripts/seo-audit.mjs`) over `dist` | 152 страниц (75 × 2 локали + gate + 404) нельзя проверить руками; the audit is the contract (see 02). |
+| Decision       | Value                                                           | Reason                                                                                                                                                                                                                                               |
+| -------------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Rendering      | Astro 7, `output: 'static'`                                     | Every page is a plain HTML file: fastest Core Web Vitals, cheapest hosting, crawlable without JS. No hydration = no framework budget.                                                                                                                |
+| Client JS      | ~1.5 KB total (countdown, search, menu, form)                   | Only three behaviours need JS; everything else is CSS. No React/Svelte runtime.                                                                                                                                                                      |
+| Styling        | Hand-written CSS with design tokens (`src/styles/global.css`)   | Full control of the "photo-led, no fluff" look; no utility-class dependency. One stylesheet for the whole site (27 KB / 8.8 KB gzip), cached across all 152 pages; component-scoped styles are added per chunk (`Blocks.astro`, `PostDetail.astro`). |
+| Fonts          | Self-hosted `@fontsource-variable/onest` + `unbounded`          | No third-party request, no CLS from remote fonts, works offline in the sandbox preview.                                                                                                                                                              |
+| i18n           | `src/pages/[locale]/…` with explicit `/ru/` and `/en/` prefixes | Prefixed URLs keep hreflang/canonical unambiguous, per-locale sitemaps/RSS, and let `/` serve a bilingual gate.                                                                                                                                      |
+| Default locale | `en` (`astro.config.mjs` → `i18n.defaultLocale`)                | International buyers (organizers, foreign exhibitors) are the money audience; RU is fully mirrored, not a fallback.                                                                                                                                  |
+| Root `/`       | Bilingual gate page (indexable, not a redirect)                 | A redirect would waste the brand query ("sof expo samarkand") for the most important URL; the gate ranks and hands the user to `/ru/` or `/en/`.                                                                                                     |
+| Trailing slash | `'ignore'` in config, `localize()` always emits `/path/`        | Canonical URLs always carry the slash, so `/ru/about` and `/ru/about/` never split equity in our markup.                                                                                                                                             |
+| Content model  | Typed TS data (`src/data/**`) + 1 shared block renderer         | Copy is authored per page in both locales, so structure and text differ everywhere while the renderer stays single-sourced.                                                                                                                          |
+| SEO gate       | `npm run audit:seo` (`scripts/seo-audit.mjs`) over `dist`       | 152 страниц (75 × 2 локали + gate + 404) нельзя проверить руками; the audit is the contract (see 02).                                                                                                                                                |
 
 ## 2. Repository layout
 
@@ -91,7 +91,8 @@ Three page families, one renderer each:
 
 ```bash
 npm run dev        # astro dev — binds all interfaces, /ru/ /en/ live
-npm run build      # → dist/ (152 pages) + sitemap pruned of noindex URLs
+node scripts/gen-editorial-map.mjs   # post path → publishing host (runs inside npm run build)
+npm run build      # → dist/ (152 pages in alias mode) + sitemap pruned of noindex URLs
 npm run audit:seo  # SEO/accessibility gate over dist/ — 0 findings required
 npm run check      # build + audit in one go (this is what CI must run)
 npm run preview    # serve dist/ (allowedHosts is open for the sandbox proxy)
@@ -112,7 +113,9 @@ Notes for whoever deploys:
   sitemap, RSS) **per host**: a build produces exactly one hostname, so a multi-host deploy is
   a loop of builds, not a config tree. Hostnames themselves live in `src/data/host-map.json`,
   which both the app (`src/data/hosts.ts`) and the Node scripts (`scripts/host-rules.mjs`)
-  read — one source, no drift.
+  read — one source, no drift. `src/data/editorial-owners.json` is generated next to it (by
+  `scripts/gen-editorial-map.mjs`, run first in every build) and records which hostname publishes
+  which news note or long-read — content placement stays data, not branching in templates.
 - `serialize` in the sitemap plugin pins `lastmod` to the content freeze date; bump it when
   copy changes rather than letting the build date drift.
 - Images are JPEG, served from `/images/`, referenced with `loading="lazy"` except the
@@ -123,14 +126,14 @@ Notes for whoever deploys:
 
 ## 5. Performance budget (measured on the build)
 
-| Metric | Value |
-| --- | --- |
-| HTML per page | 72–91 KB raw → 15–19 KB gzip (content is the payload, not the framework) |
-| CSS | one file, 27 KB → 8.8 KB gzip, shared by every page (hashed, cacheable forever) |
-| Requests per page | 1 HTML + 1 CSS + 2 font files + 1–4 images = 5–7 |
-| Third-party calls | **0** — fonts self-hosted, no analytics, maps are link-outs |
-| JS | 0 external files — inline blocks only: menu, countdown, FAQ, form (0.7–2 KB typical; 22 KB on `/search/`, which embeds the index) |
-| `preconnect`/`preload` | emitted by `Base.astro` only where the page needs the hero image |
+| Metric                 | Value                                                                                                                             |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| HTML per page          | 72–91 KB raw → 15–19 KB gzip (content is the payload, not the framework)                                                          |
+| CSS                    | one file, 27 KB → 8.8 KB gzip, shared by every page (hashed, cacheable forever)                                                   |
+| Requests per page      | 1 HTML + 1 CSS + 2 font files + 1–4 images = 5–7                                                                                  |
+| Third-party calls      | **0** — fonts self-hosted, no analytics, maps are link-outs                                                                       |
+| JS                     | 0 external files — inline blocks only: menu, countdown, FAQ, form (0.7–2 KB typical; 22 KB on `/search/`, which embeds the index) |
+| `preconnect`/`preload` | emitted by `Base.astro` only where the page needs the hero image                                                                  |
 
 If a page ever crosses ~140 KB of HTML, the fix is to shorten the authored `blocks` list, not
 to add a client framework.

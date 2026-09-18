@@ -1,0 +1,7 @@
+# hand-authored, token-formatted: the build injects the per-hostname Sitemap:/Host: lines
+public/robots.txt
+# one entry per line — prettier would wrap them into prose
+public/llms.txt
+# build output
+dist
+dist-hosts

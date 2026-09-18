@@ -1,6 +1,6 @@
-import { locales, type Locale } from '@/i18n/config';
-import { CURRENT_EVENT, isRootHost } from '@/data/hosts';
-import { localePaths } from '@/lib/pages';
+import { locales, type Locale } from "@/i18n/config";
+import { CURRENT_EVENT, isRootHost } from "@/data/hosts";
+import { localePaths } from "@/lib/pages";
 
 /**
  * Route helpers for the multi-host build (see `docs/05-subdomains.md`).

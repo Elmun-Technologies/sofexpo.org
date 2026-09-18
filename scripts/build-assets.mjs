@@ -1,8 +1,8 @@
 // One-off asset generation: social card + favicons from the source imagery.
-import sharp from 'sharp';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import sharp from "sharp";
+import { mkdirSync, writeFileSync } from "node:fs";
 
-mkdirSync('public/og', { recursive: true });
+mkdirSync("public/og", { recursive: true });
 
 const W = 1200;
 const H = 630;
@@ -22,10 +22,21 @@ const overlay = `<svg width="${W}" height="${H}">
   <text x="72" y="470" font-family="Helvetica, Arial, sans-serif" font-size="26" fill="#f7f4ec" fill-opacity="0.7">sofexpo.org</text>
 </svg>`;
 
-const base = await sharp('public/images/venue-exterior.jpg').resize(W, H, { fit: 'cover', position: 'centre' }).toBuffer();
-await sharp(base).composite([{ input: Buffer.from(overlay) }]).jpeg({ quality: 82, progressive: true }).toFile('public/og/default.jpg');
+const base = await sharp("public/images/venue-exterior.jpg")
+  .resize(W, H, { fit: "cover", position: "centre" })
+  .toBuffer();
+await sharp(base)
+  .composite([{ input: Buffer.from(overlay) }])
+  .jpeg({ quality: 82, progressive: true })
+  .toFile("public/og/default.jpg");
 
-await sharp('public/favicon.svg').resize(512, 512).png().toFile('public/favicon.png');
-await sharp('public/favicon.svg').resize(180, 180).png().toFile('public/apple-touch-icon.png');
+await sharp("public/favicon.svg")
+  .resize(512, 512)
+  .png()
+  .toFile("public/favicon.png");
+await sharp("public/favicon.svg")
+  .resize(180, 180)
+  .png()
+  .toFile("public/apple-touch-icon.png");
 
-console.log('public/og/default.jpg + favicons written');
+console.log("public/og/default.jpg + favicons written");

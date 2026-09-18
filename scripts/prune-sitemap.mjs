@@ -8,19 +8,19 @@
  * HTML is the single source of truth here, so this can never drift from the
  * pages themselves.
  */
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 
-const ROOT = process.argv[2] || 'dist';
+const ROOT = process.argv[2] || "dist";
 /* per-host build: `SITE` is what Astro was given, so <loc> prefixes match (docs/05) */
-const SITE = (process.env.SITE || 'https://sofexpo.org').replace(/\/+$/, '');
+const SITE = (process.env.SITE || "https://sofexpo.org").replace(/\/+$/, "");
 
-for (const name of ['sitemap-0.xml', 'sitemap-index.xml']) {
+for (const name of ["sitemap-0.xml", "sitemap-index.xml"]) {
   const file = join(ROOT, name);
   if (!existsSync(file)) continue;
-  if (name === 'sitemap-index.xml') continue;
+  if (name === "sitemap-index.xml") continue;
 
-  const src = readFileSync(file, 'utf8');
+  const src = readFileSync(file, "utf8");
   const kept = [];
   let removed = [];
 
@@ -30,9 +30,11 @@ for (const name of ['sitemap-0.xml', 'sitemap-index.xml']) {
       kept.push(block);
       continue;
     }
-    const rel = loc.replace(SITE, '').replace(/^\/+/, '').replace(/\/+$/, '');
-    const html = rel ? join(ROOT, rel, 'index.html') : join(ROOT, 'index.html');
-    const noindex = existsSync(html) && /name="robots" content="noindex/.test(readFileSync(html, 'utf8'));
+    const rel = loc.replace(SITE, "").replace(/^\/+/, "").replace(/\/+$/, "");
+    const html = rel ? join(ROOT, rel, "index.html") : join(ROOT, "index.html");
+    const noindex =
+      existsSync(html) &&
+      /name="robots" content="noindex/.test(readFileSync(html, "utf8"));
     if (noindex) removed.push(loc);
     else kept.push(block);
   }
@@ -41,9 +43,9 @@ for (const name of ['sitemap-0.xml', 'sitemap-index.xml']) {
     console.log(`sitemap: no noindex URLs to prune (${kept.length} URLs)`);
     continue;
   }
-  const head = src.slice(0, src.indexOf('<url>'));
-  const tail = src.slice(src.lastIndexOf('</urlset>'));
-  writeFileSync(file, `${head}${kept.join('')}${tail}`);
+  const head = src.slice(0, src.indexOf("<url>"));
+  const tail = src.slice(src.lastIndexOf("</urlset>"));
+  writeFileSync(file, `${head}${kept.join("")}${tail}`);
   console.log(
     `sitemap: pruned ${removed.length} noindex URL(s), ${kept.length} left`,
     ...removed.map((u) => `\n  - ${u}`),

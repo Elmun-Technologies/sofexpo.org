@@ -10,25 +10,25 @@ Goal: top-3 for the money queries in both languages — «выставочный
 Three permanent nodes are emitted on **every** indexable page (`Base.astro` builds one
 `@graph`, deduplicated by `@id`, so richer home-page nodes win):
 
-| `@id` | Type | Role |
-| --- | --- | --- |
-| `https://sofexpo.org/#website` | `WebSite` | the site itself; `publisher` → `#organization`; `inLanguage: [ru, en]` |
-| `https://sofexpo.org/#organization` | `Organization` | ООО «RESOF EXPO» — legal name, phone, e-mail, address, `sameAs` (IG/FB/TG), `subOrganization` → `#venue` |
-| `https://sofexpo.org/#venue` | `ExhibitionCenter` | the physical centre: geo, `hasMap`, `areaServed`, `amenityFeature` (4 400 m², 5 000 m², 700 kW, Wi-Fi, parking, 350 café seats) |
+| `@id`                               | Type               | Role                                                                                                                            |
+| ----------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| `https://sofexpo.org/#website`      | `WebSite`          | the site itself; `publisher` → `#organization`; `inLanguage: [ru, en]`                                                          |
+| `https://sofexpo.org/#organization` | `Organization`     | ООО «RESOF EXPO» — legal name, phone, e-mail, address, `sameAs` (IG/FB/TG), `subOrganization` → `#venue`                        |
+| `https://sofexpo.org/#venue`        | `ExhibitionCenter` | the physical centre: geo, `hasMap`, `areaServed`, `amenityFeature` (4 400 m², 5 000 m², 700 kW, Wi-Fi, parking, 350 café seats) |
 
 `WebPage` on each page carries `isPartOf: #website` and `breadcrumb: #breadcrumbs`, so the
 page nodes join the same entity graph instead of floating free.
 
 Per-page-type nodes (counts from the current build, 152 pages):
 
-| Node | Emitted on | Pages |
-| --- | --- | --- |
-| `BreadcrumbList` (`#breadcrumbs`) | every page with ≥1 crumb | 144 |
-| `ExhibitionEvent` (`#event`) | 4 pages of each of 6 events | 48 |
-| `Article` (`#article`) | news + article detail pages | 20 |
-| `FAQPage` (`#faq`) | pages that author an FAQ block | 8 |
-| `ItemList` (`#list`) | events index, past archive, news, articles, home | 10 |
-| `WebSite` + `SearchAction` (root) | home only (`rootJsonLd`) | 2 |
+| Node                              | Emitted on                                       | Pages |
+| --------------------------------- | ------------------------------------------------ | ----- |
+| `BreadcrumbList` (`#breadcrumbs`) | every page with ≥1 crumb                         | 144   |
+| `ExhibitionEvent` (`#event`)      | 4 pages of each of 6 events                      | 48    |
+| `Article` (`#article`)            | news + article detail pages                      | 20    |
+| `FAQPage` (`#faq`)                | pages that author an FAQ block                   | 8     |
+| `ItemList` (`#list`)              | events index, past archive, news, articles, home | 10    |
+| `WebSite` + `SearchAction` (root) | home only (`rootJsonLd`)                         | 2     |
 
 Event nodes are truthful about state: `eventStatus` flips to `EventCompleted` once
 `dates.end` has passed, `eventAttendanceMode` is `OnSiteEventAttendanceMode` (no online
@@ -38,23 +38,36 @@ stand or ticket prices in markup that could not be matched on the page.
 ## 2. Head contract
 
 ```html
-<html lang="ru">                                   <!-- localeMeta[locale].html -->
-<title>FOODERA EXPO 2026 — выставка продуктов и напитков, Самарканд</title>
-<meta name="description" content="…">              <!-- authored per page, per locale -->
-<link rel="canonical" href="https://sofexpo.org/ru/events/foodera-expo/">
-<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
-<link rel="alternate" hreflang="ru"  href="…/ru/events/foodera-expo/">
-<link rel="alternate" hreflang="en"  href="…/en/events/foodera-expo/">
-<link rel="alternate" hreflang="x-default" href="…/en/events/foodera-expo/">
-<link rel="alternate" type="application/rss+xml" href="/ru/rss.xml">
-<meta property="og:type" content="website">        <!-- article: on editorial pages -->
-<meta property="og:locale" content="ru_RU">
-<meta property="og:locale:alternate" content="en_US">
-<meta property="og:image" content="https://sofexpo.org/images/event-foodera.jpg">
-<meta property="og:image:width|height|alt" …>      <!-- 1200×630, alt = page title -->
-<meta name="twitter:card" content="summary_large_image">
-<link rel="icon|apple-touch-icon|manifest|sitemap" …>
-<script type="application/ld+json">{ "@graph": [...] }</script>
+<html lang="ru">
+  <!-- localeMeta[locale].html -->
+  <title>FOODERA EXPO 2026 — выставка продуктов и напитков, Самарканд</title>
+  <meta name="description" content="…" />
+  <!-- authored per page, per locale -->
+  <link rel="canonical" href="https://sofexpo.org/ru/events/foodera-expo/" />
+  <meta
+    name="robots"
+    content="index,follow,max-image-preview:large,max-snippet:-1"
+  />
+  <link rel="alternate" hreflang="ru" href="…/ru/events/foodera-expo/" />
+  <link rel="alternate" hreflang="en" href="…/en/events/foodera-expo/" />
+  <link rel="alternate" hreflang="x-default" href="…/en/events/foodera-expo/" />
+  <link rel="alternate" type="application/rss+xml" href="/ru/rss.xml" />
+  <meta property="og:type" content="website" />
+  <!-- article: on editorial pages -->
+  <meta property="og:locale" content="ru_RU" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta
+    property="og:image"
+    content="https://sofexpo.org/images/event-foodera.jpg"
+  />
+  <meta property="og:image:width|height|alt" … />
+  <!-- 1200×630, alt = page title -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon|apple-touch-icon|manifest|sitemap" … />
+  <script type="application/ld+json">
+    { "@graph": [...] }
+  </script>
+</html>
 ```
 
 `localize()` always appends the trailing slash, so `canonical`, `hreflang` and every
@@ -63,11 +76,11 @@ for `/` itself, which is its own x-default).
 
 ## 3. Title and description budgets
 
-| Family | Title | Description | Rule |
-| --- | --- | --- | --- |
-| Venue / exhibitors / visitors / organizers / about / contacts | ≤ 78 chars | ≤ 185 chars | keyword first, brand second, no `|`-stuffing |
-| News & article details | ≤ 96 | ≤ 210 | the headline *is* the SERP line; the brand goes in the site-name slot |
-| `noindex` pages (past editions, 404) | free | free | still checked for uniqueness and h1 |
+| Family                                                        | Title      | Description | Rule                                                                  |
+| ------------------------------------------------------------- | ---------- | ----------- | --------------------------------------------------------------------- |
+| Venue / exhibitors / visitors / organizers / about / contacts | ≤ 78 chars | ≤ 185 chars | keyword first, brand second, no `                                     | `-stuffing |
+| News & article details                                        | ≤ 96       | ≤ 210       | the headline _is_ the SERP line; the brand goes in the site-name slot |
+| `noindex` pages (past editions, 404)                          | free       | free        | still checked for uniqueness and h1                                   |
 
 Enforced additionally: exactly one `<h1>` per page; the brand suffix appears once
 (the event/archive index pages used to render `SOF EXPO Samarkand — SOF EXPO Samarkand — …`);
@@ -80,15 +93,19 @@ is an independent site with its own `robots.txt`, sitemap, `hreflang` pairs and 
 property. A page is emitted on exactly one host; the path an exhibition cluster gave up on the
 centre is a `noindex,follow` stub whose `canonical` points across hosts, so equity moves and no
 duplicate competes with the live page.
+Editorial pieces follow the same rule in reverse: a text tagged with a show is **published on that
+show's hostname**, and the centre's `/news/` and `/articles/` indexes link to it absolutely — the
+map is generated (`src/data/editorial-owners.json`), so a canonical, a card and a link inside an
+article body can never disagree.
 
-| Route | State | Why |
-| --- | --- | --- |
-| `/` (gate) | index, `x-default` | owns the brand query; a 301 here would throw that equity away |
-| `/ru/**`, `/en/**` | index, mirrored 1:1 | parity is asserted per path by the audit |
-| `/events/promotors-show-samarkand/**` | `noindex,follow` | 12–13 Sep 2026 already happened; it is an archive page, not a sales page — it must not compete with the live editions |
-| `/404` | `noindex,follow`, excluded from sitemap | — |
-| `/search/` | index, but result-free by design | gives crawlers one more entry point; no query params are ever indexed |
-| `/legal/**` | index, `nofollow`-free | present for the org's trust signals, deliberately not linked from the nav |
+| Route                                 | State                                   | Why                                                                                                                   |
+| ------------------------------------- | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `/` (gate)                            | index, `x-default`                      | owns the brand query; a 301 here would throw that equity away                                                         |
+| `/ru/**`, `/en/**`                    | index, mirrored 1:1                     | parity is asserted per path by the audit                                                                              |
+| `/events/promotors-show-samarkand/**` | `noindex,follow`                        | 12–13 Sep 2026 already happened; it is an archive page, not a sales page — it must not compete with the live editions |
+| `/404`                                | `noindex,follow`, excluded from sitemap | —                                                                                                                     |
+| `/search/`                            | index, but result-free by design        | gives crawlers one more entry point; no query params are ever indexed                                                 |
+| `/legal/**`                           | index, `nofollow`-free                  | present for the org's trust signals, deliberately not linked from the nav                                             |
 
 `robots.txt`: `Allow: /` for everything, three `Disallow` rules for tracking parameters
 (`?utm_`, `?gclid=`, `?fbclid=`), a Yandex-style `Host:` line, and `Sitemap: …/sitemap-index.xml`.

@@ -23,7 +23,7 @@
  *  · hreflang pairs are same-host — a language switch never jumps hostname;
  *  · every host gets its own robots.txt, sitemap and Search Console property.
  */
-import map from './host-map.json';
+import map from "./host-map.json";
 import {
   ROOT_HOST as ROOT,
   aliasRedirects as aliasRedirectsRaw,
@@ -34,21 +34,27 @@ import {
   isBuiltHere as builtHere,
   movedRedirects,
   ownerOf as ownerOfRaw,
-} from '../../scripts/host-rules.mjs';
+} from "../../scripts/host-rules.mjs";
 
-export type HostMode = 'alias' | 'subdomain';
+export type HostMode = "alias" | "subdomain";
 
 /**
  * Env-first, twice over: `import.meta.env` is what Astro injects into app code, `process.env`
  * is what the plain-Node scripts and the Astro config see.
  */
 function envValue(key: string): string | undefined {
-  const injected = (import.meta as unknown as { env?: Record<string, string | undefined> }).env;
-  return injected?.[key] ?? (typeof process !== 'undefined' ? process.env[key] : undefined);
+  const injected = (
+    import.meta as unknown as { env?: Record<string, string | undefined> }
+  ).env;
+  return (
+    injected?.[key] ??
+    (typeof process !== "undefined" ? process.env[key] : undefined)
+  );
 }
 
 /** Flip the env var (`PUBLIC_HOSTS_MODE`) to change the topology. */
-export const HOSTS_MODE: HostMode = (envValue('PUBLIC_HOSTS_MODE') as HostMode) || 'alias';
+export const HOSTS_MODE: HostMode =
+  (envValue("PUBLIC_HOSTS_MODE") as HostMode) || "alias";
 
 export const ROOT_HOST: string = ROOT;
 
@@ -74,8 +80,8 @@ export const ALL_HOSTS: HostDef[] = allHosts() as HostDef[];
 
 /** Host this build produces, e.g. `sofexpo.org` or `foodera.sofexpo.org`. */
 export const CURRENT_HOST: string = (() => {
-  const raw = envValue('SITE') || `https://${ROOT_HOST}/`;
-  return raw.replace(/^https?:\/\//, '').replace(/\/+$/, '') || ROOT_HOST;
+  const raw = envValue("SITE") || `https://${ROOT_HOST}/`;
+  return raw.replace(/^https?:\/\//, "").replace(/\/+$/, "") || ROOT_HOST;
 })();
 
 export const isRootHost = CURRENT_HOST === ROOT_HOST;
@@ -93,7 +99,7 @@ export function ownerOf(path: string): { host: string; path: string } {
 }
 
 /** Absolute-or-relative href for a link target — the implementation behind `localize()`. */
-export function hrefForPath(locale: 'ru' | 'en', path: string): string {
+export function hrefForPath(locale: "ru" | "en", path: string): string {
   return hrefFor(locale, path, { mode: HOSTS_MODE, currentHost: CURRENT_HOST });
 }
 
@@ -113,16 +119,16 @@ export function isBuiltHere(path: string): boolean {
 
 /** True when the cluster of `slug` lives on another host and the root must only redirect. */
 export function clusterMoved(slug: string): boolean {
-  return HOSTS_MODE === 'subdomain' && isRootHost && !!hostOfEvent(slug);
+  return HOSTS_MODE === "subdomain" && isRootHost && !!hostOfEvent(slug);
 }
 
-export function hostUrl(host: string, path = '/'): string {
-  const p = path === '/' ? '/' : `${path.replace(/\/+$/, '')}/`;
+export function hostUrl(host: string, path = "/"): string {
+  const p = path === "/" ? "/" : `${path.replace(/\/+$/, "")}/`;
   return `https://${host}${p}`;
 }
 
 /** Root-host URL — used for shared assets and legal pages referenced from an event host. */
-export function rootUrl(path = '/'): string {
+export function rootUrl(path = "/"): string {
   return hostUrl(ROOT_HOST, path);
 }
 

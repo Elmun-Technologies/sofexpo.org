@@ -1,7 +1,8 @@
-import { pages } from '@/data/pages';
-import { events } from '@/data/events';
-import { getCollection } from 'astro:content';
-import { localize, type Locale } from '@/i18n/config';
+import { pages } from "@/data/pages";
+import { events } from "@/data/events";
+import { getCollection } from "astro:content";
+import { localize, type Locale } from "@/i18n/config";
+import { postHref } from "@/lib/contentOwnership";
 
 export interface SearchDoc {
   title: string;
@@ -18,42 +19,69 @@ export async function searchDocs(locale: Locale): Promise<SearchDoc[]> {
     const meta = page.meta[locale];
     const blocks = page.blocks[locale];
     const body = blocks
-      .flatMap((b) => [b.title, b.lead, b.text, b.note, ...(b.paragraphs ?? []), ...(b.list ?? []), ...(b.items ?? []).map((i: any) => `${i.title ?? i.label ?? i.q ?? ''} ${i.text ?? i.a ?? ''}`)].filter(Boolean))
-      .join(' ')
-      .replace(/\s+/g, ' ')
+      .flatMap((b) =>
+        [
+          b.title,
+          b.lead,
+          b.text,
+          b.note,
+          ...(b.paragraphs ?? []),
+          ...(b.list ?? []),
+          ...(b.items ?? []).map(
+            (i: any) =>
+              `${i.title ?? i.label ?? i.q ?? ""} ${i.text ?? i.a ?? ""}`,
+          ),
+        ].filter(Boolean),
+      )
+      .join(" ")
+      .replace(/\s+/g, " ")
       .slice(0, 700);
-    out.push({ title: meta.title.split(' — ')[0], text: meta.description, href: localize(locale, page.path), kind: 'page', haystack: `${meta.title} ${meta.description} ${body}`.toLowerCase() });
+    out.push({
+      title: meta.title.split(" — ")[0],
+      text: meta.description,
+      href: localize(locale, page.path),
+      kind: "page",
+      haystack: `${meta.title} ${meta.description} ${body}`.toLowerCase(),
+    });
   }
   for (const e of events) {
-    const body = [e.tagline[locale], e.intro[locale], e.pitch[locale], ...e.categories.map((c) => c.name[locale]), ...e.benefits.map((b) => `${b.title[locale]} ${b.text[locale]}`), ...e.searchTerms.map((t) => t[locale])].join(' ');
+    const body = [
+      e.tagline[locale],
+      e.intro[locale],
+      e.pitch[locale],
+      ...e.categories.map((c) => c.name[locale]),
+      ...e.benefits.map((b) => `${b.title[locale]} ${b.text[locale]}`),
+      ...e.searchTerms.map((t) => t[locale]),
+    ].join(" ");
     out.push({
       title: `${e.brand[locale]} — ${e.edition[locale]}`,
       text: `${e.dates.display[locale]} · ${e.tagline[locale]}`,
       href: localize(locale, `/events/${e.slug}/`),
-      kind: 'event',
+      kind: "event",
       haystack: `${e.brand[locale]} ${e.shortName} ${body}`.toLowerCase(),
     });
-    for (const sub of ['exhibitors', 'visitors', 'program'] as const) {
+    for (const sub of ["exhibitors", "visitors", "program"] as const) {
       out.push({
-        title: `${e.shortName} · ${sub === 'exhibitors' ? (locale === 'ru' ? 'участникам' : 'for exhibitors') : sub === 'visitors' ? (locale === 'ru' ? 'посетителям' : 'for visitors') : locale === 'ru' ? 'программа' : 'programme'}`,
+        title: `${e.shortName} · ${sub === "exhibitors" ? (locale === "ru" ? "участникам" : "for exhibitors") : sub === "visitors" ? (locale === "ru" ? "посетителям" : "for visitors") : locale === "ru" ? "программа" : "programme"}`,
         text: e.intro[locale],
         href: localize(locale, `/events/${e.slug}/${sub}/`),
-        kind: 'event',
+        kind: "event",
         haystack: `${e.brand[locale]} ${sub} ${e.intro[locale]}`.toLowerCase(),
       });
     }
   }
-  for (const kind of ['news', 'articles'] as const) {
+  for (const kind of ["news", "articles"] as const) {
     const col = await getCollection(kind, ({ data }: any) => !data.draft);
     for (const entry of col) {
       if (!entry.id.startsWith(`${locale}/`)) continue;
-      const slug = entry.id.split('/').slice(1).join('/');
+      const slug = entry.id.split("/").slice(1).join("/");
       out.push({
         title: entry.data.title,
         text: entry.data.description,
-        href: `/${locale}/${kind}/${slug}/`,
+        href: postHref(locale, kind, slug),
         kind,
-        haystack: `${entry.data.title} ${entry.data.description} ${(entry.data.tags ?? []).join(' ')} ${entry.data.category ?? ''}`.toLowerCase(),
+        haystack:
+          `${entry.data.title} ${entry.data.description} ${(entry.data.tags ?? []).join(" ")} ${entry.data.category ?? ""}`.toLowerCase(),
       });
     }
   }

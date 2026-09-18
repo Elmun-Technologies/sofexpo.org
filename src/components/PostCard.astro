@@ -1,6 +1,6 @@
 ---
 import type { Locale } from '@/i18n/config';
-import { localize } from '@/i18n/config';
+import { postHref, type PostKind } from '@/lib/contentOwnership';
 import { formatDate } from '@/lib/nav';
 import { getEvent } from '@/data/events';
 import Icon from '@/components/Icon.astro';
@@ -26,7 +26,9 @@ const { locale, post, path, variant = 'default', priority = false } = Astro.prop
 };
 const ru = locale === 'ru';
 const slug = post.id.split('/').slice(1).join('/');
-const href = localize(locale, `${path}${slug}/`);
+/* a piece tagged with a show that owns a hostname is published THERE — the centre's index
+   card therefore carries an absolute URL, and on the show's own host it stays relative */
+const href = postHref(locale, path.replace(/^\/|\/$/g, '') as PostKind, slug);
 const relatedEvent = post.data.event ? getEvent(post.data.event) : undefined;
 /** never a phantom path: poster of the linked show, otherwise the hall photo */
 const hero = post.data.hero ?? relatedEvent?.heroImage ?? '/images/hero-hall.jpg';

@@ -9,6 +9,7 @@ import { localize } from '@/i18n/config';
 import { useUI } from '@/i18n/ui';
 import { formatDate, telHref } from '@/lib/nav';
 import { abs, articleJsonLd, breadcrumbJsonLd } from '@/lib/seo';
+import { postHref } from '@/lib/contentOwnership';
 import { site } from '@/data/site';
 import { getEvent } from '@/data/events';
 import Base from '@/layouts/Base.astro';
@@ -47,6 +48,8 @@ const L = (p: string) => localize(locale, p);
 const base = kind === 'news' ? '/news/' : '/articles/';
 const slug = post.id.split('/').slice(1).join('/');
 const path = `${base}${slug}/`;
+const selfHref = postHref(locale, kind as 'news' | 'articles', slug);
+const selfUrl = /^https?:/.test(selfHref) ? selfHref : abs(selfHref);
 const relEvent = post.data.event ? getEvent(post.data.event) : undefined;
 const isArticle = kind === 'articles';
 const toc = isArticle ? headings.filter((h) => h.depth === 2) : [];
@@ -54,7 +57,7 @@ const dateStr = post.data.date.toISOString().slice(0, 10);
 const crumbs = [
   { name: 'SOF EXPO Samarkand', url: abs(`/${locale}/`) },
   { name: sectionTitle[locale], url: abs(L(base)) },
-  { name: post.data.title, url: abs(L(path)) },
+  { name: post.data.title, url: selfUrl },
 ];
 const Content = body;
 ---
@@ -128,9 +131,9 @@ const Content = body;
         <div class="pdetail__share">
           <p class="mono-label">{ru ? 'Поделиться материалом' : 'Share this'}</p>
           <div class="btn-row">
-            <a class="btn btn--sm btn--ghost" href={`https://t.me/share/url?url=${encodeURIComponent(abs(L(path)))}&text=${encodeURIComponent(post.data.title)}`} target="_blank" rel="noopener">Telegram</a>
-            <a class="btn btn--sm btn--ghost" href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(abs(L(path)))}`} target="_blank" rel="noopener">Facebook</a>
-            <a class="btn btn--sm btn--ghost" href={`mailto:?subject=${encodeURIComponent(post.data.title)}&body=${encodeURIComponent(abs(L(path)))}`}>{ru ? 'Почта' : 'Email'}</a>
+            <a class="btn btn--sm btn--ghost" href={`https://t.me/share/url?url=${encodeURIComponent(selfUrl)}&text=${encodeURIComponent(post.data.title)}`} target="_blank" rel="noopener">Telegram</a>
+            <a class="btn btn--sm btn--ghost" href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(selfUrl)}`} target="_blank" rel="noopener">Facebook</a>
+            <a class="btn btn--sm btn--ghost" href={`mailto:?subject=${encodeURIComponent(post.data.title)}&body=${encodeURIComponent(selfUrl)}`}>{ru ? 'Почта' : 'Email'}</a>
           </div>
         </div>
         <p class="small muted">

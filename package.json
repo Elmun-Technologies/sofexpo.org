@@ -5,13 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev --host 0.0.0.0 --port 4321",
-    "build": "astro build && node scripts/prune-sitemap.mjs",
+    "build": "node scripts/gen-editorial-map.mjs && astro build && node scripts/prune-sitemap.mjs",
     "preview": "astro preview --host 0.0.0.0 --port 4321",
     "check": "npm run build && npm run audit:seo",
     "audit:seo": "node scripts/seo-audit.mjs",
     "build:hosts": "node scripts/build-hosts.mjs --mode subdomain",
     "build:alias": "node scripts/build-hosts.mjs --mode alias",
-    "check:hosts": "node scripts/build-hosts.mjs --mode subdomain && node scripts/check-hosts.mjs --mode subdomain"
+    "check:hosts": "node scripts/build-hosts.mjs --mode subdomain && node scripts/check-hosts.mjs --mode subdomain",
+    "build:host": "node scripts/build-one-host.mjs",
+    "editorial:map": "node scripts/gen-editorial-map.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",

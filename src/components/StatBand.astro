@@ -1,0 +1,23 @@
+---
+import type { Locale } from '@/i18n/config';
+import { site } from '@/data/site';
+
+const { locale, items } = Astro.props as {
+  locale: Locale;
+  items?: { value: string; unit?: string; ru: string; en: string }[];
+};
+const data = items ?? site.stats;
+---
+<div class="stats">
+  {
+    data.map((s) => (
+      <div class="stat">
+        <b class="num">
+          {s.value}
+          {s.unit && <small style="font-size:.5em;letter-spacing:0"> {s.unit}</small>}
+        </b>
+        <span>{locale === 'ru' ? s.ru : s.en}</span>
+      </div>
+    ))
+  }
+</div>

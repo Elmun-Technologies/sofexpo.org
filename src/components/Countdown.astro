@@ -1,0 +1,76 @@
+---
+/**
+ * Countdown: computed once at build time (so crawlers and JS-off users see a real number,
+ * never "00 дней"), then refined every second on the client. 1.5 KB of inline JS, no layout shift.
+ */
+const { locale, target, label } = Astro.props as { locale: 'ru' | 'en'; target: string; label?: string };
+
+const ru = locale === 'ru';
+const ms = new Date(`${target}T18:00:00+05:00`).getTime();
+const diff = Math.max(0, ms - Date.now());
+const at = {
+  d: Math.floor(diff / 864e5),
+  h: Math.floor((diff % 864e5) / 36e5),
+  m: Math.floor((diff % 36e5) / 6e4),
+  s: Math.floor((diff % 6e4) / 1e3),
+};
+const pad = (n: number) => String(n).padStart(2, '0');
+const plural = (n: number, forms: [string, string, string]) => {
+  const m10 = n % 10;
+  const m100 = n % 100;
+  if (m10 === 1 && m100 !== 11) return forms[0];
+  if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return forms[1];
+  return forms[2];
+};
+const unit = (n: number) => (ru ? plural(n, ['день', 'дня', 'дней']) : n === 1 ? 'day' : 'days');
+const units = { h: ru ? 'часов' : 'hours', m: ru ? 'минут' : 'min', s: ru ? 'секунд' : 'sec' };
+---
+
+<div class="cd-wrap">
+  {label && <p class="mono-label" style="margin:0 0 .5rem">{label}</p>}
+  <div class="cd" data-countdown={ms} aria-live="off">
+    <div>
+      <b data-cd="d">{pad(at.d)}</b>
+      <span data-cd="dl">{unit(at.d)}</span>
+    </div>
+    <div><b data-cd="h">{pad(at.h)}</b><span>{units.h}</span></div>
+    <div><b data-cd="m">{pad(at.m)}</b><span>{units.m}</span></div>
+    <div><b data-cd="s">{pad(at.s)}</b><span>{units.s}</span></div>
+  </div>
+</div>
+
+<script is:inline>
+  document.querySelectorAll('[data-countdown]').forEach((el) => {
+    const target = Number(el.dataset.countdown);
+    const out = { d: el.querySelector('[data-cd=d]'), h: el.querySelector('[data-cd=h]'), m: el.querySelector('[data-cd=m]'), s: el.querySelector('[data-cd=s]') };
+    const dl = el.querySelector('[data-cd=dl]');
+    const pad = (n) => String(Math.max(0, n)).padStart(2, '0');
+    const plural = (n, f) => {
+      const m10 = n % 10, m100 = n % 100;
+      if (m10 === 1 && m100 !== 11) return f[0];
+      if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return f[1];
+      return f[2];
+    };
+    const ru = dl && /[\u0400-\u04ff]/.test(dl.textContent);
+    let raf;
+    const tick = () => {
+      let diff = Math.max(0, target - Date.now());
+      const day = Math.floor(diff / 864e5);
+      diff -= day * 864e5;
+      const h = Math.floor(diff / 36e5);
+      diff -= h * 36e5;
+      const m = Math.floor(diff / 6e4);
+      const s = Math.floor((diff - m * 6e4) / 1e3);
+      out.d.textContent = pad(day);
+      if (dl) dl.textContent = ru ? plural(day, ['день', 'дня', 'дней']) : day === 1 ? 'day' : 'days';
+      out.h.textContent = pad(h);
+      out.m.textContent = pad(m);
+      out.s.textContent = pad(s);
+      raf = setTimeout(tick, 1000);
+    };
+    if (document.visibilityState === 'hidden') {
+      const onVis = () => { if (document.visibilityState === 'visible') { clearTimeout(raf); tick(); } }
+      document.addEventListener('visibilitychange', onVis);
+    } else { tick(); }
+  });
+</script>

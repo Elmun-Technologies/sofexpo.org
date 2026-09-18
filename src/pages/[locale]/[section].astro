@@ -1,0 +1,40 @@
+---
+/**
+ * Host-local cluster sections: on an exhibition hostname the three sub-pages of the cluster
+ * live at the root of that host (`/ru/exhibitors/`), not under `/events/{slug}/`. This route
+ * builds nothing on the centre's host — there the same content is served by
+ * `/events/[slug]/[section]/`, and a link from an event host back to `/exhibitors/` resolves
+ * to the centre's exhibitor hub (absolute) instead.
+ */
+import type { GetStaticPaths } from 'astro';
+import { locales, type Locale } from '@/i18n/config';
+import { hostEventSlug } from '@/lib/hostRoutes';
+import { events } from '@/data/events';
+import { eventPages, type EventPage } from '@/data/pages/event-pages';
+import EventPageComponent from '@/components/EventPage.astro';
+
+export const getStaticPaths = (async () => {
+  /* inlined on purpose: Astro hoists getStaticPaths out of the module scope */
+  const SECTIONS = ['exhibitors', 'visitors', 'program'] as const;
+  if (!hostEventSlug) return [];
+  const event = events.find((e) => e.slug === hostEventSlug);
+  if (!event) return [];
+  const out: {
+    params: { locale: Locale; section: (typeof SECTIONS)[number] };
+    props: { page: EventPage };
+  }[] = [];
+  for (const locale of locales) {
+    for (const section of SECTIONS) {
+      const page = eventPages[event.slug]?.[section];
+      if (page) out.push({ params: { locale, section }, props: { page } });
+    }
+  }
+  return out;
+}) satisfies GetStaticPaths;
+
+const { locale } = Astro.params as { locale: Locale };
+const event = events.find((e) => e.slug === hostEventSlug)!;
+const page = Astro.props.page as EventPage;
+---
+
+<EventPageComponent {locale} {event} {page} />

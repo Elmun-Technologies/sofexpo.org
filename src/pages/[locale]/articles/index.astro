@@ -1,0 +1,142 @@
+---
+/** Market insights: long-form guides that answer the questions buyers and exhibitors actually type. */
+import type { Locale } from '@/i18n/config';
+import { localize } from '@/i18n/config';
+import { getCollection } from 'astro:content';
+import { rootOnlyPaths } from '@/lib/hostRoutes';
+import { abs, breadcrumbJsonLd, itemListJsonLd } from '@/lib/seo';
+import Base from '@/layouts/Base.astro';
+import SectionHead from '@/components/SectionHead.astro';
+import PostCard from '@/components/PostCard.astro';
+
+export function getStaticPaths() {
+  return rootOnlyPaths();
+}
+
+const locale = Astro.params.locale as Locale;
+const ru = locale === 'ru';
+const L = (p: string) => localize(locale, p);
+const all = (await getCollection('articles', ({ data }) => !data.draft))
+  .filter((e) => e.id.startsWith(`${locale}/`))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const [lead, ...rest] = all;
+const byCategory = new Map<string, typeof all>();
+for (const p of all) {
+  const key = p.data.category ?? (ru ? 'разбор' : 'guide');
+  byCategory.set(key, [...(byCategory.get(key) ?? []), p]);
+}
+const minutes = all.reduce((acc, p) => acc + (p.data.readingMinutes ?? 0), 0);
+const copy = {
+  ru: {
+    title: 'Аналитика выставок и рынков — SOF EXPO Samarkand',
+    desc: 'Как выбрать стенд и посчитать эффект от выставки, какие документы нужны иностранному поставщику, что происходит на рынках продуктов, стройки и агропрома.',
+    h1: 'Что мы знаем про выставки и рынки',
+    lead: 'Пишем только о том, что сами делаем на площадке: подготовка участника, документы, экономика события, состояние отраслей. Без мотивационных постов и «трендов 2030».',
+  },
+  en: {
+    title: 'Exhibition and market insights from SOF EXPO',
+    desc: 'Practical guides: choosing a stand, measuring show ROI, documents a foreign supplier needs in Uzbekistan, and how the food, construction and agri markets move.',
+    h1: 'What we know about shows and markets',
+    lead: 'We write only about what we run on the floor: exhibitor preparation, documents, event economics and the state of the industries. No motivational posts, no "trends of 2030".',
+  },
+};
+---
+
+<Base
+  {locale}
+  title={copy[locale].title}
+  description={copy[locale].desc}
+  path="/articles/"
+  image={lead?.data.hero ?? '/og/default.jpg'}
+  breadcrumbs={[{ name: ru ? 'Аналитика рынков' : 'Market insights', path: '/articles/' }]}
+  jsonLd={[
+    breadcrumbJsonLd([{ name: 'SOF EXPO Samarkand', url: abs(`/${locale}/`) }, { name: ru ? 'Аналитика' : 'Insights', url: abs(L('/articles/')) }]),
+    itemListJsonLd(all.map((p) => ({ name: p.data.title, url: abs(`${L('/articles/')}${p.id.split('/').slice(1).join('/')}/`) })), abs(L('/articles/')), ru ? 'Аналитика рынков' : 'Market insights'),
+  ]}
+>
+  <section class="sec">
+    <div class="wrap">
+      <SectionHead level={1} locale={locale} kicker={ru ? 'Библиотека' : 'Library'} title={copy[locale].h1} text={copy[locale].lead}>
+        <p slot="aside" class="small muted">
+          {all.length} {ru ? 'материала' : 'articles'} · {minutes} {ru ? 'мин чтения' : 'min of reading'}
+        </p>
+      </SectionHead>
+      {lead && <PostCard {locale} post={lead} path="/articles/" variant="lead" priority />}
+    </div>
+  </section>
+
+  <section class="sec sec--paper">
+    <div class="wrap">
+      <div class="grid g3">
+        {rest.map((p) => <PostCard {locale} post={p} path="/articles/" />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <p class="kicker">{ru ? 'По темам' : 'By topic'}</p>
+      <div class="cats">
+        {[...byCategory.entries()].map(([cat, list]) => (
+          <div class="cat">
+            <p class="mono-label">{cat}</p>
+            <ul>
+              {list.map((p) => (
+                <li>
+                  <a href={L(`/articles/${p.id.split('/').slice(1).join('/')}/`)}>{p.data.title}</a>
+                  <span>{p.data.readingMinutes} {ru ? 'мин' : 'min'}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+      <p class="small muted" style="margin-top:1.4rem">
+        {ru
+          ? 'Хотите, чтобы мы разобрали тему для вашей отрасли? Напишите — публикуем материалы совместно с партнёрами и ассоциациями.'
+          : 'Want us to cover a topic for your industry? Write to us — we publish jointly with partners and associations.'}
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .cats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .cat {
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    padding: 1.1rem 1.2rem;
+    background: var(--paper);
+  }
+  .cat ul {
+    list-style: none;
+    margin: 0.6rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.55rem;
+  }
+  .cat li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: baseline;
+  }
+  .cat a {
+    color: var(--evergreen-2);
+    text-decoration: none;
+    font-size: 0.95rem;
+  }
+  .cat a:hover {
+    text-decoration: underline;
+  }
+  .cat span {
+    color: var(--ink-40);
+    font-size: 0.8rem;
+    flex: none;
+  }
+</style>

@@ -1,0 +1,264 @@
+---
+/**
+ * Detail layout for a single post. Used by both /news/ (announcements, press releases)
+ * and /articles/ (long-form market guides) — the difference is in the front matter and
+ * in the extras we attach: table of contents and reading time for articles, event chip for news.
+ */
+import type { Locale } from '@/i18n/config';
+import { localize } from '@/i18n/config';
+import { useUI } from '@/i18n/ui';
+import { formatDate, telHref } from '@/lib/nav';
+import { abs, articleJsonLd, breadcrumbJsonLd } from '@/lib/seo';
+import { postHref } from '@/lib/contentOwnership';
+import { site } from '@/data/site';
+import { getEvent } from '@/data/events';
+import Base from '@/layouts/Base.astro';
+import PostBody from '@/components/PostBody.astro';
+import PostCard from '@/components/PostCard.astro';
+import Icon from '@/components/Icon.astro';
+
+interface PostData {
+  title: string;
+  description: string;
+  date: Date;
+  updated?: Date;
+  tags: string[];
+  category?: string;
+  hero?: string;
+  event?: string;
+  readingMinutes: number;
+}
+interface Post {
+  id: string;
+  data: PostData;
+}
+
+const { locale, kind, post, headings = [], body, related, sectionTitle } = Astro.props as {
+  locale: Locale;
+  kind: 'news' | 'articles';
+  post: Post;
+  headings?: { depth: number; text: string; slug: string }[];
+  body: any;
+  related: Post[];
+  sectionTitle: { ru: string; en: string };
+};
+const t = useUI(locale);
+const ru = locale === 'ru';
+const L = (p: string) => localize(locale, p);
+const base = kind === 'news' ? '/news/' : '/articles/';
+const slug = post.id.split('/').slice(1).join('/');
+const path = `${base}${slug}/`;
+const selfHref = postHref(locale, kind as 'news' | 'articles', slug);
+const selfUrl = /^https?:/.test(selfHref) ? selfHref : abs(selfHref);
+const relEvent = post.data.event ? getEvent(post.data.event) : undefined;
+const isArticle = kind === 'articles';
+const toc = isArticle ? headings.filter((h) => h.depth === 2) : [];
+const dateStr = post.data.date.toISOString().slice(0, 10);
+const crumbs = [
+  { name: 'SOF EXPO Samarkand', url: abs(`/${locale}/`) },
+  { name: sectionTitle[locale], url: abs(L(base)) },
+  { name: post.data.title, url: selfUrl },
+];
+const Content = body;
+---
+
+<Base
+  {locale}
+  title={post.data.title}
+  description={post.data.description}
+  {path}
+  type="article"
+  image={post.data.hero}
+  publishedTime={post.data.date.toISOString()}
+  modifiedTime={post.data.updated?.toISOString()}
+  jsonLd={[
+    articleJsonLd({
+      headline: post.data.title,
+      description: post.data.description,
+      date: post.data.date.toISOString(),
+      modified: post.data.updated?.toISOString(),
+      locale,
+      url: L(path),
+      image: post.data.hero,
+    }),
+    breadcrumbJsonLd(crumbs),
+  ]}
+  breadcrumbs={[{ name: sectionTitle[locale], path: base }]}
+  preload={post.data.hero}
+>
+  <article class="pdetail">
+    <header class="sec pdetail__head">
+      <div class="wrap wrap--narrow">
+        <p class="kicker">
+          {isArticle ? (ru ? 'Аналитика' : 'Insight') : ru ? 'Пресс-релиз' : 'Press release'} · {formatDate(dateStr, locale)}
+          {post.data.updated ? ` · ${ru ? 'обновлено' : 'updated'} ${formatDate(post.data.updated.toISOString().slice(0, 10), locale)}` : ''}
+        </p>
+        <h1>{post.data.title}</h1>
+        <p class="lead">{post.data.description}</p>
+        <div class="pdetail__meta">
+          <span class="chip"><Icon name="clock" size={14} /> {post.data.readingMinutes} {ru ? 'мин чтения' : 'min read'}</span>
+          {post.data.tags.map((tag) => <span class="chip chip--gold">{tag}</span>)}
+          {relEvent && <a class="chip chip--live" href={L(`/events/${relEvent.slug}/`)}>{relEvent.shortName} · {relEvent.dates.display[locale]}</a>}
+        </div>
+      </div>
+    </header>
+
+    {post.data.hero && (
+      <figure class="pdetail__hero">
+        <img src={post.data.hero} alt={post.data.title} width="1440" height="720" loading="eager" decoding="async" fetchpriority="high" />
+      </figure>
+    )}
+
+    <div class:list={['sec', 'pdetail__body', isArticle && 'pdetail__body--withtoc']}>
+      <div class="wrap">
+        {toc.length > 2 && (
+          <aside class="pdetail__toc">
+            <p class="mono-label">{ru ? 'Содержание' : 'Contents'}</p>
+            <ol>
+              {toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}
+            </ol>
+            <a class="btn btn--sm btn--ghost" href={L(base)}>{ru ? 'Все материалы' : 'All articles'}</a>
+          </aside>
+        )}
+        <PostBody layout={isArticle ? 'sidebar' : 'prose'}>
+          <Content />
+        </PostBody>
+      </div>
+    </div>
+
+    <footer class="sec sec--paper pdetail__foot">
+      <div class="wrap wrap--narrow">
+        <div class="pdetail__share">
+          <p class="mono-label">{ru ? 'Поделиться материалом' : 'Share this'}</p>
+          <div class="btn-row">
+            <a class="btn btn--sm btn--ghost" href={`https://t.me/share/url?url=${encodeURIComponent(selfUrl)}&text=${encodeURIComponent(post.data.title)}`} target="_blank" rel="noopener">Telegram</a>
+            <a class="btn btn--sm btn--ghost" href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(selfUrl)}`} target="_blank" rel="noopener">Facebook</a>
+            <a class="btn btn--sm btn--ghost" href={`mailto:?subject=${encodeURIComponent(post.data.title)}&body=${encodeURIComponent(selfUrl)}`}>{ru ? 'Почта' : 'Email'}</a>
+          </div>
+        </div>
+        <p class="small muted">
+          {ru ? 'Вопросы и запрос на комментарий:' : 'Questions and interview requests:'} <a href={`mailto:${site.contacts.email}`}>{site.contacts.email}</a> · <a href={telHref(site.contacts.phoneMain)}>{site.contacts.phoneMain}</a> · <a href={site.contacts.telegramChannel}>Telegram</a>
+        </p>
+      </div>
+    </footer>
+  </article>
+
+  {related.length > 0 && (
+    <section class="sec">
+      <div class="wrap">
+        <h2 class="h4" style="font-size:1.25rem;margin-bottom:1.2rem">{ru ? 'Читать дальше' : 'Keep reading'}</h2>
+        <div class="grid g3">
+          {related.map((p) => <PostCard {locale} post={p} path={base} />)}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="sec sec--forest">
+    <div class="wrap">
+      <div class="pdetail__cta">
+        <div>
+          <p class="kicker">{isArticle ? (ru ? 'Практика' : 'Practice') : ru ? 'Событие' : 'Event'}</p>
+          <h2>{isArticle ? (ru ? 'Проверьте выводы на выставке' : 'Test the conclusions at a trade show') : ru ? 'Участвовать в ближайшей выставке' : 'Take part in the next show'}</h2>
+          <p>{isArticle ? (ru ? 'Мы собираем в одном зале тех, о ком говорится в этом материале: сравните предложения и цены за один день.' : 'We gather in one hall exactly the people this article is about: compare offers and prices in one day.') : (ru ? 'Заявка на стенд занимает пять минут, ответ — в течение рабочего дня.' : 'A stand request takes five minutes; we answer within the business day.')}</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn--gold" href={L('/request-stand/')}>{t('cta.stand')}</a>
+          <a class="btn btn--ghost" href={L('/events/')}>{ru ? 'Афиша' : 'Line-up'}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .pdetail__head h1 {
+    max-width: 30ch;
+  }
+  .pdetail__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 1.2rem;
+  }
+  .pdetail__meta a {
+    text-decoration: none;
+  }
+  .pdetail__hero {
+    margin: 0;
+    padding: 0 var(--gutter);
+  }
+  .pdetail__hero img {
+    width: 100%;
+    max-width: var(--maxw);
+    margin: 0 auto;
+    display: block;
+    border-radius: var(--r-lg);
+    aspect-ratio: 21 / 9;
+    object-fit: cover;
+  }
+  .pdetail__body .wrap {
+    display: grid;
+    gap: clamp(1.6rem, 1rem + 3vw, 3.4rem);
+  }
+  .pdetail__body--withtoc .wrap {
+    grid-template-columns: 232px minmax(0, 1fr);
+    align-items: start;
+  }
+  .pdetail__toc {
+    position: sticky;
+    top: calc(var(--header-h) + 1.4rem);
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    padding: 1rem 1.1rem;
+    background: var(--paper);
+    font-size: 0.9rem;
+  }
+  .pdetail__toc ol {
+    margin: 0.5rem 0 1rem;
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 0.35rem;
+  }
+  .pdetail__toc a {
+    color: var(--ink-60);
+    text-decoration: none;
+  }
+  .pdetail__toc a:hover {
+    color: var(--evergreen);
+  }
+  .pdetail__foot .pdetail__share {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .pdetail__cta {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, auto);
+    gap: 1.4rem 2.4rem;
+    align-items: center;
+  }
+  .pdetail__cta h2 {
+    color: #fff;
+  }
+  .pdetail__cta p {
+    color: rgba(255, 255, 255, 0.82);
+    max-width: 62ch;
+  }
+  @media (max-width: 1000px) {
+    .pdetail__body--withtoc .wrap {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .pdetail__toc {
+      position: static;
+    }
+  }
+  @media (max-width: 880px) {
+    .pdetail__cta {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

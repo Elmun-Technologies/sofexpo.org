@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="SOF EXPO Samarkand">
+  <!-- the mark is the hall, not a monogram: one shell, three stand modules, one service aisle.
+       No rounded corners, no gradient, no letterforms to redraw every time a brand asset changes. -->
+  <rect width="64" height="64" fill="#0f2b1c"/>
+  <rect x="10" y="12" width="44" height="34" fill="none" stroke="#ffffff" stroke-width="2"/>
+  <rect x="15" y="17" width="9" height="9" fill="#ffffff"/>
+  <rect x="27.5" y="17" width="9" height="9" fill="#ffffff"/>
+  <rect x="40" y="17" width="9" height="9" fill="#ffffff"/>
+  <rect x="15" y="31" width="34" height="3" fill="#ffffff" opacity=".6"/>
+  <rect x="10" y="49" width="44" height="3" fill="#ffffff"/>
+</svg>

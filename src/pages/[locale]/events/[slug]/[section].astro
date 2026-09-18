@@ -1,0 +1,41 @@
+---
+/**
+ * Sub-pages of an exhibition cluster: /exhibitors/, /visitors/, /program/.
+ * Each is authored per event, so the exhibitor page of FOODERA and the exhibitor
+ * page of AGROPRO are different documents, not the same grid with new dates.
+ */
+import type { GetStaticPaths } from 'astro';
+import { locales, localize } from '@/i18n/config';
+import { clusterMoved, isBuiltHere } from '@/data/hosts';
+import MovedNotice from '@/components/MovedNotice.astro';
+import { events } from '@/data/events';
+import { eventPages, type EventPage } from '@/data/pages/event-pages';
+import EventPage from '@/components/EventPage.astro';
+
+export const getStaticPaths = (async () => {
+  const out: { params: { locale: string; slug: string; section: string }; props: { page: EventPage } }[] = [];
+  for (const locale of locales) {
+    for (const event of events) {
+      for (const section of ['exhibitors', 'visitors', 'program'] as const) {
+        const page = eventPages[event.slug]?.[section];
+        if (!page) continue;
+        const path = `/events/${event.slug}/${section}/`;
+        if (isBuiltHere(path)) {
+          out.push({ params: { locale, slug: event.slug, section }, props: { page, moved: null } });
+        } else if (clusterMoved(event.slug)) {
+          out.push({ params: { locale, slug: event.slug, section }, props: { page, moved: localize(locale, path) } });
+        }
+      }
+    }
+  }
+  return out;
+}) satisfies GetStaticPaths;
+
+const { locale } = Astro.params as { locale: 'ru' | 'en' };
+const slug = Astro.params.slug as string;
+const event = events.find((e) => e.slug === slug)!;
+const page = Astro.props.page as EventPage;
+const moved = Astro.props.moved as string | null;
+---
+
+{moved ? <MovedNotice {locale} {event} section={Astro.params.section as 'exhibitors'} to={moved} /> : <EventPage {locale} {event} {page} />}

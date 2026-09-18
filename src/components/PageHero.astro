@@ -1,0 +1,71 @@
+---
+import type { Locale } from '@/i18n/config';
+import Icon from '@/components/Icon.astro';
+
+const {
+  locale,
+  kicker,
+  title,
+  lead,
+  bullets = [],
+  image,
+  imageAlt,
+  actions = [],
+  side,
+} = Astro.props as {
+  locale: Locale;
+  kicker?: string;
+  title: string;
+  lead?: string;
+  bullets?: string[];
+  image?: string;
+  /** the hero photo carries meaning (it shows the hall / the expo floor), so it needs a caption */
+  imageAlt?: string;
+  actions?: { label: string; href: string; tone?: 'gold' | 'ghost' | 'light' }[];
+  side?: string;
+};
+---
+<section class="hero">
+  {image && (
+    <div class="hero__media">
+      <img
+        src={image}
+        alt={imageAlt ?? title.replace(/<[^>]+>/g, '').trim()}
+        width="1600"
+        height="900"
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+      />
+    </div>
+  )}
+  <div class="wrap hero__in">
+    <div>
+      {kicker && <p class="kicker">{kicker}</p>}
+      <h1 set:html={title} />
+      {lead && <p class="hero__lead">{lead}</p>}
+      {bullets.length > 0 && (
+        <ul class="pill-row" style="list-style:none;padding:0;margin:1.2rem 0 0">
+          {bullets.map((b) => (
+            <li class="chip" style="background:rgba(255, 255, 255, .1);border-color:rgba(255, 255, 255, .24);color:rgba(255,255,255,.86)">
+              <Icon name="check" size={14} /> {b}
+            </li>
+          ))}
+        </ul>
+      )}
+      {actions.length > 0 && (
+        <div class="btn-row" style="margin-top:1.6rem">
+          {actions.map((a) => (
+            <a class:list={['btn', { 'btn--gold': a.tone === 'gold', 'btn--ghost': a.tone === 'ghost', 'btn--light': a.tone === 'light' || !a.tone }]} href={a.href}>
+              {a.label}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+    {side && (
+      <div class="hero__side" set:html={side} />
+    )}
+    <slot name="side" />
+  </div>
+</section>

@@ -1,0 +1,29 @@
+{
+  "generatedFrom": "src/content/**/ru|en/*.md — do not edit by hand",
+  "map": {
+    "/news/agropro-2027-priem-zayavok/": {
+      "host": "agropro.sofexpo.org",
+      "event": "agropro-expo"
+    },
+    "/news/buildpro-2026-plan-zala/": {
+      "host": "buildpro.sofexpo.org",
+      "event": "buildpro-expo"
+    },
+    "/news/foodera-2026-registratsiya-otkryta/": {
+      "host": "foodera.sofexpo.org",
+      "event": "foodera-expo"
+    },
+    "/news/promotors-2026-itogi/": {
+      "host": "sofexpo.org",
+      "event": "promotors-show-samarkand"
+    },
+    "/articles/kak-voyti-v-roznichnye-seti-uzbekistana/": {
+      "host": "foodera.sofexpo.org",
+      "event": "foodera-expo"
+    },
+    "/articles/krupnogabaritnaya-tehnika-na-vystavke/": {
+      "host": "agropro.sofexpo.org",
+      "event": "agropro-expo"
+    }
+  }
+}

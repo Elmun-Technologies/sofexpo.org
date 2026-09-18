@@ -1,0 +1,242 @@
+---
+/**
+ * Site search. Static build, so the index is embedded in the page: ~120 documents,
+ * ranked in 30 lines of vanilla JS. Progressive: without JS the page still lists
+ * every section by group, which is what a crawler and a keyboard user need.
+ */
+import type { Locale } from '@/i18n/config';
+import { localize } from '@/i18n/config';
+import { searchDocs } from '@/lib/search';
+import { rootOnlyPaths } from '@/lib/hostRoutes';
+import { abs, breadcrumbJsonLd } from '@/lib/seo';
+import Base from '@/layouts/Base.astro';
+import SectionHead from '@/components/SectionHead.astro';
+import Icon from '@/components/Icon.astro';
+import { pages } from '@/data/pages';
+import { events } from '@/data/events';
+
+export function getStaticPaths() {
+  return rootOnlyPaths();
+}
+
+const locale = Astro.params.locale as Locale;
+const ru = locale === 'ru';
+const L = (p: string) => localize(locale, p);
+const docs = await searchDocs(locale);
+const index = docs.map(({ title, text, href, kind }) => ({ title, text, href, kind }));
+
+const groups: { title: string; items: { label: string; href: string; note?: string }[] }[] = [
+  {
+    title: ru ? 'Выставки' : 'Exhibitions',
+    items: events.map((e) => ({ label: e.brand[locale], href: L(`/events/${e.slug}/`), note: e.dates.display[locale] })),
+  },
+  {
+    title: ru ? 'Разделы сайта' : 'Site sections',
+    items: pages.filter((p) => !p.noindex).map((p) => ({ label: p.meta[locale].title.split(' — ')[0], href: L(p.path), note: p.meta[locale].title.split(' — ')[1] })),
+  },
+];
+---
+
+<Base
+  {locale}
+  title={ru ? 'Поиск по сайту SOF EXPO Samarkand' : 'Search SOF EXPO Samarkand'}
+  description={ru ? 'Поиск по выставкам, пакетам участия, документам площадки, новостям и аналитике SOF EXPO Samarkand.' : 'Search exhibitions, participation packages, venue documents, news and market insights from SOF EXPO Samarkand.'}
+  path="/search/"
+  breadcrumbs={[{ name: ru ? 'Поиск' : 'Search', path: '/search/' }]}
+  jsonLd={[breadcrumbJsonLd([{ name: 'SOF EXPO Samarkand', url: abs(`/${locale}/`) }, { name: ru ? 'Поиск' : 'Search', url: abs(L('/search/')) }])]}
+>
+  <section class="sec">
+    <div class="wrap wrap--narrow">
+      <SectionHead level={1} locale={locale} kicker={ru ? 'Поиск' : 'Search'} title={ru ? 'Найти страницу, раздел или новость' : 'Find a page, a section or a note'} text={ru ? 'Поиск работает по всем страницам сайта: выставки, пакеты, техтребования, документы, новости и аналитика.' : 'Search covers every page: shows, packages, technical requirements, documents, news and insights.'} />
+      <form class="sform" role="search" action={L('/search/')} method="get">
+        <label class="sr-only" htmlFor="q">{ru ? 'Поисковый запрос' : 'Search query'}</label>
+        <span class="sform__ico"><Icon name="search" size={20} /></span>
+        <input id="q" name="q" type="search" autocomplete="off" placeholder={ru ? 'напр. стенд, дрифт, орошение, виза' : 'e.g. stand, drift, irrigation, visa'} />
+        <button class="btn" type="submit">{ru ? 'Искать' : 'Search'}</button>
+      </form>
+      <p class="scount small muted" hidden></p>
+      <div class="sresults"></div>
+    </div>
+  </section>
+
+  <section class="sec sec--paper">
+    <div class="wrap">
+      <p class="kicker">{ru ? 'Все разделы' : 'All sections'}</p>
+      <div class="grid g2">
+        {groups.map((g) => (
+          <div class="sgroup">
+            <h2>{g.title}</h2>
+            <ul>
+              {g.items.map((i) => (
+                <li>
+                  <a href={i.href}>{i.label}</a>
+                  {i.note && <span>{i.note}</span>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script define:vars={{ index, locale }}>
+  const input = document.getElementById('q');
+  const box = document.querySelector('.sresults');
+  const count = document.querySelector('.scount');
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  function rank(docs, query) {
+    const q = query.trim().toLowerCase();
+    if (q.length < 2) return [];
+    const tokens = q.split(/\s+/).filter(Boolean);
+    return docs
+      .map((d) => {
+        let score = 0;
+        for (const t of tokens) {
+          if (d.title.toLowerCase().includes(t)) score += 6;
+          const hay = (d.title + ' ' + d.text).toLowerCase();
+          if (hay.startsWith(t)) score += 4;
+          score += Math.min(hay.split(t).length - 1, 8);
+        }
+        return { d, score };
+      })
+      .filter((r) => r.score > 2)
+      .sort((a, b) => b.score - a.score)
+      .map((r) => r.d);
+  }
+
+  function render(list, q) {
+    if (!q || q.length < 2) {
+      box.innerHTML = '';
+      count.hidden = true;
+      return;
+    }
+    count.hidden = false;
+    count.textContent = locale === 'ru' ? `Найдено: ${list.length}` : `Results: ${list.length}`;
+    box.innerHTML = list
+      .map(
+        (d) =>
+          `<a class="shit" href="${d.href}"><b>${esc(d.title)}</b><span>${esc(d.text)}</span><em>${esc(d.kind)}</em></a>`,
+      )
+      .join('') || `<p class="muted">${locale === 'ru' ? 'Ничего не найдено. Напишите нам — подскажем раздел.' : 'Nothing found. Write to us and we will point you to the right page.'}</p>`;
+  }
+
+  const params = new URLSearchParams(location.search);
+  const initial = params.get('q') || '';
+  if (initial) input.value = initial;
+  render(rank(index, initial), initial);
+  input.addEventListener('input', () => render(rank(index, input.value), input.value.trim()));
+  document.querySelector('.sform').addEventListener('submit', (e) => {
+    e.preventDefault();
+    render(rank(index, input.value), input.value.trim());
+    history.replaceState({}, '', input.value.trim() ? `?q=${encodeURIComponent(input.value.trim())}` : location.pathname);
+  });
+</script>
+
+<style>
+  .sform {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0.5rem 0.5rem 1rem;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--r-pill);
+    margin-top: 1.4rem;
+  }
+  .sform:focus-within {
+    border-color: var(--moss);
+  }
+  .sform__ico {
+    color: var(--ink-40);
+    display: grid;
+    place-items: center;
+  }
+  .sform input {
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 1.05rem;
+    padding: 0.6rem 0;
+    color: var(--ink);
+    width: 100%;
+  }
+  .sform input:focus {
+    outline: none;
+  }
+  .scount {
+    margin: 1.1rem 0 0.4rem;
+  }
+  .sresults {
+    display: grid;
+    gap: 0.6rem;
+  }
+  .sresults :global(.shit) {
+    display: grid;
+    gap: 0.2rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    background: var(--paper);
+    text-decoration: none;
+    color: inherit;
+  }
+  .sresults :global(.shit:hover) {
+    border-color: var(--moss);
+  }
+  .sresults :global(.shit b) {
+    font-size: 1rem;
+  }
+  .sresults :global(.shit span) {
+    color: var(--ink-60);
+    font-size: 0.9rem;
+  }
+  .sresults :global(.shit em) {
+    font-style: normal;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    color: var(--ink-40);
+  }
+  .sgroup {
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: 1.2rem 1.3rem;
+    background: var(--paper);
+  }
+  .sgroup h2 {
+    font-size: 1.1rem;
+    margin: 0 0 0.6rem;
+  }
+  .sgroup ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.45rem;
+    max-height: 420px;
+    overflow: auto;
+  }
+  .sgroup li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    border-bottom: 1px dashed var(--line);
+    padding-bottom: 0.35rem;
+    font-size: 0.92rem;
+  }
+  .sgroup a {
+    color: var(--evergreen-2);
+    text-decoration: none;
+  }
+  .sgroup a:hover {
+    text-decoration: underline;
+  }
+  .sgroup span {
+    color: var(--ink-40);
+    font-size: 0.78rem;
+    flex: none;
+  }
+</style>

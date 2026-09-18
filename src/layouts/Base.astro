@@ -1,0 +1,183 @@
+---
+import '@/styles/global.css';
+/* display: Inter Tight (has the Cyrillic subset Archivo lacks) · body: Golos Text · data: JetBrains Mono */
+import '@fontsource-variable/inter-tight/wght.css';
+import '@fontsource-variable/golos-text/wght.css';
+import '@fontsource-variable/jetbrains-mono/wght.css';
+import { buildMeta, entityNodes, SITE } from '@/lib/seo';
+import { localize, localeMeta, type Locale } from '@/i18n/config';
+import { CURRENT_BRAND, isRootHost } from '@/data/hosts';
+import { brandCss } from '@/data/brands';
+import { useUI } from '@/i18n/ui';
+import Header from '@/components/Header.astro';
+import PromoBar from '@/components/PromoBar.astro';
+import Footer from '@/components/Footer.astro';
+
+interface Props {
+  locale: Locale;
+  /** path without locale prefix, e.g. "/events/foodera-expo/" */
+  path: string;
+  title: string;
+  description: string;
+  image?: string;
+  type?: 'website' | 'article';
+  publishedTime?: string;
+  modifiedTime?: string;
+  jsonLd?: Record<string, unknown>[];
+  noindex?: boolean;
+  /** LCP image to preload (absolute-from-root path) */
+  preload?: string;
+  breadcrumbs?: { name: string; path: string }[];
+  /**
+   * Absolute URL this page redirects to. Used when an exhibition cluster is published on its
+   * own hostname: the old root path stays alive as a stub (no crawler lands on a 404, no
+   * anchor text is wasted) while every identity signal — canonical, og:url, hreflang — is
+   * pointed at the real page. A real 301 at the CDN is still preferred; see docs/05.
+   */
+  redirect?: string;
+}
+
+const props = Astro.props;
+const { locale, path, jsonLd = [], breadcrumbs = [] } = props;
+
+/** icon folder: a branded host keeps its own icons beside the centre's */
+const ICON = CURRENT_BRAND ? `/brand/${CURRENT_BRAND.id}` : '';
+const meta = buildMeta({
+  locale,
+  path,
+  title: props.title,
+  description: props.description,
+  image: props.image,
+  type: props.type,
+  publishedTime: props.publishedTime,
+  modifiedTime: props.modifiedTime,
+  noindex: props.noindex,
+});
+if (props.redirect) {
+  meta.canonical = props.redirect;
+  meta.og.url = props.redirect;
+  meta.hreflang = [];
+  meta.xDefault = props.redirect;
+}
+/* a page we ask out of the index must not advertise language alternates: hreflang on a
+   noindex URL is ignored at best and splits the signal at worst (docs/02 §4) */
+if (meta.noindex) {
+  meta.hreflang = [];
+  meta.xDefault = '';
+}
+const t = useUI(locale);
+const nodes: Record<string, unknown>[] = [
+  {
+    '@type': 'WebPage',
+    '@id': meta.canonical,
+    url: meta.canonical,
+    name: props.title,
+    description: props.description,
+    inLanguage: localeMeta[locale].html,
+    isPartOf: { '@id': `${SITE}/#website` },
+    breadcrumb: breadcrumbs.length
+      ? { '@id': `${SITE}${localize(locale, path)}#breadcrumbs` }
+      : undefined,
+  },
+  ...jsonLd,
+];
+/* keep one node per @id so entity stubs never duplicate the richer home nodes */
+const seen = new Set<string>();
+const graph = {
+  '@context': 'https://schema.org',
+  '@graph': [...nodes, ...entityNodes()].filter((node) => {
+    const id = node?.['@id'];
+    if (!id) return node !== undefined;
+    if (seen.has(id)) return false;
+    seen.add(id);
+    return true;
+  }),
+};
+const crumbs = [{ name: t('breadcrumbs.home'), path: '/' }, ...breadcrumbs];
+---
+
+<!doctype html>
+<html lang={localeMeta[locale].html} data-brand={CURRENT_BRAND?.id}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{meta.title}</title>
+    <meta name="description" content={meta.description} />
+    <link rel="canonical" href={meta.canonical} />
+    <meta name="theme-color" content={CURRENT_BRAND?.palette.evergreen ?? "#0f2b1c"} />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="robots" content={meta.noindex ? 'noindex,follow,max-image-preview:large' : 'index,follow,max-image-preview:large,max-snippet:-1'} />
+    {
+      meta.hreflang.map((h) => (
+        <link rel="alternate" hreflang={h.locale === 'en' ? 'en' : h.locale} href={h.href} />
+      ))
+    }
+    {meta.xDefault && <link rel="alternate" hreflang="x-default" href={meta.xDefault} />}
+    {isRootHost && (
+      <link rel="alternate" type="application/rss+xml" title="SOF EXPO Samarkand" href={`/${locale}/rss.xml`} />
+    )}
+    {props.redirect && <meta http-equiv="refresh" content={`0; url=${props.redirect}`} />}
+    <link rel="icon" href={`${ICON}/favicon.svg`} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={`${ICON}/apple-touch-icon.png`} />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
+    {props.preload && <link rel="preload" as="image" href={props.preload} fetchpriority="high" />}
+    <meta property="og:type" content={meta.og.type} />
+    <meta property="og:site_name" content={CURRENT_BRAND ? `${CURRENT_BRAND.name.en} ${CURRENT_BRAND.sub.en}` : "SOF EXPO Samarkand"} />
+    <meta property="og:locale" content={meta.og.locale} />
+    {meta.hreflang.filter((h) => h.locale !== locale).map((h) => <meta property="og:locale:alternate" content={`${h.locale === 'ru' ? 'ru_RU' : 'en_US'}`} />)}
+    <meta property="og:title" content={meta.og.title} />
+    <meta property="og:description" content={meta.og.description} />
+    <meta property="og:url" content={meta.og.url} />
+    <meta property="og:image" content={meta.og.image} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={props.title} />
+    {meta.og.publishedTime && <meta property="article:published_time" content={meta.og.publishedTime} />}
+    {meta.og.modifiedTime && <meta property="article:modified_time" content={meta.og.modifiedTime} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={meta.og.title} />
+    <meta name="twitter:description" content={meta.og.description} />
+    <meta name="twitter:image" content={meta.og.image} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(graph)} />
+    {/* a show host repaints the same token ladder with its own identity (src/data/brands.ts) —
+        html[data-brand] is more specific than :root, so order of stylesheets does not matter */}
+    {CURRENT_BRAND && <style is:inline set:html={brandCss(CURRENT_BRAND)} />}
+  </head>
+  <body>
+    <a class="skip" href="#main">{locale === 'ru' ? 'К основному содержимому' : 'Skip to content'}</a>
+    <PromoBar locale={locale} hideFor={path} />
+    <Header locale={locale} path={path} />
+    <main id="main">
+      {
+        crumbs.length > 1 && (
+          <div class="wrap">
+            <ol class="crumbs">
+              {crumbs.map((c, i) => (
+                <li>
+                  {i === crumbs.length - 1 ? (
+                    <span aria-current="page">{c.name}</span>
+                  ) : (
+                    <a href={localize(locale, c.path)}>{c.name}</a>
+                  )}
+                </li>
+              ))}
+            </ol>
+          </div>
+        )
+      }
+      <slot />
+    </main>
+    <Footer locale={locale} />
+  </body>
+</html>
+
+<style is:global>
+  main {
+    display: block;
+  }
+  .wrap + .wrap {
+    margin-top: 0;
+  }
+</style>

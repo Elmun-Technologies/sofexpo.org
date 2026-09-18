@@ -1,0 +1,104 @@
+---
+import { footerColumns, site } from '@/data/site';
+import { CURRENT_BRAND } from '@/data/hosts';
+import BrandMark from '@/components/BrandMark.astro';
+import Ornament from '@/components/Ornament.astro';
+import { localize, type Locale } from '@/i18n/config';
+import { useUI } from '@/i18n/ui';
+import { upcoming } from '@/data/events';
+import Icon from '@/components/Icon.astro';
+
+const { locale } = Astro.props as { locale: Locale };
+const t = useUI(locale);
+const P = (p: string) => localize(locale, p);
+const year = 2026;
+const ru = locale === 'ru';
+---
+
+<footer class="ftr">
+    {CURRENT_BRAND?.ornament && <Ornament variant="band" height={20} flip />}
+  <div class="wrap">
+    <div class="ftr__grid">
+      <div>
+        <a class="logo" href={P('/')} style="color:#ffffff">
+          {CURRENT_BRAND?.id ? (
+            <BrandMark brand={CURRENT_BRAND} locale={locale} withWordmark size={30} tone="on-dark" />
+          ) : (
+            <>
+              <span class="logo__mark" aria-hidden="true">SE</span>
+              <span class="logo__txt">
+                <b>{site.brand[locale]}</b>
+                <span style="color:rgba(255, 255, 255, .6)">{ru ? 'Выставочный центр' : 'Exhibition centre'}</span>
+              </span>
+            </>
+          )}
+        </a>
+        <p style="margin-top:1rem;max-width:38ch">{t('footer.about')}</p>
+        <p class="small" style="margin:0">
+          {site.contacts.phoneMain}<br />
+          <a href={`mailto:${site.contacts.email}`}>{site.contacts.email}</a>
+        </p>
+        <div class="socials" style="margin-top:1rem">
+          {
+            Object.entries({
+              telegram: { icon: 'telegram', href: site.contacts.telegramChannel, label: 'Telegram' },
+              instagram: { icon: 'instagram', href: site.contacts.instagram, label: 'Instagram' },
+              facebook: { icon: 'facebook', href: site.contacts.facebook, label: 'Facebook' },
+              youtube: { icon: 'youtube', href: site.contacts.youtube, label: 'YouTube' },
+            }).map(
+              ([, s]) => (
+                <a href={s.href} aria-label={s.label} rel="noopener" target="_blank" style="text-decoration:none">
+                  <Icon name={s.icon} size={18} />
+                </a>
+              ),
+            )
+          }
+        </div>
+      </div>
+
+      {
+        footerColumns.map((col) => (
+          <div>
+            <h3>{t(col.title as never)}</h3>
+            <ul>
+              {col.links.map((l) => (
+                <li>
+                  <a href={P(l.path)}>
+                    {'key' in l ? t((l as { key: never }).key) : ru ? (l as { ru: string }).ru : (l as { en: string }).en}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+
+    <div style="margin-top:clamp(1.4rem,1rem + 2vw,2.4rem)">
+      <h3>{t('footer.events')}</h3>
+      <div class="pill-row">
+        {upcoming.map((e) => (
+          <a class="chip" style="background:rgba(255, 255, 255, .08);border-color:rgba(255, 255, 255, .2);color:#ffffff" href={P(`/events/${e.slug}/`)}>
+            {e.shortName} · {e.dates.display[locale]}
+          </a>
+        ))}
+        <a class="chip" style="background:rgba(255, 255, 255, .08);border-color:rgba(255, 255, 255, .2);color:var(--gold-soft)" href={P('/events/')}>
+          {t('cta.all')}
+        </a>
+      </div>
+    </div>
+
+    <div class="ftr__bottom">
+      <p style="margin:0">
+        © {year} {site.brand[locale]}. {t('footer.rights')} {ru ? site.brand.legal : site.brand.legalEn}.
+      </p>
+      <p style="margin:0">
+        <a href={P('/legal/privacy/')}>{t('form.privacy')}</a> · <a href={P('/legal/terms/')}><span data-i18n>Пользовательское соглашение</span></a>
+      </p>
+      <a href="#top" style="display:inline-flex;gap:.4rem;align-items:center">
+        <Icon name="arrow-up" size={14} /> {t('misc.scrollToTop')}
+      </a>
+    </div>
+    <p class="small" style="margin:1rem 0 0;color:rgba(255, 255, 255, .4)">{t('footer.made')}</p>
+  </div>
+</footer>

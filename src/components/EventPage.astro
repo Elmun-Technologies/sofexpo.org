@@ -1,0 +1,112 @@
+---
+/** Shared composition for an exhibition cluster page: hero → data blocks → authored copy → data blocks. */
+import type { Locale } from '@/i18n/config';
+import { localize } from '@/i18n/config';
+import { useUI } from '@/i18n/ui';
+import type { ExpoEvent } from '@/data/events';
+import type { EventPage } from '@/data/pages/event-pages';
+import { abs, breadcrumbJsonLd, eventJsonLd, faqJsonLd, organizationJsonLd } from '@/lib/seo';
+import { pageCrumbs } from '@/lib/nav';
+import Base from '@/layouts/Base.astro';
+import EventHero from '@/components/EventHero.astro';
+import EventNav from '@/components/EventNav.astro';
+import EventSections from '@/components/EventSections.astro';
+import type { SectionKey } from '@/components/EventSections.astro';
+import Blocks from '@/components/Blocks.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import PostCard from '@/components/PostCard.astro';
+import SectionHead from '@/components/SectionHead.astro';
+import { getCollection } from 'astro:content';
+import { events } from '@/data/events';
+
+const { locale, event, page } = Astro.props as { locale: Locale; event: ExpoEvent; page: EventPage };
+const t = useUI(locale);
+const ru = locale === 'ru';
+const L = (p: string) => localize(locale, p);
+const meta = page.meta[locale];
+const blocks = page.blocks[locale];
+const crumbs = pageCrumbs(locale, page.path);
+const heroBlocks = [page.hero];
+const past = event.status === 'past';
+const trail = [
+  { name: 'SOF EXPO Samarkand', url: abs(`/${locale}/`) },
+  { name: ru ? 'Афиша' : 'Line-up', url: abs(L('/events/')) },
+  { name: event.brand[locale], url: abs(L(`/events/${event.slug}/`)) },
+  ...(page.path === `/events/${event.slug}/` ? [] : [{ name: meta.title.split(' — ')[0], url: abs(L(page.path)) }]),
+];
+const ld: Record<string, unknown>[] = [organizationJsonLd(), eventJsonLd({ ...event, locale })];
+const faq = blocks.find((b) => b.type === 'faq');
+if (faq?.items?.length) ld.push(faqJsonLd(faq.items as never, abs(L(page.path))));
+ld.push(breadcrumbJsonLd(trail));
+/* editorial that talks about this exact show — inbound link for the article,
+   reading time for the visitor, and topical depth for the cluster */
+const reading = (
+  await Promise.all(
+    (['articles', 'news'] as const).map(async (kind) =>
+      (await getCollection(kind, ({ data }: any) => !data.draft))
+        .filter((e: any) => e.id.startsWith(`${locale}/`) && e.data.event === event.slug)
+        .map((e: any) => ({ entry: e, kind })),
+    ),
+  )
+)
+  .flat()
+  .sort((a: any, b: any) => b.entry.data.date.getTime() - a.entry.data.date.getTime())
+  .slice(0, 3);
+
+const before = (page.before ?? []) as SectionKey[];
+const after = (page.after ?? []) as SectionKey[];
+---
+
+<Base
+  {locale}
+  title={meta.title}
+  description={meta.description}
+  path={page.path}
+  image={page.image ?? event.heroImage}
+  noindex={page.noindex}
+  breadcrumbs={crumbs}
+  jsonLd={ld}
+  preload={page.image ?? event.heroImage}
+>
+  <EventHero
+    {locale}
+    {event}
+    variant={past ? 'past' : 'open'}
+    kicker={page.hero.kicker[locale]}
+    title={page.hero.title[locale]}
+    lead={page.hero.lead[locale]}
+    bullets={page.hero.bullets?.map((b) => b[locale])}
+  />
+  <EventNav {locale} {event} {past} active={page.path} />
+  {before.map((s) => <EventSections {locale} {event} section={s} tone={s === 'facts' ? 'forest' : 'default'} />)}
+  <Blocks {blocks} {locale} />
+  {after.map((s) => <EventSections {locale} {event} section={s} />)}
+  {
+    reading.length > 0 && (
+      <section class="sec sec--sand">
+        <div class="wrap">
+          <SectionHead
+            locale={locale}
+            kicker={ru ? 'Читать по теме' : 'Read next'}
+            title={ru ? 'Разборы рынка вокруг этой выставки' : 'Market breakdowns around this show'}
+          />
+          <div class="grid g3">
+            {reading.map(({ entry, kind }) => (
+              <PostCard {locale} post={entry} path={kind === 'articles' ? '/articles/' : '/news/'} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+  <CtaBand
+    locale={locale}
+    kicker={page.path === `/events/${event.slug}/` ? (ru ? 'Следующее событие' : 'Next event') : undefined}
+    title={past
+      ? ru ? 'Участвовать в следующей редакции' : 'Take part in the next edition'
+      : ru ? 'Забронировать место на выставке' : 'Reserve your place at the show'}
+    text={ru ? 'Заявка занимает пять минут: укажите продукт и площадь — вернёмся с планом зала и расчётом.' : 'A request takes five minutes: name the product and the area, we come back with the floor plan and a quote.'}
+    primary={{ label: t('cta.stand'), href: L('/request-stand/') }}
+    secondary={{ label: ru ? 'Все выставки' : 'All shows', href: L('/events/') }}
+  />
+</Base>

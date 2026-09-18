@@ -1,0 +1,31 @@
+---
+/** Exhibition overview page. */
+import type { GetStaticPaths } from 'astro';
+import { locales, localize } from '@/i18n/config';
+import { clusterMoved, isBuiltHere } from '@/data/hosts';
+import MovedNotice from '@/components/MovedNotice.astro';
+import { events } from '@/data/events';
+import { eventPages } from '@/data/pages/event-pages';
+import EventPage from '@/components/EventPage.astro';
+
+export const getStaticPaths = (async () => {
+  const out: { params: { locale: string; slug: string }; props: { moved: string | null } }[] = [];
+  for (const locale of locales) {
+    for (const event of events) {
+      const path = `/events/${event.slug}/`;
+      if (isBuiltHere(path)) out.push({ params: { locale, slug: event.slug }, props: { moved: null } });
+      else if (clusterMoved(event.slug))
+        out.push({ params: { locale, slug: event.slug }, props: { moved: localize(locale, path) } });
+    }
+  }
+  return out;
+}) satisfies GetStaticPaths;
+
+const { locale } = Astro.params as { locale: 'ru' | 'en' };
+const slug = Astro.params.slug as string;
+const event = events.find((e) => e.slug === slug)!;
+const page = eventPages[slug].overview;
+const moved = Astro.props.moved as string | null;
+---
+
+{moved ? <MovedNotice {locale} {event} section="overview" to={moved} /> : <EventPage {locale} {event} {page} />}

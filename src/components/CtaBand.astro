@@ -1,0 +1,60 @@
+---
+import type { Locale } from '@/i18n/config';
+import Icon from '@/components/Icon.astro';
+
+const { locale, kicker, title, text, primary, secondary, dark = true } = Astro.props as {
+  locale: Locale;
+  kicker?: string;
+  title: string;
+  text?: string;
+  primary: { label: string; href: string };
+  secondary?: { label: string; href: string };
+  dark?: boolean;
+};
+---
+<section class:list={['sec', 'cta-band', { 'sec--forest': dark }]}>
+  <div class="wrap">
+    <div class="cta-band__in">
+      <div>
+        {kicker && <p class="kicker">{kicker}</p>}
+        <h2 set:html={title} />
+        {text && <p class="lead" style={dark ? 'color:rgba(255, 255, 255, .82)' : undefined}>{text}</p>}
+      </div>
+      <div class="cta-band__actions">
+        <a class="btn" href={primary.href}>
+          <Icon name="arrow" size={17} /> {primary.label}
+        </a>
+        {secondary && (
+          <a class="btn btn--ghost" style={dark ? 'border-color:rgba(255, 255, 255, .4);color:rgba(255,255,255,.86)' : undefined} href={secondary.href}>
+            {secondary.label}
+          </a>
+        )}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-band__in {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, auto);
+    gap: 1.6rem 2.5rem;
+    align-items: center;
+  }
+  .cta-band h2 {
+    max-width: 26ch;
+  }
+  .cta-band__actions {
+    display: flex;
+    gap: .7rem;
+    flex-wrap: wrap;
+  }
+  .cta-band:not(.sec--forest) .btn--ghost {
+    border-color: var(--line);
+  }
+  @media (max-width: 900px) {
+    .cta-band__in {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

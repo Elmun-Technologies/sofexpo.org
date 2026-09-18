@@ -1,0 +1,74 @@
+---
+import type { Locale } from '@/i18n/config';
+import Icon from '@/components/Icon.astro';
+
+const { locale, items, cols = 3 } = Astro.props as {
+  locale: Locale;
+  cols?: 2 | 3 | 4;
+  items: {
+    icon?: string;
+    title: string;
+    text?: string;
+    href?: string;
+    meta?: string;
+  }[];
+};
+---
+<div class:list={['grid', `g${cols}`]}>
+  {
+    items.map((item) => {
+      const Tag = item.href ? 'a' : 'div';
+      return (
+        <Tag class="feature" href={item.href} {...item.href ? { rel: 'noopener' } : {}}>
+          {item.icon && (
+            <span class="ico-tile">
+              <Icon name={item.icon} size={24} />
+            </span>
+          )}
+          <h3 class="feature__t">{item.title}</h3>
+          {item.text && <p>{item.text}</p>}
+          {item.meta && <span class="mono-label">{item.meta}</span>}
+          {item.href && <span class="feature__go">→</span>}
+        </Tag>
+      );
+    })
+  }
+</div>
+
+<style>
+  .feature {
+    position: relative;
+    display: block;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: clamp(1.1rem, .7rem + 1.4vw, 1.7rem);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color var(--tr), background-color var(--tr);
+  }
+  .feature:hover {
+    border-color: var(--ink);
+      border-color: var(--sage);
+  }
+  .feature__t {
+    font-size: clamp(1.05rem, .98rem + .35vw, 1.25rem);
+    margin: 0 0 .35em;
+  }
+  .feature p {
+    margin: 0;
+    color: var(--ink-60);
+    font-size: .95rem;
+  }
+  .feature__go {
+    position: absolute;
+    top: clamp(1.1rem, .7rem + 1vw, 1.6rem);
+    right: clamp(1.1rem, .7rem + 1vw, 1.6rem);
+    color: var(--moss);
+    opacity: 0.55;
+    transition: opacity var(--tr), color var(--tr);
+  }
+  .feature:hover .feature__go {
+    opacity: 1;
+  }
+</style>

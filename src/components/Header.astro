@@ -1,0 +1,160 @@
+---
+import { nav, site } from '@/data/site';
+import { CURRENT_BRAND } from '@/data/hosts';
+import BrandMark from '@/components/BrandMark.astro';
+import { localize, localeMeta, locales, type Locale } from '@/i18n/config';
+import { useUI } from '@/i18n/ui';
+import Icon from '@/components/Icon.astro';
+
+interface Props {
+  locale: Locale;
+  /** path without the locale prefix */
+  path: string;
+}
+
+const { locale, path } = Astro.props;
+const t = useUI(locale);
+const current = localize(locale, path);
+const t0 = localize(locale, '/');
+const P = (p: string) => localize(locale, p);
+const active = (base: string) => (base === '/' ? current === '/' : current.startsWith(base));
+---
+
+<header class="hdr" id="top">
+  <div class="topbar">
+    <div class="wrap topbar__in">
+      <p style="margin:0">
+        <Icon name="pin" size={14} />
+        {locale === 'ru' ? 'Самарканд, Джамбайский район · 16 км от аэропорта' : 'Samarkand, Dzhambay district · 16 km from the airport'}
+      </p>
+      <div class="topbar__right">
+        <a href={`tel:${site.contacts.phoneMain.replace(/\s/g, '')}`}>
+          <Icon name="phone" size={14} /> {t('topbar.phone')}
+        </a>
+        <a href={`mailto:${site.contacts.email}`}>
+          <Icon name="mail" size={14} /> {site.contacts.email}
+        </a>
+        <span class="small">{t('topbar.hours')}</span>
+        <a href={site.contacts.telegramManager} rel="noopener" target="_blank">
+          <Icon name="telegram" size={14} /> @sofexpomgr
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap hdr__in">
+    <a class="logo" href={P('/')} aria-label={`${CURRENT_BRAND ? CURRENT_BRAND.name[locale] + ' ' + CURRENT_BRAND.sub[locale] : site.brand[locale]} — ${t('breadcrumbs.home')}`}>
+      {CURRENT_BRAND?.id ? (
+        <BrandMark brand={CURRENT_BRAND} locale={locale} withWordmark size={32} tone="on-dark" />
+      ) : (
+        <>
+          <span class="logo__mark" aria-hidden="true">SE</span>
+          <span class="logo__txt">
+            <b>{site.brand[locale]}</b>
+            <span>{t('brand.sub')}</span>
+          </span>
+        </>
+      )}
+    </a>
+
+    <nav class="nav" aria-label={t('nav.menu')}>
+      {
+        nav.map((item) => (
+          <div class:list={['nav__item', { 'nav__item--wide': item.children.length > 6 }]}>
+            <a class="nav__link" href={P(item.base)} aria-current={active(item.base) ? 'page' : undefined}>
+              {t(item.key as never)}
+            </a>
+            <div class:list={['mega', { 'mega--grid': item.children.length > 5 }]}>
+              {item.children.map((child) => (
+                <a href={P(child.path)}>
+                  <b>{locale === 'ru' ? child.ru : child.en}</b>
+                  {child.note ? (
+                    <small>{locale === 'ru' ? child.note.ru : child.note.en}</small>
+                  ) : (
+                    <small>{t(item.desc as never)}</small>
+                  )}
+                </a>
+              ))}
+            </div>
+          </div>
+        ))
+      }
+    </nav>
+
+    <div class="hdr__tools">
+      <div class="lang" role="group" aria-label={t('topbar.lang')}>
+        {
+          locales.map((l) => (
+            <a
+              href={l === 'ru' ? current.replace(`/${locale}/`, `/${l}/`) : current.replace(`/${locale}/`, `/${l}/`)}
+              hreflang={l}
+              aria-current={l === locale ? 'true' : undefined}
+              title={localeMeta[l].label}
+            >
+              {localeMeta[l].flag}
+            </a>
+          ))
+        }
+      </div>
+      <a class="btn btn--sm btn--desk" href={P('/request-stand/')}>
+        <Icon name="sparkle" size={16} /> {t('cta.stand')}
+      </a>
+      <button class="burger" type="button" aria-controls="mnav" aria-expanded="false" aria-label={t('nav.menu')}>
+        <span></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="mnav" id="mnav">
+    <nav aria-label={t('nav.menu')}>
+      {
+        nav.map((item) => (
+          <details>
+            <summary>{t(item.key as never)}</summary>
+            <div class="mnav__list">
+              <a href={P(item.base)}>{locale === 'ru' ? 'Раздел: главная' : 'Section home'}</a>
+              {item.children
+                .filter((c) => c.path !== item.base)
+                .map((child) => (
+                  <a href={P(child.path)}>{locale === 'ru' ? child.ru : child.en}</a>
+                ))}
+            </div>
+          </details>
+        ))
+      }
+      <div class="mnav__ctas">
+        <a class="btn" href={P('/request-stand/')}>{t('cta.stand')}</a>
+        <a class="btn btn--ghost" href={P('/visitors/tickets/')}>{t('cta.ticket')}</a>
+        <a class="btn btn--ghost" href={P('/events/')}>{locale === 'ru' ? 'Афиша и программа' : 'Line-up and programme'}</a>
+        <a class="btn btn--ghost" href={`tel:${site.contacts.phoneMain.replace(/\s/g, '')}`}>
+          {t('topbar.phone')}
+        </a>
+        <div class="pill-row">{locales.map((l) => <a class="chip" href={localize(l, path)}>{localeMeta[l].label}</a>)}</div>
+        <a class="chip" href={t0}>{locale === 'ru' ? 'На главную' : 'Back to home'}</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script is:inline>
+  (() => {
+    const burger = document.querySelector('.burger');
+    const mnav = document.getElementById('mnav');
+    if (!burger || !mnav) return;
+    const set = (open) => {
+      document.body.classList.toggle('nav-open', open);
+      burger.setAttribute('aria-expanded', String(open));
+      document.documentElement.style.overflow = open ? 'hidden' : '';
+    };
+    set(false);
+    burger.addEventListener('click', () => set(!document.body.classList.contains('nav-open')));
+    document.addEventListener('keydown', (e) => e.key === 'Escape' && set(false));
+    mnav.addEventListener('click', (e) => e.target.tagName === 'A' && set(false));
+  })();
+</script>
+
+<style>
+  .nav__item--wide .mega {
+    min-width: 520px;
+  }
+</style>

@@ -1,0 +1,76 @@
+---
+/**
+ * The host's own mark. For FOODERA that is the eight-pointed star from the organiser's badge:
+ * geometrically it is two equal squares, one turned 45°, drawn as thick ribbons — blue and tan gold
+ * exactly as in their file. It is typeset and vector, not a pasted PNG, so it stays sharp at 16px
+ * (favicon), at 34px (header) and at 1200px (social card).
+ *
+ * `withWordmark` renders the name as real text (never outlined), which is what allows a screen reader
+ * and a print stylesheet to read it.
+ */
+import type { Locale } from '@/i18n/config';
+import type { HostBrand } from '@/data/brands';
+
+const { brand, size = 34, withWordmark = false, locale = 'ru' as Locale, tone = 'auto' } = Astro.props as {
+  brand: HostBrand;
+  size?: number;
+  withWordmark?: boolean;
+  locale?: Locale;
+  tone?: 'auto' | 'on-dark' | 'on-light';
+};
+const p = brand.palette;
+---
+
+<span class:list={['bm', `bm--${tone}`]} style={`--bm-size:${size}px`}>
+  <svg class="bm__mark" viewBox="0 0 64 64" width={size} height={size} aria-hidden="true" focusable="false">
+    <g fill="none" stroke-width="7" stroke-linejoin="miter">
+      <rect x="15" y="15" width="34" height="34" stroke={p.mark} />
+      <rect x="15" y="15" width="34" height="34" stroke={p.goldSoft} transform="rotate(45 32 32)" />
+    </g>
+  </svg>
+  {
+    withWordmark && (
+      <span class="bm__txt">
+        <b>{brand.name[locale]}</b>
+        <span>{brand.sub[locale]}</span>
+      </span>
+    )
+  }
+</span>
+
+<style>
+  .bm {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    flex: none;
+  }
+
+  .bm__mark {
+    display: block;
+    flex: none;
+  }
+
+  .bm__txt {
+    display: grid;
+    line-height: 1.05;
+  }
+
+  .bm__txt b {
+    font-family: var(--f-display);
+    font-size: 1.02rem;
+    font-weight: 750;
+    letter-spacing: -0.01em;
+  }
+
+  .bm__txt span {
+    font-family: var(--f-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.09em;
+    color: var(--ornament);
+  }
+
+  .bm--on-light .bm__txt span {
+    color: var(--ink-40);
+  }
+</style>

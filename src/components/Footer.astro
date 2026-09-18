@@ -1,5 +1,8 @@
 ---
 import { footerColumns, site } from '@/data/site';
+import { CURRENT_BRAND } from '@/data/hosts';
+import BrandMark from '@/components/BrandMark.astro';
+import Ornament from '@/components/Ornament.astro';
 import { localize, type Locale } from '@/i18n/config';
 import { useUI } from '@/i18n/ui';
 import { upcoming } from '@/data/events';
@@ -13,15 +16,22 @@ const ru = locale === 'ru';
 ---
 
 <footer class="ftr">
+    {CURRENT_BRAND?.ornament && <Ornament variant="band" height={20} flip />}
   <div class="wrap">
     <div class="ftr__grid">
       <div>
         <a class="logo" href={P('/')} style="color:#ffffff">
-          <span class="logo__mark" aria-hidden="true">SE</span>
-          <span class="logo__txt">
-            <b>{site.brand[locale]}</b>
-            <span style="color:rgba(255, 255, 255, .6)">{ru ? 'Выставочный центр' : 'Exhibition centre'}</span>
-          </span>
+          {CURRENT_BRAND?.id ? (
+            <BrandMark brand={CURRENT_BRAND} locale={locale} withWordmark size={30} tone="on-dark" />
+          ) : (
+            <>
+              <span class="logo__mark" aria-hidden="true">SE</span>
+              <span class="logo__txt">
+                <b>{site.brand[locale]}</b>
+                <span style="color:rgba(255, 255, 255, .6)">{ru ? 'Выставочный центр' : 'Exhibition centre'}</span>
+              </span>
+            </>
+          )}
         </a>
         <p style="margin-top:1rem;max-width:38ch">{t('footer.about')}</p>
         <p class="small" style="margin:0">

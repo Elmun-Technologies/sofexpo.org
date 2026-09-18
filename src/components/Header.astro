@@ -1,5 +1,7 @@
 ---
 import { nav, site } from '@/data/site';
+import { CURRENT_BRAND } from '@/data/hosts';
+import BrandMark from '@/components/BrandMark.astro';
 import { localize, localeMeta, locales, type Locale } from '@/i18n/config';
 import { useUI } from '@/i18n/ui';
 import Icon from '@/components/Icon.astro';
@@ -41,12 +43,18 @@ const active = (base: string) => (base === '/' ? current === '/' : current.start
   </div>
 
   <div class="wrap hdr__in">
-    <a class="logo" href={P('/')} aria-label={`${site.brand[locale]} — ${t('breadcrumbs.home')}`}>
-      <span class="logo__mark" aria-hidden="true">SE</span>
-      <span class="logo__txt">
-        <b>{site.brand[locale]}</b>
-        <span>{t('brand.sub')}</span>
-      </span>
+    <a class="logo" href={P('/')} aria-label={`${CURRENT_BRAND ? CURRENT_BRAND.name[locale] + ' ' + CURRENT_BRAND.sub[locale] : site.brand[locale]} — ${t('breadcrumbs.home')}`}>
+      {CURRENT_BRAND?.id ? (
+        <BrandMark brand={CURRENT_BRAND} locale={locale} withWordmark size={32} tone="on-dark" />
+      ) : (
+        <>
+          <span class="logo__mark" aria-hidden="true">SE</span>
+          <span class="logo__txt">
+            <b>{site.brand[locale]}</b>
+            <span>{t('brand.sub')}</span>
+          </span>
+        </>
+      )}
     </a>
 
     <nav class="nav" aria-label={t('nav.menu')}>

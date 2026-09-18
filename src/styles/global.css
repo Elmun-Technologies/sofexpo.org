@@ -23,6 +23,10 @@
   --evergreen-2: #16412a;
   --moss: #1b6b40;
   --sage: #dfe8e0;
+  /* identity layer: --ornament is the colour of the national scroll bands, --brand-mark the
+     fill of the host's own mark; the centre uses its greens, a show host overrides both */
+  --ornament: #dfe8e0;
+  --brand-mark: var(--evergreen);
   --gold: #0f2b1c; /* no decorative gold in the UI: the accent becomes the brand ground itself */
   --gold-soft: #cfe0d4;
   --danger: #a33518;
@@ -265,7 +269,7 @@ li::marker {
 }
 
 .sec--forest .kicker {
-  color: var(--gold-soft);
+  color: var(--ornament);
 }
 
 .lead {
@@ -1593,7 +1597,7 @@ body.nav-open .mnav {
 
 .sec--forest .ico-tile {
   background: rgba(255, 255, 255, 0.1);
-  color: var(--gold-soft);
+  color: var(--ornament);
 }
 
 /* ---------- callouts ---------- */

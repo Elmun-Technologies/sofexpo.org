@@ -1,0 +1,47 @@
+{
+  "_comment": "Per-host identity, read by the app (src/data/brands.ts) and by Node (scripts/build-assets.mjs, scripts/build-hosts.mjs). One source. Colours were read off the organiser's own badge (public/brand/foodera/logo.png once they send the file); every text/ground pair is annotated with its contrast ratio.",
+  "root": {
+    "id": "sofexpo",
+    "name": {
+      "ru": "SOF EXPO",
+      "en": "SOF EXPO"
+    },
+    "sub": {
+      "ru": "SAMARKAND",
+      "en": "SAMARKAND"
+    },
+    "ornament": null
+  },
+  "hosts": {
+    "foodera-expo": {
+      "id": "foodera",
+      "host": "foodera.sofexpo.org",
+      "name": {
+        "ru": "FOODERA",
+        "en": "FOODERA"
+      },
+      "sub": {
+        "ru": "EXPO 2026",
+        "en": "EXPO 2026"
+      },
+      "ornament": "islimi",
+      "contrast": "white/#16405E 10.89 · white/#1E5C88 7.14 · #1E5C88/#F7FAFD 6.82 · #12222E/#F7FAFD 15.49 · #8A6A32/#F7FAFD 4.79 · #C3A06A/#16405E 4.44 · #BBD8EE/#16405E 7.35",
+      "palette": {
+        "evergreen": "#16405e",
+        "evergreen2": "#1e5c88",
+        "moss": "#1e5c88",
+        "ink": "#12222e",
+        "ink60": "#46586a",
+        "ink40": "#4a5d6e",
+        "line": "#d6e2ec",
+        "lineStrong": "#a9c2d6",
+        "cream": "#f7fafd",
+        "cream2": "#edf3f8",
+        "gold": "#8a6a32",
+        "goldSoft": "#c3a06a",
+        "ornament": "#bbd8ee",
+        "mark": "#2c7fbb"
+      }
+    }
+  }
+}

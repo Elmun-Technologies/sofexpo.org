@@ -1,5 +1,6 @@
 import { alternates, localize, locales, localeMeta, type Locale } from '@/i18n/config';
 import { site } from '@/data/site';
+import { CURRENT_BRAND } from '@/data/hosts';
 
 export const SITE = (import.meta.env.SITE || 'https://sofexpo.org').replace(/\/$/, '');
 export const ORG = 'SOF EXPO Samarkand';
@@ -27,7 +28,8 @@ export function buildMeta(input: MetaInput) {
   const { locale, path } = input;
   const self = localize(locale, path);
   const pair = alternates(path);
-  const ogImage = abs(input.image ?? '/og/default.jpg');
+  /* a branded host unfurls with its own card, not the centre's */
+  const ogImage = abs(input.image ?? (CURRENT_BRAND ? `/brand/${CURRENT_BRAND.id}/og.jpg` : '/og/default.jpg'));
   return {
     title: input.title,
     description: input.description,

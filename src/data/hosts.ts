@@ -24,6 +24,7 @@
  *  · every host gets its own robots.txt, sitemap and Search Console property.
  */
 import map from "./host-map.json";
+import { brandForEvent, type HostBrand } from "./brands";
 import {
   ROOT_HOST as ROOT,
   aliasRedirects as aliasRedirectsRaw,
@@ -88,6 +89,9 @@ export const isRootHost = CURRENT_HOST === ROOT_HOST;
 
 /** Slug of the exhibition this build is dedicated to (null on the root host). */
 export const CURRENT_EVENT: string | null = eventOfHost(CURRENT_HOST);
+
+/** the identity of this host, or null when it wears the centre's own */
+export const CURRENT_BRAND: HostBrand | null = brandForEvent(CURRENT_EVENT);
 
 export function hostOfEventSlug(slug: string): HostDef | null {
   return hostOfEvent(slug) as HostDef | null;

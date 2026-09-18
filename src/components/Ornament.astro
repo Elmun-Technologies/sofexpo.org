@@ -1,0 +1,81 @@
+---
+/**
+ * The national ornament layer, as structure rather than decoration.
+ *
+ * Two uses, both about the host's identity — never inside prose blocks:
+ *  · `band`  — a repeating islimi scroll (chuyurma): two mirrored tendrils with a leaf between them,
+ *              tiled on a fixed 96px rhythm so the line reads as a border, not as a picture;
+ *  · `rule`  — one centred motif on a hairline, used where a section would otherwise be separated
+ *              by empty space.
+ *
+ * Single colour (`--ornament`), no gradient, no fill of the ground, `aria-hidden` because it carries
+ * no information a reader should hear. On an unbranded host it still works: the centre's
+ * `--ornament` is its pale sage.
+ */
+const { variant = 'band', height = 40, flip = false } = Astro.props as {
+  variant?: 'band' | 'rule';
+  height?: number;
+  flip?: boolean;
+};
+const uid = `orn-${variant}-${height}-${flip ? 'f' : 'n'}`;
+---
+
+<svg
+  class:list={['orn', `orn--${variant}`, { 'orn--flip': flip }]}
+  style={`height:${variant === 'band' ? height : 14}px`}
+  viewBox={variant === 'band' ? '0 0 192 48' : '0 0 240 16'}
+  preserveAspectRatio={variant === 'band' ? 'xMinYMid slice' : 'xMidYMid meet'}
+  aria-hidden="true"
+  focusable="false"
+>
+  {
+    variant === 'band' ? (
+      <>
+        <defs>
+          <pattern id={uid} width="96" height="48" patternUnits="userSpaceOnUse">
+            <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <path d="M8 40C8 24 20 12 36 12c10 0 16 6 16 13 0 6-5 10-10 10-4 0-7-3-7-6 0-3 2-5 5-5" />
+              <path d="M88 8C88 24 76 36 60 36c-10 0-16-6-16-13 0-6 5-10 10-10 4 0 7 3 7 6 0 3-2 5-5 5" />
+              <path d="M48 5c6-4 12-3 16 2-6 4-12 3-16-2z" />
+              <path d="M48 43c-6 4-12 3-16-2 6-4 12-3 16 2z" />
+              <circle cx="48" cy="24" r="1.5" fill="currentColor" stroke="none" />
+            </g>
+          </pattern>
+        </defs>
+        <rect width="192" height="48" fill={`url(#${uid})`} />
+      </>
+    ) : (
+      <g fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">
+        <path d="M0 8h96" opacity="0.5" />
+        <path d="M144 8h96" opacity="0.5" />
+        <path d="M120 1l11 7-11 7-11-7z" />
+        <path d="M96 8c6-5 12-5 18 0-6 5-12 5-18 0z" />
+        <path d="M144 8c-6 5-12 5-18 0 6-5 12-5 18 0z" />
+      </g>
+    )
+  }
+</svg>
+
+<style>
+  .orn {
+    display: block;
+    width: 100%;
+    color: var(--ornament);
+    opacity: 0.5;
+  }
+
+  .orn--rule {
+    opacity: 0.75;
+    margin-block: 1.6rem;
+  }
+
+  .orn--flip {
+    transform: scaleY(-1);
+  }
+
+  @media (max-width: 640px) {
+    .orn--band {
+      opacity: 0.4;
+    }
+  }
+</style>

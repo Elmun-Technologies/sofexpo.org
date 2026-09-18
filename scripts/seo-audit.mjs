@@ -161,11 +161,20 @@ for (const file of files) {
   // images need alt text and dimensions
   for (const m of html.matchAll(/<img\b[^>]*>/g)) {
     const tag = m[0];
+    /* an empty alt is only allowed on an image that says so: a content photo must be describable.
+       This rule used to exempt alt="" wholesale, which is how 136 images quietly shipped without
+       a description. */
+    const decorative = /role="presentation"|aria-hidden="true"/.test(tag);
     if (!/alt="[^"]*"/.test(tag)) warn(url, "img without alt attribute");
-    else if (!/alt="[^"]{8,}"/.test(tag) && !/alt=""/.test(tag))
-      warn(url, `img with thin alt: ${tag.slice(0, 90)}`);
-    if (!/loading=/.test(tag) && !/fetchpriority="high"/.test(tag))
-      warn(url, "img without loading strategy hint");
+    else if (!/alt="[^"]{8,}"/.test(tag) && !decorative)
+      warn(url, `img with thin or empty alt: ${tag.slice(0, 90)}`);
+    if (/alt="\/images\/|alt="[a-z0-9-]+\.jpe?g"/i.test(tag))
+      warn(url, `alt is a filename: ${tag.slice(0, 60)}`);
+    if (!/loading="(eager|lazy)"/.test(tag))
+      warn(
+        url,
+        `img without an explicit loading strategy: ${tag.slice(0, 70)}`,
+      );
   }
 }
 

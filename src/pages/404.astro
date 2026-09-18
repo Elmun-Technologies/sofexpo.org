@@ -20,28 +20,28 @@ const L = (locale: Locale, path: string) => localize(locale, path);
 ---
 
 <!doctype html>
-<html lang="ru">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>404 — страница не найдена · SOF EXPO Samarkand</title>
-    <meta name="description" content="Страница не найдена. Перейдите в афишу выставок, к пакетам участия, описанию площадки или контактам SOF EXPO Samarkand." />
+    <title>404 · Page not found / страница не найдена · SOF EXPO Samarkand</title>
+    <meta name="description" content="Page not found / страница не найдена: откройте афишу выставок, пакеты участия, описание площадки или контакты SOF EXPO Samarkand." />
     <meta name="robots" content="noindex,follow" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
   <body class="nf">
     <main class="nf__wrap">
       <p class="kicker">404 · Page not found</p>
-      <h1>Такой страницы нет — есть всё остальное</h1>
-      <p class="lead">
+      <h1 lang="ru">Такой страницы нет — есть всё остальное</h1>
+      <p class="lead" lang="ru">
         Структура сайта обновлена, поэтому старые адреса разделов могли измениться. Начните с афиши, либо напишите нам — подскажем, где лежат нужные материалы.
       </p>
 
       <div class="nf__grid">
         {cards.map((c) => (
           <a class="nf__card" href={L('ru', c.path)}>
-            <b>{c.tRu}</b>
-            <span>{c.dRu}</span>
+            <b lang="ru">{c.tRu}</b>
+            <span lang="ru">{c.dRu}</span>
             <small lang="en">{c.tEn} — {c.dEn}</small>
           </a>
         ))}
@@ -50,7 +50,7 @@ const L = (locale: Locale, path: string) => localize(locale, path);
       <p class="nf__next">
         {next && (
           <>
-            Ближайшее событие: <a href={L('ru', `/events/${next.slug}/`)}>{next.brand.ru}</a> · {next.dates.display.ru} <span lang="en">/ {next.dates.display.en}</span>
+            <span lang="ru">Ближайшее событие: <a href={L('ru', `/events/${next.slug}/`)}>{next.brand.ru}</a> · {next.dates.display.ru}</span> <span lang="en">/ {next.dates.display.en}</span>
           </>
         )}
       </p>

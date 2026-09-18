@@ -9,6 +9,7 @@ const {
   lead,
   bullets = [],
   image,
+  imageAlt,
   actions = [],
   side,
 } = Astro.props as {
@@ -18,6 +19,8 @@ const {
   lead?: string;
   bullets?: string[];
   image?: string;
+  /** the hero photo carries meaning (it shows the hall / the expo floor), so it needs a caption */
+  imageAlt?: string;
   actions?: { label: string; href: string; tone?: 'gold' | 'ghost' | 'light' }[];
   side?: string;
 };
@@ -25,7 +28,15 @@ const {
 <section class="hero">
   {image && (
     <div class="hero__media">
-      <img src={image} alt="" width="1600" height="900" loading="eager" decoding="async" fetchpriority="high" />
+      <img
+        src={image}
+        alt={imageAlt ?? title.replace(/<[^>]+>/g, '').trim()}
+        width="1600"
+        height="900"
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+      />
     </div>
   )}
   <div class="wrap hero__in">

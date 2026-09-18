@@ -99,7 +99,7 @@ const langs = hostEvent ? eventLangs : centreLangs;
   </head>
   <body class="gate">
     <main class="gate__main">
-      <div class="gate__media"><img src={media} alt={brand} width="1600" height="1000" fetchpriority="high" decoding="async" /></div>
+      <div class="gate__media"><img src={media} alt={brand} width="1600" height="1000" loading="eager" fetchpriority="high" decoding="async" /></div>
       <div class="gate__panel">
         <p class="kicker">{brand} · {site.location.city.en}, {site.location.country.en}</p>
         <h1>{brand}</h1>

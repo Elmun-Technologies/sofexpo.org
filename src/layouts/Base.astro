@@ -53,6 +53,12 @@ if (props.redirect) {
   meta.hreflang = [];
   meta.xDefault = props.redirect;
 }
+/* a page we ask out of the index must not advertise language alternates: hreflang on a
+   noindex URL is ignored at best and splits the signal at worst (docs/02 §4) */
+if (meta.noindex) {
+  meta.hreflang = [];
+  meta.xDefault = '';
+}
 const t = useUI(locale);
 const nodes: Record<string, unknown>[] = [
   {
@@ -101,7 +107,7 @@ const crumbs = [{ name: t('breadcrumbs.home'), path: '/' }, ...breadcrumbs];
         <link rel="alternate" hreflang={h.locale === 'en' ? 'en' : h.locale} href={h.href} />
       ))
     }
-    <link rel="alternate" hreflang="x-default" href={meta.xDefault} />
+    {meta.xDefault && <link rel="alternate" hreflang="x-default" href={meta.xDefault} />}
     {isRootHost && (
       <link rel="alternate" type="application/rss+xml" title="SOF EXPO Samarkand" href={`/${locale}/rss.xml`} />
     )}

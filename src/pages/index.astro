@@ -4,8 +4,9 @@
  * Deliberately not a marketing landing: two doors, the facts a visitor needs to choose, nothing else.
  */
 import '@/styles/global.css';
-import '@fontsource-variable/onest/wght.css';
-import '@fontsource-variable/unbounded/wght.css';
+import '@fontsource-variable/inter-tight/wght.css';
+import '@fontsource-variable/golos-text/wght.css';
+import '@fontsource-variable/jetbrains-mono/wght.css';
 import { SITE } from '@/lib/seo';
 import { site } from '@/data/site';
 import { upcoming, events } from '@/data/events';
@@ -77,7 +78,7 @@ const langs = hostEvent ? eventLangs : centreLangs;
     <link rel="alternate" hreflang="en" href={`${SITE}/en/`} />
     <link rel="alternate" hreflang="x-default" href={`${SITE}/`} />
     <meta name="robots" content="index,follow,max-image-preview:large" />
-    <meta name="theme-color" content="#12301f" />
+    <meta name="theme-color" content="#0f2b1c" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="SOF EXPO Samarkand" />
     <meta property="og:title" content="SOF EXPO Samarkand" />
@@ -145,7 +146,7 @@ const langs = hostEvent ? eventLangs : centreLangs;
     <style is:global>
       body.gate {
         background: var(--evergreen);
-        color: #f6f3ea;
+        color: rgba(255,255,255,.86);
         min-height: 100vh;
       }
     </style>
@@ -170,7 +171,7 @@ const langs = hostEvent ? eventLangs : centreLangs;
         content: '';
         position: absolute;
         inset: 0;
-        background: linear-gradient(180deg, rgba(11, 28, 18, 0.15), rgba(11, 28, 18, 0.55));
+        background: linear-gradient(180deg, rgba(10, 26, 17, 0.15), rgba(10, 26, 17, 0.55));
       }
       .gate__panel {
         padding: clamp(1.6rem, 1rem + 3vw, 3.4rem) clamp(1.2rem, .6rem + 2vw, 3rem);
@@ -185,7 +186,7 @@ const langs = hostEvent ? eventLangs : centreLangs;
         margin: 0;
       }
       .gate__panel .lead {
-        color: rgba(246, 243, 234, 0.82);
+        color: rgba(255, 255, 255, 0.82);
         max-width: 44ch;
       }
       .gate__panel .kicker {
@@ -202,8 +203,8 @@ const langs = hostEvent ? eventLangs : centreLangs;
         gap: 0.4rem;
         padding: 1.15rem 1.2rem;
         border-radius: var(--r-lg);
-        background: rgba(246, 243, 234, 0.07);
-        border: 1px solid rgba(246, 243, 234, 0.18);
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.18);
         color: inherit;
         text-decoration: none;
         transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
@@ -211,7 +212,7 @@ const langs = hostEvent ? eventLangs : centreLangs;
       .door:hover {
         transform: translateY(-3px);
         border-color: var(--gold-soft);
-        background: rgba(246, 243, 234, 0.11);
+        background: rgba(255, 255, 255, 0.11);
       }
       .door__code {
         font-family: var(--f-display);
@@ -227,7 +228,7 @@ const langs = hostEvent ? eventLangs : centreLangs;
       .door p {
         margin: 0;
         font-size: 0.9rem;
-        color: rgba(246, 243, 234, 0.74);
+        color: rgba(255, 255, 255, 0.74);
       }
       .door__go {
         display: flex;
@@ -236,7 +237,7 @@ const langs = hostEvent ? eventLangs : centreLangs;
         gap: 0.5rem;
         margin-top: 0.3rem;
         font-size: 0.8rem;
-        color: rgba(246, 243, 234, 0.6);
+        color: rgba(255, 255, 255, 0.6);
       }
       .gate__facts {
         display: flex;
@@ -246,7 +247,7 @@ const langs = hostEvent ? eventLangs : centreLangs;
         padding: 0;
         margin: 0.8rem 0 0;
         font-size: 0.86rem;
-        color: rgba(246, 243, 234, 0.72);
+        color: rgba(255, 255, 255, 0.72);
       }
       .gate__facts b {
         font-family: var(--f-display);
@@ -261,9 +262,9 @@ const langs = hostEvent ? eventLangs : centreLangs;
         gap: 0.6rem;
         margin: 1rem 0 0;
         padding-top: 1rem;
-        border-top: 1px solid rgba(246, 243, 234, 0.16);
+        border-top: 1px solid rgba(255, 255, 255, 0.16);
         font-size: 0.9rem;
-        color: rgba(246, 243, 234, 0.78);
+        color: rgba(255, 255, 255, 0.78);
       }
       .gate__next a {
         color: var(--gold-soft);
@@ -272,7 +273,7 @@ const langs = hostEvent ? eventLangs : centreLangs;
       .gate__foot {
         margin: 0.6rem 0 0;
         font-size: 0.85rem;
-        color: rgba(246, 243, 234, 0.6);
+        color: rgba(255, 255, 255, 0.6);
       }
       .gate__foot a {
         color: inherit;

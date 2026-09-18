@@ -40,7 +40,9 @@ const actions = [
 ];
 ---
 
-<section class:list={['ehero', { 'ehero--past': !upcoming }]} style={`--ehero-img:url(${event.heroImage})`}>
+<!-- the hero carries a measured hall grid, not a blurred render: on an expo site the first
+     screen owes the visitor facts (dates, venue, countdown), not an impression of a crowd -->
+<section class:list={['ehero', { 'ehero--past': !upcoming }]}>
   <div class="wrap ehero__in">
     <div class="ehero__text">
       <p class="kicker">
@@ -89,28 +91,29 @@ const actions = [
     position: relative;
     overflow: hidden;
     background: var(--evergreen);
-    color: #f6f3ea;
+    color: rgba(255,255,255,.86);
     isolation: isolate;
   }
   .ehero::before {
     content: '';
     position: absolute;
     inset: 0;
-    background-image: var(--ehero-img);
-    background-size: cover;
-    background-position: center;
-    opacity: 0.42;
+    background-image: linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+    background-size:
+      64px 64px,
+      64px 64px;
     z-index: -2;
   }
   .ehero::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(100deg, rgba(11, 28, 18, 0.94) 0%, rgba(11, 28, 18, 0.66) 46%, rgba(11, 28, 18, 0.24) 100%);
+    background: linear-gradient(100deg, rgba(10, 26, 17, 0.94) 0%, rgba(10, 26, 17, 0.66) 46%, rgba(10, 26, 17, 0.24) 100%);
     z-index: -1;
   }
   .ehero--past::after {
-    background: linear-gradient(100deg, rgba(11, 28, 18, 0.96) 0%, rgba(11, 28, 18, 0.8) 60%, rgba(11, 28, 18, 0.5) 100%);
+    background: linear-gradient(100deg, rgba(10, 26, 17, 0.96) 0%, rgba(10, 26, 17, 0.8) 60%, rgba(10, 26, 17, 0.5) 100%);
   }
   .ehero__in {
     display: grid;
@@ -129,7 +132,7 @@ const actions = [
     color: var(--gold-soft);
   }
   .hero__lead {
-    color: rgba(246, 243, 234, 0.86);
+    color: rgba(255, 255, 255, 0.86);
     max-width: 62ch;
   }
   .ehero__facts {
@@ -145,18 +148,20 @@ const actions = [
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
-    color: rgba(246, 243, 234, 0.9);
+    color: rgba(255, 255, 255, 0.9);
   }
   .ehero__note {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
     margin: 1rem 0 0;
-    padding: 0.5rem 0.8rem;
-    border-radius: var(--r-pill);
-    background: rgba(197, 138, 46, 0.22);
-    border: 1px solid rgba(233, 201, 129, 0.4);
-    font-size: 0.86rem;
+    padding: 0.45rem 0.7rem;
+    border-radius: var(--r);
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.26);
+    font-family: var(--f-mono);
+    font-size: 0.76rem;
+    letter-spacing: 0.01em;
   }
   .ehero__side {
     display: grid;
@@ -169,7 +174,7 @@ const actions = [
     display: grid;
     gap: 0.4rem;
     font-size: 0.9rem;
-    color: rgba(246, 243, 234, 0.82);
+    color: rgba(255, 255, 255, 0.82);
   }
   .ehero__archive b {
     font-family: var(--f-display);
@@ -183,8 +188,8 @@ const actions = [
     gap: 0.5rem;
     padding: 1rem 1.1rem;
     border-radius: var(--r);
-    background: rgba(11, 28, 18, 0.42);
-    border: 1px solid rgba(246, 243, 234, 0.16);
+    background: rgba(10, 26, 17, 0.42);
+    border: 1px solid rgba(255, 255, 255, 0.16);
     font-size: 0.85rem;
   }
   .ehero__key div {
@@ -193,7 +198,7 @@ const actions = [
     gap: 1rem;
   }
   .ehero__key dt {
-    color: rgba(246, 243, 234, 0.6);
+    color: rgba(255, 255, 255, 0.6);
   }
   .ehero__key dd {
     margin: 0;

@@ -167,7 +167,6 @@ because the 31 Aug deadline has passed.
 Current state: **152 pages (75 RU / 75 EN + gate + 404), 173 distinct internal targets,
 0 findings.** Run `npm run check` (= build + this audit) before any commit.
 
-
 `scripts/qa-independent.py` is a second, deliberately separate pass (python, no shared code with the
 audit) over `dist/` **and** every host in `dist-hosts/`: h1 count, title/description budgets, canonical
 resolving to a page built on the same host, hreflang presence on index pages and its absence on
@@ -178,12 +177,13 @@ it after `npm run build:hosts`; the point is that a rule missing from `seo-audit
 
 What it flags and the project accepts **on purpose** (do not "fix" these without a decision):
 
-| Observation | Why it stays |
-| --- | --- |
+| Observation                                                 | Why it stays                                                                                                                              |
+| ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | the gate page (`/`) of every host is short (~100–120 words) | it is a dispatcher: the depth is in `/ru/` and `/en/` (median 1 066 words per page); a gate that reads like an article stops being a gate |
-| `/404` carries no canonical, OG or twitter card | it is `noindex,follow` and absent from the sitemap; tags there would only invite a share of a dead end |
-| moved-path stub titles are 23–24 chars | they exist to hand equity over, not to rank |
-| 2 pages ship ~22 KB of inline JS | the search page inlines its index so lookups need no request; every other page stays under 1 KB and loads no external script |
+| `/404` carries no canonical, OG or twitter card             | it is `noindex,follow` and absent from the sitemap; tags there would only invite a share of a dead end                                    |
+| moved-path stub titles are 23–24 chars                      | they exist to hand equity over, not to rank                                                                                               |
+| 2 pages ship ~22 KB of inline JS                            | the search page inlines its index so lookups need no request; every other page stays under 1 KB and loads no external script              |
+
 ## 7. Feeds and discovery
 
 - `sitemap-index.xml` → `sitemap-0.xml`, one `<url>` per indexable page with `<xhtml:link>`

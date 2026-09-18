@@ -8,65 +8,72 @@ decorative animation. One CSS file, one breakpoint ladder, no utility framework.
 
 ### Palette
 
-| Token | Value | Use |
-| --- | --- | --- |
-| `--cream` | `#f7f4ec` | page background |
-| `--cream-2` | `#efeadd` | `.sec--sand`, `.card--sand` — the "second sheet of paper" |
-| `--paper` | `#fffdf7` | `.sec--paper`, cards, forms |
-| `--ink` | `#16211c` | body text |
-| `--ink-60` / `--ink-40` | rgba | secondary text, meta rows |
-| `--line` | `rgba(22,33,28,.14)` | 1px hairlines everywhere; no shadows for separation |
-| `--evergreen` / `--evergreen-2` | `#12301f` / `#1b4a30` | `.sec--forest`, header, footer, primary button |
-| `--moss` | `#2f6f49` | links on light ground, live dots, checkmarks |
-| `--sage` | `#cbdcca` | chips on dark ground, table stripes |
-| `--gold` / `--gold-soft` | `#c58a2e` / `#e9c981` | one accent per screen maximum: `.btn--gold`, `.chip--gold`, `.callout--gold` |
-| `--danger` | `#b23a2f` | form validation only |
+Пересмотр 2026-09-18: тёплая «крем + золото + мята» палитра была главным признаком
+AI-происхождения (тот же грэй, что и на рендерах) и давала мягкость без структуры. Сейчас —
+бумага и графит, один тёмно-зелёный, ноль пастели.
 
-Rules: text on `--evergreen` is `#f4f1e8` (not white); gold never carries body text; the
-only dark sections are `.sec--forest`, so a page reads as light paper with two or three dark
-"stages".
+| Токен                    | Значение                      | Где                                                                                                                          |
+| ------------------------ | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `--paper`                | `#ffffff`                     | фон карточек, секции `.sec--paper`                                                                                           |
+| `--cream`                | `#f4f5f3`                     | фон страницы; бывшие имена токенов сохранены, чтобы 14 использований поменялись разом                                        |
+| `--cream-2`              | `#ebeeec`                     | `.sec--sand`, `.card--sand` — «вторая страница»                                                                              |
+| `--ink`                  | `#0e1411`                     | текст, первичная кнопка, верхняя линейка `.stat`                                                                             |
+| `--ink-60`               | `#4b5350`                     | вторичный текст, `.kicker`, `.mono-label`                                                                                    |
+| `--ink-40`               | `#6f7773`                     | только крупное/служебное; на `--cream` даёт 4.2:1 — поэтому мелкие подписи переехали на `--ink-60`                           |
+| `--line`                 | `#dde1dd`                     | 1px разделители (раньше был `rgba(ink,.14)` — полупрозрачные, «нечёткие» линии)                                              |
+| `--line-strong`          | `#b6bdb7`                     | границы таблиц, hover-обводка                                                                                                |
+| `--evergreen` / `-2`     | `#0f2b1c` / `#16412a`         | шапка, футер, тёмные секции, первичная кнопка                                                                                |
+| `--moss`                 | `#1b6b40`                     | ссылки на светлом, статус «идёт набор» (белый на moss = 7.8:1)                                                               |
+| `--sage`                 | `#dfe8e0`                     | чипы на тёмном, зебра таблиц                                                                                                 |
+| `--gold` / `--gold-soft` | `#0f2b1c` / `#cfe0d4`         | **декоративного золота в UI больше нет**; имена оставлены, значения стали брендовыми, чтобы 18 использований не переписывать |
+| `--danger`               | `#a33518`                     | ошибки формы, «осталось N дней»                                                                                              |
+| `--ph-filter`            | `grayscale(1) contrast(1.06)` | единственная строка, которую нужно удалить, когда придут настоящие фото                                                      |
 
 ### Type
 
-| Token | Value | Where |
-| --- | --- | --- |
-| `--f-display` | `Unbounded Variable`, fallback system-ui | h1/h2, `.logo__txt`, `.num`, stat values, `.kicker` in heroes |
-| `--f-body` | `Onest Variable` | everything else, incl. buttons and tables |
-| `--t-hero` | `clamp(2.35rem, 1.15rem + 4.6vw, 5.2rem)` | h1 |
-| `--t-h2` | `clamp(1.75rem, 1.05rem + 2.6vw, 3.2rem)` | section heads |
-| `--t-h3` | `clamp(1.3rem, 1.02rem + 1.1vw, 1.9rem)` | card and sub-head titles |
-| `--t-h4` | `clamp(1.08rem, .98rem + .4vw, 1.28rem)` | small heads |
-| `--t-lead` | `clamp(1.06rem, .98rem + .45vw, 1.4rem)` | hero lead, `.lead` |
-| `--t-body` | `clamp(1rem, .96rem + .2vw, 1.1rem)` | body, `line-height: 1.62` |
-| `--t-small` / `--t-kicker` | `.9rem` / `.78rem` (`.12em` tracking, uppercase) | meta, kickers, `.mono-label` |
+Дисплейный **Unbounded** (широкий geometric с «криптовалютной» plastic-подачей) и мягкий
+**Onest** убраны. Теперь:
 
-Both families are self-hosted variable fonts (`@fontsource-variable/*`, weights
-variable, `font-display: swap`), so no font file is fetched from a third party and RU/Cyrillic
-and EN share one file.
+| Роль                | Шрифт                                                 | Почему                                                                                                                           |
+| ------------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| заголовки           | `Inter Tight Variable` 750, `letter-spacing: -.028em` | узкий гротеск, держит RU и EN одинаково; у Archivo (который хотелось) нет кириллического сабсета — проверено в пакете fontsource |
+| текст               | `Golos Text Variable` (Paratype)                      | нейтральный, «инженерный», табличные цифры, родная кириллица                                                                     |
+| лейблы, числа, даты | `JetBrains Mono Variable`                             | всё, что является фактом, а не прозой, набрано моно — это и есть «аніқ»                                                          |
+
+| Токен                          | Значение                                                                      |
+| ------------------------------ | ----------------------------------------------------------------------------- |
+| `--t-hero`                     | `clamp(2.05rem, 1.28rem + 2.7vw, 3.4rem)` (было до 5.2rem — плакатность ушла) |
+| `--t-h2` / `--t-h3` / `--t-h4` | `2.1 / 1.34 / 1.03rem` максимумы; шаг масштаба сделан заметным                |
+| `--t-body`                     | `0.985rem / 1.62`                                                             |
+| `--t-kicker`                   | `0.72rem` mono, uppercase, `letter-spacing: .12em`                            |
 
 ### Metrics
 
-`--maxw: 1320px` · `--gutter: clamp(1.05rem, .4rem + 2.6vw, 3rem)` · `--wrap--narrow: 900px`
-· `--pad: clamp(1.5rem, .8rem + 2.4vw, 2.6rem)` (card padding) · `--sec: clamp(3.5rem, 2rem +
-5.5vw, 7.5rem)` (section rhythm, halved by `.sec--tight`) · radii `--r-sm: 12px` `--r: 20px`
-`--r-lg: 32px` `--r-pill: 999px` · shadows `--shadow` / `--shadow-soft` (the only two, used on
-cards and overlays, always tinted by evergreen) · `--header-h: 78px`.
+`--maxw 1240px` · `--gutter clamp(1rem, .62rem + 1.3vw, 2.2rem)` · `--pad clamp(1.05rem, .8rem +
+0.9vw, 1.6rem)` · `--sec clamp(2.7rem, 1.7rem + 3.1vw, 4.7rem)` · `--header-h 72px`.
+
+Радиусы: **`--r-sm 2px`, `--r 3px`, `--r-lg 4px`, `--r-pill 2px`** — то есть «pill» больше не
+pill, все 11 капсул стали прямоугольниками без единой правки селектора. Тени: `--shadow` и
+`--shadow-soft` = `none`; в CSS остались только два `box-shadow` фокус-ринга
+(`:focus-visible`) — это доступность, не декор. Разделение — hairline-линией или 2px-верхней
+линейкой (`.stat`), не тенью и не подъёмом: hover у карточки меняет цвет рамки, у
+`.ev__img img` снимает обесцвечивание.
 
 ## 2. Layout primitives
 
-| Class | Contract |
-| --- | --- |
-| `.wrap` / `.wrap--narrow` | full-bleed section → centred measure; gutter from the token |
-| `.sec`, `.sec--paper`, `.sec--sand`, `.sec--forest`, `.sec--tight` | vertical rhythm + one of three grounds |
-| `.grid` + `.g2 .g3 .g4 .g-sidebar` | every grid on the site; `.g-sidebar` = content + 340 px rail |
-| `.stack`, `.row`, `.btn-row`, `.pill-row` | gaps without wrappers |
-| `.kicker`, `.mono-label`, `.lead`, `.muted`, `.small`, `.center` | typography utilities only |
-| `.chip`, `.chip--gold`, `.chip--live`, `.dot` | status: dates, live countdown, "38 stands left" |
-| `.btn`, `.btn--gold`, `.btn--ghost`, `.btn--light`, `.btn--sm` | exactly four button looks |
-| `.card`, `.card--flat`, `.card--sand`, `.tile` | the only containers; `.card--flat` has no shadow |
-| `.table`, `.table--rates` | specs and rate cards; `<th scope="col|row">` always present |
-| `.hairline`, `.num`, `.ico-tile`, `.ico`, `.ico--lg` | separators, index numbers, icon squares |
-| `.sr-only`, `.skip` | a11y scaffolding; `.skip` is the first focusable element on every page |
+| Class                                                              | Contract                                                               |
+| ------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| `.wrap` / `.wrap--narrow`                                          | full-bleed section → centred measure; gutter from the token            |
+| `.sec`, `.sec--paper`, `.sec--sand`, `.sec--forest`, `.sec--tight` | vertical rhythm + one of three grounds                                 |
+| `.grid` + `.g2 .g3 .g4 .g-sidebar`                                 | every grid on the site; `.g-sidebar` = content + 340 px rail           |
+| `.stack`, `.row`, `.btn-row`, `.pill-row`                          | gaps without wrappers                                                  |
+| `.kicker`, `.mono-label`, `.lead`, `.muted`, `.small`, `.center`   | typography utilities only                                              |
+| `.chip`, `.chip--gold`, `.chip--live`, `.dot`                      | status: dates, live countdown, "38 stands left"                        |
+| `.btn`, `.btn--gold`, `.btn--ghost`, `.btn--light`, `.btn--sm`     | exactly four button looks                                              |
+| `.card`, `.card--flat`, `.card--sand`, `.tile`                     | the only containers; `.card--flat` has no shadow                       |
+| `.table`, `.table--rates`                                          | specs and rate cards; `<th scope="col                                  | row">` always present |
+| `.hairline`, `.num`, `.ico-tile`, `.ico`, `.ico--lg`               | separators, index numbers, icon squares                                |
+| `.sr-only`, `.skip`                                                | a11y scaffolding; `.skip` is the first focusable element on every page |
 
 Sticky geometry: the utility topbar scrolls away, `.hdr__in` sticks at `top: 0` and is exactly
 `--header-h` tall, so `scroll-padding-top`, the mobile menu overlay and the `.evnav` rail
@@ -84,27 +91,27 @@ so a spec page prints as a clean sheet.
 
 ## 3. Components (`src/components/`)
 
-| Component | Props | Notes |
-| --- | --- | --- |
-| `Base.astro` (layout) | `locale, path, title, description, image?, type?, publishedTime?, modifiedTime?, jsonLd?, noindex?, preload?, breadcrumbs?` | the whole head contract + JSON-LD graph + Header/Footer; nothing else may touch `<head>` |
-| `Blocks.astro` | `blocks: Block[], locale` | the only content renderer; owns `H()` (locale-prefixing helper) |
-| `PromoBar.astro` | `locale, hideFor?` | announcement strip above the header; data-driven from `nextEvent()`, self-hides when the edition is on its own page or nothing is upcoming |
-| `EventNav.astro` | `locale, event, active, past?` | sticky per-edition rail: 4 cluster pages + 4 hub links + CTA pair; horizontal scroll under 680 px |
-| `PageHero.astro` | `kicker, title, lead?, bullets?, image, actions?, side?, locale` | 3 variants used by authored pages |
-| `EventHero.astro` | `event, kicker, title, lead, variant: 'open' \| 'past'` | countdown + ticket CTA, or result band for finished editions |
-| `SectionHead.astro` | `kicker?, title, level: 1 \| 2 (default 2), text?, align?` | `level={1}` exactly once per page |
-| `StatBand.astro` | `items: {value, unit?, ru, en}[]` | the "important facts" band |
-| `FeatureGrid.astro` | `items, cols = 3` | icon + title + text tiles |
-| `EventCard.astro` | `event, locale, priority?, variant?` | poster + date chip + 1-line caption, `→` |
-| `Countdown.astro` | `target, locale, label?` | 1.5 KB inline, hides itself after the date |
-| `CtaBand.astro` | `kicker, title, text, primary?, secondary?, dark = true` | the conversion band |
-| `LeadForm.astro` | `eventName?, directions?, areas?, subtitle?, note?, compact?, id` | static form: composes a `mailto:` link (no backend) + `form__ok` confirmation state, `role="status"` |
-| 
-| `PostCard.astro` / `PostBody.astro` / `PostDetail.astro` | `post, path, locale, variant?, priority?` / `layout: 'prose' \| 'sidebar'` | editorial cluster; the detail title is the plain headline (no brand suffix). Media is never optional in the markup: `data.hero` → poster of the linked event → `/images/hero-hall.jpg` |
-| `EventSections.astro` | `event, section: 'exhibitors' \| 'visitors' \| 'program', tone?` | per-event data views |
-| `EventPage.astro` | `event, page, locale` | composes `hero` + `EventNav` + `before` + sections + `after` + auto editorial rail + `CtaBand` + JSON-LD |
-| `Header.astro` / `Footer.astro` | `locale, path?` | mega-dropdown nav, topbar actions, 4 footer columns, legal row |
-| `Icon.astro` | `name, size = 22, label?` | 113 inline SVG glyphs (24-grid, stroke 1.6); an unknown name falls back to a neutral tile, so a typo never breaks a build |
+| Component                                                | Props                                                                                                                       | Notes                                                                                                                                                                                  |
+| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Base.astro` (layout)                                    | `locale, path, title, description, image?, type?, publishedTime?, modifiedTime?, jsonLd?, noindex?, preload?, breadcrumbs?` | the whole head contract + JSON-LD graph + Header/Footer; nothing else may touch `<head>`                                                                                               |
+| `Blocks.astro`                                           | `blocks: Block[], locale`                                                                                                   | the only content renderer; owns `H()` (locale-prefixing helper)                                                                                                                        |
+| `PromoBar.astro`                                         | `locale, hideFor?`                                                                                                          | announcement strip above the header; data-driven from `nextEvent()`, self-hides when the edition is on its own page or nothing is upcoming                                             |
+| `EventNav.astro`                                         | `locale, event, active, past?`                                                                                              | sticky per-edition rail: 4 cluster pages + 4 hub links + CTA pair; horizontal scroll under 680 px                                                                                      |
+| `PageHero.astro`                                         | `kicker, title, lead?, bullets?, image, actions?, side?, locale`                                                            | 3 variants used by authored pages                                                                                                                                                      |
+| `EventHero.astro`                                        | `event, kicker, title, lead, variant: 'open' \| 'past'`                                                                     | countdown + ticket CTA, or result band for finished editions                                                                                                                           |
+| `SectionHead.astro`                                      | `kicker?, title, level: 1 \| 2 (default 2), text?, align?`                                                                  | `level={1}` exactly once per page                                                                                                                                                      |
+| `StatBand.astro`                                         | `items: {value, unit?, ru, en}[]`                                                                                           | the "important facts" band                                                                                                                                                             |
+| `FeatureGrid.astro`                                      | `items, cols = 3`                                                                                                           | icon + title + text tiles                                                                                                                                                              |
+| `EventCard.astro`                                        | `event, locale, priority?, variant?`                                                                                        | poster + date chip + 1-line caption, `→`                                                                                                                                               |
+| `Countdown.astro`                                        | `target, locale, label?`                                                                                                    | 1.5 KB inline, hides itself after the date                                                                                                                                             |
+| `CtaBand.astro`                                          | `kicker, title, text, primary?, secondary?, dark = true`                                                                    | the conversion band                                                                                                                                                                    |
+| `LeadForm.astro`                                         | `eventName?, directions?, areas?, subtitle?, note?, compact?, id`                                                           | static form: composes a `mailto:` link (no backend) + `form__ok` confirmation state, `role="status"`                                                                                   |
+|                                                          |
+| `PostCard.astro` / `PostBody.astro` / `PostDetail.astro` | `post, path, locale, variant?, priority?` / `layout: 'prose' \| 'sidebar'`                                                  | editorial cluster; the detail title is the plain headline (no brand suffix). Media is never optional in the markup: `data.hero` → poster of the linked event → `/images/hero-hall.jpg` |
+| `EventSections.astro`                                    | `event, section: 'exhibitors' \| 'visitors' \| 'program', tone?`                                                            | per-event data views                                                                                                                                                                   |
+| `EventPage.astro`                                        | `event, page, locale`                                                                                                       | composes `hero` + `EventNav` + `before` + sections + `after` + auto editorial rail + `CtaBand` + JSON-LD                                                                               |
+| `Header.astro` / `Footer.astro`                          | `locale, path?`                                                                                                             | mega-dropdown nav, topbar actions, 4 footer columns, legal row                                                                                                                         |
+| `Icon.astro`                                             | `name, size = 22, label?`                                                                                                   | 113 inline SVG glyphs (24-grid, stroke 1.6); an unknown name falls back to a neutral tile, so a typo never breaks a build                                                              |
 
 Every component keeps its own scoped `<style>` only when its markup is not covered by the
 primitives (Blocks, Header, LeadForm, PostCard/Detail, EventHero/Sections, FeatureGrid,
@@ -117,25 +124,25 @@ translation cannot silently shift the layout. Common fields on every block: `typ
 `title?`, `kicker?`, `text?`, `tone?: 'paper' | 'sand' | 'forest'`, `width?: 'narrow'`,
 `id?: string` (anchor target).
 
-| `type` | Payload | Renders as |
-| --- | --- | --- |
-| `hero` | `title, lead, bullets?, image, actions?[], side?` | full-bleed photo hero with the date/venue rail |
-| `h2` | `title, kicker?, text?` | section head (uses `SectionHead`, level 2) |
-| `text` | `text` (HTML allowed), `width` | prose measure |
-| `stats` | `items: {value, unit?, ru/en}[]` | `StatBand` |
-| `grid` | `items: {icon?, title, text?, meta?, href?}[]` | card grid; `href` makes the whole card a link |
-| `rows` | `items: {title, text?}[]` | numbered rows with hairlines |
-| `table` | `head: string[], rows: string[][]` | spec / rate table, first column bold |
-| `steps` | `items: {title, text?}[]` | ordered process (1 → n) |
-| `checklist` | `items: {title, text?}[]` | checkmark list (what to bring, what to sign) |
-| `callout` | `title, text?, action?: {label, href}`, `tone` | bordered note; `--gold` variant for deadlines |
-| `files` | `items: {title, href, note?, kind: 'pdf' \| 'link' \| 'video'}` | downloadable documents (PDF icons, size note) |
-| `gallery` | `items: {src, alt?, caption?}[]` | photo grid; `alt` falls back to `caption` (the audit fails on empty `alt`) |
-| `quote` | `text, cite?` | pull-quote |
-| `links` | `items: {label, href, note?}[]` | cross-navigation block |
-| `form` | `fields?: …, note?` | `LeadForm` in-page |
-| `faq` | `items: {q, a}[]` | accordion, mirrored into `FAQPage` JSON-LD by the route |
-| `cta` | `kicker?, title, text?, primary?, secondary?` | `CtaBand` |
+| `type`      | Payload                                                         | Renders as                                                                 |
+| ----------- | --------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `hero`      | `title, lead, bullets?, image, actions?[], side?`               | full-bleed photo hero with the date/venue rail                             |
+| `h2`        | `title, kicker?, text?`                                         | section head (uses `SectionHead`, level 2)                                 |
+| `text`      | `text` (HTML allowed), `width`                                  | prose measure                                                              |
+| `stats`     | `items: {value, unit?, ru/en}[]`                                | `StatBand`                                                                 |
+| `grid`      | `items: {icon?, title, text?, meta?, href?}[]`                  | card grid; `href` makes the whole card a link                              |
+| `rows`      | `items: {title, text?}[]`                                       | numbered rows with hairlines                                               |
+| `table`     | `head: string[], rows: string[][]`                              | spec / rate table, first column bold                                       |
+| `steps`     | `items: {title, text?}[]`                                       | ordered process (1 → n)                                                    |
+| `checklist` | `items: {title, text?}[]`                                       | checkmark list (what to bring, what to sign)                               |
+| `callout`   | `title, text?, action?: {label, href}`, `tone`                  | bordered note; `--gold` variant for deadlines                              |
+| `files`     | `items: {title, href, note?, kind: 'pdf' \| 'link' \| 'video'}` | downloadable documents (PDF icons, size note)                              |
+| `gallery`   | `items: {src, alt?, caption?}[]`                                | photo grid; `alt` falls back to `caption` (the audit fails on empty `alt`) |
+| `quote`     | `text, cite?`                                                   | pull-quote                                                                 |
+| `links`     | `items: {label, href, note?}[]`                                 | cross-navigation block                                                     |
+| `form`      | `fields?: …, note?`                                             | `LeadForm` in-page                                                         |
+| `faq`       | `items: {q, a}[]`                                               | accordion, mirrored into `FAQPage` JSON-LD by the route                    |
+| `cta`       | `kicker?, title, text?, primary?, secondary?`                   | `CtaBand`                                                                  |
 
 Authoring rules: no two adjacent blocks may repeat a type; every page ends with either a
 `links` or a `cta` block that points at a money page; `files` items must resolve to a real
@@ -145,10 +152,15 @@ block), otherwise the page opens with content, not a repeat of the header.
 ## 5. Imagery
 
 - **Сейчас в `public/images/*.jpg` — 10 AI-рендеров зала и площадки, а не фотографии SOF
-  EXPO.** Визуально сайт на них держится (композиция, свет, кроп — всё как у съёмки), но это
-  **временные заглушки**: как только клиент отдаст архив, файлы заменяются 1-в-1 по именам
-  (`venue-*`, `hall-*`, `hero-*`, `event-<slug>`), и больше ничего менять не нужно.
-  Публиковать рендеры под видом съёмки центра нельзя ни в КП, ни в пресс-релизах.
+  EXPO.** Это видно по признакам, которые нельзя «доделать» стилями: ни одной читаемой вывески
+  или логотипа на стендах, бесконечные одинаковые модули, идеальная симметрия ферм, нулевой
+  пол без кабеля и упаковки, однотипные «стоковые» лица, и тот же тёплый грэй, что и у кремовой
+  палитры сайта. Поэтому принято два решения (2026-09-18):
+  1. рендеры **обесцвечены** токеном `--ph-filter` и больше не стоят первым экраном: хиро
+     события — это размерная сетка зала + факты, а не размытое фото;
+  2. как только клиент отдаст архив, файлы заменяются 1-в-1 по именам, и удаление **одной
+     строки** `--ph-filter` возвращает цвет. Публиковать рендеры под видом съёмки центра нельзя
+     ни в КП, ни в пресс-релизах. Спец-требования к съёмке — `docs/07-design-review.md` §4.
 - Naming: `venue-*`, `hall-*`, `hero-*`, `event-<slug>`. Event posters are the OG image of the
   event cluster.
 - Alt text describes the frame ("Главный зал: экспозиция и переговорные зоны"), never repeats
@@ -165,13 +177,13 @@ block), otherwise the page opens with content, not a repeat of the header.
 
 ## 6. Voice (the "no fluff" contract)
 
-| Do | Don't |
-| --- | --- |
-| «Зал 4 400 м², нагрузка на пол 2 т/м², 700 кВт на стенд» | «Современные технологии и индивидуальный подход» |
-| «38 премиальных стендов осталось» | «Количество мест ограничено» |
-| Dates as numbers + weekdays: «20–22 октября 2026, secondary» | «Скоро», «Уже скоро» |
-| A number per headline where one exists | Adjectives without a figure next to them |
-| One CTA per screen, verb first: «Забронировать стенд» | Two competing CTAs, «Узнать больше» alone |
+| Do                                                           | Don't                                            |
+| ------------------------------------------------------------ | ------------------------------------------------ |
+| «Зал 4 400 м², нагрузка на пол 2 т/м², 700 кВт на стенд»     | «Современные технологии и индивидуальный подход» |
+| «38 премиальных стендов осталось»                            | «Количество мест ограничено»                     |
+| Dates as numbers + weekdays: «20–22 октября 2026, secondary» | «Скоро», «Уже скоро»                             |
+| A number per headline where one exists                       | Adjectives without a figure next to them         |
+| One CTA per screen, verb first: «Забронировать стенд»        | Two competing CTAs, «Узнать больше» alone        |
 
 Sentences ≤ 20 words; a paragraph ≤ 3 sentences; every claim traceable to sofexpo.uz
 (otherwise the sentence is deleted, not softened).
@@ -196,6 +208,8 @@ Sentences ≤ 20 words; a paragraph ≤ 3 sentences; every claim traceable to so
 2. New token? Put it in `:root`, use it in ≥ 2 places, otherwise keep it local to the
    component's scoped style.
 3. No new shadows, no new radii, no third accent colour, no `!important`, no `px` font sizes.
+   Labels, figures and dates go through `--f-mono`; a new colour means a new token in `:root`
+   with a contrast number next to it (`.stat`, `.kicker`, `.chip--live` were moved this way).
 4. Check both locales at 1 440 / 768 / 390 px, then `npm run build && npm run audit:seo`
    (the audit also catches the structural regressions a new component tends to cause:
    duplicate `h1`, missing `alt`, non-localised links).

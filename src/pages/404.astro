@@ -1,8 +1,8 @@
 ---
 /** Static 404 for every locale: give the four doors that matter, in both languages. */
 import '@/styles/global.css';
-import '@fontsource-variable/onest/wght.css';
-import '@fontsource-variable/unbounded/wght.css';
+import '@fontsource-variable/inter-tight/wght.css';
+import '@fontsource-variable/golos-text/wght.css';
 import { site } from '@/data/site';
 import { upcoming } from '@/data/events';
 import { localize, type Locale } from '@/i18n/config';
@@ -63,7 +63,7 @@ const L = (locale: Locale, path: string) => localize(locale, path);
     <style is:global>
       body.nf {
         background: var(--evergreen);
-        color: #f6f3ea;
+        color: rgba(255,255,255,.86);
         min-height: 100vh;
       }
     </style>
@@ -83,7 +83,7 @@ const L = (locale: Locale, path: string) => localize(locale, path);
         max-width: 24ch;
       }
       .lead {
-        color: rgba(246, 243, 234, 0.82);
+        color: rgba(255, 255, 255, 0.82);
         max-width: 62ch;
       }
       .nf__grid {
@@ -97,8 +97,8 @@ const L = (locale: Locale, path: string) => localize(locale, path);
         gap: 0.3rem;
         padding: 1.1rem 1.15rem;
         border-radius: var(--r-lg);
-        background: rgba(246, 243, 234, 0.07);
-        border: 1px solid rgba(246, 243, 234, 0.18);
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.18);
         color: inherit;
         text-decoration: none;
       }
@@ -112,15 +112,15 @@ const L = (locale: Locale, path: string) => localize(locale, path);
       }
       .nf__card span {
         font-size: 0.9rem;
-        color: rgba(246, 243, 234, 0.78);
+        color: rgba(255, 255, 255, 0.78);
       }
       .nf__card small {
         font-size: 0.78rem;
-        color: rgba(246, 243, 234, 0.5);
+        color: rgba(255, 255, 255, 0.5);
       }
       .nf__next {
         padding-top: 1rem;
-        border-top: 1px solid rgba(246, 243, 234, 0.16);
+        border-top: 1px solid rgba(255, 255, 255, 0.16);
         font-size: 0.95rem;
       }
       .nf__next a {
@@ -128,7 +128,7 @@ const L = (locale: Locale, path: string) => localize(locale, path);
       }
       .nf__foot {
         font-size: 0.85rem;
-        color: rgba(246, 243, 234, 0.62);
+        color: rgba(255, 255, 255, 0.62);
       }
       .nf__foot a {
         color: inherit;

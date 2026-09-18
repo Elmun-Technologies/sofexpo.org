@@ -1,6 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="SOF EXPO">
-  <rect width="64" height="64" rx="14" fill="#12301f"/>
-  <path d="M14 44V20h6.5c4.4 0 7 2.2 7 6 0 2.4-1.2 4.2-3.4 5l4.7 13H22l-2.9-8.6H20V44h-6zm6.2-13.6h1.6c1.6 0 2.6-.8 2.6-2.1s-1-2-2.6-2h-1.6v4.1z" fill="#f7f4ec"/>
-  <path d="M30.5 20H48v5.4H42V44h-6.2V25.4h-5.3V20z" fill="#e9c981"/>
-  <circle cx="51.5" cy="41.5" r="4.5" fill="#c58a2e"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="SOF EXPO Samarkand">
+  <!-- the mark is the hall, not a monogram: one shell, three stand modules, one service aisle.
+       No rounded corners, no gradient, no letterforms to redraw every time a brand asset changes. -->
+  <rect width="64" height="64" fill="#0f2b1c"/>
+  <rect x="10" y="12" width="44" height="34" fill="none" stroke="#ffffff" stroke-width="2"/>
+  <rect x="15" y="17" width="9" height="9" fill="#ffffff"/>
+  <rect x="27.5" y="17" width="9" height="9" fill="#ffffff"/>
+  <rect x="40" y="17" width="9" height="9" fill="#ffffff"/>
+  <rect x="15" y="31" width="34" height="3" fill="#ffffff" opacity=".6"/>
+  <rect x="10" y="49" width="44" height="3" fill="#ffffff"/>
 </svg>

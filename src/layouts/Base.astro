@@ -1,7 +1,9 @@
 ---
 import '@/styles/global.css';
-import '@fontsource-variable/onest/wght.css';
-import '@fontsource-variable/unbounded/wght.css';
+/* display: Inter Tight (has the Cyrillic subset Archivo lacks) · body: Golos Text · data: JetBrains Mono */
+import '@fontsource-variable/inter-tight/wght.css';
+import '@fontsource-variable/golos-text/wght.css';
+import '@fontsource-variable/jetbrains-mono/wght.css';
 import { buildMeta, entityNodes, SITE } from '@/lib/seo';
 import { localize, localeMeta, type Locale } from '@/i18n/config';
 import { isRootHost } from '@/data/hosts';
@@ -98,7 +100,7 @@ const crumbs = [{ name: t('breadcrumbs.home'), path: '/' }, ...breadcrumbs];
     <title>{meta.title}</title>
     <meta name="description" content={meta.description} />
     <link rel="canonical" href={meta.canonical} />
-    <meta name="theme-color" content="#12301f" />
+    <meta name="theme-color" content="#0f2b1c" />
     <meta name="format-detection" content="telephone=no" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="robots" content={meta.noindex ? 'noindex,follow,max-image-preview:large' : 'index,follow,max-image-preview:large,max-snippet:-1'} />

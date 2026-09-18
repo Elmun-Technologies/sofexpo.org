@@ -16,11 +16,11 @@ const ru = locale === 'ru';
   <div class="wrap">
     <div class="ftr__grid">
       <div>
-        <a class="logo" href={P('/')} style="color:#fbf9f2">
+        <a class="logo" href={P('/')} style="color:#ffffff">
           <span class="logo__mark" aria-hidden="true">SE</span>
           <span class="logo__txt">
             <b>{site.brand[locale]}</b>
-            <span style="color:rgba(251,249,242,.6)">{ru ? 'Выставочный центр' : 'Exhibition centre'}</span>
+            <span style="color:rgba(255, 255, 255, .6)">{ru ? 'Выставочный центр' : 'Exhibition centre'}</span>
           </span>
         </a>
         <p style="margin-top:1rem;max-width:38ch">{t('footer.about')}</p>
@@ -68,11 +68,11 @@ const ru = locale === 'ru';
       <h3>{t('footer.events')}</h3>
       <div class="pill-row">
         {upcoming.map((e) => (
-          <a class="chip" style="background:rgba(251,249,242,.08);border-color:rgba(251,249,242,.2);color:#fbf9f2" href={P(`/events/${e.slug}/`)}>
+          <a class="chip" style="background:rgba(255, 255, 255, .08);border-color:rgba(255, 255, 255, .2);color:#ffffff" href={P(`/events/${e.slug}/`)}>
             {e.shortName} · {e.dates.display[locale]}
           </a>
         ))}
-        <a class="chip" style="background:rgba(251,249,242,.08);border-color:rgba(251,249,242,.2);color:var(--gold-soft)" href={P('/events/')}>
+        <a class="chip" style="background:rgba(255, 255, 255, .08);border-color:rgba(255, 255, 255, .2);color:var(--gold-soft)" href={P('/events/')}>
           {t('cta.all')}
         </a>
       </div>
@@ -89,6 +89,6 @@ const ru = locale === 'ru';
         <Icon name="arrow-up" size={14} /> {t('misc.scrollToTop')}
       </a>
     </div>
-    <p class="small" style="margin:1rem 0 0;color:rgba(251,249,242,.4)">{t('footer.made')}</p>
+    <p class="small" style="margin:1rem 0 0;color:rgba(255, 255, 255, .4)">{t('footer.made')}</p>
   </div>
 </footer>

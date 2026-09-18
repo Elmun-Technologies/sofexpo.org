@@ -274,11 +274,11 @@ const jsonLd = [
       <a href={P(`/events/${next.slug}/`)} style="text-decoration:none;color:#fff">
         <h3 style="margin:0 0 .3rem;font-size:1.35rem">{next.brand[locale]}</h3>
       </a>
-      <p style="margin:0;color:rgba(246,243,234,.8);font-size:.92rem">{next.tagline[locale]}</p>
+      <p style="margin:0;color:rgba(255, 255, 255, .8);font-size:.92rem">{next.tagline[locale]}</p>
       <Countdown locale={locale} target={next.dates.start} label={ru ? 'До старта' : 'Opening in'} />
       <div class="btn-row">
-        <a class="btn btn--sm" style="background:#f6f3ea;color:var(--evergreen)" href={P(`/events/${next.slug}/`)}>{t('cta.details')}</a>
-        <a class="btn btn--sm btn--ghost" style="border-color:rgba(246,243,234,.4);color:#f6f3ea" href={P('/request-stand/')}>{t('cta.stand')}</a>
+        <a class="btn btn--sm" style="background:rgba(255,255,255,.86);color:var(--evergreen)" href={P(`/events/${next.slug}/`)}>{t('cta.details')}</a>
+        <a class="btn btn--sm btn--ghost" style="border-color:rgba(255, 255, 255, .4);color:rgba(255,255,255,.86)" href={P('/request-stand/')}>{t('cta.stand')}</a>
       </div>
     </div>
   </PageHero>
@@ -338,10 +338,10 @@ const jsonLd = [
         <div>
           <p class="kicker">{copy.stands.kicker}</p>
           <h2 set:html={copy.stands.title} />
-          <p class="lead" style="color:rgba(246,243,234,.85)">{copy.stands.text}</p>
+          <p class="lead" style="color:rgba(255, 255, 255, .85)">{copy.stands.text}</p>
           <div class="btn-row" style="margin-top:1.4rem">
             <a class="btn btn--light" href={P('/exhibitors/packages/')}>{ru ? 'Все пакеты участия' : 'All participation packages'}</a>
-            <a class="btn btn--ghost" style="border-color:rgba(246,243,234,.4);color:#f6f3ea" href={P('/exhibitors/floor-plan/')}>{ru ? 'Планировка зала' : 'Floor plan'}</a>
+            <a class="btn btn--ghost" style="border-color:rgba(255, 255, 255, .4);color:rgba(255,255,255,.86)" href={P('/exhibitors/floor-plan/')}>{ru ? 'Планировка зала' : 'Floor plan'}</a>
           </div>
         </div>
         <div class="grid g2">
@@ -507,8 +507,8 @@ const jsonLd = [
 
 <style>
   .stand-card {
-    background: rgba(251, 249, 242, 0.07);
-    border: 1px solid rgba(251, 249, 242, 0.16);
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.16);
     border-radius: var(--r-lg);
     padding: clamp(1rem, .6rem + 1.4vw, 1.6rem);
   }
@@ -519,7 +519,7 @@ const jsonLd = [
   .stand-card p {
     margin: 0;
     font-size: .9rem;
-    color: rgba(246, 243, 234, .75);
+    color: rgba(255, 255, 255, .75);
   }
   .mini {
     display: flex;

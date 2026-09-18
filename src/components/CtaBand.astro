@@ -18,14 +18,14 @@ const { locale, kicker, title, text, primary, secondary, dark = true } = Astro.p
       <div>
         {kicker && <p class="kicker">{kicker}</p>}
         <h2 set:html={title} />
-        {text && <p class="lead" style={dark ? 'color:rgba(246,243,234,.82)' : undefined}>{text}</p>}
+        {text && <p class="lead" style={dark ? 'color:rgba(255, 255, 255, .82)' : undefined}>{text}</p>}
       </div>
       <div class="cta-band__actions">
         <a class="btn" href={primary.href}>
           <Icon name="arrow" size={17} /> {primary.label}
         </a>
         {secondary && (
-          <a class="btn btn--ghost" style={dark ? 'border-color:rgba(246,243,234,.4);color:#f6f3ea' : undefined} href={secondary.href}>
+          <a class="btn btn--ghost" style={dark ? 'border-color:rgba(255, 255, 255, .4);color:rgba(255,255,255,.86)' : undefined} href={secondary.href}>
             {secondary.label}
           </a>
         )}

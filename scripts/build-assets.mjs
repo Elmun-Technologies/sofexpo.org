@@ -6,43 +6,25 @@ mkdirSync("public/og", { recursive: true });
 
 const W = 1200;
 const H = 630;
-/* The card is built from the same system as the site: flat brand ground, a measured module
-   grid, hard rules instead of pills, and the (still synthetic) exterior used as a greyscale
-   panel at the right edge rather than as a "photo of the venue" hero. No gold, no gradient
-   wash, no rounded corners. */
-const grid = Array.from(
-  { length: 17 },
-  (_, i) =>
-    `<rect x="${75 * i}" y="0" width="1" height="${H}" fill="#ffffff" opacity="0.05"/>`,
-).join("");
-const rows = Array.from(
-  { length: 9 },
-  (_, i) =>
-    `<rect x="0" y="${70 * i}" width="${W}" height="1" fill="#ffffff" opacity="0.05"/>`,
-).join("");
+/* The calmest version of the card: flat brand ground, one rule, typeset facts, and the exterior
+   as a plain panel. No grid texture, no desaturation, no accent colour — those were decoration
+   for its own sake (docs/07 §7). The exterior is still a render, so the card says nothing about
+   it being photography. */
 const overlay = `<svg width="${W}" height="${H}">
   <rect width="${W}" height="${H}" fill="#0f2b1c"/>
-  ${grid}${rows}
-  <g>
-    <rect x="70" y="120" width="14" height="14" fill="#ffffff"/>
-    <rect x="90" y="120" width="14" height="14" fill="#ffffff"/>
-    <rect x="110" y="120" width="14" height="14" fill="#ffffff"/>
-    <rect x="70" y="142" width="54" height="3" fill="#ffffff" opacity="0.55"/>
-  </g>
-  <rect x="70" y="182" width="640" height="2" fill="#ffffff"/>
-  <text x="68" y="266" font-family="Helvetica, Arial, sans-serif" font-size="66" font-weight="700" fill="#ffffff" letter-spacing="-2">SOF EXPO</text>
-  <text x="68" y="330" font-family="Helvetica, Arial, sans-serif" font-size="66" font-weight="700" fill="#ffffff" letter-spacing="-2">SAMARKAND</text>
-  <text x="72" y="372" font-family="Menlo, Consolas, monospace" font-size="21" fill="#ffffff" opacity="0.72" letter-spacing="2.6">EXHIBITION CENTRE · TRADE SHOWS</text>
-  <text x="72" y="436" font-family="Helvetica, Arial, sans-serif" font-size="27" fill="#ffffff">4 400 m² hall · 5 000 m² open-air</text>
-  <text x="72" y="472" font-family="Helvetica, Arial, sans-serif" font-size="27" fill="#ffffff">20+ events a year · 70 000+ visitors</text>
-  <text x="72" y="540" font-family="Menlo, Consolas, monospace" font-size="22" fill="#ffffff" opacity="0.8" letter-spacing="1.6">sofexpo.org</text>
-  <rect x="70" y="566" width="640" height="1" fill="#ffffff" opacity="0.3"/>
+  <rect x="70" y="132" width="34" height="34" fill="none" stroke="#ffffff" stroke-width="2"/>
+  <rect x="112" y="132" width="34" height="34" fill="#ffffff"/>
+  <text x="68" y="300" font-family="Helvetica, Arial, sans-serif" font-size="66" font-weight="700" fill="#ffffff" letter-spacing="-2">SOF EXPO</text>
+  <text x="68" y="364" font-family="Helvetica, Arial, sans-serif" font-size="66" font-weight="700" fill="#ffffff" letter-spacing="-2">SAMARKAND</text>
+  <text x="72" y="410" font-family="Menlo, Consolas, monospace" font-size="21" fill="#ffffff" opacity="0.72" letter-spacing="2.6">EXHIBITION CENTRE · TRADE SHOWS</text>
+  <text x="72" y="462" font-family="Helvetica, Arial, sans-serif" font-size="27" fill="#ffffff">4 400 m² hall · 5 000 m² open-air</text>
+  <text x="72" y="498" font-family="Helvetica, Arial, sans-serif" font-size="27" fill="#ffffff">20+ events a year · 70 000+ visitors</text>
+  <text x="72" y="556" font-family="Menlo, Consolas, monospace" font-size="22" fill="#ffffff" opacity="0.8" letter-spacing="1.6">sofexpo.org</text>
+  <rect x="70" y="576" width="640" height="1" fill="#ffffff" opacity="0.3"/>
 </svg>`;
 
 const panelW = 430;
 const panel = await sharp("public/images/venue-exterior.jpg")
-  .grayscale()
-  .linear(1.12, -8)
   .resize(panelW, H, { fit: "cover", position: "centre" })
   .toBuffer();
 await sharp({

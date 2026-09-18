@@ -98,11 +98,9 @@ const actions = [
     content: '';
     position: absolute;
     inset: 0;
-    background-image: linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
-    background-size:
-      64px 64px,
-      64px 64px;
+    /* a plain ground with one hairline — the module grid was texture for texture's sake */
+    background: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
     z-index: -2;
   }
   .ehero::after {
@@ -159,9 +157,7 @@ const actions = [
     border-radius: var(--r);
     background: rgba(255, 255, 255, 0.07);
     border: 1px solid rgba(255, 255, 255, 0.26);
-    font-family: var(--f-mono);
-    font-size: 0.76rem;
-    letter-spacing: 0.01em;
+    font-size: 0.84rem;
   }
   .ehero__side {
     display: grid;

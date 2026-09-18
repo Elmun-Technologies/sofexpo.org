@@ -5,14 +5,18 @@ import '@fontsource-variable/onest/wght.css';
 import '@fontsource-variable/unbounded/wght.css';
 import { site } from '@/data/site';
 import { upcoming } from '@/data/events';
+import { localize, type Locale } from '@/i18n/config';
 
 const next = upcoming[0];
+/* paths, not literal URLs: on an exhibition hostname only some of these live on this host,
+   the rest must resolve absolutely to the centre (localize does that per host) */
 const cards = [
-  { ru: '/ru/events/', en: '/en/events/', tRu: 'Афиша выставок', tEn: 'Exhibition line-up', dRu: 'Даты, разделы, регистрация', dEn: 'Dates, sections, registration' },
-  { ru: '/ru/exhibitors/packages/', en: '/en/exhibitors/packages/', tRu: 'Пакеты и цены', tEn: 'Packages and rates', dRu: 'Сколько стоит участие', dEn: 'What participation costs' },
-  { ru: '/ru/venue/halls/', en: '/en/venue/halls/', tRu: 'Залы и площади', tEn: 'Halls and areas', dRu: '4 400 м² и 5 000 м²', dEn: '4,400 m² and 5,000 m²' },
-  { ru: '/ru/contacts/', en: '/en/contacts/', tRu: 'Контакты', tEn: 'Contacts', dRu: 'Телефон, почта, адрес', dEn: 'Phone, email, address' },
+  { path: '/events/', tRu: 'Афиша выставок', tEn: 'Exhibition line-up', dRu: 'Даты, разделы, регистрация', dEn: 'Dates, sections, registration' },
+  { path: '/exhibitors/packages/', tRu: 'Пакеты и цены', tEn: 'Packages and rates', dRu: 'Сколько стоит участие', dEn: 'What participation costs' },
+  { path: '/venue/halls/', tRu: 'Залы и площади', tEn: 'Halls and areas', dRu: '4 400 м² и 5 000 м²', dEn: '4,400 m² and 5,000 m²' },
+  { path: '/contacts/', tRu: 'Контакты', tEn: 'Contacts', dRu: 'Телефон, почта, адрес', dEn: 'Phone, email, address' },
 ];
+const L = (locale: Locale, path: string) => localize(locale, path);
 ---
 
 <!doctype html>
@@ -34,19 +38,25 @@ const cards = [
       </p>
 
       <div class="nf__grid">
-        {cards.map((c) => <a class="nf__card" href={c.ru}><b>{c.tRu}</b><span>{c.dRu}</span><small lang="en">{c.tEn} — {c.dEn}</small></a>)}
+        {cards.map((c) => (
+          <a class="nf__card" href={L('ru', c.path)}>
+            <b>{c.tRu}</b>
+            <span>{c.dRu}</span>
+            <small lang="en">{c.tEn} — {c.dEn}</small>
+          </a>
+        ))}
       </div>
 
       <p class="nf__next">
         {next && (
           <>
-            Ближайшее событие: <a href={`/ru/events/${next.slug}/`}>{next.brand.ru}</a> · {next.dates.display.ru} <span lang="en">/ {next.dates.display.en}</span>
+            Ближайшее событие: <a href={L('ru', `/events/${next.slug}/`)}>{next.brand.ru}</a> · {next.dates.display.ru} <span lang="en">/ {next.dates.display.en}</span>
           </>
         )}
       </p>
 
       <p class="nf__foot">
-        <a href="/ru/">Русская версия</a> · <a href="/en/">English version</a> · <a href="/ru/search/">Поиск по сайту</a> · <a href={`mailto:${site.contacts.email}`}>{site.contacts.email}</a> · <a href={`tel:${site.contacts.phoneMain.replace(/[^\d+]/g, '')}`}>{site.contacts.phoneMain}</a>
+        <a href={L('ru', '/')}>Русская версия</a> · <a href={L('en', '/')}>English version</a> · <a href={L('ru', '/search/')}>Поиск по сайту</a> · <a href={`mailto:${site.contacts.email}`}>{site.contacts.email}</a> · <a href={`tel:${site.contacts.phoneMain.replace(/[^\d+]/g, '')}`}>{site.contacts.phoneMain}</a>
       </p>
     </main>
 

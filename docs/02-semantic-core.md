@@ -19,7 +19,7 @@ Three permanent nodes are emitted on **every** indexable page (`Base.astro` buil
 `WebPage` on each page carries `isPartOf: #website` and `breadcrumb: #breadcrumbs`, so the
 page nodes join the same entity graph instead of floating free.
 
-Per-page-type nodes (counts from the current build, 146 pages):
+Per-page-type nodes (counts from the current build, 152 pages):
 
 | Node | Emitted on | Pages |
 | --- | --- | --- |
@@ -74,6 +74,12 @@ Enforced additionally: exactly one `<h1>` per page; the brand suffix appears onc
 no two pages share a title or a description; canonical is absolute.
 
 ## 4. Indexation policy
+
+Multi-host builds (`docs/05-subdomains.md`) follow the same contract per host: every hostname
+is an independent site with its own `robots.txt`, sitemap, `hreflang` pairs and Search Console
+property. A page is emitted on exactly one host; the path an exhibition cluster gave up on the
+centre is a `noindex,follow` stub whose `canonical` points across hosts, so equity moves and no
+duplicate competes with the live page.
 
 | Route | State | Why |
 | --- | --- | --- |

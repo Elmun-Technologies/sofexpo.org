@@ -2,11 +2,13 @@ import rss from '@astrojs/rss';
 import type { APIContext } from 'astro';
 import { getCollection } from 'astro:content';
 import { locales, type Locale } from '@/i18n/config';
+import { isRootHost } from '@/data/hosts';
 import { events } from '@/data/events';
 import { abs } from '@/lib/seo';
 
 export function getStaticPaths() {
-  return locales.map((locale) => ({ params: { locale } }));
+  // the feed is a property of the centre host: an exhibition hostname links to it absolutely
+  return isRootHost ? locales.map((locale) => ({ params: { locale } })) : [];
 }
 
 /** Feed carries news, articles and exhibition dates — the three things a trade reader subscribes to. */

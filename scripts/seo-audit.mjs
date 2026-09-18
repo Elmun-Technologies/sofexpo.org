@@ -13,6 +13,14 @@ import { join, relative, dirname, resolve } from 'node:path';
 
 const SITE_URL = process.env.SITE_URL || 'https://sofexpo.org';
 const ROOT = process.argv[2] ?? 'dist';
+/** `--host foodera.sofexpo.org --peers dist-hosts`: count inbound links that arrive from the
+ *  sibling hosts of a multi-host build, so a page linked only from the centre is not an orphan. */
+const argOf = (name, fallback = null) => {
+  const i = process.argv.indexOf(`--${name}`);
+  return i >= 0 && process.argv[i + 1] && !process.argv[i + 1].startsWith('--') ? process.argv[i + 1] : fallback;
+};
+const THIS_HOST = argOf('host');
+const PEERS = argOf('peers');
 if (!existsSync(ROOT)) {
   console.error(`No ${ROOT}. Run "npm run build" first.`);
   process.exit(1);
@@ -142,6 +150,31 @@ for (const [map, label] of [[titleByUrl, 'title'], [descriptions, 'description']
     if (!value) continue;
     if (seen.has(value)) warn(url, `duplicate ${label} with ${seen.get(value)}`);
     else seen.set(value, url);
+  }
+}
+
+// peer-host links count as inbound: on an exhibition hostname the centre is the referrer
+if (THIS_HOST && PEERS && existsSync(PEERS)) {
+  const needle = new RegExp(`href="https:\\/\\/${THIS_HOST.replace(/\./g, '\\.')}(/[^"]*)"?`, 'g');
+  for (const entry of readdirSync(PEERS)) {
+    if (entry === THIS_HOST) continue;
+    const dir = join(PEERS, entry);
+    if (!statSync(dir).isDirectory()) continue;
+    for (const file of (function walk(d) {
+      const out = [];
+      for (const name of readdirSync(d)) {
+        const full = join(d, name);
+        if (statSync(full).isDirectory()) out.push(...walk(full));
+        else if (full.endsWith('.html')) out.push(full);
+      }
+      return out;
+    })(dir)) {
+      for (const m of readFileSync(file, 'utf8').matchAll(needle)) {
+        let target = m[1];
+        if (!target.endsWith('/') && !/\.[a-z0-9]+$/i.test(target)) target += '/';
+        if (allUrls.has(target)) inbound.set(target, (inbound.get(target) ?? 0) + 1);
+      }
+    }
   }
 }
 

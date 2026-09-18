@@ -5,3 +5,6 @@ dist/
 *.log
 .env
 .env.local
+
+# multi-host build output (docs/05)
+dist-hosts/

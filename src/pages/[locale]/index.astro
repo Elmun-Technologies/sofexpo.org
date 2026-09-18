@@ -6,6 +6,9 @@ import { localePaths } from '@/lib/pages';
 import { site } from '@/data/site';
 import { telHref } from '@/lib/nav';
 import { upcoming, events } from '@/data/events';
+import { CURRENT_EVENT } from '@/data/hosts';
+import { eventPages } from '@/data/pages/event-pages';
+import EventPage from '@/components/EventPage.astro';
 import { getCollection } from 'astro:content';
 import { rootJsonLd, breadcrumbJsonLd, itemListJsonLd, faqJsonLd, abs } from '@/lib/seo';
 import Icon from '@/components/Icon.astro';
@@ -22,6 +25,11 @@ import LeadForm from '@/components/LeadForm.astro';
 export function getStaticPaths() {
   return localePaths();
 }
+
+/* On an exhibition's own hostname this route IS the event home: the cluster lives at the
+   root of that host, so `/ru/` shows the show, not the centre. */
+const hostEvent = CURRENT_EVENT ? events.find((e) => e.slug === CURRENT_EVENT) ?? null : null;
+const hostPage = hostEvent ? eventPages[hostEvent.slug]?.overview ?? null : null;
 
 const { locale } = Astro.params as { locale: 'ru' | 'en' };
 const t = useUI(locale);
@@ -240,7 +248,7 @@ const jsonLd = [
 ];
 ---
 
-<Base
+{hostEvent && hostPage ? <EventPage locale={locale} event={hostEvent} page={hostPage} /> : <Base
   locale={locale}
   path="/"
   title={copy.title}
@@ -495,7 +503,7 @@ const jsonLd = [
     primary={{ label: ru ? 'Расчёт даты и ставки' : 'Get dates and rates', href: P('/organizers/') }}
     secondary={{ label: ru ? 'Техническая спецификация' : 'Technical data sheet', href: P('/venue/tech-specs/') }}
   />
-</Base>
+</Base>}
 
 <style>
   .stand-card {

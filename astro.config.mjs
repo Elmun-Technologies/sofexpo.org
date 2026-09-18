@@ -4,8 +4,12 @@ import sitemap from '@astrojs/sitemap';
 
 // SOF EXPO SAMARKAND — international exhibition centre website.
 // Static output (SSG): fastest Core Web Vitals, CDN friendly, no client JS framework.
+// One project, many hostnames: `SITE` picks the host and `PUBLIC_HOSTS_MODE` the topology.
+// `npm run build:hosts` builds every host; see docs/05-subdomains.md.
+const SITE = process.env.SITE || 'https://sofexpo.org/';
+
 export default defineConfig({
-  site: 'https://sofexpo.org/',
+  site: SITE,
   output: 'static',
   trailingSlash: 'ignore',
   compressHTML: true,

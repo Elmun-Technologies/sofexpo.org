@@ -3,9 +3,12 @@
 import type { GetStaticPaths } from 'astro';
 import { locales } from '@/i18n/config';
 import { getCollection, render } from 'astro:content';
+import { isRootHost } from '@/data/hosts';
 import PostDetail from '@/components/PostDetail.astro';
 
 export const getStaticPaths = (async () => {
+  // editorial stays on the centre host: an exhibition hostname links to these pages absolutely
+  if (!isRootHost) return [];
   const entries = await getCollection('news', ({ data }) => !data.draft);
   const out: { params: { locale: string; slug: string }; props: { entry: (typeof entries)[number] } }[] = [];
   for (const entry of entries) {

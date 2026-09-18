@@ -1,9 +1,10 @@
 import type { APIContext } from 'astro';
 import { locales, type Locale } from '@/i18n/config';
+import { isRootHost } from '@/data/hosts';
 import { searchDocs } from '@/lib/search';
 
 export function getStaticPaths() {
-  return locales.map((locale) => ({ params: { locale } }));
+  return isRootHost ? locales.map((locale) => ({ params: { locale } })) : [];
 }
 
 /** Machine-readable site index used by the search page (no server, no third-party service). */

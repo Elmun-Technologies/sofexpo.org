@@ -7,6 +7,7 @@
 import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
 import { locales, localize, type Locale } from '@/i18n/config';
 import { pages, type PageDef } from '@/data/pages';
+import { isBuiltHere } from '@/data/hosts';
 import Base from '@/layouts/Base.astro';
 import Blocks from '@/components/Blocks.astro';
 import { breadcrumbJsonLd, organizationJsonLd, abs, faqJsonLd } from '@/lib/seo';
@@ -15,6 +16,7 @@ import { pageCrumbs } from '@/lib/nav';
 export const getStaticPaths = (async () => {
   const out: { params: { locale: Locale; slug: string }; props: { page: PageDef } }[] = [];
   for (const page of pages) {
+    if (!isBuiltHere(page.path)) continue;
     const slug = page.path.replace(/^\/+|\/+$/g, '');
     for (const locale of locales) out.push({ params: { locale, slug }, props: { page } });
   }

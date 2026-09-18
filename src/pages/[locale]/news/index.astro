@@ -3,7 +3,7 @@
 import type { Locale } from '@/i18n/config';
 import { localize } from '@/i18n/config';
 import { getCollection } from 'astro:content';
-import { localePaths } from '@/lib/pages';
+import { rootOnlyPaths } from '@/lib/hostRoutes';
 import { abs, breadcrumbJsonLd, itemListJsonLd } from '@/lib/seo';
 import { site } from '@/data/site';
 import Base from '@/layouts/Base.astro';
@@ -12,7 +12,7 @@ import PostCard from '@/components/PostCard.astro';
 import CtaBand from '@/components/CtaBand.astro';
 
 export function getStaticPaths() {
-  return localePaths();
+  return rootOnlyPaths();
 }
 
 const locale = Astro.params.locale as Locale;

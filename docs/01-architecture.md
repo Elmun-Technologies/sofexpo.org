@@ -1,7 +1,8 @@
 # 01 · Architecture
 
 SOF EXPO Samarkand — an international (RU/EN) website for an exhibition centre and its
-own trade shows. 146 static pages, 2 locales, zero client-side framework.
+own trade shows. 152 static pages, 2 locales, zero client-side framework — and
+up to six hostnames from the same build (docs/05-subdomains.md).
 
 ## 1. Decisions and why
 
@@ -9,14 +10,14 @@ own trade shows. 146 static pages, 2 locales, zero client-side framework.
 | --- | --- | --- |
 | Rendering | Astro 7, `output: 'static'` | Every page is a plain HTML file: fastest Core Web Vitals, cheapest hosting, crawlable without JS. No hydration = no framework budget. |
 | Client JS | ~1.5 KB total (countdown, search, menu, form) | Only three behaviours need JS; everything else is CSS. No React/Svelte runtime. |
-| Styling | Hand-written CSS with design tokens (`src/styles/global.css`) | Full control of the "photo-led, no fluff" look; no utility-class dependency. One stylesheet for the whole site (27 KB / 8.8 KB gzip), cached across all 146 pages; component-scoped styles are added per chunk (`Blocks.astro`, `PostDetail.astro`). |
+| Styling | Hand-written CSS with design tokens (`src/styles/global.css`) | Full control of the "photo-led, no fluff" look; no utility-class dependency. One stylesheet for the whole site (27 KB / 8.8 KB gzip), cached across all 152 pages; component-scoped styles are added per chunk (`Blocks.astro`, `PostDetail.astro`). |
 | Fonts | Self-hosted `@fontsource-variable/onest` + `unbounded` | No third-party request, no CLS from remote fonts, works offline in the sandbox preview. |
 | i18n | `src/pages/[locale]/…` with explicit `/ru/` and `/en/` prefixes | Prefixed URLs keep hreflang/canonical unambiguous, per-locale sitemaps/RSS, and let `/` serve a bilingual gate. |
 | Default locale | `en` (`astro.config.mjs` → `i18n.defaultLocale`) | International buyers (organizers, foreign exhibitors) are the money audience; RU is fully mirrored, not a fallback. |
 | Root `/` | Bilingual gate page (indexable, not a redirect) | A redirect would waste the brand query ("sof expo samarkand") for the most important URL; the gate ranks and hands the user to `/ru/` or `/en/`. |
 | Trailing slash | `'ignore'` in config, `localize()` always emits `/path/` | Canonical URLs always carry the slash, so `/ru/about` and `/ru/about/` never split equity in our markup. |
 | Content model | Typed TS data (`src/data/**`) + 1 shared block renderer | Copy is authored per page in both locales, so structure and text differ everywhere while the renderer stays single-sourced. |
-| SEO gate | `npm run audit:seo` (`scripts/seo-audit.mjs`) over `dist` | 146 pages × 2 locales cannot be checked by hand; the audit is the contract (see 02). |
+| SEO gate | `npm run audit:seo` (`scripts/seo-audit.mjs`) over `dist` | 152 страниц (75 × 2 локали + gate + 404) нельзя проверить руками; the audit is the contract (see 02). |
 
 ## 2. Repository layout
 
@@ -90,19 +91,28 @@ Three page families, one renderer each:
 
 ```bash
 npm run dev        # astro dev — binds all interfaces, /ru/ /en/ live
-npm run build      # → dist/ (146 pages) + sitemap pruned of noindex URLs
+npm run build      # → dist/ (152 pages) + sitemap pruned of noindex URLs
 npm run audit:seo  # SEO/accessibility gate over dist/ — 0 findings required
 npm run check      # build + audit in one go (this is what CI must run)
 npm run preview    # serve dist/ (allowedHosts is open for the sandbox proxy)
 node scripts/build-assets.mjs   # only when public/images/*.jpg or favicon.svg change
+
+# multi-host (docs/05-subdomains.md): one repo, one build per hostname
+npm run build:hosts  # 6 builds → dist-hosts/<host>/ + per-host robots/_redirects + audit
+node scripts/check-hosts.mjs --dir dist-hosts --mode subdomain   # cross-host link integrity
+PUBLIC_HOSTS_MODE=subdomain npx astro build   # one host by hand (SITE= picks the hostname)
 ```
 
 Notes for whoever deploys:
 
 - Host any static origin with `/404.html` fallback **or** keep the folder-style output
   (`dist/ru/about/index.html`) — trailing-slash URLs resolve as directories on every host.
-- `site: 'https://sofexpo.org/'` in `astro.config.mjs` is the single source of absolute URLs
-  (canonical, OG, JSON-LD, sitemap, RSS). Change it once when the domain is final.
+- `site` in `astro.config.mjs` reads `SITE` from the environment and falls back to
+  `https://sofexpo.org/`. It is the single source of absolute URLs (canonical, OG, JSON-LD,
+  sitemap, RSS) **per host**: a build produces exactly one hostname, so a multi-host deploy is
+  a loop of builds, not a config tree. Hostnames themselves live in `src/data/host-map.json`,
+  which both the app (`src/data/hosts.ts`) and the Node scripts (`scripts/host-rules.mjs`)
+  read — one source, no drift.
 - `serialize` in the sitemap plugin pins `lastmod` to the content freeze date; bump it when
   copy changes rather than letting the build date drift.
 - Images are JPEG, served from `/images/`, referenced with `loading="lazy"` except the

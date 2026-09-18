@@ -144,7 +144,11 @@ block), otherwise the page opens with content, not a repeat of the header.
 
 ## 5. Imagery
 
-- Real photos only, `public/images/*.jpg` (10 files, 1 264×848 or larger, 150–200 KB).
+- **Сейчас в `public/images/*.jpg` — 10 AI-рендеров зала и площадки, а не фотографии SOF
+  EXPO.** Визуально сайт на них держится (композиция, свет, кроп — всё как у съёмки), но это
+  **временные заглушки**: как только клиент отдаст архив, файлы заменяются 1-в-1 по именам
+  (`venue-*`, `hall-*`, `hero-*`, `event-<slug>`), и больше ничего менять не нужно.
+  Публиковать рендеры под видом съёмки центра нельзя ни в КП, ни в пресс-релизах.
 - Naming: `venue-*`, `hall-*`, `hero-*`, `event-<slug>`. Event posters are the OG image of the
   event cluster.
 - Alt text describes the frame ("Главный зал: экспозиция и переговорные зоны"), never repeats

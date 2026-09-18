@@ -12,7 +12,8 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const ROOT = process.argv[2] || 'dist';
-const SITE = 'https://sofexpo.org';
+/* per-host build: `SITE` is what Astro was given, so <loc> prefixes match (docs/05) */
+const SITE = (process.env.SITE || 'https://sofexpo.org').replace(/\/+$/, '');
 
 for (const name of ['sitemap-0.xml', 'sitemap-index.xml']) {
   const file = join(ROOT, name);

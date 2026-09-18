@@ -1,0 +1,138 @@
+---
+/**
+ * Redirect stub for an exhibition cluster that is published on its own hostname
+ * (`PUBLIC_HOSTS_MODE=subdomain`). The root host keeps the old URL alive with the event's
+ * own facts on it and one obvious way forward; `Base` points canonical/og/hreflang at the
+ * real page. This is a safety net for hosts that cannot 301 — a CDN redirect is preferred.
+ */
+import { localize, type Locale } from '@/i18n/config';
+import type { ExpoEvent } from '@/data/events';
+import { abs } from '@/lib/seo';
+import Base from '@/layouts/Base.astro';
+import Icon from '@/components/Icon.astro';
+
+interface Props {
+  locale: Locale;
+  event: ExpoEvent;
+  section: 'overview' | 'exhibitors' | 'visitors' | 'program';
+  to: string;
+}
+
+const { locale, event, section, to } = Astro.props as Props;
+const ru = locale === 'ru';
+const name = event.brand[locale];
+
+const labels: Record<Props['section'], { ru: string; en: string }> = {
+  overview: { ru: 'Главная страницы выставки', en: 'the exhibition’s main page' },
+  exhibitors: { ru: 'Раздел для экспонентов', en: 'the exhibitor section' },
+  visitors: { ru: 'Раздел для посетителей', en: 'the visitor section' },
+  program: { ru: 'Деловая программа', en: 'the business programme' },
+};
+
+const short: Record<Props['section'], { ru: string; en: string }> = {
+  overview: { ru: 'сайт выставки', en: 'exhibition site' },
+  exhibitors: { ru: 'экспонентам', en: 'for exhibitors' },
+  visitors: { ru: 'посетителям', en: 'for visitors' },
+  program: { ru: 'деловая программа', en: 'business programme' },
+};
+
+const copy = {
+  ru: {
+    title: `${name} — ${short[section].ru}`,
+    desc: `${name}: ${event.dates.display.ru}. ${short[section].ru}: страница переехала на отдельный адрес.`,
+    h1: `${name} — на отдельном адресе`,
+    lead: `${labels[section].ru} теперь живёт собственным сайтом: те же даты, тот же зал, те же контакты, но без лишней навигации центра. Страница откроется автоматически; если этого не произошло — нажмите кнопку.`,
+    cta: 'Перейти на сайт выставки',
+    back: 'Вернуться в афишу SOF EXPO',
+    note: 'Центр, аренда зала и все остальные выставки — на sofexpo.org',
+  },
+  en: {
+    title: `${name} — ${short[section].en}`,
+    desc: `${name}: ${event.dates.display.en}. ${short[section].en} — this page moved to the exhibition's own hostname.`,
+    h1: `${name} now has its own address`,
+    lead: `${labels[section].en} has its own site now: same dates, same hall, same contacts — without the centre's surrounding navigation. The page opens automatically; if it does not, use the button.`,
+    cta: 'Open the exhibition site',
+    back: 'Back to the SOF EXPO line-up',
+    note: 'The centre, hall rental and the rest of the line-up stay on sofexpo.org',
+  },
+}[locale];
+---
+
+<Base
+  {locale}
+  title={copy.title}
+  description={copy.desc}
+  path={`/events/${event.slug}/${section === 'overview' ? '' : `${section}/`}`}
+  image={event.heroImage}
+  noindex
+  redirect={to}
+>
+  <section class="sec sec--paper moved">
+    <div class="wrap moved__in">
+      <p class="kicker">{ru ? 'Переезд страницы' : 'Page moved'}</p>
+      <h1 class="h1">{copy.h1}</h1>
+      <p class="lead">{copy.lead}</p>
+
+      <dl class="moved__facts">
+        <div>
+          <dt>{ru ? 'Даты' : 'Dates'}</dt>
+          <dd>{event.dates.display[locale]}</dd>
+        </div>
+        {event.facts.slice(0, 2).map((f) => (
+          <div>
+            <dt>{f.label[locale]}</dt>
+            <dd>{f.value}</dd>
+          </div>
+        ))}
+      </dl>
+
+      <p class="moved__cta">
+        <a class="btn btn--primary" href={to} rel="follow">
+          {copy.cta}
+          <Icon name="arrow-right" size={18} />
+        </a>
+        <a class="btn btn--ghost" href={localize(locale, '/events/')}>{copy.back}</a>
+      </p>
+      <p class="moved__note">{copy.note}</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .moved__in {
+    max-width: 720px;
+  }
+  .moved__facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-6) var(--sp-9);
+    margin: var(--sp-7) 0 0;
+    padding: var(--sp-6) 0 0;
+    border-top: 1px solid var(--line);
+  }
+  .moved__facts div {
+    min-width: 132px;
+  }
+  .moved__facts dt {
+    font: 600 11px/1.4 var(--font-body);
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin: 0 0 4px;
+  }
+  .moved__facts dd {
+    margin: 0;
+    font: 500 16px/1.45 var(--font-body);
+  }
+  .moved__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-4);
+    margin: var(--sp-7) 0 0;
+  }
+  .moved__note {
+    margin: var(--sp-5) 0 0;
+    font-size: 13.5px;
+    color: var(--ink-3);
+  }
+</style>

@@ -1,0 +1,11 @@
+{
+  "root": "sofexpo.org",
+  "sections": ["exhibitors", "visitors", "program"],
+  "hosts": [
+    { "host": "foodera.sofexpo.org", "event": "foodera-expo", "label": { "ru": "FOODERA EXPO", "en": "FOODERA EXPO" } },
+    { "host": "buildpro.sofexpo.org", "event": "buildpro-expo", "label": { "ru": "BUILD PRO EXPO", "en": "BUILD PRO EXPO" } },
+    { "host": "agropro.sofexpo.org", "event": "agropro-expo", "label": { "ru": "AGROPRO EXPO", "en": "AGROPRO EXPO" } },
+    { "host": "worldedu.sofexpo.org", "event": "world-edu-expo", "label": { "ru": "WORLD EDU EXPO", "en": "WORLD EDU EXPO" } },
+    { "host": "ecomretail.sofexpo.org", "event": "ecom-retail-expo", "label": { "ru": "ECOM & RETAIL EXPO", "en": "ECOM & RETAIL EXPO" } }
+  ]
+}

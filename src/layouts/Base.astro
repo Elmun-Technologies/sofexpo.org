@@ -4,6 +4,7 @@ import '@fontsource-variable/onest/wght.css';
 import '@fontsource-variable/unbounded/wght.css';
 import { buildMeta, entityNodes, SITE } from '@/lib/seo';
 import { localize, localeMeta, type Locale } from '@/i18n/config';
+import { isRootHost } from '@/data/hosts';
 import { useUI } from '@/i18n/ui';
 import Header from '@/components/Header.astro';
 import PromoBar from '@/components/PromoBar.astro';
@@ -24,6 +25,13 @@ interface Props {
   /** LCP image to preload (absolute-from-root path) */
   preload?: string;
   breadcrumbs?: { name: string; path: string }[];
+  /**
+   * Absolute URL this page redirects to. Used when an exhibition cluster is published on its
+   * own hostname: the old root path stays alive as a stub (no crawler lands on a 404, no
+   * anchor text is wasted) while every identity signal — canonical, og:url, hreflang — is
+   * pointed at the real page. A real 301 at the CDN is still preferred; see docs/05.
+   */
+  redirect?: string;
 }
 
 const props = Astro.props;
@@ -39,6 +47,12 @@ const meta = buildMeta({
   modifiedTime: props.modifiedTime,
   noindex: props.noindex,
 });
+if (props.redirect) {
+  meta.canonical = props.redirect;
+  meta.og.url = props.redirect;
+  meta.hreflang = [];
+  meta.xDefault = props.redirect;
+}
 const t = useUI(locale);
 const nodes: Record<string, unknown>[] = [
   {
@@ -88,7 +102,10 @@ const crumbs = [{ name: t('breadcrumbs.home'), path: '/' }, ...breadcrumbs];
       ))
     }
     <link rel="alternate" hreflang="x-default" href={meta.xDefault} />
-    <link rel="alternate" type="application/rss+xml" title="SOF EXPO Samarkand" href={`/${locale}/rss.xml`} />
+    {isRootHost && (
+      <link rel="alternate" type="application/rss+xml" title="SOF EXPO Samarkand" href={`/${locale}/rss.xml`} />
+    )}
+    {props.redirect && <meta http-equiv="refresh" content={`0; url=${props.redirect}`} />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />

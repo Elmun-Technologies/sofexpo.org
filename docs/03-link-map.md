@@ -1,6 +1,12 @@
 # 03 · Link map
 
 152 pages: 75 URLs per locale, mirrored 1:1, plus the bilingual gate `/` and `/404`.
+
+**Hosts.** Всё ниже описывает режим `alias` (один хост). В режиме `subdomain` те же связи
+разъезжаются по hostname'ам: `ownerOf()` решает, какой путь на каком хосте публикуется,
+а `localize()` превращает чужой путь в абсолютный URL — якоря, глубина и логика хаба не
+меняются. Матрица владения и 7 правил межхостовой перелинковки: `docs/05-subdomains.md`;
+интегральность ссылок между хостами проверяет `scripts/check-hosts.mjs`.
 Every page is reachable in ≤ 3 clicks from `/ru/` or `/en/`, and no indexable page has
 zero inbound links (rule 10 of the audit).
 

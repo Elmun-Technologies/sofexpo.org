@@ -8,11 +8,18 @@ import '@fontsource-variable/onest/wght.css';
 import '@fontsource-variable/unbounded/wght.css';
 import { SITE } from '@/lib/seo';
 import { site } from '@/data/site';
-import { upcoming } from '@/data/events';
+import { upcoming, events } from '@/data/events';
+import { localize } from '@/i18n/config';
+import { CURRENT_EVENT, isRootHost } from '@/data/hosts';
 import Icon from '@/components/Icon.astro';
 
 const next = upcoming[0];
-const langs = [
+/* On an exhibition hostname the gate offers the two languages of that show, not of the centre. */
+const hostEvent = CURRENT_EVENT ? events.find((e) => e.slug === CURRENT_EVENT) ?? null : null;
+const brand = hostEvent ? hostEvent.brand.ru : site.brand.ru;
+const sub = hostEvent ? `${hostEvent.brand.en}: ${hostEvent.dates.display.en}` : site.tagline.en;
+const media = hostEvent ? hostEvent.heroImage : '/images/venue-exterior.jpg';
+const centreLangs = [
   {
     code: 'ru',
     label: 'Русский',
@@ -28,6 +35,25 @@ const langs = [
     text: 'Stand booking, business programme, visitor registration, hall rental for your own event.',
   },
 ];
+const eventLangs = hostEvent
+  ? [
+      {
+        code: 'ru',
+        label: 'Русский',
+        note: 'Язык деловой программы, каталога и договоров',
+        title: `${hostEvent.brand.ru}: ${hostEvent.dates.display.ru}`,
+        text: hostEvent.tagline.ru,
+      },
+      {
+        code: 'en',
+        label: 'English',
+        note: 'For international exhibitors and buyers',
+        title: `${hostEvent.brand.en}: ${hostEvent.dates.display.en}`,
+        text: hostEvent.tagline.en,
+      },
+    ]
+  : centreLangs;
+const langs = hostEvent ? eventLangs : centreLangs;
 ---
 
 <!doctype html>
@@ -35,8 +61,17 @@ const langs = [
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>SOF EXPO Samarkand — выставочный центр · exhibition centre</title>
-    <meta name="description" content={`${site.brand.ru}: ${site.venue.indoorM2} m² indoor, ${site.venue.outdoorM2} m² open-air, ${site.venue.eventsPerYear}+ events a year in Samarkand, Uzbekistan. Choose the Russian or English version of the site.`} />
+    <title>
+      {hostEvent
+        ? `${hostEvent.brand.ru} — ${hostEvent.dates.display.ru}`
+        : 'SOF EXPO Samarkand — выставочный центр · exhibition centre'}
+    </title>
+    <meta
+      name="description"
+      content={hostEvent
+        ? `${hostEvent.brand.en} ${hostEvent.dates.display.en} in Samarkand. Choose the Russian or English version of the show's site.`
+        : `${site.brand.ru}: ${site.venue.indoorM2} m² indoor, ${site.venue.outdoorM2} m² open-air, ${site.venue.eventsPerYear}+ events a year in Samarkand, Uzbekistan. Choose the Russian or English version of the site.`}
+    />
     <link rel="canonical" href={`${SITE}/`} />
     <link rel="alternate" hreflang="ru" href={`${SITE}/ru/`} />
     <link rel="alternate" hreflang="en" href={`${SITE}/en/`} />
@@ -56,17 +91,19 @@ const langs = [
     <link rel="apple-touch-icon" href="/favicon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
-    <link rel="alternate" type="application/rss+xml" title="SOF EXPO Samarkand" href={`${SITE}/rss.xml`} />
-    <link rel="preload" as="image" href="/images/venue-exterior.jpg" fetchpriority="high" />
+    {isRootHost && (
+      <link rel="alternate" type="application/rss+xml" title="SOF EXPO Samarkand" href={`${SITE}/ru/rss.xml`} />
+    )}
+    <link rel="preload" as="image" href={media} fetchpriority="high" />
     <script type="application/ld+json" is:inline set:html={JSON.stringify({ '@context': 'https://schema.org', '@type': 'WebSite', name: 'SOF EXPO Samarkand', url: `${SITE}/`, inLanguage: ['ru', 'en'], alternateName: ['SOF EXPO SAMARKAND', 'Выставочный центр SOF EXPO'], workInProgress: false })} />
   </head>
   <body class="gate">
     <main class="gate__main">
-      <div class="gate__media"><img src="/images/venue-exterior.jpg" alt="SOF EXPO Samarkand" width="1600" height="1000" fetchpriority="high" decoding="async" /></div>
+      <div class="gate__media"><img src={media} alt={brand} width="1600" height="1000" fetchpriority="high" decoding="async" /></div>
       <div class="gate__panel">
-        <p class="kicker">{site.brand.ru} · {site.location.city.en}, {site.location.country.en}</p>
-        <h1>{site.brand.ru}</h1>
-        <p class="lead">{site.tagline.en}</p>
+        <p class="kicker">{brand} · {site.location.city.en}, {site.location.country.en}</p>
+        <h1>{brand}</h1>
+        <p class="lead">{sub}</p>
 
         <div class="gate__doors">
           {langs.map((l) => (
@@ -93,14 +130,14 @@ const langs = [
           <p class="gate__next">
             <span class="mono-label">{next.shortName}</span>
             {next.dates.display.en} · {site.location.city.en}
-            <a href="/en/events/">All events →</a>
+            <a href={localize('en', '/events/')}>All events →</a>
           </p>
         )}
 
         <p class="gate__foot">
           <a href={`tel:${site.contacts.phoneMain.replace(/[^\d+]/g, '')}`}>{site.contacts.phoneMain}</a>
           · <a href={`mailto:${site.contacts.email}`}>{site.contacts.email}</a>
-          · <a href="/ru/">Рус</a> / <a href="/en/">Eng</a>
+          · <a href={localize('ru', '/')}>Рус</a> / <a href={localize('en', '/')}>Eng</a>
         </p>
       </div>
     </main>

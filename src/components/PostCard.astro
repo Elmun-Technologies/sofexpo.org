@@ -51,6 +51,10 @@ const hero = post.data.hero ?? relatedEvent?.heroImage ?? '/images/hero-hall.jpg
       <a href={href}>{post.data.title}</a>
     </h3>
     <p class="pc__d">{post.data.description}</p>
+    <p class="pc__go">
+      <a href={href}>{ru ? 'Читать' : 'Read'} →</a>
+      {post.data.event ? <span class="mono-label">· {post.data.event}</span> : null}
+    </p>
     {post.data.tags?.length ? (
       <ul class="tag-list">
         {post.data.tags.map((tg) => <li>{tg}</li>)}
@@ -112,6 +116,15 @@ const hero = post.data.hero ?? relatedEvent?.heroImage ?? '/images/hero-hall.jpg
   .pc h3 a:hover {
     color: var(--moss);
   }
+  .pc__go {
+    margin: 0.7rem 0 0;
+  }
+
+  .pc__go a {
+    font-weight: 600;
+    transition: color var(--tr);
+  }
+
   .pc__d {
     margin: 0;
     color: var(--ink-60);

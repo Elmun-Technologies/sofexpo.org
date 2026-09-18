@@ -5,6 +5,9 @@
    ============================================================ */
 
 :root {
+  /* the only easing curve in the product: a state change, not a performance. Displacement
+     (translate/scale) and reveal-on-hover are gone — see docs/07 §8 */
+  --tr: 130ms ease;
   /* palette — a specification sheet, not a mood board: white paper, cool neutral sheets,
      one deep green, ONE structural rule colour. The old cream/gold pastel wash is what made the
      whole site look like it came out of the same generator as the renders. */
@@ -265,10 +268,6 @@ li::marker {
   color: var(--gold-soft);
 }
 
-/* the ten files in /images/ are renders: grey until real photography replaces them 1:1 */
-img[src^="/images/"] {
-}
-
 .lead {
   font-size: var(--t-lead);
   line-height: 1.5;
@@ -340,11 +339,9 @@ img[src^="/images/"] {
   text-decoration: none;
   cursor: pointer;
   transition:
-    transform 0.18s ease,
-    background 0.18s ease,
-    color 0.18s ease,
-    box-shadow 0.18s ease;
-  will-change: transform;
+    background-color var(--tr),
+    border-color var(--tr),
+    color var(--tr);
 }
 
 .btn:hover {
@@ -352,7 +349,7 @@ img[src^="/images/"] {
 }
 
 .btn:active {
-  transform: translateY(0);
+  background: var(--evergreen);
 }
 
 .btn--gold {
@@ -423,18 +420,6 @@ img[src^="/images/"] {
   text-decoration: none;
   isolation: isolate;
 }
-
-.tile img {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
-}
-
-.tile:hover img {
-  transform: scale(1.045);
-}
-
 .tile__body {
   position: absolute;
   inset: auto 0 0 0;
@@ -936,8 +921,8 @@ a.chip:hover {
   text-decoration: none;
   color: var(--ink);
   transition:
-    background 0.16s ease,
-    color 0.16s ease;
+    background-color var(--tr),
+    color var(--tr);
 }
 
 .nav__link:hover,
@@ -958,22 +943,18 @@ a.chip:hover {
   background: var(--paper);
   border: 1px solid var(--line);
   border-radius: var(--r-lg);
-  box-shadow: var(--shadow);
   padding: 0.85rem;
   opacity: 0;
   visibility: hidden;
-  transform: translateY(-6px);
   transition:
-    opacity 0.18s ease,
-    transform 0.18s ease,
-    visibility 0.18s;
+    opacity var(--tr),
+    visibility var(--tr);
 }
 
 .nav__item:hover .mega,
 .nav__item:focus-within .mega {
   opacity: 1;
   visibility: visible;
-  transform: translateY(0);
 }
 
 .mega a {
@@ -1483,7 +1464,6 @@ body.nav-open .mnav {
 .tabs a[aria-current="page"] {
   background: var(--paper);
   color: var(--evergreen);
-  box-shadow: var(--shadow-soft);
 }
 
 /* ---------- marquee-free logo/partner row ---------- */
@@ -1518,8 +1498,8 @@ body.nav-open .mnav {
   overflow: hidden;
   text-decoration: none;
   transition:
-    box-shadow 0.2s ease,
-    transform 0.2s ease;
+    border-color var(--tr),
+    background-color var(--tr);
   height: 100%;
 }
 

@@ -418,11 +418,11 @@ const H = (p?: string) => {
     border-radius: var(--r);
     background: var(--paper);
     text-decoration: none;
-    transition: border-color .18s ease, transform .18s ease;
+    transition: border-color var(--tr), background-color var(--tr);
   }
   .files a:hover {
     border-color: var(--moss);
-    transform: translateY(-2px);
+    border-color: var(--ink);
   }
   .files__ico {
     width: 44px;
@@ -555,12 +555,11 @@ const H = (p?: string) => {
     padding: clamp(1.1rem, .7rem + 1.4vw, 1.7rem);
     text-decoration: none;
     color: inherit;
-    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    transition: border-color var(--tr), background-color var(--tr);
   }
   .feature:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-soft);
-  }
+    border-color: var(--ink);
+    }
   .feature h3 {
     font-size: clamp(1.02rem, .96rem + .3vw, 1.2rem);
     margin: 0 0 .35em;
@@ -579,8 +578,8 @@ const H = (p?: string) => {
     top: 1.1rem;
     right: 1.2rem;
     color: var(--moss);
-    opacity: 0;
-    transition: opacity .18s ease;
+    opacity: 0.55;
+    transition: opacity var(--tr), color var(--tr);
   }
   .feature:hover .feature__go {
     opacity: 1;

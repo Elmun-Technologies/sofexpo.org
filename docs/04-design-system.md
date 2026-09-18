@@ -171,6 +171,25 @@ block), otherwise the page opens with content, not a repeat of the header.
   `node scripts/build-assets.mjs` re-renders them from `public/images/venue-exterior.jpg` +
   `public/favicon.svg` with sharp — never edit them by hand.
 
+## 5b. Motion (what is allowed to move)
+
+Правило одно: **двигается только состояние, а не «красота»**. Проверка — по собранному CSS, а не
+по ощущениям (`scripts/qa-independent.py`).
+
+| Что                                                 | Как сейчас                                                                             | Почему                                                                                                        |
+| --------------------------------------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| hover у карточки/ссылки/кнопки                      | смена `border-color` / `background-color` / `color`, `transition: … var(--tr)` = 130ms | отклик обязан быть мгновенным и не иметь кривой «пружинки»                                                    |
+| подъёмы, `translateY`, `scale`, «Кен Бёрнс» на фото | **нет** (было 7 подъёмов + `scale(1.045)` на `.tile img`)                              | смещение — это спектакль; на touch-устройствах hover-подъём вообще не работает, а на десктопе не несёт данных |
+| стрелка «→» в карточке                              | видна всегда (`opacity: .55` → `1` на hover)                                           | раньше была `opacity: 0` и выезжала по hover — аффорданс, невидимый на планшете и в скринридере               |
+| `@keyframes`, `will-change`, `cubic-bezier`         | 0 / 0 / 0                                                                              | нет ни одной фоновой анимации; счётчик до открытия считается на билде, а не тикает JS                         |
+| меню `.mega`                                        | `opacity`+`visibility` (без сдвига), открывается и по `:focus-within`                  | доступность с клавиатуры; сдвиг был чисто косметическим                                                       |
+| FAQ `+` → `×`, бургер                               | `rotate(45deg)` без пружинки                                                           | это индикатор состояния, он остаётся                                                                          |
+| `prefers-reduced-motion: reduce`                    | гасит `animation`/`transition` в 0.001ms и `scroll-behavior: smooth`                   | один блок в `:root`-секции, покрывает и scoped-стили компонентов                                              |
+| `:focus-visible`                                    | 1px ring (2 места)                                                                     | единственный оставшийся `box-shadow` в CSS                                                                    |
+
+Всего hover-правил в сборке — 24, из них с перемещением — 0; `transition` — 12 объявлений, из них
+с `transform` — 2 (оба индикаторы состояния).
+
 ## 6. Voice (the "no fluff" contract)
 
 | Do                                                           | Don't                                            |

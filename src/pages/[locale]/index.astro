@@ -549,10 +549,10 @@ const jsonLd = [
     border-radius: var(--r-lg);
     padding: clamp(1.1rem, .7rem + 1.2vw, 1.6rem);
     text-decoration: none;
-    transition: transform .18s ease, box-shadow .18s ease;
+    transition: border-color var(--tr), background-color var(--tr);
   }
   .media-card:hover {
-    transform: translateY(-3px);
+    border-color: var(--ink);
     box-shadow: var(--shadow-soft);
   }
   .media-card h3 {

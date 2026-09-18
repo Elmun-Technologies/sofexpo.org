@@ -45,12 +45,11 @@ const { locale, items, cols = 3 } = Astro.props as {
     padding: clamp(1.1rem, .7rem + 1.4vw, 1.7rem);
     text-decoration: none;
     color: inherit;
-    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    transition: border-color var(--tr), background-color var(--tr);
   }
   .feature:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-soft);
-    border-color: var(--sage);
+    border-color: var(--ink);
+      border-color: var(--sage);
   }
   .feature__t {
     font-size: clamp(1.05rem, .98rem + .35vw, 1.25rem);
@@ -66,12 +65,10 @@ const { locale, items, cols = 3 } = Astro.props as {
     top: clamp(1.1rem, .7rem + 1vw, 1.6rem);
     right: clamp(1.1rem, .7rem + 1vw, 1.6rem);
     color: var(--moss);
-    opacity: 0;
-    transform: translateX(-6px);
-    transition: opacity .18s ease, transform .18s ease;
+    opacity: 0.55;
+    transition: opacity var(--tr), color var(--tr);
   }
   .feature:hover .feature__go {
     opacity: 1;
-    transform: none;
   }
 </style>

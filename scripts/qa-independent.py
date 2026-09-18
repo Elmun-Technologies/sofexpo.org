@@ -195,6 +195,30 @@ for label, d in HOSTS.items():
         else:
             seen[dgs] = u
 
+# ---- motion rules (design, enforced here because the design doc is not a test) ----
+motion_findings = []
+for label, d in HOSTS.items():
+    css_dir = os.path.join(d, '_astro')
+    if not os.path.isdir(css_dir):
+        continue
+    css = ''.join(open(os.path.join(css_dir, f), encoding='utf-8').read() for f in os.listdir(css_dir) if f.endswith('.css'))
+    for m in re.finditer(r'[^{}]*:hover[^{}]*\{[^}]*\}', css):
+        if re.search(r'translate[XY]?\(|scale\(', m.group(0)):
+            motion_findings.append(f'{label}: hover moves the layout — {m.group(0)[:70].strip()}')
+    if 'will-change' in css:
+        motion_findings.append(f'{label}: will-change present (no animation should need it)')
+    if '@keyframes' in css and 'prefers-reduced-motion' not in css:
+        motion_findings.append(f'{label}: @keyframes without a prefers-reduced-motion block')
+    for m in re.finditer(r'\.[a-z_-]+__go[^{}]*\{[^}]*opacity:\s*0[^.5]', css):
+        motion_findings.append(f'{label}: affordance hidden until hover — {m.group(0)[:60]}')
+    if re.search(r'transition:[^;]*transform', css):
+        for m in re.finditer(r'([^{}]{0,30}):?[^{}]*\{[^}]*transition:[^;}]*transform[^}]*\}', css):
+            sel = m.group(1).strip().splitlines()[-1] if m.group(1) else '?'
+            if not re.search(r'(summary|burger|nav-open|\.acc)', sel):
+                motion_findings.append(f'{label}: transition on transform at "{sel[:40]}"')
+for f in motion_findings:
+    findings['motion (hover must be state, not theatre)'].append(f)
+
 print('=== hosts / page counts ===')
 for label in pages:
     print(f'  {label:36} {len(pages[label]):4} html files')

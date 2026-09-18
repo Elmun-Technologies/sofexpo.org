@@ -5,6 +5,11 @@
  * exactly as in their file. It is typeset and vector, not a pasted PNG, so it stays sharp at 16px
  * (favicon), at 34px (header) and at 1200px (social card).
  *
+ * `tone` is not a cosmetic switch: on a dark ground the square goes white and the diamond tan gold;
+ * on paper the square takes the brand blue and the diamond the readable gold. Both pairs are
+ * contrast-measured (`docs/07` §10), and `stroke` is set from CSS because `var()` is illegal in a
+ * presentation attribute.
+ *
  * `withWordmark` renders the name as real text (never outlined), which is what allows a screen reader
  * and a print stylesheet to read it.
  */
@@ -24,8 +29,8 @@ const p = brand.palette;
 <span class:list={['bm', `bm--${tone}`]} style={`--bm-size:${size}px`}>
   <svg class="bm__mark" viewBox="0 0 64 64" width={size} height={size} aria-hidden="true" focusable="false">
     <g fill="none" stroke-width="7" stroke-linejoin="miter">
-      <rect x="15" y="15" width="34" height="34" stroke={p.mark} />
-      <rect x="15" y="15" width="34" height="34" stroke={p.goldSoft} transform="rotate(45 32 32)" />
+      <rect class="bm__a" x="15" y="15" width="34" height="34" />
+      <rect class="bm__b" x="15" y="15" width="34" height="34" transform="rotate(45 32 32)" />
     </g>
   </svg>
   {
@@ -49,6 +54,34 @@ const p = brand.palette;
   .bm__mark {
     display: block;
     flex: none;
+  }
+
+  /*
+   * Which ribbon is which colour depends on the ground, and only on the ground: the brand blue is
+   * 4.12 on paper but 2.52 on the host's own dark field, tan gold is 4.44 on dark and 2.34 on paper.
+   * So the two strokes swap roles per tone rather than each call site passing hexes.
+   */
+  .bm--on-dark {
+    --bm-a: #ffffff;
+    --bm-b: var(--gold-soft);
+  }
+
+  .bm--on-light {
+    --bm-a: var(--brand-mark);
+    --bm-b: var(--gold);
+  }
+
+  .bm--auto {
+    --bm-a: var(--brand-mark);
+    --bm-b: var(--gold);
+  }
+
+  .bm__a {
+    stroke: var(--bm-a);
+  }
+
+  .bm__b {
+    stroke: var(--bm-b);
   }
 
   .bm__txt {

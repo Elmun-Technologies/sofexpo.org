@@ -113,11 +113,22 @@ if (!flag('no-audit')) {
   execFileSync('node', ['scripts/check-hosts.mjs', '--dir', out, '--mode', mode], { stdio: 'inherit' });
 }
 
-/* `dist/` keeps the centre build so `npm run preview` behaves as before */
-const centre = join(out, map.root);
-if (existsSync(centre)) {
+/* `dist/` must stay previewable: in subdomain mode the centre's HTML links out to hostnames
+   that do not resolve locally, so we leave a single-host (alias) build in place instead. */
+if (mode !== 'alias') {
+  console.log('\n=== restoring a single-host build in dist/ for `npm run preview` ===');
   rmSync('dist', { recursive: true, force: true });
-  cpSync(centre, 'dist', { recursive: true });
+  execFileSync('npx', ['astro', 'build'], {
+    env: { ...process.env, SITE: `https://${map.root}/`, PUBLIC_HOSTS_MODE: 'alias' },
+    stdio: 'inherit',
+  });
+  execFileSync('node', ['scripts/prune-sitemap.mjs', 'dist'], { stdio: 'inherit' });
+} else {
+  const centre = join(out, map.root);
+  if (existsSync(centre)) {
+    rmSync('dist', { recursive: true, force: true });
+    cpSync(centre, 'dist', { recursive: true });
+  }
 }
 
 const countHtml = (dir) => {

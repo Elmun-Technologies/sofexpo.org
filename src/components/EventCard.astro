@@ -1,0 +1,77 @@
+---
+import { localize, type Locale } from '@/i18n/config';
+import type { ExpoEvent } from '@/data/events';
+import Icon from '@/components/Icon.astro';
+
+interface Props {
+  locale: Locale;
+  event: ExpoEvent;
+  priority?: boolean;
+  variant?: 'default' | 'wide';
+}
+const { locale, event, priority = false, variant = 'default' } = Astro.props;
+const href = localize(locale, `/events/${event.slug}/`);
+const ru = locale === 'ru';
+const daysToStart = Math.ceil((new Date(event.dates.start).getTime() - Date.now()) / 86400000);
+---
+<article class:list={['ev', { 'ev--wide': variant === 'wide' }]}>
+  <a class="ev__img" href={href} aria-label={event.brand[locale]}>
+    <img
+      src={event.heroImage}
+      alt={event.tagline[locale]}
+      width="800"
+      height="500"
+      loading={priority ? 'eager' : 'lazy'}
+      decoding="async"
+      fetchpriority={priority ? 'high' : 'auto'}
+    />
+    <span class="ev__date">{event.dates.display[locale]}</span>
+  </a>
+  <div class="ev__body">
+    <p class="mono-label" style="margin:0">{event.edition[locale]}</p>
+    <h3><a href={href} style="text-decoration:none">{event.brand[locale]}</a></h3>
+    <p>{event.tagline[locale]}</p>
+    <ul class="tag-list" style="margin-top:.4rem">
+      {event.categories.slice(0, 3).map((c) => <li>{c.name[locale]}</li>)}
+      {event.categories.length > 3 && <li>+{event.categories.length - 3}</li>}
+    </ul>
+    <div class="ev__foot">
+      <span>
+        <Icon name="pin" size={15} /> {ru ? 'Самарканд · SOF EXPO' : 'Samarkand · SOF EXPO'}
+      </span>
+      <span style="display:inline-flex;align-items:center;gap:.4rem">
+        {event.status === 'past' ? (
+          <span class="chip">{ru ? 'Отчёт и архив' : 'Report and archive'}</span>
+        ) : daysToStart > 0 ? (
+          <span class="chip chip--live"><span class="dot"></span>{ru ? `через ${daysToStart} дн.` : `in ${daysToStart} d`}</span>
+        ) : (
+          <span class="chip chip--live"><span class="dot"></span>{ru ? 'Идёт сейчас' : 'Running now'}</span>
+        )}
+        <a class="ev__more" href={href}>{ru ? 'Подробнее' : 'Details'} →</a>
+      </span>
+    </div>
+  </div>
+</article>
+
+<style>
+  .ev--wide {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  }
+  .ev--wide .ev__img img {
+    height: 100%;
+    aspect-ratio: auto;
+    min-height: 260px;
+  }
+  .ev__more {
+    color: var(--moss);
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  @media (max-width: 860px) {
+    .ev--wide {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

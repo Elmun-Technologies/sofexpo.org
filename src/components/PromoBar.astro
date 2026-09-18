@@ -1,0 +1,53 @@
+---
+/**
+ * Site-wide announcement strip (the pattern AGRAVIA and Textilelegprom put above the fold):
+ * the next edition, the one fact that creates urgency, and the two actions that convert.
+ * Driven entirely by `events.ts` — when the date passes, the strip moves to the next show,
+ * and if nothing is upcoming the strip is not rendered at all.
+ */
+import { localize, type Locale } from '@/i18n/config';
+import { nextEvent } from '@/data/events';
+import { site } from '@/data/site';
+import Icon from '@/components/Icon.astro';
+
+const { locale, hideFor = '' } = Astro.props as { locale: Locale; hideFor?: string };
+const ru = locale === 'ru';
+const L = (p: string) => localize(locale, p);
+
+const event = nextEvent();
+const isUpcoming = !!event && event.status !== 'past' && !!event.highlight;
+/** on the event's own page the same facts are already in the hero */
+const show = isUpcoming && !hideFor.startsWith(`/events/${event!.slug}/`) && hideFor !== `/events/${event!.slug}/`;
+---
+
+{
+  show && (
+    <div class="promo" data-promo={event!.slug}>
+      <div class="wrap promo__in">
+        <p class="promo__txt">
+          <span class="dot" aria-hidden="true"></span>
+          <b>
+            {event!.highlight!.label[locale]} · {event!.brand[locale]}{' '}
+            {event!.dates.display[locale]}
+          </b>
+          <span class="promo__note">{event!.highlight!.text[locale]}</span>
+        </p>
+        <div class="promo__act">
+          <a class="btn btn--sm btn--light" href={`${L('/request-stand/')}?event=${event!.slug}`}>
+            <Icon name="sparkle" size={15} />
+            {ru ? 'Забронировать стенд' : 'Book a stand'}
+          </a>
+          <a href={L(`/events/${event!.slug}/`)}>
+            {ru ? 'Об этой выставке' : 'About this edition'} <Icon name="arrow" size={14} />
+          </a>
+          <a href={L('/visitors/tickets/')}>
+            {ru ? 'Пригласительный билет' : 'Get an entry pass'} <Icon name="arrow" size={14} />
+          </a>
+          <a href={`tel:${site.contacts.phoneMain.replace(/\s/g, '')}`}>
+            <Icon name="phone" size={14} /> {site.contacts.phoneMain}
+          </a>
+        </div>
+      </div>
+    </div>
+  )
+}

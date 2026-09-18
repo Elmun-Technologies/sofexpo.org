@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 96" role="img" aria-label="SOF EXPO Samarkand">
+  <rect width="320" height="96" rx="16" fill="#12301f"/>
+  <text x="28" y="46" font-family="Helvetica, Arial, sans-serif" font-size="30" font-weight="700" fill="#f7f4ec" letter-spacing="1">SOF EXPO</text>
+  <text x="28" y="72" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#e9c981" letter-spacing="4">SAMARKAND</text>
+  <circle cx="286" cy="48" r="10" fill="#c58a2e"/>
+</svg>

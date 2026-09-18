@@ -1,0 +1,21 @@
+---
+/** Exhibition overview page. */
+import type { GetStaticPaths } from 'astro';
+import { locales } from '@/i18n/config';
+import { events } from '@/data/events';
+import { eventPages } from '@/data/pages/event-pages';
+import EventPage from '@/components/EventPage.astro';
+
+export const getStaticPaths = (async () => {
+  const out: { params: { locale: string; slug: string } }[] = [];
+  for (const locale of locales) for (const event of events) out.push({ params: { locale, slug: event.slug } });
+  return out;
+}) satisfies GetStaticPaths;
+
+const { locale } = Astro.params as { locale: 'ru' | 'en' };
+const slug = Astro.params.slug as string;
+const event = events.find((e) => e.slug === slug)!;
+const page = eventPages[slug].overview;
+---
+
+<EventPage {locale} {event} {page} />

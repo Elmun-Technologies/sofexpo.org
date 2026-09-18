@@ -1,0 +1,128 @@
+---
+/** Static 404 for every locale: give the four doors that matter, in both languages. */
+import '@/styles/global.css';
+import '@fontsource-variable/onest/wght.css';
+import '@fontsource-variable/unbounded/wght.css';
+import { site } from '@/data/site';
+import { upcoming } from '@/data/events';
+
+const next = upcoming[0];
+const cards = [
+  { ru: '/ru/events/', en: '/en/events/', tRu: 'Афиша выставок', tEn: 'Exhibition line-up', dRu: 'Даты, разделы, регистрация', dEn: 'Dates, sections, registration' },
+  { ru: '/ru/exhibitors/packages/', en: '/en/exhibitors/packages/', tRu: 'Пакеты и цены', tEn: 'Packages and rates', dRu: 'Сколько стоит участие', dEn: 'What participation costs' },
+  { ru: '/ru/venue/halls/', en: '/en/venue/halls/', tRu: 'Залы и площади', tEn: 'Halls and areas', dRu: '4 400 м² и 5 000 м²', dEn: '4,400 m² and 5,000 m²' },
+  { ru: '/ru/contacts/', en: '/en/contacts/', tRu: 'Контакты', tEn: 'Contacts', dRu: 'Телефон, почта, адрес', dEn: 'Phone, email, address' },
+];
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>404 — страница не найдена · SOF EXPO Samarkand</title>
+    <meta name="description" content="Страница не найдена. Перейдите в афишу выставок, к пакетам участия, описанию площадки или контактам SOF EXPO Samarkand." />
+    <meta name="robots" content="noindex,follow" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body class="nf">
+    <main class="nf__wrap">
+      <p class="kicker">404 · Page not found</p>
+      <h1>Такой страницы нет — есть всё остальное</h1>
+      <p class="lead">
+        Структура сайта обновлена, поэтому старые адреса разделов могли измениться. Начните с афиши, либо напишите нам — подскажем, где лежат нужные материалы.
+      </p>
+
+      <div class="nf__grid">
+        {cards.map((c) => <a class="nf__card" href={c.ru}><b>{c.tRu}</b><span>{c.dRu}</span><small lang="en">{c.tEn} — {c.dEn}</small></a>)}
+      </div>
+
+      <p class="nf__next">
+        {next && (
+          <>
+            Ближайшее событие: <a href={`/ru/events/${next.slug}/`}>{next.brand.ru}</a> · {next.dates.display.ru} <span lang="en">/ {next.dates.display.en}</span>
+          </>
+        )}
+      </p>
+
+      <p class="nf__foot">
+        <a href="/ru/">Русская версия</a> · <a href="/en/">English version</a> · <a href="/ru/search/">Поиск по сайту</a> · <a href={`mailto:${site.contacts.email}`}>{site.contacts.email}</a> · <a href={`tel:${site.contacts.phoneMain.replace(/[^\d+]/g, '')}`}>{site.contacts.phoneMain}</a>
+      </p>
+    </main>
+
+    <style is:global>
+      body.nf {
+        background: var(--evergreen);
+        color: #f6f3ea;
+        min-height: 100vh;
+      }
+    </style>
+    <style>
+      .nf__wrap {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: clamp(2.4rem, 1.4rem + 5vw, 6rem) clamp(1.1rem, .6rem + 2vw, 2rem);
+      }
+      .nf__wrap :global(.kicker) {
+        color: var(--gold-soft);
+      }
+      h1 {
+        color: #fff;
+        font-size: clamp(2rem, 1.2rem + 3.4vw, 3.4rem);
+        margin: 0.3rem 0 0.8rem;
+        max-width: 24ch;
+      }
+      .lead {
+        color: rgba(246, 243, 234, 0.82);
+        max-width: 62ch;
+      }
+      .nf__grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 0.8rem;
+        margin: 2rem 0 1.6rem;
+      }
+      .nf__card {
+        display: grid;
+        gap: 0.3rem;
+        padding: 1.1rem 1.15rem;
+        border-radius: var(--r-lg);
+        background: rgba(246, 243, 234, 0.07);
+        border: 1px solid rgba(246, 243, 234, 0.18);
+        color: inherit;
+        text-decoration: none;
+      }
+      .nf__card:hover {
+        border-color: var(--gold-soft);
+        transform: translateY(-2px);
+      }
+      .nf__card b {
+        font-family: var(--f-display);
+        font-size: 1rem;
+      }
+      .nf__card span {
+        font-size: 0.9rem;
+        color: rgba(246, 243, 234, 0.78);
+      }
+      .nf__card small {
+        font-size: 0.78rem;
+        color: rgba(246, 243, 234, 0.5);
+      }
+      .nf__next {
+        padding-top: 1rem;
+        border-top: 1px solid rgba(246, 243, 234, 0.16);
+        font-size: 0.95rem;
+      }
+      .nf__next a {
+        color: var(--gold-soft);
+      }
+      .nf__foot {
+        font-size: 0.85rem;
+        color: rgba(246, 243, 234, 0.62);
+      }
+      .nf__foot a {
+        color: inherit;
+      }
+    </style>
+  </body>
+</html>

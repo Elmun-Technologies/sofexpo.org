@@ -1,0 +1,95 @@
+---
+/**
+ * Per-edition section rail (the Textilelegprom left-panel pattern, adapted to our
+ * full-width block flow): the four pages of the cluster, the hub pages a buyer needs
+ * next, and the two actions — always one click away, on every page of the cluster.
+ * Sticky, horizontally scrollable on phones, plain links for crawlers.
+ */
+import { localize, type Locale } from '@/i18n/config';
+import type { ExpoEvent } from '@/data/events';
+import Icon from '@/components/Icon.astro';
+
+const { locale, event, active, past = false } = Astro.props as {
+  locale: Locale;
+  event: ExpoEvent;
+  /** page path without the locale prefix, e.g. /events/foodera-expo/exhibitors/ */
+  active: string;
+  past?: boolean;
+};
+
+const ru = locale === 'ru';
+const L = (p: string) => localize(locale, p);
+const base = `/events/${event.slug}/`;
+
+const tabs = past
+  ? [
+      { path: base, ru: 'Итоги редакции', en: 'Edition results' },
+      { path: `${base}exhibitors/`, ru: 'Форматы участия', en: 'Ways to take part' },
+      { path: `${base}visitors/`, ru: 'Посетителям', en: 'For visitors' },
+      { path: `${base}program/`, ru: 'Программа', en: 'Programme' },
+      { path: '/events/past/', ru: 'Все архивы', en: 'All archives' },
+    ]
+  : [
+      { path: base, ru: 'Об выставке', en: 'About the show' },
+      { path: `${base}exhibitors/`, ru: 'Экспонентам', en: 'For exhibitors' },
+      { path: `${base}visitors/`, ru: 'Посетителям', en: 'For visitors' },
+      { path: `${base}program/`, ru: 'Деловая программа', en: 'Business programme' },
+    ];
+
+const hubs = [
+  { path: '/exhibitors/packages/', ru: 'Пакеты и ставки', en: 'Packages and rates' },
+  { path: '/exhibitors/catalogue/', ru: 'Каталог участников', en: 'Exhibitor catalogue' },
+  { path: '/venue/tech-specs/', ru: 'Техспецификация зала', en: 'Venue technical sheet' },
+  {
+    path: past ? '/events/' : '/venue/how-to-get-there/',
+    ru: past ? 'Афиша 2026–2027' : 'Как добраться',
+    en: past ? 'Line-up 2026–2027' : 'Getting there',
+  },
+];
+const ctas = (past
+  ? [
+      { ru: 'Участвовать в следующей редакции', en: 'Join the next edition', href: L('/request-stand/'), tone: 'gold' },
+      { ru: 'Каталог участников', en: 'Exhibitor catalogue', href: L('/exhibitors/catalogue/'), tone: 'ghost' },
+    ]
+  : [
+      { ru: 'Забронировать стенд', en: 'Book a stand', href: `${L('/request-stand/')}?event=${event.slug}`, tone: 'gold' },
+      { ru: 'Пригласительный билет', en: 'Get an entry pass', href: L('/visitors/tickets/'), tone: 'ghost' },
+    ]
+).map((c) => ({ ...c, label: ru ? c.ru : c.en }));
+
+---
+
+<nav class="evnav" aria-label={ru ? `Разделы ${event.shortName}` : `${event.shortName} sections`}>
+  <div class="wrap evnav__in">
+    <ul class="evnav__tabs">
+      {
+        tabs.map((tab) => (
+          <li>
+            <a href={L(tab.path)} aria-current={tab.path === active ? 'page' : undefined}>
+              {ru ? tab.ru : tab.en}
+            </a>
+          </li>
+        ))
+      }
+      <li class="evnav__sep" aria-hidden="true"></li>
+      {
+        hubs.map((hub) => (
+          <li>
+            <a href={L(hub.path)}>
+              {ru ? hub.ru : hub.en} <Icon name="arrow" size={13} />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <div class="evnav__cta">
+      {
+        ctas.map((c) => (
+          <a class:list={['btn', 'btn--sm', c.tone === 'gold' ? 'btn--gold' : 'btn--ghost']} href={c.href}>
+            {c.label}
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</nav>

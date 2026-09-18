@@ -1,0 +1,102 @@
+---
+/** Typography for rendered markdown of a news note or an analytical article. */
+const { layout = 'prose' } = Astro.props as { layout?: 'prose' | 'sidebar' };
+---
+
+<div class:list={['post-body', `post-body--${layout}`]}>
+  <slot />
+</div>
+
+<style>
+  .post-body {
+    max-width: 74ch;
+    font-size: 1.045rem;
+    line-height: 1.68;
+  }
+  .post-body :global(h2),
+  .post-body :global(h3),
+  .post-body :global(h4) {
+    font-family: var(--f-display);
+    letter-spacing: -0.015em;
+    scroll-margin-top: 96px;
+  }
+  .post-body :global(h2) {
+    font-size: var(--t-h2);
+    margin: 2.4rem 0 0.8rem;
+  }
+  .post-body :global(h3) {
+    font-size: var(--t-h3);
+    margin: 2rem 0 0.6rem;
+    color: var(--evergreen);
+  }
+  .post-body :global(h4) {
+    font-size: var(--t-h4);
+    margin: 1.6rem 0 0.5rem;
+  }
+  .post-body :global(p) {
+    margin: 0 0 1.15em;
+  }
+  .post-body :global(ul),
+  .post-body :global(ol) {
+    margin: 0 0 1.2em;
+    padding-left: 1.35rem;
+  }
+  .post-body :global(li) {
+    margin: 0 0 0.4em;
+  }
+  .post-body :global(li::marker) {
+    color: var(--moss);
+  }
+  .post-body :global(a) {
+    color: var(--evergreen-2);
+    text-decoration: underline;
+    text-decoration-color: var(--sage);
+    text-underline-offset: 0.18em;
+  }
+  .post-body :global(a:hover) {
+    text-decoration-color: var(--gold);
+  }
+  .post-body :global(strong) {
+    color: var(--evergreen);
+  }
+  .post-body :global(blockquote) {
+    margin: 1.8rem 0;
+    padding: 0.2rem 0 0.2rem 1.2rem;
+    border-left: 3px solid var(--gold);
+    font-family: var(--f-display);
+    font-size: 1.1rem;
+    line-height: 1.45;
+  }
+  .post-body :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.6rem 0;
+    font-size: 0.95rem;
+  }
+  .post-body :global(th),
+  .post-body :global(td) {
+    text-align: left;
+    padding: 0.6rem 0.7rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .post-body :global(th) {
+    background: var(--cream-2);
+    font-family: var(--f-display);
+    font-size: 0.85rem;
+  }
+  .post-body :global(img) {
+    border-radius: var(--r);
+    margin: 1.6rem 0;
+  }
+  .post-body :global(hr) {
+    border: 0;
+    border-top: 1px solid var(--line);
+    margin: 2.4rem 0;
+  }
+  .post-body :global(code) {
+    font-size: 0.9em;
+    background: var(--cream-2);
+    padding: 0.1em 0.35em;
+    border-radius: 6px;
+  }
+</style>

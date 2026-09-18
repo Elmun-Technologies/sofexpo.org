@@ -1,0 +1,110 @@
+---
+/** Newsroom: announcements and press releases, newest first, grouped by month. */
+import type { Locale } from '@/i18n/config';
+import { localize } from '@/i18n/config';
+import { getCollection } from 'astro:content';
+import { localePaths } from '@/lib/pages';
+import { abs, breadcrumbJsonLd, itemListJsonLd } from '@/lib/seo';
+import { site } from '@/data/site';
+import Base from '@/layouts/Base.astro';
+import SectionHead from '@/components/SectionHead.astro';
+import PostCard from '@/components/PostCard.astro';
+import CtaBand from '@/components/CtaBand.astro';
+
+export function getStaticPaths() {
+  return localePaths();
+}
+
+const locale = Astro.params.locale as Locale;
+const ru = locale === 'ru';
+const L = (p: string) => localize(locale, p);
+const all = (await getCollection('news', ({ data }) => !data.draft))
+  .filter((e) => e.id.startsWith(`${locale}/`))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const [lead, ...rest] = all;
+const months = new Map<string, typeof all>();
+for (const p of rest) {
+  const key = p.data.date.toLocaleDateString(ru ? 'ru-RU' : 'en-GB', { month: 'long', year: 'numeric' });
+  months.set(key, [...(months.get(key) ?? []), p]);
+}
+const copy = {
+  ru: {
+    title: 'Новости SOF EXPO Samarkand: анонсы выставок и пресс-релизы',
+    desc: 'Официальные новости экспоцентра: открытие продаж и регистрации, состав участников, деловые программы, итоги редакций и материалы для СМИ.',
+    h1: 'Новости центра',
+    lead: 'Анонсы, изменения в программах, итоги прошедших выставок и пресс-релизы. Для редакций — медиакит с логотипами и статистикой.',
+  },
+  en: {
+    title: 'SOF EXPO Samarkand news: exhibition announcements and press releases',
+    desc: 'Official centre news: sales and registration openings, exhibitor line-ups, programme changes, past-edition results and material for media.',
+    h1: 'Newsroom',
+    lead: 'Announcements, programme changes, results of past editions and press releases. A media kit with logos and statistics for editors.',
+  },
+};
+---
+
+<Base
+  {locale}
+  title={copy[locale].title}
+  description={copy[locale].desc}
+  path="/news/"
+  image={lead?.data.hero ?? '/og/default.jpg'}
+  breadcrumbs={[{ name: ru ? 'Новости' : 'News', path: '/news/' }]}
+  jsonLd={[
+    breadcrumbJsonLd([{ name: 'SOF EXPO Samarkand', url: abs(`/${locale}/`) }, { name: ru ? 'Новости' : 'News', url: abs(L('/news/')) }]),
+    itemListJsonLd(
+      all.map((p) => ({ name: p.data.title, url: abs(`${L('/news/')}${p.id.split('/').slice(1).join('/')}/`) })),
+      abs(L('/news/')),
+      ru ? 'Новости' : 'News',
+    ),
+  ]}
+>
+  <section class="sec">
+    <div class="wrap">
+      <SectionHead level={1} locale={locale} kicker={ru ? 'Пресс-центр' : 'Press office'} title={copy[locale].h1} text={copy[locale].lead}>
+        <div slot="aside" class="btn-row">
+          <a class="btn btn--sm btn--ghost" href={`/${locale}/rss.xml`}>RSS</a>
+          <a class="btn btn--sm btn--ghost" href={L('/news/media-kit/')}>{ru ? 'Медиа-кит' : 'Media kit'}</a>
+        </div>
+      </SectionHead>
+      {lead && <PostCard {locale} post={lead} path="/news/" variant="lead" priority />}
+    </div>
+  </section>
+
+  {months.size > 0 && (
+    <section class="sec sec--paper">
+      <div class="wrap wrap--narrow">
+        {
+          [...months.entries()].map(([month, list]) => (
+            <div class="mgroup">
+              <p class="mono-label">{month}</p>
+              {list.map((p) => <PostCard {locale} post={p} path="/news/" variant="row" />)}
+            </div>
+          ))
+        }
+      </div>
+    </section>
+  )}
+
+  <CtaBand
+    locale={locale}
+    kicker={ru ? 'Для СМИ' : 'For media'}
+    title={ru ? 'Нужен комментарий или статистика выставки?' : 'Need a comment or show statistics?'}
+    text={ru ? `Пишите на ${site.contacts.email} с темой «Press» — даём цифры, спикеров и архив фотографий со съёмки.` : `Write to ${site.contacts.email} with the subject "Press" — we provide figures, speakers and the photo archive.`}
+    primary={{ label: ru ? 'Медиа-кит' : 'Media kit', href: L('/news/media-kit/') }}
+    secondary={{ label: ru ? 'Контакты' : 'Contacts', href: L('/contacts/') }}
+  />
+</Base>
+
+<style>
+  .mgroup {
+    margin-bottom: 1.6rem;
+  }
+  .mgroup :global(.pc--row) {
+    padding-top: 1.2rem;
+  }
+  .mgroup :global(.pc--row:first-child) {
+    border-top: 1px solid var(--line);
+  }
+</style>

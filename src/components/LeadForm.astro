@@ -1,0 +1,207 @@
+---
+/**
+ * Lead capture. Static build → posts to an endpoint injected at build time.
+ * Set PUBLIC_LEAD_ENDPOINT (Telegram bot proxy, CRM webhook, Formspree, ...)
+ * Without an endpoint the form validates, shows the success state and offers
+ * a mailto fallback, so nothing is ever "broken" in preview.
+ */
+const {
+  locale,
+  title,
+  subtitle,
+  eventName = '',
+  directions = [],
+  areas = [],
+  compact = false,
+  note = '',
+  id = 'lead',
+} = Astro.props as {
+  locale: 'ru' | 'en';
+  title: string;
+  subtitle?: string;
+  eventName?: string;
+  directions?: string[];
+  areas?: string[];
+  compact?: boolean;
+  note?: string;
+  id?: string;
+};
+
+const ru = locale === 'ru';
+const endpoint = (import.meta.env.PUBLIC_LEAD_ENDPOINT ?? '').trim();
+const L = {
+  name: ru ? 'Имя и фамилия' : 'Full name',
+  company: ru ? 'Компания' : 'Company',
+  position: ru ? 'Должность' : 'Position',
+  phone: ru ? 'Телефон' : 'Phone',
+  email: 'Email',
+  direction: ru ? 'Направление деятельности' : 'Business segment',
+  area: ru ? 'Площадь стенда' : 'Stand area',
+  event: ru ? 'Выставка' : 'Exhibition',
+  comment: ru ? 'Комментарий' : 'Comment',
+  submit: ru ? 'Отправить заявку' : 'Send request',
+  consent: ru
+    ? 'Отправляя заявку, вы соглашаетесь с обработкой персональных данных.'
+    : 'By submitting, you consent to the processing of your personal data.',
+  ok: ru
+    ? 'Заявка сформирована. Менеджер свяжется с вами в течение 24 часов.'
+    : 'Request received. An account manager will contact you within 24 hours.',
+  err: ru ? 'Заполните обязательные поля.' : 'Please complete the required fields.',
+  fallback: ru
+    ? 'Мы получили ваш контакт только в этом браузере — отправьте заявку также на почту.'
+    : 'Your request was kept in this browser only — please also send it by email.',
+  positions: ru
+    ? ['Руководитель', 'Маркетолог', 'PR-менеджер', 'Менеджер по экспорту', 'Закупщик', 'Другое']
+    : ['Owner / CEO', 'Marketing', 'PR', 'Export manager', 'Buyer', 'Other'],
+  areaOptions: ['9 m²', '18 m²', '27 m²', '36 m²', '50+ m²', ''],
+};
+const areaList = areas.length ? areas : L.areaOptions.filter(Boolean);
+---
+
+<form class:list={['card', 'form-wrap', { 'form--compact': compact }]} id={id} data-lead-form data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} data-fallback={L.fallback} novalidate>
+  <div>
+    <h3 style="margin-bottom:.25em">{title}</h3>
+    {subtitle && <p class="muted small" style="margin:0">{subtitle}</p>}
+  </div>
+
+  <div class:list={['form', { 'form--2': !compact }]}>
+    <div class="field">
+      <label for={`${id}-name`}>{L.name} *</label>
+      <input id={`${id}-name`} name="name" autocomplete="name" required type="text" />
+    </div>
+    <div class="field">
+      <label for={`${id}-company`}>{L.company} *</label>
+      <input id={`${id}-company`} name="company" autocomplete="organization" required type="text" />
+    </div>
+    <div class="field">
+      <label for={`${id}-phone`}>{L.phone} *</label>
+      <input id={`${id}-phone`} name="phone" type="tel" autocomplete="tel" required placeholder="+998" />
+    </div>
+    <div class="field">
+      <label for={`${id}-email`}>{L.email}</label>
+      <input id={`${id}-email`} name="email" type="email" autocomplete="email" />
+    </div>
+    <div class="field">
+      <label for={`${id}-position`}>{L.position}</label>
+      <select id={`${id}-position`} name="position">
+        {L.positions.map((p) => <option>{p}</option>)}
+      </select>
+    </div>
+    {
+      directions.length > 0 && (
+        <div class="field">
+          <label for={`${id}-direction`}>{L.direction} *</label>
+          <select id={`${id}-direction`} name="direction" required>
+            <option value="">—</option>
+            {directions.map((d) => (
+              <option>{d}</option>
+            ))}
+          </select>
+        </div>
+      )
+    }
+    {
+      !compact && (
+        <div class="field">
+          <label for={`${id}-area`}>{L.area}</label>
+          <select id={`${id}-area`} name="area">
+            {areaList.map((a) => (
+              <option>{a}</option>
+            ))}
+          </select>
+        </div>
+      )
+    }
+    {
+      eventName && (
+        <div class="field form__full">
+          <label for={`${id}-event`}>{L.event}</label>
+          <input id={`${id}-event`} name="event" type="text" value={eventName} readonly />
+        </div>
+      )
+    }
+    {
+      !compact && (
+        <div class="field form__full">
+          <label for={`${id}-comment`}>{L.comment}</label>
+          <textarea id={`${id}-comment`} name="comment" rows="3"></textarea>
+        </div>
+      )
+    }
+  </div>
+
+  <label style="display:flex;gap:.55rem;align-items:flex-start;font-size:.8rem;color:var(--ink-40)">
+    <input type="checkbox" name="consent" required style="width:16px;height:16px;margin-top:2px" />
+    <span>{L.consent}</span>
+  </label>
+
+  <div style="display:flex;flex-wrap:wrap;gap:.7rem;align-items:center">
+    <button class="btn btn--gold" type="submit">{L.submit}</button>
+    <a class="btn btn--ghost btn--sm" href={`mailto:info@sofexpo.org?subject=${encodeURIComponent(ru ? 'Заявка на участие' : 'Participation request')}`}
+      >{ru ? 'Написать на почту' : 'Or write an email'}</a
+    >
+  </div>
+  {note && <p class="form__note">{note}</p>}
+  <p class="form__msg" role="status" aria-live="polite" hidden></p>
+</form>
+
+<script is:inline>
+  document.querySelectorAll('[data-lead-form]').forEach((form) => {
+    const msg = form.querySelector('.form__msg');
+    const endpoint = form.dataset.endpoint;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      if (!form.checkValidity()) {
+        form.querySelectorAll(':invalid').forEach((el) => (el.style.borderColor = 'var(--danger)'));
+        msg.hidden = false;
+        msg.textContent = form.dataset.err || 'Check the fields.';
+        msg.className = 'form__msg form__ok';
+        msg.style.background = '#fbe9e7';
+        msg.style.borderColor = 'rgba(178,58,47,.3)';
+        msg.style.color = 'var(--danger)';
+        return;
+      }
+      const payload = Object.fromEntries(data.entries());
+      payload.page = location.pathname;
+      payload.ts = new Date().toISOString();
+      msg.hidden = false;
+      msg.className = 'form__msg form__ok';
+      msg.style = '';
+      if (endpoint) {
+        try {
+          const res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+          if (!res.ok) throw new Error('bad status');
+        } catch (err) {
+          msg.textContent = form.dataset.fallback || 'Could not send — please email us.';
+          return;
+        }
+      } else {
+        // Preview mode: keep the payload locally so the CRM wiring can be tested.
+        try {
+          const key = 'sofexpo.leads';
+          const all = JSON.parse(localStorage.getItem(key) || '[]');
+          all.push(payload);
+          localStorage.setItem(key, JSON.stringify(all));
+        } catch (e) {}
+      }
+      msg.textContent = form.dataset.ok || 'Received.';
+      form.querySelectorAll('input:not([type=checkbox]):not([readonly]), textarea, select').forEach((el) => (el.value = ''));
+    });
+  });
+</script>
+
+<style>
+  .form-wrap {
+    display: grid;
+    gap: 1rem;
+    scroll-margin-top: 110px;
+  }
+  .form--compact {
+    padding: clamp(1rem, 0.7rem + 1.2vw, 1.5rem);
+    border-radius: var(--r);
+  }
+  .form__msg {
+    margin: 0;
+  }
+</style>

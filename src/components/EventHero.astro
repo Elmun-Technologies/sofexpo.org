@@ -1,0 +1,208 @@
+---
+/**
+ * Per-event hero: brand plate, dates, venue, live countdown and the three actions
+ * a visitor or exhibitor actually needs. Past editions get an archive treatment.
+ */
+import type { Locale } from '@/i18n/config';
+import { localize } from '@/i18n/config';
+import { useUI } from '@/i18n/ui';
+import { site } from '@/data/site';
+import type { ExpoEvent } from '@/data/events';
+import Countdown from '@/components/Countdown.astro';
+import Icon from '@/components/Icon.astro';
+
+const { locale, event, kicker, title, lead, variant = 'open' } = Astro.props as {
+  locale: Locale;
+  event: ExpoEvent;
+  kicker?: string;
+  title: string;
+  lead?: string;
+  variant?: 'open' | 'past';
+};
+const t = useUI(locale);
+const ru = locale === 'ru';
+const L = (p: string) => localize(locale, p);
+const upcoming = variant === 'open';
+const days = Math.max(
+  1,
+  Math.round(
+    (new Date(`${event.dates.end}T12:00:00+05:00`).getTime() -
+      new Date(`${event.dates.start}T12:00:00+05:00`).getTime()) /
+      864e5,
+  ) + 1,
+);
+const actions = [
+  upcoming
+    ? { label: t('cta.stand'), href: L('/request-stand/') + `?event=${event.slug}` }
+    : { label: ru ? 'Следующая редакция' : 'Next edition', href: L(`/events/${event.slug}/`) },
+  { label: t('cta.ticket'), href: L('/visitors/tickets/') },
+  { label: ru ? 'Программа' : 'Programme', href: L(`/events/${event.slug}/program/`) },
+];
+---
+
+<section class:list={['ehero', { 'ehero--past': !upcoming }]} style={`--ehero-img:url(${event.heroImage})`}>
+  <div class="wrap ehero__in">
+    <div class="ehero__text">
+      <p class="kicker">
+        {kicker ?? event.industry.toUpperCase()} · {event.edition[locale]}
+      </p>
+      <h1 set:html={title} />
+      {lead && <p class="hero__lead">{lead}</p>}
+      <ul class="ehero__facts">
+        <li><Icon name="calendar" size={17} /> {event.dates.display[locale]}</li>
+        <li><Icon name="pin" size={17} /> {site.brand[locale]}</li>
+        <li>
+          <Icon name="clock" size={17} /> {days} {ru ? (days === 1 ? 'день' : days < 5 ? 'дня' : 'дней') : days === 1 ? 'day' : 'days'} · {ru ? 'Самарканд, Джамбайский район' : 'Samarkand, Dzhambay district'}
+        </li>
+        {event.status === 'open' && <li class="chip chip--live"><span class="dot" /> {ru ? 'Идёт набор участников' : 'Exhibitor sales open'}</li>}
+      </ul>
+      <div class="btn-row">
+        {actions.map((a, i) => <a class:list={['btn', { 'btn--gold': i === 0, 'btn--ghost': i > 0 }]} href={a.href.startsWith('http') ? a.href : a.href}>{a.label}</a>)}
+      </div>
+      {event.highlight && upcoming && (
+        <p class="ehero__note">
+          <Icon name="sparkle" size={15} /> <b>{event.highlight.label[locale]}</b> —{' '}
+          {event.highlight.text[locale]}
+        </p>
+      )}
+    </div>
+    <aside class="ehero__side">
+      {upcoming ? <Countdown locale={locale} target={event.dates.start} label={ru ? 'До открытия' : 'Opening in'} /> : (
+        <div class="ehero__archive">
+          <p class="mono-label">{ru ? 'Прошедшая редакция' : 'Past edition'}</p>
+          <ul>
+            {event.facts.slice(0, 4).map((f) => <li><b class="num">{f.value}</b> {f.label[locale]}</li>)}
+          </ul>
+        </div>
+      )}
+      <dl class="ehero__key">
+        <div><dt>{ru ? 'Площадка' : 'Venue'}</dt><dd>{site.brand[locale]}</dd></div>
+        <div><dt>{ru ? 'Город' : 'City'}</dt><dd>{site.location.region[locale]}</dd></div>
+        <div><dt>{ru ? 'Организатор' : 'Organizer'}</dt><dd>{ru ? site.brand.legal : site.brand.legalEn}</dd></div>
+      </dl>
+    </aside>
+  </div>
+</section>
+
+<style>
+  .ehero {
+    position: relative;
+    overflow: hidden;
+    background: var(--evergreen);
+    color: #f6f3ea;
+    isolation: isolate;
+  }
+  .ehero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--ehero-img);
+    background-size: cover;
+    background-position: center;
+    opacity: 0.42;
+    z-index: -2;
+  }
+  .ehero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, rgba(11, 28, 18, 0.94) 0%, rgba(11, 28, 18, 0.66) 46%, rgba(11, 28, 18, 0.24) 100%);
+    z-index: -1;
+  }
+  .ehero--past::after {
+    background: linear-gradient(100deg, rgba(11, 28, 18, 0.96) 0%, rgba(11, 28, 18, 0.8) 60%, rgba(11, 28, 18, 0.5) 100%);
+  }
+  .ehero__in {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
+    gap: clamp(1.6rem, 1rem + 3vw, 3.4rem);
+    padding-block: clamp(2.6rem, 1.4rem + 5vw, 5.4rem);
+    align-items: end;
+  }
+  .ehero h1 {
+    color: #fff;
+    font-size: var(--t-hero);
+    max-width: 20ch;
+    margin: 0.3rem 0 0.6rem;
+  }
+  .ehero :global(.kicker) {
+    color: var(--gold-soft);
+  }
+  .hero__lead {
+    color: rgba(246, 243, 234, 0.86);
+    max-width: 62ch;
+  }
+  .ehero__facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.4rem;
+    list-style: none;
+    padding: 0;
+    margin: 1.4rem 0 1.6rem;
+    font-size: 0.95rem;
+  }
+  .ehero__facts li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: rgba(246, 243, 234, 0.9);
+  }
+  .ehero__note {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 1rem 0 0;
+    padding: 0.5rem 0.8rem;
+    border-radius: var(--r-pill);
+    background: rgba(197, 138, 46, 0.22);
+    border: 1px solid rgba(233, 201, 129, 0.4);
+    font-size: 0.86rem;
+  }
+  .ehero__side {
+    display: grid;
+    gap: 1rem;
+  }
+  .ehero__archive ul {
+    list-style: none;
+    margin: 0.6rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+    color: rgba(246, 243, 234, 0.82);
+  }
+  .ehero__archive b {
+    font-family: var(--f-display);
+    font-size: 1.3rem;
+    color: var(--gold-soft);
+    margin-right: 0.3rem;
+  }
+  .ehero__key {
+    margin: 0;
+    display: grid;
+    gap: 0.5rem;
+    padding: 1rem 1.1rem;
+    border-radius: var(--r);
+    background: rgba(11, 28, 18, 0.42);
+    border: 1px solid rgba(246, 243, 234, 0.16);
+    font-size: 0.85rem;
+  }
+  .ehero__key div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .ehero__key dt {
+    color: rgba(246, 243, 234, 0.6);
+  }
+  .ehero__key dd {
+    margin: 0;
+    text-align: right;
+  }
+  @media (max-width: 960px) {
+    .ehero__in {
+      grid-template-columns: minmax(0, 1fr);
+      align-items: start;
+    }
+  }
+</style>

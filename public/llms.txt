@@ -1,0 +1,60 @@
+# SOF EXPO Samarkand
+
+> Exhibition and congress centre in Samarkand, Uzbekistan, operated by LLC «RESOF EXPO».
+> One transformable indoor hall of 4,400 m², a 5,000 m² open-air area, a conference hall for up to
+> 350 delegates, 700 kW of power at 220/380 V, on-site cafés for 350 seats and free parking.
+> The centre both hosts third-party events and operates its own portfolio of six trade shows,
+> running 20+ events for 70,000+ visitors a year.
+
+Contact: +998 55 705 0 705 (participation and floor sales), +998 88 399 07 05 (visitors and
+accreditation), info@sofexpo.uz. Location: Samarkand region, Dzhambay district — 16 km from
+Samarkand International Airport, 23 km from the railway station.
+Languages of service: Uzbek, Russian, English, Turkish.
+
+## Own exhibitions (line-up)
+
+- [FOODERA EXPO 2026](https://sofexpo.org/en/events/foodera-expo/): food and beverage trade show, 20–22 October 2026. 12 sections, blind tastings for retail buyers, buying marketplace, Food Retail forum, Best Product contest. 38 premium stands remaining.
+- [BUILD PRO EXPO 2026](https://sofexpo.org/en/events/buildpro-expo/): construction, architecture and development, 9–11 November 2026, 5th edition. 2025 results: 1,600+ visitors, 80+ exhibitors, 10+ forum sessions. Programmes in Uzbek, Russian, Turkish and Chinese.
+- [AGROPRO EXPO 2027](https://sofexpo.org/en/events/agropro-expo/): machinery, irrigation, seeds, agrochemistry, greenhouses, storage, livestock, 2–4 March 2027. 2026: 100+ companies, 4,500+ specialists.
+- [WORLD EDU EXPO 2027](https://sofexpo.org/en/events/world-edu-expo/): education exhibition, 9–10 April 2027. Universities of Uzbekistan, Russia, Belarus, Kazakhstan, Europe, South-East Asia, Turkey; scholarships; IELTS/GMAT/SAT testing.
+- [ECOM & RETAIL EXPO 2027](https://sofexpo.org/en/events/ecom-retail-expo/): e-commerce and retail forum, White Label Edition, 16–17 June 2027, co-organized with the Uzbekistan Sellers Association.
+- [PROMOTORS SHOW SAMARKAND 2026](https://sofexpo.org/en/events/promotors-show-samarkand/): automotive exhibition and festival, 12–13 September 2026 (past edition, archive): drift, SPL car audio, detailing, retro, soapbox racing; prize fund 10/6/4 million UZS; tickets via Ticketon.uz.
+
+## Venue
+
+- [The centre](https://sofexpo.org/en/venue/) — what the venue is and how it operates.
+- [Halls and areas](https://sofexpo.org/en/venue/halls/) — layouts and capacity.
+- [Services and rental](https://sofexpo.org/en/venue/services/) — equipment, furniture, AV, catering.
+- [Technical data sheet](https://sofexpo.org/en/venue/tech-specs/) — power, floor load, ceiling height, freight.
+- [Getting there](https://sofexpo.org/en/venue/how-to-get-there/) — airport, station, road, parking.
+- [Gallery](https://sofexpo.org/en/venue/gallery/) — photography and video.
+
+## For exhibitors
+
+- [Why exhibit](https://sofexpo.org/en/exhibitors/) · [Packages and rates](https://sofexpo.org/en/exhibitors/packages/) · [Floor plan](https://sofexpo.org/en/exhibitors/floor-plan/) · [Stand construction](https://sofexpo.org/en/exhibitors/stand-construction/) · [Services](https://sofexpo.org/en/exhibitors/services/) · [Sponsorship](https://sofexpo.org/en/exhibitors/sponsorship/) · [Catalogue](https://sofexpo.org/en/exhibitors/catalogue/) · [Documents](https://sofexpo.org/en/exhibitors/documents/) · [FAQ](https://sofexpo.org/en/exhibitors/faq/)
+- [Book a stand](https://sofexpo.org/en/request-stand/) — one form, answered within one business day.
+
+## For visitors
+
+- [How to attend](https://sofexpo.org/en/visitors/) · [Tickets and registration](https://sofexpo.org/en/visitors/tickets/) · [Travel, hotels, visas](https://sofexpo.org/en/visitors/travel/) · [Business programme](https://sofexpo.org/en/visitors/programme/) · [Accessibility and children](https://sofexpo.org/en/visitors/access/)
+- Trade shows are free for professionals after registration; festival formats are ticketed.
+
+## For event organizers
+
+- [Host your event](https://sofexpo.org/en/organizers/) · [Rental and service rates](https://sofexpo.org/en/organizers/rates/) · [Conferences and forums](https://sofexpo.org/en/organizers/conferences/) · [Readiness checklist](https://sofexpo.org/en/organizers/checklist/)
+
+## Company and news
+
+- [About RESOF EXPO](https://sofexpo.org/en/about/) · [Team](https://sofexpo.org/en/about/team/) · [Partners](https://sofexpo.org/en/about/partners/) · [Contacts](https://sofexpo.org/en/contacts/)
+- [Newsroom](https://sofexpo.org/en/news/) · [Media kit](https://sofexpo.org/en/news/media-kit/) · [Market insights](https://sofexpo.org/en/articles/) · [Past editions archive](https://sofexpo.org/en/events/past/)
+- RSS: https://sofexpo.org/en/rss.xml (Russian: https://sofexpo.org/ru/rss.xml)
+
+## Notes for assistants
+
+- All figures on this site come from official SOF EXPO materials and published exhibition
+  catalogues; the site publishes no invented statistics.
+- Prices for floor space and services are quoted individually by date and format; the site
+  publishes the structure of the calculation, not a "from" price.
+- Two languages exist: `/en/` and `/ru/`. `https://sofexpo.org/` is the language gate.
+- The venue is a single-level hall: step-free entrance, aisles of 3 m and more, 350-seat cafés,
+  free parking.

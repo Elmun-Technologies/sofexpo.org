@@ -1,0 +1,35 @@
+---
+/** A single press release or announcement. */
+import type { GetStaticPaths } from 'astro';
+import { locales } from '@/i18n/config';
+import { getCollection, render } from 'astro:content';
+import PostDetail from '@/components/PostDetail.astro';
+
+export const getStaticPaths = (async () => {
+  const entries = await getCollection('news', ({ data }) => !data.draft);
+  const out: { params: { locale: string; slug: string }; props: { entry: (typeof entries)[number] } }[] = [];
+  for (const entry of entries) {
+    const [locale, ...rest] = entry.id.split('/');
+    if (!(locales as readonly string[]).includes(locale)) continue;
+    out.push({ params: { locale, slug: rest.join('/') }, props: { entry } });
+  }
+  return out;
+}) satisfies GetStaticPaths;
+
+const { entry } = Astro.props as { entry: Awaited<ReturnType<typeof getCollection>>[number] };
+const locale = Astro.params.locale as 'ru' | 'en';
+const { Content } = await render(entry);
+const others = (await getCollection('news'))
+  .filter((e) => e.id.startsWith(`${locale}/`) && e.id !== entry.id && !e.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 2);
+---
+
+<PostDetail
+  {locale}
+  kind="news"
+  post={entry}
+  body={Content}
+  related={others}
+  sectionTitle={{ ru: 'Новости', en: 'News' }}
+/>

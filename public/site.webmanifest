@@ -1,0 +1,22 @@
+{
+  "name": "SOF EXPO Samarkand",
+  "short_name": "SOF EXPO",
+  "description": "Выставочно-конгрессный центр SOF EXPO Samarkand: отраслевые выставки, аренда зала, деловая программа.",
+  "lang": "en",
+  "dir": "ltr",
+  "start_url": "/en/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f7f4ec",
+  "theme_color": "#12301f",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/favicon.png", "sizes": "180x180", "type": "image/png", "purpose": "any" },
+    { "src": "/og/default.jpg", "sizes": "1200x630", "type": "image/jpeg", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "Exhibitions", "url": "/en/events/", "description": "Line-up and dates" },
+    { "name": "For exhibitors", "url": "/en/exhibitors/", "description": "Packages and booking" },
+    { "name": "Venue", "url": "/en/venue/", "description": "Halls and technical specs" }
+  ]
+}

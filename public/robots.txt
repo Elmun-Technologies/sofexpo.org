@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /*?utm_
+Disallow: /*?gclid=
+Disallow: /*?fbclid=
+
+Sitemap: https://sofexpo.org/sitemap-index.xml
+Host: sofexpo.org

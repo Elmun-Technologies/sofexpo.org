@@ -1,0 +1,20 @@
+---
+/** Reusable building blocks for page composition. */
+const { locale, kicker, title, text, align = 'left', level = 2 } = Astro.props as {
+  locale: 'ru' | 'en';
+  kicker?: string;
+  title: string;
+  text?: string;
+  align?: 'left' | 'center';
+  /** heading level: 1 on index pages that own the page title, 2 inside a page */
+  level?: 1 | 2;
+};
+---
+<div class:list={['sec-head', { 'sec-head--center': align === 'center' }]}>
+  <div>
+    {kicker && <p class="kicker">{kicker}</p>}
+    {level === 1 ? <h1 class="h1" set:html={title} /> : <h2 set:html={title} />}
+  </div>
+  {text && <p>{text}</p>}
+  <slot name="aside" />
+</div>

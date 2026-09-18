@@ -1,0 +1,628 @@
+---
+/**
+ * Block renderer. Every page is authored as an ordered, individual list of blocks,
+ * so no two pages share the same composition while the markup stays one system.
+ */
+import type { Block, BlockCard, BlockFile, BlockLink, BlockRow, BlockShot, BlockStat } from '@/data/pages/types';
+import { localize, type Locale } from '@/i18n/config';
+import { useUI } from '@/i18n/ui';
+import Icon from '@/components/Icon.astro';
+import StatBand from '@/components/StatBand.astro';
+import LeadForm from '@/components/LeadForm.astro';
+import Faq from '@/components/Faq.astro';
+
+const { blocks, locale } = Astro.props as { blocks: Block[]; locale: Locale };
+const t = useUI(locale);
+const ru = locale === 'ru';
+const L = (p: string) => localize(locale, p);
+/** keep external URLs intact, localize site paths */
+const H = (p?: string) => {
+  if (!p) return '';
+  if (/^(https?:|mailto:|tel:|#)/.test(p)) return p;
+  // static assets are locale-free
+  if (/^\/(files|images|og)\//.test(p) || /\.[a-z0-9]+$/i.test(p)) return p;
+  return L(p);
+};
+---
+
+{
+  blocks.map((b) => {
+    const wide = b.width !== 'narrow';
+    return (
+      <section class:list={['sec', 'block', `block--${b.type}`, b.tone === 'paper' && 'sec--paper', b.tone === 'forest' && 'sec--forest', b.tone === 'sand' && 'sec--sand', b.anchor && 'has-anchor']} id={b.id}>
+        <div class:list={['wrap', !wide && 'wrap--narrow']}>
+          {b.type === 'hero' && (
+            <div class="block__head">
+              <div>
+                {b.kicker && <p class="kicker">{b.kicker}</p>}
+                <h1 set:html={b.title ?? ''} />
+                {b.lead && <p class="lead">{b.lead}</p>}
+                {b.bullets?.length ? (
+                  <ul class="pill-row" style="list-style:none;padding:0;margin:1.1rem 0 0;display:flex;flex-wrap:wrap;gap:.5rem">
+                    {b.bullets.map((x) => (
+                      <li class="chip">
+                        <Icon name="check" size={14} /> {x}
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+                {b.actions?.length ? (
+                  <div class="btn-row" style="margin-top:1.4rem">
+                    {b.actions.map((a, i) => (
+                      <a class:list={['btn', { 'btn--gold': i === 0, 'btn--ghost': i > 0 }]} href={H(a.href)}>
+                        {a.label}
+                      </a>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+              {b.image && (
+                <figure class="block__media">
+                  <img src={b.image} alt={b.imageAlt ?? ''} width="900" height="620" loading="eager" decoding="async" />
+                </figure>
+              )}
+            </div>
+          )}
+
+          {b.type === 'h2' && (
+            <div class="sec-head">
+              <div>
+                {b.kicker && <p class="kicker">{b.kicker}</p>}
+                <h2 set:html={b.title ?? ''} />
+              </div>
+              {b.text && <p>{b.text}</p>}
+            </div>
+          )}
+
+          {b.type === 'text' && (
+            <div class="prose">
+              {(b.paragraphs ?? []).map((p) => (
+                <p set:html={p} />
+              ))}
+              {b.list?.length ? (
+                <ul>{b.list.map((x) => <li set:html={x} />)}</ul>
+              ) : null}
+            </div>
+          )}
+
+          {b.type === 'stats' && (
+              <StatBand
+                locale={locale}
+                items={(b.items as BlockStat[] ?? []).map((s) => ({
+                  value: s.value,
+                  unit: s.unit,
+                  ru: s.label ?? s.ru ?? '',
+                  en: s.label ?? s.en ?? '',
+                }))}
+              />
+            )}
+
+          {b.type === 'grid' && (
+            <div class:list={['grid', `g${b.cols ?? 3}`]}>
+              {((b.items ?? []) as BlockCard[]).map((i) => {
+                const href = i.href ? H(i.href) : undefined;
+                const Tag: any = href ? 'a' : 'div';
+                return (
+                  <Tag class="feature" href={href}>
+                    {i.icon && (
+                      <span class="ico-tile">
+                        <Icon name={i.icon} size={24} />
+                      </span>
+                    )}
+                    <h3>{i.title}</h3>
+                    {i.text && <p>{i.text}</p>}
+                    {i.meta && <span class="mono-label">{i.meta}</span>}
+                    {href && <span class="feature__go">→</span>}
+                  </Tag>
+                );
+              })}
+            </div>
+          )}
+
+          {b.type === 'rows' && (
+            <div class="rows">
+              {((b.items ?? []) as BlockRow[]).map((i, n) => (
+                <article class="row">
+                  <span class="row__n num">{String(n + 1).padStart(2, '0')}</span>
+                  <h3>{i.title}</h3>
+                  <p>{i.text}</p>
+                </article>
+              ))}
+            </div>
+          )}
+
+          {b.type === 'table' && (
+            <div class="table-wrap">
+              <table class:list={['table', { 'table--rates': b.plain }]}>
+                {b.head?.length ? (
+                  <thead>
+                    <tr>{b.head.map((h) => <th scope="col">{h}</th>)}</tr>
+                  </thead>
+                ) : null}
+                <tbody>
+                  {(b.rows ?? []).map((r) => (
+                    <tr>
+                      {r.map((cell, i) =>
+                        b.head?.length ? <td set:html={cell} /> : <th scope="row" set:html={cell} />,
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {b.type === 'steps' && (
+            <ol class="steps">
+              {((b.items ?? []) as BlockRow[]).map((s, i) => (
+                <li>
+                  <span class="steps__n num">{i + 1}</span>
+                  <div>
+                    <h3>{s.title}</h3>
+                    <p>{s.text}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          )}
+
+          {b.type === 'checklist' && (
+            <ul class="checks">
+              {((b.items as unknown as string[]) ?? []).map((x) => (
+                <li>
+                  <Icon name="check" size={18} />
+                  <span>{x}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {b.type === 'callout' && (
+            <div class:list={['callout', b.tone === 'gold' && 'callout--gold']}>
+              {b.kicker && <p class="kicker">{b.kicker}</p>}
+              <h3>{b.title}</h3>
+              {b.text && <p class="muted" style="margin-bottom:1rem">{b.text}</p>}
+              {b.action && (
+                <a class="btn btn--sm" href={H(b.action.href)}>{b.action.label}</a>
+              )}
+            </div>
+          )}
+
+          {b.type === 'files' && (
+            <div class="files">
+              {((b.items ?? []) as BlockFile[]).map((f) => (
+                <a href={H(f.href)} target={/^https?:/.test(f.href) ? '_blank' : undefined} rel="noopener" download={!/^https?:/.test(f.href)}>
+                  <span class="files__ico">
+                    <Icon name={f.kind === 'video' ? 'play' : f.kind === 'link' ? 'globe' : 'doc'} size={20} />
+                  </span>
+                  <span>
+                    <b>{f.title}</b>
+                    <small>{f.note ?? (f.href.endsWith('.pdf') ? 'PDF' : ru ? 'Материалы' : 'Material')}</small>
+                  </span>
+                  <span class="files__go">{ru ? 'Открыть' : 'Open'} →</span>
+                </a>
+              ))}
+            </div>
+          )}
+
+          {b.type === 'gallery' && (
+            <div class="gal">
+              {((b.items ?? []) as BlockShot[]).map((g, i) => (
+                <figure>
+                  <img src={g.src} alt={g.alt ?? g.caption ?? ''} width="800" height="560" loading={i === 0 ? 'eager' : 'lazy'} decoding="async" />
+                  {g.caption && <figcaption>{g.caption}</figcaption>}
+                </figure>
+              ))}
+            </div>
+          )}
+
+          {b.type === 'quote' && (
+            <figure class="quote">
+              <blockquote>{b.text}</blockquote>
+              <figcaption>
+                {b.author ?? b.cite}
+                {b.role ? ` · ${b.role}` : ''}
+              </figcaption>
+            </figure>
+          )}
+
+          {b.type === 'links' && (
+            <nav class="links" aria-label={b.title ?? (ru ? 'Связанные разделы' : 'Related sections')}>
+              <p class="mono-label">{b.title ?? (ru ? 'Читать дальше' : 'Read next')}</p>
+              <div class="links__row">
+                {((b.items ?? []) as BlockLink[]).map((i) => (
+                  <a href={H(i.href)}>
+                    <b>{i.label}</b>
+                    {i.note && <span>{i.note}</span>}
+                  </a>
+                ))}
+              </div>
+            </nav>
+          )}
+
+          {b.type === 'form' && (
+            <LeadForm
+              locale={locale}
+              title={b.title}
+              subtitle={b.text}
+              directions={b.directions}
+              areas={b.areas}
+              eventName={b.event}
+              note={b.note}
+              id={b.id ?? 'lead-form'}
+            />
+          )}
+
+          {b.type === 'faq' && <Faq locale={locale} items={(b.items as unknown as { q: string; a: string }[]) ?? []} title={b.title} />}
+
+          {b.type === 'cta' && (
+            <div class="cta-inline">
+              <div>
+                {b.kicker && <p class="kicker">{b.kicker}</p>}
+                <h2 set:html={b.title ?? ''} />
+                {b.text && <p class="lead">{b.text}</p>}
+              </div>
+              <div class="btn-row">
+                {(b.actions ?? []).map((a, i) => (
+                  <a class:list={['btn', { 'btn--gold': i === 0, 'btn--ghost': i > 0 }]} href={H(a.href)}>
+                    {a.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+    );
+  })
+}
+
+<style>
+  .sec--sand {
+    background: var(--cream-2);
+  }
+  .block--hero {
+    background: var(--cream);
+    padding-block: clamp(2rem, 1rem + 3vw, 4rem);
+  }
+  .block--faq {
+    padding-block: 0;
+  }
+  .block--faq :global(.sec) {
+    padding-block: clamp(3rem, 2rem + 3vw, 5rem);
+    background: var(--paper);
+  }
+  .block__head {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+    gap: clamp(1.4rem, .8rem + 2.4vw, 3rem);
+    align-items: center;
+  }
+  .block__head h1 {
+    font-size: clamp(2.1rem, 1.3rem + 3.4vw, 4rem);
+    max-width: 22ch;
+  }
+  .block__media {
+    margin: 0;
+  }
+  .block__media img {
+    border-radius: var(--r-lg);
+  }
+  @media (max-width: 940px) {
+    .block__head {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  .block + .block--hero {
+    border-top: 1px solid var(--line);
+  }
+  .prose {
+    max-width: 74ch;
+    font-size: 1.02rem;
+  }
+  .prose p {
+    margin: 0 0 1.05em;
+  }
+  .prose :global(strong) {
+    color: var(--evergreen);
+  }
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--paper);
+  }
+  .table-wrap .table {
+    min-width: 620px;
+  }
+  .table-wrap th,
+  .table-wrap td {
+    padding: 1rem 1.1rem;
+  }
+  .table-wrap thead th {
+    background: var(--cream-2);
+    color: var(--ink);
+    font-family: var(--f-display);
+    font-size: .95rem;
+    width: auto;
+  }
+  .steps {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+  }
+  .steps li {
+    background: var(--paper);
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 1.1rem;
+    padding: clamp(1.1rem, .7rem + 1.4vw, 1.7rem);
+    align-items: start;
+  }
+  .steps__n {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--evergreen);
+    color: var(--gold-soft);
+    display: grid;
+    place-items: center;
+    font-size: .95rem;
+  }
+  .steps h3 {
+    margin: 0 0 .3em;
+    font-size: 1.12rem;
+  }
+  .steps p {
+    margin: 0;
+    color: var(--ink-60);
+  }
+  .checks {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: .6rem 1.4rem;
+  }
+  .checks li {
+    display: flex;
+    gap: .6rem;
+    align-items: flex-start;
+    padding: .5rem 0;
+    border-bottom: 1px dashed var(--line);
+  }
+  .checks :global(svg) {
+    color: var(--moss);
+    margin-top: .28rem;
+    flex: none;
+  }
+  .files {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: .8rem;
+  }
+  .files a {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    gap: .9rem;
+    align-items: center;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    background: var(--paper);
+    text-decoration: none;
+    transition: border-color .18s ease, transform .18s ease;
+  }
+  .files a:hover {
+    border-color: var(--moss);
+    transform: translateY(-2px);
+  }
+  .files__ico {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: var(--cream-2);
+    color: var(--evergreen);
+    display: grid;
+    place-items: center;
+  }
+  .files b {
+    display: block;
+    font-size: .98rem;
+    font-weight: 600;
+  }
+  .files small {
+    color: var(--ink-40);
+    font-size: .8rem;
+  }
+  .files__go {
+    color: var(--moss);
+    font-weight: 700;
+    font-size: .85rem;
+  }
+  .gal {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+  .gal figure {
+    margin: 0;
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    background: var(--paper);
+    border: 1px solid var(--line);
+  }
+  .gal img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+  .gal figcaption {
+    padding: .7rem .95rem;
+    font-size: .85rem;
+    color: var(--ink-60);
+  }
+  .quote {
+    margin: 0;
+    padding: clamp(1.4rem, 1rem + 2vw, 2.4rem);
+    border-left: 3px solid var(--gold);
+    background: var(--cream-2);
+    border-radius: 0 var(--r-lg) var(--r-lg) 0;
+  }
+  .quote blockquote {
+    margin: 0 0 .8rem;
+    font-family: var(--f-display);
+    font-size: clamp(1.15rem, 1rem + .8vw, 1.65rem);
+    line-height: 1.35;
+    letter-spacing: -.01em;
+  }
+  .quote figcaption {
+    color: var(--ink-60);
+    font-size: .9rem;
+  }
+  .links {
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: clamp(1.1rem, .8rem + 1vw, 1.6rem);
+    background: var(--paper);
+  }
+  .links__row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: .6rem;
+    margin-top: .8rem;
+  }
+  .links a {
+    display: flex;
+    flex-direction: column;
+    gap: .15rem;
+    padding: .8rem .95rem;
+    border-radius: var(--r);
+    background: var(--cream);
+    text-decoration: none;
+    border: 1px solid transparent;
+  }
+  .links a:hover {
+    border-color: var(--sage);
+  }
+  .links a b {
+    font-size: .95rem;
+  }
+  .links a span {
+    font-size: .82rem;
+    color: var(--ink-60);
+  }
+  .cta-inline {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, auto);
+    gap: 1.4rem 2.4rem;
+    align-items: center;
+    background: var(--evergreen);
+    color: #f6f3ea;
+    border-radius: var(--r-lg);
+    padding: clamp(1.6rem, 1rem + 2.6vw, 3rem);
+  }
+  .cta-inline h2 {
+    color: #fff;
+    max-width: 24ch;
+  }
+  .cta-inline .lead,
+  .cta-inline p {
+    color: rgba(246, 243, 234, .82);
+  }
+  .cta-inline :global(.btn--ghost) {
+    border-color: rgba(246, 243, 234, .4);
+    color: #f6f3ea;
+  }
+  @media (max-width: 880px) {
+    .cta-inline {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  .feature {
+    position: relative;
+    display: block;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: clamp(1.1rem, .7rem + 1.4vw, 1.7rem);
+    text-decoration: none;
+    color: inherit;
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+  .feature:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-soft);
+  }
+  .feature h3 {
+    font-size: clamp(1.02rem, .96rem + .3vw, 1.2rem);
+    margin: 0 0 .35em;
+  }
+  .feature p {
+    margin: 0;
+    color: var(--ink-60);
+    font-size: .94rem;
+  }
+  .feature .mono-label {
+    display: block;
+    margin-top: .7rem;
+  }
+  .feature__go {
+    position: absolute;
+    top: 1.1rem;
+    right: 1.2rem;
+    color: var(--moss);
+    opacity: 0;
+    transition: opacity .18s ease;
+  }
+  .feature:hover .feature__go {
+    opacity: 1;
+  }
+  .sec--forest .block__head h1,
+  .sec--forest .prose {
+    color: inherit;
+  }
+  .sec--forest .feature,
+  .sec--forest .callout,
+  .sec--forest .links,
+  .sec--forest .steps li {
+    background: rgba(251, 249, 242, .06);
+    border-color: rgba(251, 249, 242, .16);
+    color: inherit;
+  }
+  .sec--forest .feature p,
+  .sec--forest .steps p,
+  .sec--forest .callout :global(.muted) {
+    color: rgba(246, 243, 234, .78);
+  }
+  .sec--forest .table-wrap {
+    background: transparent;
+    border-color: rgba(251, 249, 242, .18);
+  }
+  .sec--forest :global(.table) th,
+  .sec--forest :global(.table) td {
+    border-color: rgba(251, 249, 242, .16);
+    color: rgba(246, 243, 234, .9);
+  }
+  .sec--forest :global(.table) th {
+    color: rgba(246, 243, 234, .6);
+  }
+  .sec--forest .steps {
+    border-color: rgba(251, 249, 242, .16);
+    background: rgba(251, 249, 242, .16);
+  }
+  .sec--forest .steps__n {
+    background: var(--gold-soft);
+    color: var(--evergreen);
+  }
+  .has-anchor {
+    scroll-margin-top: 100px;
+  }
+</style>

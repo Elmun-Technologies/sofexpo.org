@@ -1,0 +1,330 @@
+---
+/**
+ * Data-driven sections for an exhibition page. Authored copy lives in
+ * `src/data/pages/event-pages.ts`; these blocks pull the per-event facts out of
+ * `src/data/events.ts` so every show reports its own numbers, sections and materials.
+ */
+import type { Locale } from '@/i18n/config';
+import { localize } from '@/i18n/config';
+import type { ExpoEvent } from '@/data/events';
+import { site } from '@/data/site';
+import { events } from '@/data/events';
+import SectionHead from '@/components/SectionHead.astro';
+import FeatureGrid from '@/components/FeatureGrid.astro';
+import StatBand from '@/components/StatBand.astro';
+import Faq from '@/components/Faq.astro';
+import EventCard from '@/components/EventCard.astro';
+import Icon from '@/components/Icon.astro';
+
+export type SectionKey =
+  | 'facts'
+  | 'categories'
+  | 'benefits'
+  | 'programme'
+  | 'audience'
+  | 'stands'
+  | 'speakers'
+  | 'materials'
+  | 'faq'
+  | 'related'
+  | 'venue';
+
+const { locale, event, section, tone = 'paper' } = Astro.props as {
+  locale: Locale;
+  event: ExpoEvent;
+  section: SectionKey;
+  tone?: 'paper' | 'default' | 'forest';
+};
+const ru = locale === 'ru';
+const L = (p: string) => localize(locale, p);
+const head = {
+  facts: { k: ru ? 'Цифры и факты' : 'Facts and figures', t: ru ? 'Что это за выставка в числах' : 'The show in numbers', text: event.pitch[locale] },
+  categories: { k: ru ? 'Тематические разделы' : 'Sections', t: ru ? 'Что показывают на выставке' : 'What is on show', text: undefined },
+  benefits: { k: ru ? 'Зачем участвовать' : 'Why take part', t: ru ? 'Четыре задачи, которые решает выставка' : 'Four jobs an exhibition actually does', text: undefined },
+  programme: { k: ru ? 'Деловая программа' : 'Business programme', t: ru ? 'Программа, а не только экспозиция' : 'A programme, not only stands', text: undefined },
+  audience: { k: ru ? 'Кто приходит' : 'Who attends', t: ru ? 'Аудитория выставки' : 'The audience of the show', text: undefined },
+  stands: { k: ru ? 'Форматы участия' : 'Participation formats', t: ru ? 'Как можно присутствовать' : 'Ways to be present', text: undefined },
+  speakers: { k: ru ? 'Спикеры' : 'Speakers', t: ru ? 'Кто выступает' : 'Who speaks', text: undefined },
+  materials: { k: ru ? 'Материалы' : 'Materials', t: ru ? 'Скачать до переговоров' : 'Download before you negotiate', text: undefined },
+  faq: { k: '', t: '', text: undefined },
+  related: { k: ru ? 'Другие события' : 'Other events', t: ru ? 'Следующие выставки центра' : 'Next shows at the centre', text: undefined },
+  venue: { k: ru ? 'Где проходит' : 'Where', t: ru ? 'Один зал, одна площадка, минимум логистики' : 'One hall, one site, minimal logistics', text: undefined },
+}[section];
+
+const peers = events.filter((e) => e.slug !== event.slug).slice(0, 3);
+---
+
+{
+  section === 'facts' && (
+    <section class:list={['sec', `sec--${tone}`]}>
+      <div class="wrap">
+        <SectionHead locale={locale} kicker={head.k} title={head.t} text={head.text} />
+        <StatBand
+          locale={locale}
+          items={event.facts.map((f) => ({ value: f.value, ru: f.label.ru, en: f.label.en }))}
+        />
+      </div>
+    </section>
+  )
+}
+
+{
+  section === 'categories' && (
+    <section class:list={['sec', `sec--${tone}`]}>
+      <div class="wrap">
+        <SectionHead locale={locale} kicker={head.k} title={head.t} text={head.text} />
+        <div class="cats">
+          {event.categories.map((c) => (
+            <span class="cats__i">
+              <Icon name={c.icon} size={18} />
+              {c.name[locale]}
+            </span>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+{
+  section === 'benefits' && (
+    <section class:list={['sec', `sec--${tone}`]}>
+      <div class="wrap">
+        <SectionHead locale={locale} kicker={head.k} title={head.t} text={head.text} />
+        <FeatureGrid
+          locale={locale}
+          cols={2}
+          items={event.benefits.map((b) => ({ title: b.title[locale], text: b.text[locale], icon: 'check' }))}
+        />
+      </div>
+    </section>
+  )
+}
+
+{
+  section === 'programme' && (
+    <section class:list={['sec', `sec--${tone}`]}>
+      <div class="wrap">
+        <SectionHead locale={locale} kicker={head.k} title={head.t} text={head.text}>
+          <a slot="aside" class="btn btn--sm btn--ghost" href={L('/visitors/programme/')}>
+            {ru ? 'Как устроены сессии' : 'How sessions work'}
+          </a>
+        </SectionHead>
+        <div class="rows">
+          {event.program.map((p, i) => (
+            <article class="row">
+              <span class="row__n num">{String(i + 1).padStart(2, '0')}</span>
+              <div>
+                <h3>{p.title[locale]}</h3>
+                <p>{p.text[locale]}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+{
+  section === 'audience' && (
+    <section class:list={['sec', `sec--${tone}`]}>
+      <div class="wrap">
+        <SectionHead locale={locale} kicker={head.k} title={head.t} text={head.text} />
+        <ul class="aud">
+          {event.audience.map((a) => (
+            <li>
+              <Icon name="users" size={18} />
+              <span>{a.label[locale]}</span>
+              <b>{a.value}</b>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+{
+  section === 'stands' && (
+    <section class:list={['sec', `sec--${tone}`]}>
+      <div class="wrap">
+        <SectionHead locale={locale} kicker={head.k} title={head.t} text={head.text} />
+        <div class="pkg">
+          {event.stands.map((s) => (
+            <article class="card">
+              <p class="mono-label">{s.area}</p>
+              <h3>{s.name[locale]}</h3>
+              <p class="muted">{s.note[locale]}</p>
+              <a class="btn btn--sm" href={L('/request-stand/')}>{ru ? 'Забронировать' : 'Reserve'}</a>
+            </article>
+          ))}
+        </div>
+        <p class="small muted" style="margin-top:1rem">
+          {ru
+            ? 'Полный прайс на метраж и услуги — в разделе «Пакеты участия и цены».'
+            : 'The full rate card for space and services is in the packages section.'}
+        </p>
+      </div>
+    </section>
+  )
+}
+
+{
+  section === 'speakers' && event.speakers.length > 0 && (
+    <section class:list={['sec', `sec--${tone}`]}>
+      <div class="wrap">
+        <SectionHead locale={locale} kicker={head.k} title={head.t} />
+        <div class="grid g4">
+          {event.speakers.map((s) => (
+            <article class="card card--flat">
+              <h3 style="font-size:1.05rem">{s.name}</h3>
+              <p class="small muted">{s.role[locale]}</p>
+              <p class="mono-label">{s.org}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+{
+  section === 'materials' && (
+    <section class:list={['sec', `sec--${tone}`]}>
+      <div class="wrap">
+        <SectionHead locale={locale} kicker={head.k} title={head.t} text={head.text} />
+        <div class="files">
+          {event.materials.map((m) => (
+            <a href={m.href.startsWith('http') ? m.href : m.href} rel="noopener" download={!m.href.startsWith('http')}>
+              <span class="files__ico">
+                <Icon name={m.type === 'video' ? 'play' : m.type === 'photo' ? 'image' : 'doc'} size={20} />
+              </span>
+              <span>
+                <b>{m.title[locale]}</b>
+                <small>{m.type === 'catalog' ? (ru ? 'Каталог · PDF' : 'Catalogue · PDF') : m.type === 'video' ? (ru ? 'Видео' : 'Video') : m.type === 'photo' ? (ru ? 'Фотоотчёт' : 'Photo report') : 'PDF'}</small>
+              </span>
+              <span class="files__go">{ru ? 'Открыть' : 'Open'} →</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+{
+  section === 'faq' && <Faq locale={locale} items={event.faq.map((f) => ({ q: f.q[locale], a: f.a[locale] }))} />
+}
+
+{
+  section === 'related' && (
+    <section class:list={['sec', `sec--${tone}`]}>
+      <div class="wrap">
+        <SectionHead locale={locale} kicker={head.k} title={head.t} text={head.text} />
+        <div class="grid g3">
+          {peers.map((e) => <EventCard locale={locale} event={e} />)}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+{
+  section === 'venue' && (
+    <section class:list={['sec', `sec--${tone}`]}>
+      <div class="wrap">
+        <SectionHead locale={locale} kicker={head.k} title={head.t} text={head.text}>
+          <a slot="aside" class="btn btn--sm btn--ghost" href={L('/venue/')}>
+            {ru ? 'О площадке' : 'About the venue'}
+          </a>
+        </SectionHead>
+        <div class="grid g4">
+          {[
+            ['cube', ru ? 'Крытый зал' : 'Indoor hall', `${site.venue.indoorM2.toLocaleString(ru ? 'ru-RU' : 'en-GB')} m²`],
+            ['sun', ru ? 'Открытая площадка' : 'Open-air area', `${site.venue.outdoorM2.toLocaleString(ru ? 'ru-RU' : 'en-GB')} m²`],
+            ['zap', ru ? 'Электричество' : 'Power', `${site.venue.powerKW} kW · ${site.venue.voltage}`],
+            ['cup', ru ? 'Кафе' : 'Catering', ru ? `${site.venue.cafeSeats} мест` : `${site.venue.cafeSeats} seats`],
+          ].map(([ic, ttl, val]) => (
+            <div class="vcard">
+              <Icon name={ic as string} size={20} />
+              <p class="mono-label">{ttl}</p>
+              <b>{val}</b>
+            </div>
+          ))}
+        </div>
+        <p class="small muted" style="margin-top:1.1rem">{site.location.airport[locale]} · {site.location.station[locale]}</p>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .cats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+  }
+  .cats__i {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0.9rem;
+    border: 1px solid var(--line);
+    border-radius: var(--r-pill);
+    background: var(--paper);
+    font-size: 0.92rem;
+  }
+  .cats__i :global(svg) {
+    color: var(--moss);
+  }
+  .aud {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+  }
+  .aud li {
+    background: var(--paper);
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.95rem 1.2rem;
+  }
+  .aud li :global(svg) {
+    color: var(--moss);
+  }
+  .aud b {
+    font-family: var(--f-display);
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-40);
+  }
+  .pkg {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+  .vcard {
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    padding: 1rem 1.1rem;
+    background: var(--paper);
+    display: grid;
+    gap: 0.3rem;
+  }
+  .vcard :global(svg) {
+    color: var(--moss);
+  }
+  .vcard b {
+    font-family: var(--f-display);
+    font-size: 1.15rem;
+  }
+</style>

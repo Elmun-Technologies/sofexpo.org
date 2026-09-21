@@ -26,10 +26,20 @@ const H = (p?: string) => {
 ---
 
 {
-  blocks.map((b) => {
+  blocks.map((b, idx) => {
     const wide = b.width !== 'narrow';
+    /* Rhythm: a section heading (`h2`) belongs to the block that follows it, and two blocks
+       on the same ground are one story, not two pages. Before this every block carried the full
+       `--sec` padding on both sides, so a heading floated ~170px above its own cards. */
+    const ground = (x?: Block) => (x?.tone === 'paper' || x?.tone === 'forest' || x?.tone === 'sand' ? x.tone : 'default');
+    const prev = idx > 0 ? blocks[idx - 1] : undefined;
+    const afterHead = prev?.type === 'h2' && ground(prev) === ground(b);
+    /* `faq` paints its own paper sheet and `hero` is the page opening — both are real boundaries */
+    const boundary = (x?: Block) => !x || x.type === 'hero' || x.type === 'faq';
+    const sameGround = !boundary(prev) && b.type !== 'faq' && ground(prev) === ground(b);
+    const leadsIn = b.type === 'h2';
     return (
-      <section class:list={['sec', 'block', `block--${b.type}`, b.tone === 'paper' && 'sec--paper', b.tone === 'forest' && 'sec--forest', b.tone === 'sand' && 'sec--sand', b.anchor && 'has-anchor']} id={b.id}>
+      <section class:list={['sec', 'block', `block--${b.type}`, b.tone === 'paper' && 'sec--paper', b.tone === 'forest' && 'sec--forest', b.tone === 'sand' && 'sec--sand', b.anchor && 'has-anchor', leadsIn && 'block--head', afterHead && 'block--after-head', sameGround && !afterHead && 'block--cont']} id={b.id}>
         <div class:list={['wrap', !wide && 'wrap--narrow']}>
           {b.type === 'hero' && (
             <div class="block__head">
@@ -315,6 +325,23 @@ const H = (p?: string) => {
   }
   .block + .block--hero {
     border-top: 1px solid var(--line);
+  }
+  /* heading block: no bottom padding — its content follows immediately */
+  .block--head {
+    padding-bottom: 0;
+  }
+  .block--head :global(.sec-head) {
+    margin-bottom: clamp(1.1rem, 0.6rem + 1.4vw, 1.8rem);
+  }
+  .block--after-head {
+    padding-top: 0;
+  }
+  /* consecutive blocks on the same ground: half the gap, one section */
+  .block--cont {
+    padding-top: 0;
+  }
+  .block--cont > .wrap {
+    padding-top: calc(var(--sec) * 0.45);
   }
   .prose {
     max-width: 74ch;

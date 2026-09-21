@@ -59,9 +59,10 @@ export const eventPages: Record<string, EventPages> = {
           ],
         },
         before: ["facts"],
+        /* the programme is authored below as numbered rows — the data-driven copy of the same
+           four items lives on /program/, not twice on this page */
         after: [
           "categories",
-          "programme",
           "audience",
           "venue",
           "materials",

@@ -3,6 +3,7 @@ import type { Locale } from '@/i18n/config';
 import { postHref, type PostKind } from '@/lib/contentOwnership';
 import { formatDate } from '@/lib/nav';
 import { getEvent } from '@/data/events';
+import { industryLabel } from '@/lib/labels';
 import Icon from '@/components/Icon.astro';
 
 const { locale, post, path, variant = 'default', priority = false } = Astro.props as {
@@ -42,7 +43,7 @@ const hero = post.data.hero ?? relatedEvent?.heroImage ?? '/images/hero-hall.jpg
   )}
   <div class="pc__body">
     <p class="pc__meta">
-      <span class="mono-label">{post.data.category ?? (ru ? 'заметка' : 'note')}</span>
+      <span class="mono-label">{industryLabel(post.data.category, locale)}</span>
       <span>·</span>
       <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date.toISOString().slice(0, 10), locale)}</time>
       {post.data.readingMinutes ? <span class="pc__rt"><Icon name="clock" size={13} /> {post.data.readingMinutes} {ru ? 'мин' : 'min'}</span> : null}
@@ -53,7 +54,7 @@ const hero = post.data.hero ?? relatedEvent?.heroImage ?? '/images/hero-hall.jpg
     <p class="pc__d">{post.data.description}</p>
     <p class="pc__go">
       <a href={href}>{ru ? 'Читать' : 'Read'} →</a>
-      {post.data.event ? <span class="mono-label">· {post.data.event}</span> : null}
+      {relatedEvent ? <span class="mono-label">· {relatedEvent.shortName}</span> : null}
     </p>
     {post.data.tags?.length ? (
       <ul class="tag-list">
@@ -81,6 +82,25 @@ const hero = post.data.hero ?? relatedEvent?.heroImage ?? '/images/hero-hall.jpg
     aspect-ratio: 16 / 10;
     object-fit: cover;
     display: block;
+  }
+  /* the lead card runs full width on the index: photo beside the text, not a 520px billboard above it */
+  @media (min-width: 900px) {
+    .pc--lead {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      align-items: center;
+      padding-bottom: 0;
+    }
+    .pc--lead .pc__media,
+    .pc--lead .pc__media img {
+      height: 100%;
+    }
+    .pc--lead .pc__media img {
+      aspect-ratio: auto;
+      min-height: 340px;
+    }
+    .pc--lead .pc__body {
+      padding-block: clamp(1.2rem, 0.8rem + 1.4vw, 2rem);
+    }
   }
   .pc__body {
     padding: 0 clamp(1rem, .7rem + 1vw, 1.5rem);

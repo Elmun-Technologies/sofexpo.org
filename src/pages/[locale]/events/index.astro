@@ -12,6 +12,7 @@ import SectionHead from '@/components/SectionHead.astro';
 import EventCard from '@/components/EventCard.astro';
 import Icon from '@/components/Icon.astro';
 import CtaBand from '@/components/CtaBand.astro';
+import { industryLabel } from '@/lib/labels';
 
 export function getStaticPaths() {
   return rootOnlyPaths();
@@ -24,17 +25,9 @@ const L = (p: string) => localize(locale, p);
 const next = upcoming[0];
 const rest = upcoming.slice(1);
 const past = events.filter((e) => !upcoming.includes(e));
-const industryLabels: Record<string, { ru: string; en: string }> = {
-  food: { ru: 'Продукты и напитки', en: 'Food and beverages' },
-  construction: { ru: 'Строительство и архитектура', en: 'Construction and architecture' },
-  agriculture: { ru: 'Агропром', en: 'Agriculture' },
-  automotive: { ru: 'Автоиндустрия', en: 'Automotive' },
-  ecommerce: { ru: 'E-commerce и ритейл', en: 'E-commerce and retail' },
-  education: { ru: 'Образование', en: 'Education' },
-};
 const groups = [...new Set(events.map((e) => e.industry))].map((key) => ({
   key,
-  label: industryLabels[key]?.[locale] ?? key,
+  label: industryLabel(key, locale),
   items: events.filter((e) => e.industry === key),
 }));
 
@@ -79,8 +72,8 @@ const copy = {
           <li>
             <a href={L(`/events/${e.slug}/`)}>
               <b>{e.shortName}</b>
-              <span>{e.dates.display[locale]}</span>
-              <span class:list={['chip', { 'chip--gold': e.status !== 'past' }]}>{e.status === 'past' ? (ru ? 'архив' : 'archive') : ru ? 'идёт набор' : 'sales open'}</span>
+              <span class="quick__date">{e.dates.display[locale]}</span>
+              <span class:list={['chip', 'quick__status', { 'chip--gold': e.status !== 'past' }]}>{e.status === 'past' ? (ru ? 'архив' : 'archive') : ru ? 'идёт набор' : 'sales open'}</span>
             </a>
           </li>
         ))}
@@ -188,9 +181,13 @@ const copy = {
     font-family: var(--f-display);
     font-size: 0.95rem;
   }
-  .quick span {
+  .quick__date {
     color: var(--ink-60);
     font-size: 0.85rem;
+  }
+  .quick .quick__status {
+    justify-self: start;
+    margin-top: 0.15rem;
   }
   .ind {
     border: 1px solid var(--line);

@@ -21,6 +21,7 @@ import Countdown from '@/components/Countdown.astro';
 import Faq from '@/components/Faq.astro';
 import CtaBand from '@/components/CtaBand.astro';
 import LeadForm from '@/components/LeadForm.astro';
+import { humanDate } from '@/lib/labels';
 
 export function getStaticPaths() {
   return localePaths();
@@ -424,7 +425,7 @@ const jsonLd = [
       <div class="grid g3">
         {news.map((n) => (
           <a class="media-card" href={P(`/news/${n.id.split('/')[1]}/`)}>
-            <span class="mono-label">{ru ? 'Новость' : 'News'} · {n.data.date.toISOString().slice(0, 10)}</span>
+            <span class="mono-label">{ru ? 'Новость' : 'News'} · {humanDate(n.data.date, locale)}</span>
             <h3>{n.data.title}</h3>
             <p>{n.data.description}</p>
             <span class="media-card__go">→</span>
@@ -434,7 +435,7 @@ const jsonLd = [
       <div class="grid g3" style="margin-top:1rem">
         {articles.map((a) => (
           <a class="media-card" href={P(`/articles/${a.id.split('/')[1]}/`)}>
-            <span class="mono-label">{ru ? 'Аналитика' : 'Insight'} · {a.data.date.toISOString().slice(0, 10)}</span>
+            <span class="mono-label">{ru ? 'Аналитика' : 'Insight'} · {humanDate(a.data.date, locale)}</span>
             <h3>{a.data.title}</h3>
             <p>{a.data.description}</p>
             <span class="media-card__go">→</span>

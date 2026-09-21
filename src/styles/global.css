@@ -381,6 +381,26 @@ li::marker {
   --btn-fg: var(--evergreen);
 }
 
+/* a ghost button on a dark ground must be drawn in white — it was ink-on-evergreen (invisible)
+   in every hero, the event hero, the forest sections and the CTA band */
+.sec--forest .btn--ghost,
+.hero .btn--ghost,
+.ehero .btn--ghost,
+.cta .btn--ghost,
+.ftr .btn--ghost {
+  --btn-fg: #ffffff;
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+.sec--forest .btn--ghost:hover,
+.hero .btn--ghost:hover,
+.ehero .btn--ghost:hover,
+.cta .btn--ghost:hover,
+.ftr .btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #ffffff;
+}
+
 .btn--sm {
   padding: 0.45rem 0.75rem;
   font-size: 0.83rem;
@@ -521,16 +541,32 @@ a.chip:hover {
   color: var(--ink-60);
 }
 
+/* on a dark ground the grid lines are translucent white and every cell is an opaque tile —
+   the old rgba(255,255,255,.04) let the light `--line` grid show through, so the figures
+   (light on light) disappeared entirely on the event pages */
+.sec--forest .stats {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
 .sec--forest .stat {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--evergreen-2);
+  border-top-color: transparent;
 }
 
 .sec--forest .stat b {
-  color: var(--gold-soft);
+  color: #ffffff;
 }
 
 .sec--forest .stat span {
-  color: rgba(255, 255, 255, 0.72);
+  color: rgba(255, 255, 255, 0.78);
+}
+
+/* a stat band never collapses into one long column on a phone: two-by-two is the floor */
+@media (max-width: 680px) {
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 /* ---------- numbered rows ---------- */
@@ -712,6 +748,14 @@ a.chip:hover {
   flex: none;
 }
 
+/* eight section links plus two buttons do not fit in 1240px: the secondary button goes first
+   (it was pushing «Каталог участников» out of view at 1440), then the whole button group */
+@media (max-width: 1440px) {
+  .evnav__cta a:not(:first-child) {
+    display: none;
+  }
+}
+
 @media (max-width: 1180px) {
   .evnav__cta {
     display: none;
@@ -800,6 +844,27 @@ a.chip:hover {
   .promo__note,
   .promo__act a:last-child {
     display: none;
+  }
+}
+
+/* on a phone the strip is one fact and one button — it used to take five lines before the logo */
+@media (max-width: 780px) {
+  .promo__act a:not(.btn) {
+    display: none;
+  }
+  .promo__in {
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+  .promo__txt {
+    font-size: 0.82rem;
+    line-height: 1.3;
+  }
+  .promo__txt b {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
   }
 }
 
@@ -922,6 +987,7 @@ a.chip:hover {
   border-radius: var(--r-pill);
   font-size: 0.95rem;
   font-weight: 500;
+  white-space: nowrap; /* «О компании» used to break onto two lines at 1440px */
   text-decoration: none;
   color: var(--ink);
   transition:
@@ -1497,6 +1563,7 @@ body.nav-open .mnav {
   display: flex;
   flex-direction: column;
   background: var(--paper);
+  color: var(--ink); /* a white card keeps ink text even inside a dark section */
   border: 1px solid var(--line);
   border-radius: var(--r-lg);
   overflow: hidden;
@@ -1505,6 +1572,11 @@ body.nav-open .mnav {
     border-color var(--tr),
     background-color var(--tr);
   height: 100%;
+}
+
+.sec--forest .ev h3,
+.sec--forest .ev h2 {
+  color: var(--ink);
 }
 
 .ev:hover {
@@ -1601,16 +1673,18 @@ body.nav-open .mnav {
 }
 
 /* ---------- callouts ---------- */
+/* flat sheets only — the two gradients here (one of them the old beige/gold wash) were the last
+   leftovers of the palette docs/07 retired; `--gold` is now a status sheet in the brand tint */
 .callout {
   border-radius: var(--r-lg);
   padding: var(--pad);
-  background: linear-gradient(135deg, #eef4ea, var(--cream-2));
+  background: var(--cream-2);
   border: 1px solid var(--line);
 }
 
 .callout--gold {
-  background: linear-gradient(135deg, #f6e7c6, #f1dcab);
-  border-color: rgba(255, 255, 255, 0.07);
+  background: var(--sage);
+  border-color: var(--line-strong);
 }
 
 .callout h3 {

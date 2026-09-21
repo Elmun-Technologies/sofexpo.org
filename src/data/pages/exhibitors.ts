@@ -65,6 +65,16 @@ export const exhibitorPages: PageDef[] = [
         },
         {
           type: "h2",
+          kicker: "Календарь",
+          title: "Выберите свою выставку",
+          text: "Продажа площади открывается за 4–6 месяцев до даты: лучшие локации разбирают в первый месяц.",
+        },
+        {
+          type: "rail",
+          railCount: 4,
+        },
+        {
+          type: "h2",
           kicker: "Зачем ехать",
           title: "Что даёт участие, кроме стенда",
           text: "Ниже — то, ради чего компании берут бюджет на поездку в Самарканд.",
@@ -255,6 +265,16 @@ export const exhibitorPages: PageDef[] = [
               en: "average manager response time",
             },
           ],
+        },
+        {
+          type: "h2",
+          kicker: "Calendar",
+          title: "Pick your show",
+          text: "Floor sales open 4–6 months before the date: the best positions go in the first month.",
+        },
+        {
+          type: "rail",
+          railCount: 4,
         },
         {
           type: "h2",

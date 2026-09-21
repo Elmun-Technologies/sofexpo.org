@@ -37,63 +37,98 @@ export const visitorPages: PageDef[] = [
           imageAlt: "Посетители образовательной выставки",
         },
         {
+          type: "h2",
+          kicker: "Календарь",
+          title: "Какая выставка ваша",
+          text: "Шесть событий 2026–2027 — выбирайте по отрасли: даты, форматы и статус брони в календаре.",
+        },
+        {
+          type: "rail",
+          railCount: 4,
+        },
+        {
+          type: "h2",
+          kicker: "Билеты",
+          title: "Регистрация вместо очереди на входе",
+          text: "Отраслевые выставки бесплатны для специалистов по предварительной регистрации; фестивальные форматы — по билету.",
+        },
+        {
           type: "grid",
-          cols: 4,
+          cols: 2,
           items: [
             {
               icon: "ticket",
-              title: "1. Выберите выставку",
-              text: "Даты и формат — в афише. Если задача — найти поставщика, идите на отраслевое событие, а не на потребительское.",
+              title: "Отраслевые — бесплатно",
+              text: "Предварительная регистрация даёт QR-билет, программу и список участников. Дегустации и сессии — по записи.",
+              meta: "Регистрация занимает минуту",
+              href: "/visitors/tickets/",
             },
             {
-              icon: "check",
-              title: "2. Зарегистрируйтесь",
-              text: "Имя, компания, роль и телефон. Регистрация занимает минуту и превращается в QR-билет.",
-            },
-            {
-              icon: "calendar",
-              title: "3. Составьте список",
-              text: "За две недели до старта пришлём перечень участников: отметьте 8–12 стендов и напишите им заранее.",
-            },
-            {
-              icon: "handshake",
-              title: "4. Приезжайте с вопросом",
-              text: "Цены, сроки, условия дилерства, документы. С вопросом вы получаете ответ, с «просто посмотреть» — буклет.",
+              icon: "star",
+              title: "Фестивальные — по билету",
+              text: "PROMOTORS SHOW — через Ticketon.uz, билет включает шоу и маркет. WORLD EDU — бесплатно по регистрации.",
+              meta: "Билеты и правила",
+              href: "/visitors/tickets/",
             },
           ],
         },
         {
           type: "h2",
-          kicker: "Что вы получаете",
-          title: "Четыре причины потратить утро на выставку",
+          kicker: "Маршрут",
+          title: "16 км от аэропорта, 23 км от вокзала",
+          text: "Парковка при въезде бесплатна; трансфер от аэропорта и вокзала бронируется через менеджера.",
         },
         {
-          type: "rows",
+          type: "map",
+        },
+        {
+          type: "grid",
+          cols: 3,
           items: [
             {
-              title: "Сравнить поставщиков за один заход",
-              text: "Вместо месяца писем: 10–15 компаний раздела в одном зале, с образцами и возможностью потрогать.",
+              icon: "train",
+              title: "Скоростной поезд",
+              text: "Afrosiyob и Sharq: Ташкент — Самарканд около 1 ч 40 мин. Билеты — за 2–3 недели.",
             },
             {
-              title: "Понять цены рынка",
-              text: "На выставках озвучивают диапазоны, акции сезона и условия для дилеров — то, что в прайсе на сайте не найдёте.",
+              icon: "plane",
+              title: "Самолёт",
+              text: "Аэропорт SKD: прямые рейсы из Ташкента, Стамбула, Дубая и Москвы. 20 минут до центра.",
             },
             {
-              title: "Увидеть новинки раньше каталогов",
-              text: "Презентации на сцене и живые демо: техника, материалы, упаковка, сервисы.",
-            },
-            {
-              title: "Получить контакты для тендера",
-              text: "У закупщиков сетей и девелоперов выставка — способ собрать альтернативных поставщиков за один день.",
+              icon: "car",
+              title: "Авто",
+              text: "Трасса М39 из Ташкента — 4–5 часа, из Бухары — 3. Парковка на площадке центра бесплатна.",
             },
           ],
         },
         {
           type: "callout",
-          kicker: "Практика",
-          title: "Планируйте два дня из трёх",
-          text: "Первый день — экспозиция и переговоры, второй — деловая программа и доклады. Вечер третьего дня обычно пустой: демонтаж.",
-          action: { label: "Смотреть афишу", href: "/events/" },
+          kicker: "Проживание",
+          title: "Отели: скидка 15% в Reikartz",
+          text: "Для партнёров и участников SOF EXPO — назовите код выставки при бронировании. Список отелей с расстояниями — в разделе «Проезд».",
+          action: { label: "Маршрут и отели", href: "/visitors/travel/" },
+        },
+        {
+          type: "faq",
+          items: [
+            {
+              q: "Что взять для входа?",
+              a: "Электронный билет (QR) или бейдж плюс паспорт или документ компании для верификации специалиста.",
+            },
+            {
+              q: "Можно ли купить билет на месте?",
+              a: "Да, на кассе при наличии мест; на отраслевые выставки регистрация на кассе тоже бесплатна, но займёт 10–15 минут вместо одной минуты онлайн.",
+            },
+            {
+              q: "Бывают ли групповые визиты?",
+              a: "Группы от 10 человек регистрируются списком: отдельный вход, координатор, экскурсия по разделам. Заявка за 5 рабочих дней.",
+            },
+            {
+              q: "Что делать, если не пришло письмо с билетом?",
+              a: "Проверьте спам и напишите на info@sofexpo.org — восстановим билет по телефону, указанному при регистрации.",
+            },
+          ],
         },
         {
           type: "links",
@@ -124,63 +159,98 @@ export const visitorPages: PageDef[] = [
           imageAlt: "Visitors at an education exhibition",
         },
         {
+          type: "h2",
+          kicker: "Calendar",
+          title: "Which show is yours",
+          text: "Six events in 2026–2027 — pick by industry: dates, formats and booking status in the calendar.",
+        },
+        {
+          type: "rail",
+          railCount: 4,
+        },
+        {
+          type: "h2",
+          kicker: "Tickets",
+          title: "Registration instead of a queue at the gate",
+          text: "Trade shows are free for professionals with pre-registration; festival formats are ticketed.",
+        },
+        {
           type: "grid",
-          cols: 4,
+          cols: 2,
           items: [
             {
               icon: "ticket",
-              title: "1. Pick the show",
-              text: "Dates and format are in the line-up. If the goal is to find a supplier, go to the trade event, not the consumer one.",
+              title: "Trade shows — free",
+              text: "Pre-registration issues a QR e-ticket, the programme and the exhibitor list. Tastings and sessions by sign-up.",
+              meta: "Registration takes a minute",
+              href: "/visitors/tickets/",
             },
             {
-              icon: "check",
-              title: "2. Register",
-              text: "Name, company, role, phone. One minute, and you have a QR ticket.",
-            },
-            {
-              icon: "calendar",
-              title: "3. Build a list",
-              text: "Two weeks ahead we send the exhibitor list: tick 8–12 stands and write to them before the opening.",
-            },
-            {
-              icon: "handshake",
-              title: "4. Arrive with a question",
-              text: 'Prices, lead times, dealer terms, documents. A question gets an answer; "just looking" gets a leaflet.',
+              icon: "star",
+              title: "Festival formats — ticketed",
+              text: "PROMOTORS SHOW via Ticketon.uz — the ticket covers the show and the market. WORLD EDU is free with registration.",
+              meta: "Tickets and rules",
+              href: "/visitors/tickets/",
             },
           ],
         },
         {
           type: "h2",
-          kicker: "What you get",
-          title: "Four reasons to spend a morning at a show",
+          kicker: "Route",
+          title: "16 km from the airport, 23 km from the station",
+          text: "Parking at the gate is free; transfers from the airport and the station are booked through the manager.",
         },
         {
-          type: "rows",
+          type: "map",
+        },
+        {
+          type: "grid",
+          cols: 3,
           items: [
             {
-              title: "Compare suppliers in one go",
-              text: "Instead of a month of emails: 10–15 companies of your section in one hall, with samples you can touch.",
+              icon: "train",
+              title: "High-speed train",
+              text: "Afrosiyob and Sharq: Tashkent — Samarkand about 1 h 40 min. Buy 2–3 weeks ahead.",
             },
             {
-              title: "Learn real market prices",
-              text: "At shows people say the ranges, seasonal promotions and dealer terms out loud — you will not find that on a website.",
+              icon: "plane",
+              title: "Plane",
+              text: "SKD airport: direct flights from Tashkent, Istanbul, Dubai and Moscow. 20 minutes to the centre.",
             },
             {
-              title: "See new products before catalogues",
-              text: "Stage presentations and live demos: machinery, materials, packaging, services.",
-            },
-            {
-              title: "Collect contacts for a tender",
-              text: "For chain and developer buyers, a show is the way to gather alternative suppliers in one day.",
+              icon: "car",
+              title: "By car",
+              text: "M39 from Tashkent — 4–5 hours, from Bukhara — 3. Parking on the centre grounds is free.",
             },
           ],
         },
         {
           type: "callout",
-          kicker: "Practice",
-          title: "Plan for two of the three days",
-          text: "Day one: expo and negotiations. Day two: the business programme. The third evening is mostly dismantle.",
-          action: { label: "See the line-up", href: "/events/" },
+          kicker: "Stay",
+          title: "Hotels: 15% off at Reikartz",
+          text: "For SOF EXPO partners and participants — name the show code when booking. The hotel list with distances is in the travel section.",
+          action: { label: "Route and hotels", href: "/visitors/travel/" },
+        },
+        {
+          type: "faq",
+          items: [
+            {
+              q: "What do I bring for entry?",
+              a: "An e-ticket (QR) or badge plus a passport or company document to verify professional status.",
+            },
+            {
+              q: "Can I buy a ticket on site?",
+              a: "Yes, at the desk if places remain; trade registration at the desk is also free, but takes 10–15 minutes instead of one minute online.",
+            },
+            {
+              q: "Are group visits possible?",
+              a: "Groups of 10+ register as a list: separate entrance, coordinator, a tour through the sections. Apply 5 business days ahead.",
+            },
+            {
+              q: "The ticket email never arrived — what now?",
+              a: "Check spam and write to info@sofexpo.org — we restore the ticket by the phone number given at registration.",
+            },
+          ],
         },
         {
           type: "links",

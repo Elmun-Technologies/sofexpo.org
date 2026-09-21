@@ -109,4 +109,58 @@ const after = (page.after ?? []) as SectionKey[];
     primary={{ label: t('cta.stand'), href: L('/request-stand/') }}
     secondary={{ label: ru ? 'Все выставки' : 'All shows', href: L('/events/') }}
   />
+
+  {/* mobile (docs/08 §4.13): the primary action stays reachable while the page scrolls —
+      sticky, state-only, 56px; the footer and CtaBand above already serve desktop */}
+  <div class="m-cta">
+    <span class="m-cta__txt">
+      <b>{event.shortName}</b>
+      <span>{event.dates.display[locale]}</span>
+    </span>
+    <a class="btn btn--sm btn--light" href={past ? L(`/events/${event.slug}/`) : L('/request-stand/') + `?event=${event.slug}`}>
+      {past ? (ru ? 'Следующая редакция' : 'Next edition') : t('cta.stand')}
+    </a>
+  </div>
 </Base>
+
+<style>
+  .m-cta {
+    display: none;
+  }
+  @media (max-width: 780px) {
+    .m-cta {
+      position: sticky;
+      bottom: 0;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem;
+      min-height: 56px;
+      background: var(--evergreen);
+      border-top: 1px solid rgba(255, 255, 255, 0.16);
+      padding: 0.55rem var(--gutter);
+    }
+    .m-cta__txt {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.15;
+      min-width: 0;
+    }
+    .m-cta__txt b {
+      font-family: var(--f-display);
+      font-size: 0.95rem;
+      letter-spacing: -0.01em;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .m-cta__txt span {
+      font-family: var(--f-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.03em;
+      color: var(--gold-soft);
+    }
+  }
+</style>

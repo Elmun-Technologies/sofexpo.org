@@ -10,6 +10,7 @@ import Icon from '@/components/Icon.astro';
 import StatBand from '@/components/StatBand.astro';
 import LeadForm from '@/components/LeadForm.astro';
 import Faq from '@/components/Faq.astro';
+import CalendarRail from '@/components/CalendarRail.astro';
 import VenuePlan from '@/components/VenuePlan.astro';
 import MapSchema from '@/components/MapSchema.astro';
 
@@ -227,6 +228,8 @@ const H = (p?: string) => {
               ))}
             </div>
           )}
+
+          {b.type === 'rail' && <CalendarRail locale={locale} tone="light" count={b.railCount ?? 4} />}
 
           {b.type === 'plan' && <VenuePlan locale={locale} />}
 

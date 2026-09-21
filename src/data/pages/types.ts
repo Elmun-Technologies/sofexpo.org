@@ -23,8 +23,9 @@ export type BlockType =
   | "form"
   | "faq"
   | "cta"
-  /* Phase 1 (docs/08 §6): the three structural blocks — the venue schematic, the location
-     map and the line-up calendar row. No other block type changes. */
+  /* Phase 1 (docs/08 §6): the structural blocks — the line-up rail, the venue schematic and
+     the location map. No other block type changes. */
+  | "rail"
   | "plan"
   | "map";
 
@@ -99,6 +100,8 @@ export interface Block {
   tone?: "default" | "paper" | "forest" | "sand" | "gold";
   width?: "narrow" | "wide";
   cols?: 2 | 3 | 4;
+  /** `rail` block: how many upcoming shows to show (default 4) */
+  railCount?: number;
   /** collection-ish blocks */
   items?: BlockItem[];
   head?: string[];

@@ -27,11 +27,12 @@ qolmaydigan shablon**. Uchinchi xato — birinchi ikkitasining aksi bo'lib, o'z-
 | 10 | **Venue/kontakt sahifalarida asosiy narsa yo'q** | Zal rejasi (floor plan) yo'q, xarita yo'q, galereya 2 ta render, narx «по запросу» | Organizator va eksponent uchun qaror qabul qilish mumkin emas |
 
 **Bugun tuzatildi** (Phase 0, §5): 1, 2, 7, qisman 8 va 9, `/news/` lead-karta, FOODERA'da dasturning
-takrorlanishi. **Phase 1** (§5b) bilan 3, 4, 8, 9 va 10 ning asosiy qismi ham yopildi — kalendar
-birinchi ekranda, sana eng katta element, header 1 bar, bosh sahifa 14 → 6 seksiya, mobil
-19 549 → 9 235 px, `/events/` jadval-kalendar + filtr + `.ics`, tadbir overview 16 → ~10 blok,
-`/venue/` SVG-reja, `/contacts/` statik xarita, `/organizers/` band sanalar. Qolganlari — materialga
-bog'liq (Phase 2/3) va §7 qarorlari.
+takrorlanishi. **Phase 1** (§5b) bilan 3, 4, 8, 9 va 10 yopildi — kalendar birinchi ekranda, sana
+eng katta element, header 1 bar, bosh sahifa 14 → 6 seksiya, mobil 19 549 → 9 235 px, `/events/`
+jadval-kalendar + filtr + `.ics`, tadbir overview 16 → ~10 blok, `/venue/` SVG-reja, `/contacts/`
+statik xarita, `/organizers/` band sanalar, `/visitors/` bitta-oqim (rail → bilet → yo'l → mehmonxona
+→ FAQ), `/exhibitors/` kalendar-reyka, mobil tadbir sahifasida sticky «Стенд» bari. Qolganlari —
+materialga bog'liq (Phase 2/3) va §7 qarorlari.
 
 ---
 
@@ -362,16 +363,23 @@ Nima qilindi, faylma-fayl:
 | `src/data/pages/venue.ts`, `company.ts` | `/venue/` ga `plan`, `/contacts/` ga `map` bloklari; contact hero'dan render olib tashlandi |
 | `scripts/ics.mjs` (yangi) + `astro.config.mjs` | `/sofexpo-calendar.ics` — **build'da** `events.ts` dan generatsiya (Astro integratsiyasi), har hostning `dist/` ga yoziladi; `events.ts` bilan doimo sinxron, `public/` da eskiruvchi fayl yo'q |
 | `src/data/pages/event-pages.ts` | Overview'larda takrorlanishlar olib tashlandi: «stats» (factlarni takrorlaydi) va «cta» (CtaBand takrorlaydi) bloklari; FOODERA dastur `rows` takrori o'rniga data-driven by-day |
+| `src/components/EventPage.astro` | **Mobil sticky-CTA** (§4.13): ≤780 px da ekran tagida 56 px bar — `shortName` · sana · «Стенд» (o'tganlar uchun «Следующая редакция»). Desktop'ta `display:none`, state-only, evergreen fon |
+| `src/components/CalendarRail.astro` | `tone` prop qo'shildi: `dark` (bosh sahifa hero) / `light` (yorug' seksiyalar uchun — paper karta, moss sana) |
+| `src/data/pages/types.ts` + `Blocks.astro` | Yangi blok turi `rail` (+ `railCount`) — kalendar-reyka istalgan blok-sahifaga o'rnatiladi |
+| `src/data/pages/visitors.ts` | **`/visitors/` bitta-oqim** (§4.6): hero → «Какая выставка ваша» (rail) → «Регистрация вместо очереди» (grid2: trade bepul / festival biletli) → «16 км / 23 км» (xarita + 3 yo'l) → Reikartz −15% callout → FAQ → havolalar. Detailar sub-sahifalarda qoladi |
+| `src/data/pages/exhibitors.ts` | `stats` dan keyin **rail** (§4.5): «Выберите свою выставку» — keyingi 4 ta, status bilan; 5-qadam bloki o'z joyida |
 
 Tekshiruv: `npm run check` → 152 sahifa, SEO-audit «no problems»; `check:hosts` → 6 host, «hosts
 agree»; `qa-independent.py` — yangi tur yo'q (faqat eski 8 qoida / 75 ta). CSS `:has()` filtr
 headless Chromium'da tekshirildi (6 → 1 qator). `.ics` valid VCALENDAR (6 VEVENT). Hover'da
-`translate`/`scale` — 0, `@keyframes` — 0.
+`translate`/`scale` — 0, `@keyframes` — 0. Mobil sticky-CTA headless'da ko'rishga tasdiqlandi
+(FOODERA host, 390 px: bar hero'dan footergacha yopishib turadi). `/ru/visitors/` (4 530 px
+desktop / 6 301 px mobil) va `/ru/exhibitors/` (4 706 px) ssuralari ko'rib chiqildi.
 
 **Qolgan (Phase 1 dan tushib qolgan):** `/` gate — §7 Q1 qarori kerak (hozircha darvoza turibdi);
 tadbir kartasidagi «rang chizig'i» endi tarmoq rangida, lekin **ko'rgazma brendi/logotipi** —
-Phase 2 (material). `/exhibitors/` 3 qadam + narx jadvali va `/visitors/` bilet-oqimi — Q4/Q5
-qarorlariga bog'liq, shuning uchun shu yerda to'xtatildi.
+Phase 2 (material). `/exhibitors/` narx jadvali va real PDF'lar — Phase 3 (Q4). Bilet-oqimi
+narxlarsiz qurildi (trade = bepul registratsiya, festival = Ticketon) — narx chiqqach 1 satr.
 
 ---
 
@@ -380,7 +388,7 @@ qarorlariga bog'liq, shuning uchun shu yerda to'xtatildi.
 | Faza | Muddat | Nima | Sizdan kerak |
 | --- | --- | --- | --- |
 | **0 · Buglar** | ✅ 2026-09-21 | §5 | — |
-| **1 · Tuzilma** | ✅ 2026-09-21 (asosiy qismi) | §5b — hammasi bajarildi, bo'lmasa `/` gate (Q1) va narx/biletga bog'liq qismlar (Q4–Q5) | Q1, Q4, Q5; zal o'lchamlari (anigcha SVG uchun) |
+| **1 · Tuzilma** | ✅ 2026-09-21 | §5b — tuzilma qismi to'liq (kalendar-first, /visitors/ oqimi, /exhibitors/ rail, mobil sticky-CTA). Qolgan: `/` gate (Q1), narx/PDF (Q4, Phase 3), zal o'lchamlari (Phase 3) | Q1; Q4 (narxlar) |
 | **2 · Identifikatsiya** | fotolar kelgach, 3–4 kun | 6 ko'rgazma: logotip + rang `brand-map.json` (5 yozuv); real fotolar 1:1 fayl nomi bo'yicha; hamkor logotiplari; jamoa fotolari; OG-kartalar har ko'rgazma uchun | Logotiplar (SVG/AI), 22 kadr (`docs/07 §4`), hamkor logotiplari |
 | **3 · Kommersiya** | narxlar kelgach, 2 kun | Rate-card jadvallari (`/packages/`, `/organizers/rates/`, tadbir sahifasi), «уточняется» 6 joy o'rniga qiymatlar, real PDF (21 fayl) | Narxlar, texspes qiymatlari, PDF'lar |
 

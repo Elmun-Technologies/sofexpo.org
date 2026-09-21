@@ -59,12 +59,11 @@ export const eventPages: Record<string, EventPages> = {
           ],
         },
         before: ["facts"],
-        /* the programme is authored below as numbered rows — the data-driven copy of the same
-           four items lives on /program/, not twice on this page */
+        /* the programme is the data-driven by-day section (events.ts `day` field) — one source,
+           duplicated nowhere */
         after: [
           "categories",
-          "audience",
-          "venue",
+          "programme",
           "materials",
           "faq",
           "related",
@@ -117,48 +116,6 @@ export const eventPages: Record<string, EventPages> = {
               text: "Локации у центрального прохода и у входа в деловую программу разбираются первыми. Бронь фиксируется заявкой, договор — в течение 3 рабочих дней.",
               action: { label: "Забронировать место", href: "/request-stand/" },
             },
-            {
-              type: "rows",
-              items: [
-                {
-                  title: "Дегустационная зона",
-                  text: "Слепые дегустации с участием категорийных менеджеров: продукт оценивают вслепую, результат — в отчёте выставки и в решениях о вводе в ассортимент.",
-                },
-                {
-                  title: "Закупочная биржа",
-                  text: "Вы выбираете 6–10 сетей или оптовых баз, мы подтверждаем встречи по 15 минут с точным таймингом.",
-                },
-                {
-                  title: "Форум Food Retail",
-                  text: "Полка, логистика, ценообразование, private label. Отрасль обсуждает не тренды вообще, а условия работы здесь и сейчас.",
-                },
-                {
-                  title: "Конкурс «Лучший продукт»",
-                  text: "Экспертное жюри, номинации по разделам, награждение в первый день — повод приехать с новинкой, а не с каталогом.",
-                },
-              ],
-            },
-            {
-              type: "stats",
-              items: [
-                {
-                  value: "20–22",
-                  unit: "октября",
-                  label: "даты выставки 2026",
-                },
-                { value: "3", label: "дня переговоров" },
-                { value: "12", label: "тематических разделов" },
-              ],
-            },
-            {
-              type: "cta",
-              title: "Готовы привезти продукт на дегустацию?",
-              text: "Пришлите описание и цену — скажем, в какой раздел встать и какой формат стенда соберёт нужную аудиторию.",
-              actions: [
-                { label: "Оставить заявку", href: "/request-stand/" },
-                { label: "Пакеты участия", href: "/exhibitors/packages/" },
-              ],
-            },
           ],
           en: [
             {
@@ -206,47 +163,6 @@ export const eventPages: Record<string, EventPages> = {
               title: "38 premium stands left",
               text: "Positions on the central aisle and near the programme entrance go first. A request holds the space, the contract follows within three working days.",
               action: { label: "Reserve a place", href: "/request-stand/" },
-            },
-            {
-              type: "rows",
-              items: [
-                {
-                  title: "Tasting area",
-                  text: "Blind tastings with category managers: products are judged anonymously, results feed the show report and listing decisions.",
-                },
-                {
-                  title: "Buying marketplace",
-                  text: "You pick 6–10 chains or wholesalers, we confirm 15-minute meetings on a strict timer.",
-                },
-                {
-                  title: "Food Retail forum",
-                  text: "Shelf, logistics, pricing, private label. Not trends in general — the terms of working here and now.",
-                },
-                {
-                  title: "Best Product contest",
-                  text: "Expert jury, nominations per section, awards on opening day — a reason to bring a launch, not a catalogue.",
-                },
-              ],
-            },
-            {
-              type: "stats",
-              items: [
-                { value: "20–22", unit: "Oct", label: "2026 show dates" },
-                { value: "3", label: "days of trading" },
-                { value: "12", label: "thematic sections" },
-              ],
-            },
-            {
-              type: "cta",
-              title: "Ready to bring a product to the tasting?",
-              text: "Send a description and a price — we will tell you which section to enter and which stand format gathers the audience you need.",
-              actions: [
-                { label: "Send a request", href: "/request-stand/" },
-                {
-                  label: "Participation packages",
-                  href: "/exhibitors/packages/",
-                },
-              ],
             },
           ],
         },
@@ -709,7 +625,7 @@ eventPages["buildpro-expo"] = {
       ],
     },
     before: ["facts"],
-    after: ["categories", "programme", "venue", "materials", "faq", "related"],
+    after: ["categories", "programme", "materials", "faq", "related"],
     blocks: {
       ru: [
         {
@@ -736,15 +652,6 @@ eventPages["buildpro-expo"] = {
               title: "Продать частному застройщику",
               text: "Второй контур аудитории — те, кто строит дом для себя и выбирает окно, кровлю, фасад, отопление за один сезон.",
             },
-          ],
-        },
-        {
-          type: "stats",
-          items: [
-            { value: "9–11", unit: "ноября", label: "даты 2026 года" },
-            { value: "5", label: "редакция выставки" },
-            { value: "10+", label: "сессий форума" },
-            { value: "4", label: "языка программы" },
           ],
         },
         {
@@ -783,15 +690,6 @@ eventPages["buildpro-expo"] = {
             },
           ],
         },
-        {
-          type: "cta",
-          title: "Забронировать место на пятой редакции",
-          text: "Пришлите описание продукта — предложим раздел, соседство и локацию под демо.",
-          actions: [
-            { label: "Заявка на участие", href: "/request-stand/" },
-            { label: "Пакеты и цены", href: "/exhibitors/packages/" },
-          ],
-        },
       ],
       en: [
         {
@@ -818,15 +716,6 @@ eventPages["buildpro-expo"] = {
               title: "Sell to private builders",
               text: "The second audience circle is people building their own house who choose windows, roof, facade and heating within one season.",
             },
-          ],
-        },
-        {
-          type: "stats",
-          items: [
-            { value: "9–11", unit: "Nov", label: "2026 dates" },
-            { value: "5th", label: "edition of the show" },
-            { value: "10+", label: "forum sessions" },
-            { value: "4", label: "programme languages" },
           ],
         },
         {
@@ -863,15 +752,6 @@ eventPages["buildpro-expo"] = {
               title: "Hall advertising",
               text: "Banners, media surfaces, session sponsorship — for brands working on awareness rather than direct sales.",
             },
-          ],
-        },
-        {
-          type: "cta",
-          title: "Reserve a place at the fifth edition",
-          text: "Send a product description and we propose the section, the neighbours and a demo position.",
-          actions: [
-            { label: "Participation request", href: "/request-stand/" },
-            { label: "Packages and rates", href: "/exhibitors/packages/" },
           ],
         },
       ],
@@ -1291,7 +1171,7 @@ eventPages["agropro-expo"] = {
       ],
     },
     before: ["facts"],
-    after: ["categories", "audience", "venue", "materials", "faq", "related"],
+    after: ["programme", "audience", "materials", "faq", "related"],
     blocks: {
       ru: [
         {
@@ -1343,33 +1223,12 @@ eventPages["agropro-expo"] = {
           ],
         },
         {
-          type: "stats",
-          items: [
-            { value: "2–4", unit: "марта", label: "даты 2027 года" },
-            { value: "468", label: "агрокластеров в стране" },
-            { value: "85 000+", label: "фермерских хозяйств" },
-            { value: "25+", unit: "млрд $", label: "производство в АПК" },
-          ],
-        },
-        {
           type: "callout",
           tone: "gold",
           kicker: "Иностранному участнику",
           title: "Рынок заходит через партнёра",
           text: "Мы помогаем найти дилера, переводчика и согласовать демонстрацию техники на улице. Языки деловой программы — русский, английский, турецкий, нидерландский, немецкий.",
           action: { label: "Запросить условия", href: "/contacts/" },
-        },
-        {
-          type: "cta",
-          title: "Поставьте технику в поле зрения отрасли",
-          text: "Заявка на площадь или демо-позицию — с габаритами и требованиями к площадке.",
-          actions: [
-            { label: "Забронировать место", href: "/request-stand/" },
-            {
-              label: "Форматы участия",
-              href: "/events/agropro-expo/exhibitors/",
-            },
-          ],
         },
       ],
       en: [
@@ -1422,33 +1281,12 @@ eventPages["agropro-expo"] = {
           ],
         },
         {
-          type: "stats",
-          items: [
-            { value: "2–4", unit: "March", label: "2027 dates" },
-            { value: "468", label: "agro-clusters in the country" },
-            { value: "85,000+", label: "farm holdings" },
-            { value: "25+", unit: "bn $", label: "agricultural output" },
-          ],
-        },
-        {
           type: "callout",
           tone: "gold",
           kicker: "For foreign exhibitors",
           title: "This market enters through a partner",
           text: "We help find a dealer and an interpreter and approve a machinery demo outdoors. Programme languages: Russian, English, Turkish, Dutch, German.",
           action: { label: "Request conditions", href: "/contacts/" },
-        },
-        {
-          type: "cta",
-          title: "Put your machinery in front of the industry",
-          text: "Apply for space or a demo position — with dimensions and site requirements.",
-          actions: [
-            { label: "Reserve a place", href: "/request-stand/" },
-            {
-              label: "Participation formats",
-              href: "/events/agropro-expo/exhibitors/",
-            },
-          ],
         },
       ],
     },
@@ -2253,7 +2091,7 @@ eventPages["world-edu-expo"] = {
       ],
     },
     before: ["facts"],
-    after: ["categories", "programme", "venue", "materials", "faq", "related"],
+    after: ["categories", "programme", "materials", "faq", "related"],
     blocks: {
       ru: [
         {
@@ -2309,15 +2147,6 @@ eventPages["world-edu-expo"] = {
           text: "Самая дорогая ошибка абитуриента — год, потраченный на подготовку «в никуда». На выставке этот год можно сэкономить.",
           cite: "проектная команда WORLD EDU",
         },
-        {
-          type: "cta",
-          title: "Приехать классом или семьёй",
-          text: "Групповая регистрация для школ и лицеев, отдельный маршрут и сессия профориентации.",
-          actions: [
-            { label: "Зарегистрировать группу", href: "/visitors/tickets/" },
-            { label: "Программа", href: "/events/world-edu-expo/program/" },
-          ],
-        },
       ],
       en: [
         {
@@ -2372,15 +2201,6 @@ eventPages["world-edu-expo"] = {
           type: "quote",
           text: "The costliest mistake of an applicant is a year spent preparing for nothing. At the show you can save that year.",
           cite: "the WORLD EDU project team",
-        },
-        {
-          type: "cta",
-          title: "Come with a class or as a family",
-          text: "Group registration for schools and lyceums, a dedicated route and a guidance session.",
-          actions: [
-            { label: "Register a group", href: "/visitors/tickets/" },
-            { label: "Programme", href: "/events/world-edu-expo/program/" },
-          ],
         },
       ],
     },
@@ -2825,18 +2645,6 @@ eventPages["ecom-retail-expo"] = {
             },
           ],
         },
-        {
-          type: "cta",
-          title: "Привезти продукт или найти поставщика",
-          text: "Заявка участника — и мы вернёмся со списком встреч и форматом стенда.",
-          actions: [
-            { label: "Стать участником", href: "/request-stand/" },
-            {
-              label: "Форматы участия",
-              href: "/events/ecom-retail-expo/exhibitors/",
-            },
-          ],
-        },
       ],
       en: [
         {
@@ -2902,18 +2710,6 @@ eventPages["ecom-retail-expo"] = {
             {
               title: "Two days instead of weeks of email",
               text: "The forum runs next to the expo: a session on marketplace commissions in the morning, negotiations at noon, a contact list by evening.",
-            },
-          ],
-        },
-        {
-          type: "cta",
-          title: "Bring a product or find a supplier",
-          text: "Send a participant request and we return a meeting list and a stand format.",
-          actions: [
-            { label: "Become a participant", href: "/request-stand/" },
-            {
-              label: "Participation formats",
-              href: "/events/ecom-retail-expo/exhibitors/",
             },
           ],
         },

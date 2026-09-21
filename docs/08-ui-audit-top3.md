@@ -27,7 +27,11 @@ qolmaydigan shablon**. Uchinchi xato — birinchi ikkitasining aksi bo'lib, o'z-
 | 10 | **Venue/kontakt sahifalarida asosiy narsa yo'q** | Zal rejasi (floor plan) yo'q, xarita yo'q, galereya 2 ta render, narx «по запросу» | Organizator va eksponent uchun qaror qabul qilish mumkin emas |
 
 **Bugun tuzatildi** (Phase 0, §5): 1, 2, 7, qisman 8 va 9, `/news/` lead-karta, FOODERA'da dasturning
-takrorlanishi. Qolganlari — §4 sahifama-sahifa va §6 roadmap.
+takrorlanishi. **Phase 1** (§5b) bilan 3, 4, 8, 9 va 10 ning asosiy qismi ham yopildi — kalendar
+birinchi ekranda, sana eng katta element, header 1 bar, bosh sahifa 14 → 6 seksiya, mobil
+19 549 → 9 235 px, `/events/` jadval-kalendar + filtr + `.ics`, tadbir overview 16 → ~10 blok,
+`/venue/` SVG-reja, `/contacts/` statik xarita, `/organizers/` band sanalar. Qolganlari — materialga
+bog'liq (Phase 2/3) va §7 qarorlari.
 
 ---
 
@@ -326,14 +330,57 @@ Tekshiruv: `npm run check` → 152 sahifa, SEO-audit «no problems»; `build:hos
 `@keyframes` — 0; yig'ilgan CSS'da qolgan 4 gradient — hammasi foto/fon ustidagi o'qiluvchanlik
 qatlami (`.hero__media::after`, `.ehero::after` ×2, `.tile__body`), dekorativ gradient — 0.
 
+## 5b. Phase 1 · Tuzilma — bajarildi (2026-09-21)
+
+§4 dagi P1-lar bajarildi. **URL, host-model, SEO-kontrakt, QA qoidalari o'zgarmadi** — faqat
+tuzilma, ierarxiya va uch yangi blok turi (`plan`, `map`, `calendar`-reyka). O'lchangan natija:
+
+| O'lchov | Oldin | Endi |
+| --- | --- | --- |
+| Bosh sahifa, desktop | 10 667 px (14 seksiya) | **6 174 px (6 seksiya)** |
+| Bosh sahifa, mobil | 19 549 px (≈25 ekran) | **9 235 px (≈13 ekran)** |
+| `/events/`, desktop | 4 818 px (karta to'plami) | **2 272 px (jadval-kalendar)** |
+| Tadbir overview, desktop | 8 998 px (16 blok) | **6 703 px (dastur kun bo'yicha, takrorlanishlarsiz)** |
+
+Nima qilindi, faylma-fayl:
+
+| Fayl | Nima |
+| --- | --- |
+| `src/styles/global.css` | Shrift shkalasi ko'tarildi (`--t-hero` 2.9 rem, `--t-h2` 2.05 rem, yangi `--t-date` 1.95 rem) — qoida «eng katta element = sana/raqam». Header 3 qavat → 1 bar (topbar olib tashlandi, `--header-h` 72 px qoldi). Promo 36 px yupqa lenta. `/events/` jadval-kalendar (`.cal`), tarmoq rangi 4 px chiziq, CSS `:has()` filtr. Bosh sahifa hero (`.home-hero`) + kalendar-reyka (`.rail`), venue 1 qator (`.venue-strip`). Tadbir kartasi (`.ev`) — sana katta, chiplar yo'q, «N разделов» bitta raqam |
+| `src/components/Header.astro` | 3 bar → **1 bar**: logotip · 6 punkt · RU/EN · 1 CTA. Topbar (manzil/telefon/pochta) → `/contacts/` va footer. Nav 7 → 6 («Новости» footer'da qoldi) |
+| `src/components/PromoBar.astro` | 152 px'lik 3 qavatdan **faqat bosh sahifa + `/events/`** da 36 px: brend · sana · «через N дн.» · 1 «Стенд» tugma. Sana o'tgach keyingi ko'rgazmaga o'tadi |
+| `src/pages/[locale]/index.astro` | **14 → 6 seksiya**: (1) hero = keyingi ko'rgazma — eng katta shrift bilan sana, countdown, kalendar-reyka; (2) markaz 1 qator; (3) 3 eshik; (4) Samarqand + **bitta** stat-band; (5) yangiliklar 1 lead + 3 qator; (6) forma + FAQ. Olib tashlandi: 2-marta stat-band, «Форматы участия», 8 xizmat kartasi, logotipsiz hamkorlar, 3+2 yetim karta to'plami |
+| `src/pages/[locale]/events/index.astro` | Karta to'plami → **jadval-kalendar**: sana bloki (katta), tarmoq rangi chiziq, tarmoq, status, «Стенд/Билет». Ustida **tarmoq filtri** (JS'siz, `:has()`) + «Скачать календарь (.ics)». O'tganlar — «архив / Итоги →» |
+| `src/components/EventCard.astro` | Sana — katta display bloq, chapda tarmoq rangi 4 px chiziq, `tag-list` chiplari → «12 разделов» bitta raqam |
+| `src/components/EventHero.astro` | Sana hero'da **eng katta element** (2.2–3.6 rem) — 0.95 rem fakt-ro'yxatidan olib, alohida qator qilindi |
+| `src/components/EventSections.astro` | «Деловая программа» — **kun bo'yicha** tab (20 окт / 21 окт …), `events.ts` ga `day` maydoni qo'shildi |
+| `src/data/events.ts` | Har dastur yozuviga `day` (kun) maydoni |
+| `src/components/CalendarRail.astro` (yangi) | Bosh sahifa kalendar-reyakasi: keyingi 4 ko'rgazma, rang chizig'i · sana · nom; mobilda gorizontal skroll |
+| `src/components/VenuePlan.astro` (yangi) + `Blocks.astro` `plan` | `/venue/` — **1 ekran = 1 sxema**: zonalar, maydonlar, kirish, yuk davori, parковка, 64 px modul setkasi. «Схема, не в масштабе» + texspes havolasi. Aniq o'lchamlar (balandlik, pol yuklamasi) Phase 3 da `site.ts` dan to'ldiriladi |
+| `src/components/MapSchema.astro` (yangi) + `Blocks.astro` `map` | `/contacts/` — **statik xarita-sxema** (0 tashqi so'rov): aэропорт 16 km, вокзал 23 km, Termez M-40, pinn + Yandex/Google/2GIS havolalari. `site.location.lat/lng` (`needsVerification`) tagida «координаты подтвервляются» yozuvi |
+| `src/data/pages/organizers.ts` | **Band sanalar** — `events.ts` dan avtomatik (montaj −2 / demонтаж +2 kun), jadval ko'rinishida; afisha o'zgarganda o'zi qayta hisoblanadi |
+| `src/data/pages/venue.ts`, `company.ts` | `/venue/` ga `plan`, `/contacts/` ga `map` bloklari; contact hero'dan render olib tashlandi |
+| `scripts/ics.mjs` (yangi) + `astro.config.mjs` | `/sofexpo-calendar.ics` — **build'da** `events.ts` dan generatsiya (Astro integratsiyasi), har hostning `dist/` ga yoziladi; `events.ts` bilan doimo sinxron, `public/` da eskiruvchi fayl yo'q |
+| `src/data/pages/event-pages.ts` | Overview'larda takrorlanishlar olib tashlandi: «stats» (factlarni takrorlaydi) va «cta» (CtaBand takrorlaydi) bloklari; FOODERA dastur `rows` takrori o'rniga data-driven by-day |
+
+Tekshiruv: `npm run check` → 152 sahifa, SEO-audit «no problems»; `check:hosts` → 6 host, «hosts
+agree»; `qa-independent.py` — yangi tur yo'q (faqat eski 8 qoida / 75 ta). CSS `:has()` filtr
+headless Chromium'da tekshirildi (6 → 1 qator). `.ics` valid VCALENDAR (6 VEVENT). Hover'da
+`translate`/`scale` — 0, `@keyframes` — 0.
+
+**Qolgan (Phase 1 dan tushib qolgan):** `/` gate — §7 Q1 qarori kerak (hozircha darvoza turibdi);
+tadbir kartasidagi «rang chizig'i» endi tarmoq rangida, lekin **ko'rgazma brendi/logotipi** —
+Phase 2 (material). `/exhibitors/` 3 qadam + narx jadvali va `/visitors/` bilet-oqimi — Q4/Q5
+qarorlariga bog'liq, shuning uchun shu yerda to'xtatildi.
+
 ---
 
 ## 6. Roadmap
 
 | Faza | Muddat | Nima | Sizdan kerak |
 | --- | --- | --- | --- |
-| **0 · Buglar** | ✅ bugun | §5 | — |
-| **1 · Tuzilma** | 5–7 ish kuni | Header 1 bar; bosh sahifa 14 → 7 seksiya, hero = keyingi ko'rgazma + kalendar-reyka; `/events/` jadval-kalendar + filtr + `.ics`; tadbir sahifasi 16 → 9 blok, dastur kun bo'yicha; tadbir kartasi (sana katta, chiplar yo'q, rang chizig'i); shrift shkalasi (§2.3); `/venue/` SVG-reja; `/contacts/` xarita; `/organizers/` band sanalar; mobil ≤ 9 000 px | Q1–Q3 (§7); zal o'lchamlari (SVG uchun) |
+| **0 · Buglar** | ✅ 2026-09-21 | §5 | — |
+| **1 · Tuzilma** | ✅ 2026-09-21 (asosiy qismi) | §5b — hammasi bajarildi, bo'lmasa `/` gate (Q1) va narx/biletga bog'liq qismlar (Q4–Q5) | Q1, Q4, Q5; zal o'lchamlari (anigcha SVG uchun) |
 | **2 · Identifikatsiya** | fotolar kelgach, 3–4 kun | 6 ko'rgazma: logotip + rang `brand-map.json` (5 yozuv); real fotolar 1:1 fayl nomi bo'yicha; hamkor logotiplari; jamoa fotolari; OG-kartalar har ko'rgazma uchun | Logotiplar (SVG/AI), 22 kadr (`docs/07 §4`), hamkor logotiplari |
 | **3 · Kommersiya** | narxlar kelgach, 2 kun | Rate-card jadvallari (`/packages/`, `/organizers/rates/`, tadbir sahifasi), «уточняется» 6 joy o'rniga qiymatlar, real PDF (21 fayl) | Narxlar, texspes qiymatlari, PDF'lar |
 

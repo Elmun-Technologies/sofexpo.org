@@ -9,6 +9,7 @@ import { localize } from '@/i18n/config';
 import type { ExpoEvent } from '@/data/events';
 import { site } from '@/data/site';
 import { events } from '@/data/events';
+import { humanDate } from '@/lib/labels';
 import SectionHead from '@/components/SectionHead.astro';
 import FeatureGrid from '@/components/FeatureGrid.astro';
 import StatBand from '@/components/StatBand.astro';
@@ -52,6 +53,22 @@ const head = {
 }[section];
 
 const peers = events.filter((e) => e.slug !== event.slug).slice(0, 3);
+
+/* Programme grouped by show day: the number becomes a real date (20 октября), the way
+   Ekspocentr and Crocus present theirs. Entries without `day` fall into day 1. */
+const progDays: { day: number; label: string; items: typeof event.program }[] = (() => {
+  if (section !== 'programme') return [];
+  const byDay = new Map<number, typeof event.program>();
+  for (const p of event.program) {
+    const d = p.day ?? 1;
+    byDay.set(d, [...(byDay.get(d) ?? []), p]);
+  }
+  return [...byDay.entries()].sort((a, b) => a[0] - b[0]).map(([day, items]) => {
+    const date = new Date(`${event.dates.start}T12:00:00+05:00`);
+    date.setDate(date.getDate() + (day - 1));
+    return { day, label: humanDate(date, locale), items };
+  });
+})();
 ---
 
 {
@@ -110,15 +127,25 @@ const peers = events.filter((e) => e.slug !== event.slug).slice(0, 3);
             {ru ? 'Как устроены сессии' : 'How sessions work'}
           </a>
         </SectionHead>
-        <div class="rows">
-          {event.program.map((p, i) => (
-            <article class="row">
-              <span class="row__n num">{String(i + 1).padStart(2, '0')}</span>
-              <div>
-                <h3>{p.title[locale]}</h3>
-                <p>{p.text[locale]}</p>
+        <div class="prog">
+          {progDays.map((g) => (
+            <div class="prog__day">
+              <div class="prog__head">
+                <span class="prog__n num">{String(g.day).padStart(2, '0')}</span>
+                <div>
+                  <b>{g.label}</b>
+                  <small>{ru ? `День ${g.day} · ${g.items.length} ${g.items.length === 1 ? 'мероприятие' : g.items.length < 5 ? 'мероприятия' : 'мероприятий'}` : `Day ${g.day} · ${g.items.length} item${g.items.length === 1 ? '' : 's'}`}</small>
+                </div>
               </div>
-            </article>
+              <ul>
+                {g.items.map((p) => (
+                  <li>
+                    <b>{p.title[locale]}</b>
+                    <span>{p.text[locale]}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))}
         </div>
       </div>
@@ -276,6 +303,70 @@ const peers = events.filter((e) => e.slug !== event.slug).slice(0, 3);
   }
   .cats__i :global(svg) {
     color: var(--moss);
+  }
+  .prog {
+    display: grid;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+  }
+  .prog__day {
+    background: var(--paper);
+    padding: clamp(1.1rem, .7rem + 1.4vw, 1.7rem) clamp(1.2rem, .8rem + 1.4vw, 1.8rem);
+  }
+  .prog__head {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .prog__n {
+    width: 40px;
+    height: 40px;
+    flex: none;
+    border-radius: var(--r);
+    background: var(--evergreen);
+    color: var(--gold-soft);
+    display: grid;
+    place-items: center;
+    font-size: .95rem;
+  }
+  .prog__head b {
+    display: block;
+    font-family: var(--f-display);
+    font-size: 1.18rem;
+    letter-spacing: -.01em;
+  }
+  .prog__head small {
+    color: var(--ink-40);
+    font-size: .82rem;
+  }
+  .prog ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: .9rem;
+  }
+  .prog li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: .25rem;
+    padding-bottom: .9rem;
+    border-bottom: 1px dashed var(--line);
+  }
+  .prog li:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+  .prog li b {
+    font-size: 1.02rem;
+  }
+  .prog li span {
+    color: var(--ink-60);
+    font-size: .94rem;
   }
   .aud {
     list-style: none;

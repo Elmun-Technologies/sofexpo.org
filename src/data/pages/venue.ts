@@ -69,6 +69,16 @@ export const venuePages: PageDef[] = [
         },
         {
           type: "h2",
+          kicker: "Планировка",
+          title: "Один экран — вся площадка",
+          text: "Зоны, площади и точки доступа: где встаёт стенд, где техника, где регистрации и грузовой двор.",
+        },
+        {
+          /* one screen = one schematic (docs/08 §4.8): zones, areas, access points */
+          type: "plan",
+        },
+        {
+          type: "h2",
           kicker: "Что внутри",
           title: "Четыре элемента, из которых собирается любое событие",
           text: "Вы можете взять только зал, только улицу или весь контур вместе с деловой программой — конфигурация влияет на ставку, но не на сроки монтажа.",
@@ -234,6 +244,15 @@ export const venuePages: PageDef[] = [
               en: "events a year",
             },
           ],
+        },
+        {
+          type: "h2",
+          kicker: "The plan",
+          title: "The whole venue on one screen",
+          text: "Zones, areas and access points: where a stand goes, where machinery stands, where registration and the loading yard sit.",
+        },
+        {
+          type: "plan",
         },
         {
           type: "h2",

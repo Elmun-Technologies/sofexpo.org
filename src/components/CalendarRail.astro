@@ -1,0 +1,30 @@
+---
+/**
+ * The home's calendar rail: the next four shows, one line each — industry colour line,
+ * big date, name (docs/08 §4.2). Horizontal on phones. This is the "calendar first"
+ * mechanic every CIS top-3 expo site runs; it used to be the third section on our home.
+ */
+import { localize, type Locale } from '@/i18n/config';
+import { upcoming, type ExpoEvent } from '@/data/events';
+import { bigDate, industryColor, industryLabel } from '@/lib/labels';
+
+const { locale } = Astro.props as { locale: Locale };
+const ru = locale === 'ru';
+const L = (p: string) => localize(locale, p);
+const shows = upcoming.slice(0, 4);
+---
+
+<nav class="rail" aria-label={ru ? 'Календарь выставок' : 'Exhibition calendar'}>
+  {shows.map((e: ExpoEvent) => {
+    const d = bigDate(e.dates.start, e.dates.end, locale);
+    return (
+      <a href={L(`/events/${e.slug}/`)} style={{ '--ic': industryColor(e.industry) } as Record<string, string>}>
+        <span class="rail__date">
+          {d.days} {d.month} {d.year}
+        </span>
+        <b>{e.brand[locale]}</b>
+        <span class="rail__ind">{industryLabel(e.industry, locale)}</span>
+      </a>
+    );
+  })}
+</nav>

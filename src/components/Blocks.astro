@@ -10,6 +10,8 @@ import Icon from '@/components/Icon.astro';
 import StatBand from '@/components/StatBand.astro';
 import LeadForm from '@/components/LeadForm.astro';
 import Faq from '@/components/Faq.astro';
+import VenuePlan from '@/components/VenuePlan.astro';
+import MapSchema from '@/components/MapSchema.astro';
 
 const { blocks, locale } = Astro.props as { blocks: Block[]; locale: Locale };
 const t = useUI(locale);
@@ -225,6 +227,10 @@ const H = (p?: string) => {
               ))}
             </div>
           )}
+
+          {b.type === 'plan' && <VenuePlan locale={locale} />}
+
+          {b.type === 'map' && <MapSchema locale={locale} />}
 
           {b.type === 'quote' && (
             <figure class="quote">

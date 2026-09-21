@@ -491,6 +491,7 @@ export const companyPages: PageDef[] = [
     blocks: {
       ru: [
         {
+          /* a contacts page is map + phone + form — the render does not belong here (docs/08 §4.11) */
           type: "hero",
           kicker: "Контакты",
           title: "Напишите — ответим в тот же день",
@@ -499,8 +500,6 @@ export const companyPages: PageDef[] = [
             { label: "Забронировать стенд", href: "/request-stand/" },
             { label: "Telegram", href: "https://t.me/sofexpo" },
           ],
-          image: "/images/venue-exterior.jpg",
-          imageAlt: "Здание экспоцентра",
         },
         {
           type: "grid",
@@ -528,6 +527,15 @@ export const companyPages: PageDef[] = [
               text: "Пн–Пт 9:00–18:00. В дни монтажа и работы выставки офис открыт с 8:00 до последнего посетителя.",
             },
           ],
+        },
+        {
+          type: "h2",
+          kicker: "Как добраться",
+          title: "16 км от аэропорта, 23 км от вокзала",
+          text: "Въезд с самаркандского кольца, парковка при въезде, грузовой двор для фур. Трансфер от аэропорта и вокзала бронируется через менеджера.",
+        },
+        {
+          type: "map",
         },
         {
           type: "table",
@@ -583,8 +591,6 @@ export const companyPages: PageDef[] = [
             { label: "Book a stand", href: "/request-stand/" },
             { label: "Telegram", href: "https://t.me/sofexpo" },
           ],
-          image: "/images/venue-exterior.jpg",
-          imageAlt: "Exhibition centre building",
         },
         {
           type: "grid",
@@ -612,6 +618,15 @@ export const companyPages: PageDef[] = [
               text: "Mon–Fri 9:00–18:00. During build-up and show days the office is open from 8:00 until the last visitor.",
             },
           ],
+        },
+        {
+          type: "h2",
+          kicker: "Getting there",
+          title: "16 km from the airport, 23 km from the station",
+          text: "Entrance off the Samarkand ring road, parking at the gate, a loading yard for trucks. Transfers from the airport and station are booked through the manager.",
+        },
+        {
+          type: "map",
         },
         {
           type: "table",

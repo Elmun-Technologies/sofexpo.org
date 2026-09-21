@@ -1,18 +1,21 @@
 ---
-/** Line-up: every exhibition the centre runs, ordered by date, with the next show first. */
+/**
+ * The line-up as a table calendar (docs/08 §4.3): date block, industry colour line,
+ * one row per show, industry filter without JS (CSS :has()), .ics export generated
+ * at build time from events.ts. The old card grid (5+1 orphan cards) is gone —
+ * a calendar is what top-3 CIS expo sites put on this page.
+ */
 import type { Locale } from '@/i18n/config';
 import { localize } from '@/i18n/config';
-import { useUI } from '@/i18n/ui';
 import { events, upcoming } from '@/data/events';
 import { archive } from '@/data/archive';
 import { rootOnlyPaths } from '@/lib/hostRoutes';
 import { abs, itemListJsonLd, breadcrumbJsonLd, organizationJsonLd } from '@/lib/seo';
 import Base from '@/layouts/Base.astro';
 import SectionHead from '@/components/SectionHead.astro';
-import EventCard from '@/components/EventCard.astro';
 import Icon from '@/components/Icon.astro';
 import CtaBand from '@/components/CtaBand.astro';
-import { industryLabel } from '@/lib/labels';
+import { bigDate, daysUntil, industryColor, industryLabel } from '@/lib/labels';
 
 export function getStaticPaths() {
   return rootOnlyPaths();
@@ -20,37 +23,61 @@ export function getStaticPaths() {
 
 const locale = Astro.params.locale as Locale;
 const ru = locale === 'ru';
-const t = useUI(locale);
 const L = (p: string) => localize(locale, p);
 const next = upcoming[0];
-const rest = upcoming.slice(1);
-const past = events.filter((e) => !upcoming.includes(e));
-const groups = [...new Set(events.map((e) => e.industry))].map((key) => ({
-  key,
-  label: industryLabel(key, locale),
-  items: events.filter((e) => e.industry === key),
-}));
+/** future first, then the finished editions — the archive row keeps its report link */
+const rows = [...events].sort((a, b) => a.dates.start.localeCompare(b.dates.start));
+/** filter chips: only industries that actually have a show */
+const filters = [...new Set(events.map((e) => e.industry))];
 
 const copy = {
   ru: {
     title: 'Афиша выставок 2026–2027 в Самарканде',
     desc: 'Шесть отраслевых выставок в Самарканде: FOODERA, BUILD PRO, AGROPRO, PROMOTORS SHOW, WORLD EDU, ECOM & RETAIL. Даты, разделы, регистрация участников и посетителей.',
     h1: 'Шесть отраслей, один адрес',
-    lead: 'Центр проводит собственную линейку событий: от продуктов и строительства до агропрома и электронной коммерции. Ниже — даты, формат и то, кому какое событие действительно нужно.',
+    lead: 'Центр проводит собственную линейку событий: от продуктов и строительства до агропрома и электронной коммерции. Даты, разделы и статус брони — в календаре ниже.',
+    all: 'Все отрасли',
+    ics: 'Скачать календарь (.ics)',
+    statusOpen: 'идёт набор',
+    statusReg: 'приём заявок',
+    statusPast: 'архив',
+    stand: 'Стенд',
+    ticket: 'Билет',
+    report: 'Итоги',
+    tipsTitle: 'Практика',
+    tips: [
+      'Продажа площади открывается за 4–6 месяцев до даты: лучшие локации разбирают в первый месяц.',
+      'Отраслевые выставки бесплатны для специалистов — регистрируйтесь заранее, чтобы не стоять на кассе.',
+      'Деловая программа идёт параллельно: планируйте два дня, а не один.',
+    ],
   },
   en: {
     title: 'Exhibition line-up 2026–2027 in Samarkand',
     desc: 'Six trade shows in Samarkand: FOODERA, BUILD PRO, AGROPRO, PROMOTORS SHOW, WORLD EDU and ECOM & RETAIL. Dates, sections and registration for exhibitors and visitors.',
     h1: 'Six industries, one address',
-    lead: 'The centre runs its own portfolio: from food and construction to agriculture and e-commerce. Below are the dates, the format and who each event is actually for.',
+    lead: 'The centre runs its own portfolio: from food and construction to agriculture and e-commerce. Dates, sections and booking status — in the calendar below.',
+    all: 'All industries',
+    ics: 'Download the calendar (.ics)',
+    statusOpen: 'sales open',
+    statusReg: 'applications open',
+    statusPast: 'archive',
+    stand: 'Stand',
+    ticket: 'Pass',
+    report: 'Report',
+    tipsTitle: 'Practice',
+    tips: [
+      'Floor sales open 4–6 months before the date; the best positions go in the first month.',
+      'Trade shows are free for professionals — register early to skip the desk.',
+      'The business programme runs in parallel: plan two days, not one.',
+    ],
   },
-};
+}[locale];
 ---
 
 <Base
   {locale}
-  title={`${copy[locale].title} — SOF EXPO`}
-  description={copy[locale].desc}
+  title={`${copy.title} — SOF EXPO`}
+  description={copy.desc}
   path="/events/"
   image={next.heroImage}
   breadcrumbs={[{ name: ru ? 'Афиша выставок' : 'Exhibition line-up', path: '/events/' }]}
@@ -66,82 +93,79 @@ const copy = {
 >
   <section class="sec">
     <div class="wrap">
-      <SectionHead level={1} locale={locale} kicker={ru ? 'Афиша 2026–2027' : 'Line-up 2026–2027'} title={copy[locale].h1} text={copy[locale].lead} />
-      <ul class="quick">
-        {events.map((e) => (
-          <li>
-            <a href={L(`/events/${e.slug}/`)}>
-              <b>{e.shortName}</b>
-              <span class="quick__date">{e.dates.display[locale]}</span>
-              <span class:list={['chip', 'quick__status', { 'chip--gold': e.status !== 'past' }]}>{e.status === 'past' ? (ru ? 'архив' : 'archive') : ru ? 'идёт набор' : 'sales open'}</span>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </div>
-  </section>
+      <SectionHead level={1} locale={locale} kicker={ru ? 'Афиша 2026–2027' : 'Line-up 2026–2027'} title={copy.h1} text={copy.lead} />
 
-  {next && (
-    <section class="sec sec--forest">
-      <div class="wrap">
-        <p class="kicker">{ru ? 'Ближайшее событие' : 'Next event'}</p>
-        <EventCard locale={locale} event={next} priority variant="wide" />
-      </div>
-    </section>
-  )}
+      <div class="cal-wrap">
+        <div class="cal__filter" role="group" aria-label={ru ? 'Фильтр по отрасли' : 'Industry filter'}>
+          <input type="radio" name="ind-filter" id="f-all" checked />
+          <label for="f-all">{copy.all}</label>
+          {filters.map((f) => (
+            <Fragment>
+              <input type="radio" name="ind-filter" id={`f-${f}`} />
+              <label for={`f-${f}`}>{industryLabel(f, locale)}</label>
+            </Fragment>
+          ))}
+          <a class="cal__ics" href="/sofexpo-calendar.ics" download>
+            <Icon name="doc" size={14} /> {copy.ics}
+          </a>
+        </div>
 
-  <section class="sec sec--paper">
-    <div class="wrap">
-      <SectionHead locale={locale} kicker={ru ? 'Скоро' : 'Upcoming'} title={ru ? 'Ближайшие выставки' : 'The next shows'} />
-      <div class="grid g3">
-        {rest.map((e) => <EventCard locale={locale} event={e} />)}
+        <div class="cal">
+          {rows.map((e) => {
+            const d = bigDate(e.dates.start, e.dates.end, locale);
+            const past = e.status === 'past';
+            const days = daysUntil(e.dates.start);
+            const status = past ? copy.statusPast : e.status === 'open' ? copy.statusOpen : copy.statusReg;
+            return (
+              <a class="cal__row" href={L(`/events/${e.slug}/`)} data-ind={e.industry} style={{ '--ic': industryColor(e.industry) } as Record<string, string>} aria-label={`${e.brand[locale]} — ${e.dates.display[locale]}`}>
+                <span class="cal__date">
+                  <b>{d.days}</b>
+                  <span>{d.month} {d.year}</span>
+                </span>
+                <span class="cal__name">
+                  <b>{e.brand[locale]}</b>
+                  <small>
+                    {e.edition[locale]}
+                    {!past && days > 0 && (ru ? ` · через ${days} дн.` : ` · in ${days} d`)}
+                  </small>
+                </span>
+                <span class="cal__ind">{industryLabel(e.industry, locale)}</span>
+                <span class="cal__status">
+                  <span class:list={['chip', { 'chip--live': !past }]}>
+                    {!past && <span class="dot"></span>}
+                    {status}
+                  </span>
+                </span>
+                <span class="cal__act">
+                  {!past ? (
+                    <>
+                      <span class="txt">
+                        {copy.stand} <Icon name="arrow" size={13} />
+                      </span>
+                      <span class="txt">
+                        {copy.ticket} <Icon name="arrow" size={13} />
+                      </span>
+                    </>
+                  ) : (
+                    <span class="txt">
+                      {copy.report} <Icon name="arrow" size={13} />
+                    </span>
+                  )}
+                </span>
+              </a>
+            );
+          })}
+        </div>
+        <p class="small muted" style="margin-top:1rem">
+          <a href={L('/events/past/')}>{ru ? `Архив всех редакций (${archive.length})` : `Full edition archive (${archive.length})`} →</a>
+        </p>
       </div>
-      {past.length > 0 && (
-        <>
-          <hr class="hairline" style="margin:2.6rem 0" />
-          <SectionHead locale={locale} kicker={ru ? 'Прошедшие редакции' : 'Past editions'} title={ru ? 'Отчёты, каталоги и фото' : 'Reports, catalogues and photos'} />
-          <div class="grid g3">
-            {past.map((e) => <EventCard locale={locale} event={e} />)}
-          </div>
-          <p class="small muted" style="margin-top:1.2rem">
-            <a href={L('/events/past/')}>{ru ? `Архив всех редакций (${archive.length})` : `Full edition archive (${archive.length})`} →</a>
-          </p>
-        </>
-      )}
-    </div>
-  </section>
 
-  <section class="sec">
-    <div class="wrap">
-      <SectionHead locale={locale} kicker={ru ? 'Как выбрать' : 'How to choose'} title={ru ? 'Событие под задачу, а не по календарю' : 'Pick the event for the job, not the calendar'} />
-      <div class="grid g2">
-        {groups.map((g) => (
-          <div class="ind">
-            <p class="mono-label">{g.label}</p>
-            <ul>
-              {g.items.map((e) => (
-                <li>
-                  <a href={L(`/events/${e.slug}/`)}>{e.brand[locale]}</a>
-                  <span class="small muted">{e.dates.display[locale]}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-      <div class="tips">
-        <p class="kicker">{ru ? 'Практика' : 'Practice'}</p>
+      <div class="tips" style="margin-top:2.4rem">
+        <p class="kicker">{copy.tipsTitle}</p>
         <ol>
-          <li>{ru ? 'Продажа площади открывается за 4–6 месяцев до даты: лучшие локации разбирают в первый месяц.' : 'Floor sales open 4–6 months before the date; the best positions go in the first month.'}</li>
-          <li>{ru ? 'Отраслевые выставки бесплатны для специалистов — регистрируйтесь заранее, чтобы не стоять на кассе.' : 'Trade shows are free for professionals — register early to skip the desk.'}</li>
-          <li>{ru ? 'Деловая программа идёт параллельно: планируйте два дня, а не один.' : 'The business programme runs in parallel: plan two days, not one.'}</li>
+          {copy.tips.map((tip) => <li>{tip}</li>)}
         </ol>
-      </div>
-      <div class="btn-row" style="margin-top:1.6rem">
-        <a class="btn btn--gold" href={L('/request-stand/')}>
-          <Icon name="arrow" size={16} /> {t('cta.stand')}
-        </a>
-        <a class="btn btn--ghost" href={L('/visitors/tickets/')}>{t('cta.ticket')}</a>
       </div>
     </div>
   </section>
@@ -156,61 +180,7 @@ const copy = {
 </Base>
 
 <style>
-  .quick {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 0.7rem;
-    list-style: none;
-    padding: 0;
-    margin: 1.6rem 0 0;
-  }
-  .quick a {
-    display: grid;
-    gap: 0.3rem;
-    padding: 0.9rem 1rem;
-    border: 1px solid var(--line);
-    border-radius: var(--r);
-    background: var(--paper);
-    text-decoration: none;
-    color: inherit;
-  }
-  .quick a:hover {
-    border-color: var(--moss);
-  }
-  .quick b {
-    font-family: var(--f-display);
-    font-size: 0.95rem;
-  }
-  .quick__date {
-    color: var(--ink-60);
-    font-size: 0.85rem;
-  }
-  .quick .quick__status {
-    justify-self: start;
-    margin-top: 0.15rem;
-  }
-  .ind {
-    border: 1px solid var(--line);
-    border-radius: var(--r);
-    padding: 1.1rem 1.2rem;
-    background: var(--paper);
-  }
-  .ind ul {
-    list-style: none;
-    margin: 0.6rem 0 0;
-    padding: 0;
-    display: grid;
-    gap: 0.5rem;
-  }
-  .ind li {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    border-bottom: 1px dashed var(--line);
-    padding-bottom: 0.4rem;
-  }
   .tips {
-    margin-top: 2rem;
     padding: 1.2rem 1.3rem;
     background: var(--cream-2);
     border-radius: var(--r);
@@ -221,5 +191,8 @@ const copy = {
     display: grid;
     gap: 0.4rem;
     color: var(--ink-60);
+  }
+  .cal__status .chip {
+    white-space: nowrap;
   }
 </style>

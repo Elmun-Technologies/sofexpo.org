@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import { icsIntegration } from './scripts/ics.mjs';
 
 // SOF EXPO SAMARKAND — international exhibition centre website.
 // Static output (SSG): fastest Core Web Vitals, CDN friendly, no client JS framework.
@@ -26,6 +27,8 @@ export default defineConfig({
       },
       serialize: (item) => ({ ...item, lastmod: new Date('2026-09-18') }),
     }),
+    /* /sofexpo-calendar.ics — the line-up as an iCal file, kept in sync with events.ts */
+    icsIntegration(),
   ],
   vite: {
     build: { cssMinify: true },

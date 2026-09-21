@@ -18,30 +18,15 @@ const current = localize(locale, path);
 const t0 = localize(locale, '/');
 const P = (p: string) => localize(locale, p);
 const active = (base: string) => (base === '/' ? current === '/' : current.startsWith(base));
+/**
+ * One bar, six items (docs/08 §3.1). The old utility bar (address · phone · hours · telegram)
+ * moved to /contacts/ and the footer; «Новости» is in the footer — the first screen belongs
+ * to the calendar, not to service contacts.
+ */
+const items = nav.filter((i) => i.key !== 'nav.news');
 ---
 
 <header class="hdr" id="top">
-  <div class="topbar">
-    <div class="wrap topbar__in">
-      <p style="margin:0">
-        <Icon name="pin" size={14} />
-        {locale === 'ru' ? 'Самарканд, Джамбайский район · 16 км от аэропорта' : 'Samarkand, Dzhambay district · 16 km from the airport'}
-      </p>
-      <div class="topbar__right">
-        <a href={`tel:${site.contacts.phoneMain.replace(/\s/g, '')}`}>
-          <Icon name="phone" size={14} /> {t('topbar.phone')}
-        </a>
-        <a href={`mailto:${site.contacts.email}`}>
-          <Icon name="mail" size={14} /> {site.contacts.email}
-        </a>
-        <span class="small">{t('topbar.hours')}</span>
-        <a href={site.contacts.telegramManager} rel="noopener" target="_blank">
-          <Icon name="telegram" size={14} /> @sofexpomgr
-        </a>
-      </div>
-    </div>
-  </div>
-
   <div class="wrap hdr__in">
     <a class="logo" href={P('/')} aria-label={`${CURRENT_BRAND ? CURRENT_BRAND.name[locale] + ' ' + CURRENT_BRAND.sub[locale] : site.brand[locale]} — ${t('breadcrumbs.home')}`}>
       {CURRENT_BRAND?.id ? (
@@ -59,7 +44,7 @@ const active = (base: string) => (base === '/' ? current === '/' : current.start
 
     <nav class="nav" aria-label={t('nav.menu')}>
       {
-        nav.map((item) => (
+        items.map((item) => (
           <div class:list={['nav__item', { 'nav__item--wide': item.children.length > 6 }]}>
             <a class="nav__link" href={P(item.base)} aria-current={active(item.base) ? 'page' : undefined}>
               {t(item.key as never)}
@@ -108,7 +93,7 @@ const active = (base: string) => (base === '/' ? current === '/' : current.start
   <div class="mnav" id="mnav">
     <nav aria-label={t('nav.menu')}>
       {
-        nav.map((item) => (
+        items.map((item) => (
           <details>
             <summary>{t(item.key as never)}</summary>
             <div class="mnav__list">

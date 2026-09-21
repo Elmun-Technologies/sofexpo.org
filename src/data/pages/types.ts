@@ -22,7 +22,11 @@ export type BlockType =
   | "links"
   | "form"
   | "faq"
-  | "cta";
+  | "cta"
+  /* Phase 1 (docs/08 §6): the three structural blocks — the venue schematic, the location
+     map and the line-up calendar row. No other block type changes. */
+  | "plan"
+  | "map";
 
 export interface BlockAction {
   label: string;

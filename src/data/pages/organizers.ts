@@ -1,4 +1,29 @@
 import type { PageDef } from "./types";
+import { events } from "@/data/events";
+
+/**
+ * Booked windows, computed from events.ts (docs/08 §4.7): every own show holds the venue
+ * for build-up (−2 days) through dismantling (+2 days). Rebuilds automatically when the
+ * line-up changes; no second source to keep in sync by hand.
+ */
+function busyWindows(locale: "ru" | "en"): [string, string][] {
+  const fmt = (iso: string) =>
+    new Intl.DateTimeFormat(locale === "ru" ? "ru-RU" : "en-GB", {
+      day: "numeric",
+      month: "long",
+      timeZone: "Asia/Samarkand",
+    }).format(new Date(`${iso}T12:00:00+05:00`));
+  const shift = (iso: string, n: number) => {
+    const d = new Date(`${iso}T12:00:00+05:00`);
+    d.setDate(d.getDate() + n);
+    const p = (x: number) => String(x).padStart(2, "0");
+    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+  };
+  return events
+    .filter((e) => e.status !== "past")
+    .sort((a, b) => a.dates.start.localeCompare(b.dates.start))
+    .map((e) => [e.brand[locale], `${fmt(shift(e.dates.start, -2))} — ${fmt(shift(e.dates.end, 2))}`]);
+}
 
 export const organizerPages: PageDef[] = [
   {
@@ -94,6 +119,17 @@ export const organizerPages: PageDef[] = [
               text: "Отчёт: посещаемость, активность, логистические замечания, рекомендации к следующей дате.",
             },
           ],
+        },
+        {
+          type: "h2",
+          kicker: "Календарь",
+          title: "Занятые даты — собственные выставки",
+          text: "Каждая выставка занимает площадку с монтажом за два дня и демонтажом два дня после. Любая другая дата свободна — пришлите бриф, вернёмся с расчётом за рабочий день.",
+        },
+        {
+          type: "table",
+          head: ["Собственная выставка", "Площадка занята: монтаж + работа + демонтаж"],
+          rows: busyWindows("ru"),
         },
         {
           type: "callout",
@@ -204,6 +240,17 @@ export const organizerPages: PageDef[] = [
               text: "Attendance, activity, logistics notes and a recommendation for the next date.",
             },
           ],
+        },
+        {
+          type: "h2",
+          kicker: "Calendar",
+          title: "Booked dates — our own exhibitions",
+          text: "Each show holds the venue for build-up two days before and dismantling two days after. Any other date is free — send a brief and we reply with a quote within one business day.",
+        },
+        {
+          type: "table",
+          head: ["Own exhibition", "Venue booked: build-up + run + dismantling"],
+          rows: busyWindows("en"),
         },
         {
           type: "callout",

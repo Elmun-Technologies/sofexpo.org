@@ -101,6 +101,8 @@ export function eventJsonLd(e: {
   intro: { ru: string; en: string };
   heroImage: string;
   locale: Locale;
+  /** business-programme speakers, when the edition has a published line-up */
+  performers?: { name: string; jobTitle: string; org?: string }[];
 }) {
   const t = e.locale;
   return {
@@ -122,6 +124,19 @@ export function eventJsonLd(e: {
     organizer: { '@id': `${SITE}/#organization` },
     location: { '@id': `${SITE}/#venue` },
     audience: { '@type': 'Audience', audienceType: 'Trade visitors and exhibitors' },
+    /* A named line-up is the strongest entity signal an event has: it is what turns
+       "who is speaking at ..." into a result. Only emitted when the edition actually
+       published one, so the other shows stay silent rather than claiming an empty list. */
+    ...(e.performers?.length
+      ? {
+          performer: e.performers.map((p) => ({
+            '@type': 'Person',
+            name: p.name,
+            jobTitle: p.jobTitle,
+            ...(p.org ? { worksFor: { '@type': 'Organization', name: p.org } } : {}),
+          })),
+        }
+      : {}),
   };
 }
 

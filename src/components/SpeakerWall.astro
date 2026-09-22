@@ -30,7 +30,30 @@ const ru = locale === 'ru';
 let list = edition ? all.filter((s) => s.edition === edition) : all;
 const total = list.length;
 if (limit) list = list.slice(0, limit);
+
+/* The wall is the only place these 37 people are named on the site, and a speaker line-up is
+   exactly the kind of thing people search for by name. Without Person markup the poster is an
+   opaque image and the caption is loose text; with it each speaker becomes an addressable
+   entity that can surface for "<name> Samarkand" queries. ItemList preserves the running
+   order, which is the programme order. */
+const speakerLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  itemListElement: list.map((s, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    item: {
+      '@type': 'Person',
+      name: s.name[locale],
+      jobTitle: s.role[locale],
+      image: `https://sofexpo.org/images/speakers/${s.card}.jpg`,
+      ...(s.org ? { worksFor: { '@type': 'Organization', name: s.org } } : {}),
+    },
+  })),
+};
 ---
+
+<script type="application/ld+json" set:html={JSON.stringify(speakerLd)} is:inline />
 
 <div class="spk">
   {(kicker || title || text) && (

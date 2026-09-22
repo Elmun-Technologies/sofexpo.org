@@ -6,8 +6,12 @@ import '@fontsource-variable/golos-text/wght.css';
 import { site } from '@/data/site';
 import { upcoming } from '@/data/events';
 import { localize, type Locale } from '@/i18n/config';
+import { abs } from '@/lib/seo';
+import { CURRENT_BRAND } from '@/data/hosts';
 
 const next = upcoming[0];
+const SITE = (import.meta.env.SITE || 'https://sofexpo.org').replace(/\/$/, '');
+const ogImg = CURRENT_BRAND ? `/brand/${CURRENT_BRAND.id}/og.jpg` : '/og/default.jpg';
 /* paths, not literal URLs: on an exhibition hostname only some of these live on this host,
    the rest must resolve absolutely to the centre (localize does that per host) */
 const cards = [
@@ -27,6 +31,12 @@ const L = (locale: Locale, path: string) => localize(locale, path);
     <title>404 · Page not found / страница не найдена · SOF EXPO Samarkand</title>
     <meta name="description" content="Page not found / страница не найдена: откройте афишу выставок, пакеты участия, описание площадки или контакты SOF EXPO Samarkand." />
     <meta name="robots" content="noindex,follow" />
+    <link rel="canonical" href={`${SITE}/404.html`} />
+    <meta property="og:title" content="404 · Page not found / страница не найдена" />
+    <meta property="og:description" content="Страница переехала или не существует: афиша выставок, пакеты участия, залы и контакты SOF EXPO Samarkand." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content={abs(ogImg)} />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
   <body class="nf">

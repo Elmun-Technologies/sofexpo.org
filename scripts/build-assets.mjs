@@ -91,20 +91,34 @@ if (existsSync(brandRoot)) {
       `brand icons: ${b.id} (favicon.png 512, apple-touch-icon.png 180)`,
     );
     const c = b.palette;
-    const band = Array.from({ length: 13 }, (_, n) =>
+    /* mark: 'star' hosts unfurl the organiser's eight-pointed badge (big, centre-left).
+       Until a badge file exists the card wears the centre's hall mark (small, top-left),
+       retyped in the show's palette — site system, not an invented logo. */
+    const star = `<g fill="none" transform="translate(70 250) scale(1.35)">
+    <rect x="3.25" y="3.25" width="57.5" height="57.5" stroke="${c.cream}" stroke-width="6.5" stroke-linejoin="round"/>
+    <rect x="3.25" y="3.25" width="57.5" height="57.5" stroke="${c.goldSoft}" stroke-width="6.5" stroke-linejoin="round" transform="rotate(45 32 32)"/>
+  </g>`;
+    const hall = `<g transform="translate(68 130) scale(1.1)" fill="none">
+    <rect x="10" y="12" width="44" height="34" stroke="${c.cream}" stroke-width="2.4"/>
+    <rect x="15" y="17" width="9" height="9" fill="${c.cream}"/>
+    <rect x="27.5" y="17" width="9" height="9" fill="${c.cream}"/>
+    <rect x="40" y="17" width="9" height="9" fill="${c.cream}"/>
+    <rect x="15" y="31" width="34" height="3" fill="${c.cream}" opacity=".6"/>
+    <rect x="10" y="49" width="44" height="3" fill="${c.cream}"/>
+  </g>`;
+    const band =
+      b.ornament === "islimi" ? Array.from({ length: 13 }, (_, n) =>
       ORN.replaceAll("{c}", c.ornament).replace(
         "<g ",
         `<g transform="translate(${n * 96} 24)" `,
       ),
-    ).join("");
+        ).join("")
+        : "";
     const card = `<svg width="1200" height="630">
   <rect width="1200" height="630" fill="${c.evergreen}"/>
   ${band}
-  <g fill="none" transform="translate(70 250) scale(1.35)">
-    <rect x="3.25" y="3.25" width="57.5" height="57.5" stroke="${c.cream}" stroke-width="6.5" stroke-linejoin="round"/>
-    <rect x="3.25" y="3.25" width="57.5" height="57.5" stroke="${c.goldSoft}" stroke-width="6.5" stroke-linejoin="round" transform="rotate(45 32 32)"/>
-  </g>
-  <text x="70" y="420" font-family="Helvetica, Arial, sans-serif" font-size="104" font-weight="700" fill="${c.cream}" letter-spacing="-3">${b.name.en}</text>
+  ${b.mark === "star" ? star : hall}
+  <text x="70" y="420" font-family="Helvetica, Arial, sans-serif" font-size="104" font-weight="700" fill="${c.cream}" letter-spacing="-3">${b.name.en.replaceAll("&", "&amp;")}</text>
   <text x="74" y="472" font-family="Menlo, Consolas, monospace" font-size="30" fill="${c.ornament}" letter-spacing="10">${b.sub.en}</text>
   <text x="74" y="548" font-family="Helvetica, Arial, sans-serif" font-size="30" fill="${c.cream}" opacity="0.82">Samarkand · SOF EXPO Samarkand</text>
   <text x="74" y="592" font-family="Menlo, Consolas, monospace" font-size="25" fill="${c.goldSoft}" letter-spacing="1.4">${b.host}</text>

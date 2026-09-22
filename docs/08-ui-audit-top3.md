@@ -32,7 +32,9 @@ eng katta element, header 1 bar, bosh sahifa 14 → 6 seksiya, mobil 19 549 → 
 jadval-kalendar + filtr + `.ics`, tadbir overview 16 → ~10 blok, `/venue/` SVG-reja, `/contacts/`
 statik xarita, `/organizers/` band sanalar, `/visitors/` bitta-oqim (rail → bilet → yo'l → mehmonxona
 → FAQ), `/exhibitors/` kalendar-reyka, mobil tadbir sahifasida sticky «Стенд» bari, `/` gate yopildi
-(301 → `/en/`). Qolganlari — materialga bog'liq (Phase 2/3) va §7 ning Q4/Q5/Q7 qarorlari.
+(301 → `/en/`). **2026-09-22:** 5 host o'z palitra + wordmark + OG-kartalarini oldi
+(`brand-map.json`, `scripts/build-assets.mjs`), mustaqil QA **0 topshiriq** (143 → 0).
+Qolganlari — materialga bog'liq (Phase 2/3) va §7 ning Q4/Q5/Q7 qarorlari.
 
 ---
 
@@ -394,7 +396,7 @@ festival = Ticketon) — narx chiqqach 1 satr. **`/` gate — 2026-09-22 yopildi
 | --- | --- | --- | --- |
 | **0 · Buglar** | ✅ 2026-09-21 | §5 | — |
 | **1 · Tuzilma** | ✅ 2026-09-22 | §5b — to'liq: kalendar-first, /visitors/ oqimi, /exhibitors/ rail, mobil sticky-CTA, `/` gate yopildi (Q1 → A, 301 → /en/) | — (narx/PDF Phase 3, zal o'lchamlari Phase 3) |
-| **2 · Identifikatsiya** | fotolar kelgach, 3–4 kun | 6 ko'rgazma: logotip + rang `brand-map.json` (5 yozuv); real fotolar 1:1 fayl nomi bo'yicha; hamkor logotiplari; jamoa fotolari; OG-kartalar har ko'rgazma uchun | Logotiplar (SVG/AI), 22 kadr (`docs/07 §4`), hamkor logotiplari |
+| **2 · Identifikatsiya** | qisman ✅ 2026-09-22, fotolar kelgach 2–3 kun | ✅ 5 host: palitra + wordmark `brand-map.json` da, OG-kartalar, faviconlar (`scripts/build-assets.mjs`). ⏳ Organizator logotiplari (5 ta) → `mark: "star"` + huddi o'sha `favicon.svg`; real fotolar 1:1 fayl nomi bo'yicha; hamkor logotiplari; jamoa fotolari | Logotiplar (SVG/AI), 22 kadr (`docs/07 §4`), hamkor logotiplari |
 | **3 · Kommersiya** | narxlar kelgach, 2 kun | Rate-card jadvallari (`/packages/`, `/organizers/rates/`, tadbir sahifasi), «уточняется» 6 joy o'rniga qiymatlar, real PDF (21 fayl) | Narxlar, texspes qiymatlari, PDF'lar |
 
 Phase 1 kodda hech narsani buzmaydi: URL, host-model, SEO-kontrakt, audit qoidalari o'zgarmaydi;

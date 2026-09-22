@@ -106,7 +106,7 @@ export const events: ExpoEvent[] = [
     stands: [
       { name: { ru: 'Стандартный стенд', en: 'Standard stand' }, area: '9 м²', note: { ru: 'Готовая застройка, брендирование и мебель включены.', en: 'Shell scheme, branding and furniture included.' } },
       { name: { ru: 'Премиум-стенд', en: 'Premium stand' }, area: '18 м²', note: { ru: 'Улучшенная локация и увеличенная рекламная поверхность.', en: 'Better location and larger advertising surface.' } },
-      { name: { ru: 'Свободная площадь', en: 'Raw space' }, area: '36 м²+', note: { ru: 'Индивидуальная застройка по вашему брендбуку.', en: 'Custom build following your brand book.' } },
+      { name: { ru: 'Свободная площадь', en: 'Raw space' }, area: '36 м²+', note: { ru: 'Застройка по вашему брендбуку.', en: 'Custom build following your brand book.' } },
     ],
     speakers: [],
     materials: [
@@ -190,7 +190,7 @@ export const events: ExpoEvent[] = [
     ],
     stands: [
       { name: { ru: 'Готовый стенд Octanorm', en: 'Ready-made Octanorm stand' }, area: 'за м²', note: { ru: 'Стандартная застройка с расчётом стоимости за квадратный метр.', en: 'Shell scheme priced per square metre.' } },
-      { name: { ru: 'Индивидуальная застройка', en: 'Custom build' }, area: 'по проекту', note: { ru: 'Стенд по дизайну и брендбуку вашей компании.', en: 'A stand built to your design and brand book.' } },
+      { name: { ru: 'Застройка по проекту', en: 'Custom build' }, area: 'по проекту', note: { ru: 'Стенд по дизайну и брендбуку вашей компании.', en: 'A stand built to your design and brand book.' } },
       { name: { ru: 'Рекламные поверхности', en: 'Advertising surfaces' }, area: 'в зале', note: { ru: 'Баннеры и медиа-поверхности внутри выставочного зала.', en: 'Banners and media surfaces inside the exhibition hall.' } },
     ],
     speakers: [],

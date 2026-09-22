@@ -18,8 +18,11 @@ import PostCard from '@/components/PostCard.astro';
 import SectionHead from '@/components/SectionHead.astro';
 import { getCollection } from 'astro:content';
 import { events } from '@/data/events';
+import { brandForEvent } from '@/data/brands';
 
 const { locale, event, page } = Astro.props as { locale: Locale; event: ExpoEvent; page: EventPage };
+/* a branded show unfurls with its own social card, not the AI hall render */
+const ogCard = brandForEvent(event.slug);
 const t = useUI(locale);
 const ru = locale === 'ru';
 const L = (p: string) => localize(locale, p);
@@ -62,7 +65,7 @@ const after = (page.after ?? []) as SectionKey[];
   title={meta.title}
   description={meta.description}
   path={page.path}
-  image={page.image ?? event.heroImage}
+  image={page.image ?? (ogCard ? `/brand/${ogCard.id}/og.jpg` : event.heroImage)}
   noindex={page.noindex}
   breadcrumbs={crumbs}
   jsonLd={ld}

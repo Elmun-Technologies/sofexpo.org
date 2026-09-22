@@ -29,8 +29,14 @@ const items = nav.filter((i) => i.key !== 'nav.news');
 <header class="hdr" id="top">
   <div class="wrap hdr__in">
     <a class="logo" href={P('/')} aria-label={`${CURRENT_BRAND ? CURRENT_BRAND.name[locale] + ' ' + CURRENT_BRAND.sub[locale] : site.brand[locale]} — ${t('breadcrumbs.home')}`}>
-      {CURRENT_BRAND?.id ? (
+      {CURRENT_BRAND?.mark === 'star' ? (
         <BrandMark brand={CURRENT_BRAND} locale={locale} withWordmark size={32} tone="on-dark" />
+      ) : CURRENT_BRAND ? (
+        /* badge not delivered yet: the wordmark in the host's palette is the identity, no placeholder glyph */
+        <span class="logo__txt">
+          <b>{CURRENT_BRAND.name[locale]}</b>
+          <span>{CURRENT_BRAND.sub[locale]}</span>
+        </span>
       ) : (
         <>
           <span class="logo__mark" aria-hidden="true">SE</span>

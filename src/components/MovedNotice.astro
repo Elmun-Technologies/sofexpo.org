@@ -21,6 +21,7 @@ interface Props {
 const { locale, event, section, to } = Astro.props as Props;
 const ru = locale === 'ru';
 const name = event.brand[locale];
+const year = event.dates.display[locale].slice(-4);
 
 const labels: Record<Props['section'], { ru: string; en: string }> = {
   overview: { ru: 'Главная страницы выставки', en: 'the exhibition’s main page' },
@@ -38,7 +39,7 @@ const short: Record<Props['section'], { ru: string; en: string }> = {
 
 const copy = {
   ru: {
-    title: `${name} — ${short[section].ru}`,
+    title: `${name} ${year}: ${short[section].ru} — на отдельном адресе`,
     desc: `${name}: ${event.dates.display.ru}. ${short[section].ru}: страница переехала на отдельный адрес.`,
     h1: `${name} — на отдельном адресе`,
     lead: `${labels[section].ru} теперь живёт собственным сайтом: те же даты, тот же зал, те же контакты, но без лишней навигации центра. Страница откроется автоматически; если этого не произошло — нажмите кнопку.`,
@@ -47,7 +48,7 @@ const copy = {
     note: 'Центр, аренда зала и все остальные выставки — на sofexpo.org',
   },
   en: {
-    title: `${name} — ${short[section].en}`,
+    title: `${name} ${year}: ${short[section].en} — on its own address`,
     desc: `${name}: ${event.dates.display.en}. ${short[section].en} — this page moved to the exhibition's own hostname.`,
     h1: `${name} now has its own address`,
     lead: `${labels[section].en} has its own site now: same dates, same hall, same contacts — without the centre's surrounding navigation. The page opens automatically; if it does not, use the button.`,

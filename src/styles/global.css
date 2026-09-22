@@ -39,10 +39,13 @@
   --f-body: "Golos Text Variable", system-ui, -apple-system, sans-serif;
   --f-mono:
     "JetBrains Mono Variable", ui-monospace, "SFMono-Regular", monospace;
-  --t-hero: clamp(1.75rem, 1.3rem + 1.5vw, 2.35rem);
-  --t-h2: clamp(1.3rem, 1.14rem + 0.55vw, 1.6rem);
+  /* the biggest element on a trade-show page is the date/number, not the slogan (docs/08 §2.3) */
+  --t-hero: clamp(2rem, 1.45rem + 2.6vw, 2.9rem);
+  --t-h2: clamp(1.45rem, 1.22rem + 1.05vw, 2.05rem);
   --t-h3: clamp(1.06rem, 1rem + 0.25vw, 1.16rem);
   --t-h4: 0.98rem;
+  /* the calendar's date block: display type, the loudest figure in a line */
+  --t-date: clamp(1.5rem, 1.2rem + 1.3vw, 1.95rem);
   --t-lead: clamp(1rem, 0.97rem + 0.18vw, 1.09rem);
   --t-body: 0.985rem;
   --t-small: 0.855rem;
@@ -381,6 +384,26 @@ li::marker {
   --btn-fg: var(--evergreen);
 }
 
+/* a ghost button on a dark ground must be drawn in white — it was ink-on-evergreen (invisible)
+   in every hero, the event hero, the forest sections and the CTA band */
+.sec--forest .btn--ghost,
+.hero .btn--ghost,
+.ehero .btn--ghost,
+.cta .btn--ghost,
+.ftr .btn--ghost {
+  --btn-fg: #ffffff;
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+.sec--forest .btn--ghost:hover,
+.hero .btn--ghost:hover,
+.ehero .btn--ghost:hover,
+.cta .btn--ghost:hover,
+.ftr .btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #ffffff;
+}
+
 .btn--sm {
   padding: 0.45rem 0.75rem;
   font-size: 0.83rem;
@@ -521,16 +544,32 @@ a.chip:hover {
   color: var(--ink-60);
 }
 
+/* on a dark ground the grid lines are translucent white and every cell is an opaque tile —
+   the old rgba(255,255,255,.04) let the light `--line` grid show through, so the figures
+   (light on light) disappeared entirely on the event pages */
+.sec--forest .stats {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
 .sec--forest .stat {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--evergreen-2);
+  border-top-color: transparent;
 }
 
 .sec--forest .stat b {
-  color: var(--gold-soft);
+  color: #ffffff;
 }
 
 .sec--forest .stat span {
-  color: rgba(255, 255, 255, 0.72);
+  color: rgba(255, 255, 255, 0.78);
+}
+
+/* a stat band never collapses into one long column on a phone: two-by-two is the floor */
+@media (max-width: 680px) {
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 /* ---------- numbered rows ---------- */
@@ -712,6 +751,14 @@ a.chip:hover {
   flex: none;
 }
 
+/* eight section links plus two buttons do not fit in 1240px: the secondary button goes first
+   (it was pushing «Каталог участников» out of view at 1440), then the whole button group */
+@media (max-width: 1440px) {
+  .evnav__cta a:not(:first-child) {
+    display: none;
+  }
+}
+
 @media (max-width: 1180px) {
   .evnav__cta {
     display: none;
@@ -728,42 +775,57 @@ a.chip:hover {
   }
 }
 
-/* ------------------------- announcement strip ------------------------- */
+/* ------------------- announcement strip: one line, 36px -------------------
+   home and /events/ only (PromoBar.astro). The date and the countdown are the content;
+   it is a link to the show, so the whole line responds. */
 .promo {
   background: var(--evergreen);
   color: #f1efe4;
-  font-size: 0.88rem;
-  line-height: 1.45;
+  font-size: 0.84rem;
+  line-height: 1.3;
 }
 
 .promo__in {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.6rem 1.6rem;
-  padding-block: 0.55rem;
+  gap: 1rem;
+  min-height: 36px;
+  padding-block: 0.32rem;
 }
 
 .promo__txt {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: 0.35rem 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
   margin: 0;
   min-width: 0;
+  color: #f1efe4;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.promo__txt:hover {
+  color: #fff;
 }
 
 .promo__txt b {
   color: #fff;
+  font-family: var(--f-display);
   font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
+  letter-spacing: -0.01em;
 }
 
-.promo__note {
+.promo__date {
   color: rgba(241, 239, 228, 0.72);
+}
+
+.promo__count {
+  color: var(--gold-soft);
+  font-family: var(--f-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.02em;
 }
 
 .promo .dot {
@@ -774,65 +836,21 @@ a.chip:hover {
   background: var(--gold-soft);
 }
 
-.promo__act {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.5rem 1.1rem;
+.promo__txt :global(svg) {
+  color: var(--gold-soft);
+  flex: none;
 }
 
-.promo__act a:not(.btn) {
-  color: #f1efe4;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  border-bottom: 1px solid rgba(241, 239, 228, 0.3);
-  padding-bottom: 1px;
-}
-
-.promo__act a:not(.btn):hover {
-  color: #fff;
-  border-color: var(--gold-soft);
-}
-
-@media (max-width: 1080px) {
-  .promo__note,
-  .promo__act a:last-child {
+/* on a phone the date drops out, name + countdown stay */
+@media (max-width: 860px) {
+  .promo__date {
     display: none;
   }
 }
-
-.topbar {
-  background: var(--evergreen);
-  color: rgba(255, 255, 255, 0.82);
-  font-size: 0.84rem;
-}
-
-.topbar a {
-  color: inherit;
-  text-decoration: none;
-}
-
-.topbar a:hover {
-  color: #fff;
-}
-
-.topbar__in {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  min-height: 40px;
-  flex-wrap: wrap;
-  padding-block: 0.35rem;
-}
-
-.topbar__right {
-  display: flex;
-  align-items: center;
-  gap: clamp(0.7rem, 0.3rem + 1vw, 1.5rem);
-  flex-wrap: wrap;
+@media (max-width: 520px) {
+  .promo__count {
+    display: none;
+  }
 }
 
 .hdr {
@@ -922,6 +940,7 @@ a.chip:hover {
   border-radius: var(--r-pill);
   font-size: 0.95rem;
   font-weight: 500;
+  white-space: nowrap; /* «О компании» used to break onto two lines at 1440px */
   text-decoration: none;
   color: var(--ink);
   transition:
@@ -1492,79 +1511,10 @@ body.nav-open .mnav {
   place-items: center;
 }
 
-/* ---------- event cards ---------- */
-.ev {
-  display: flex;
-  flex-direction: column;
-  background: var(--paper);
-  border: 1px solid var(--line);
-  border-radius: var(--r-lg);
-  overflow: hidden;
-  text-decoration: none;
-  transition:
-    border-color var(--tr),
-    background-color var(--tr);
-  height: 100%;
-}
-
-.ev:hover {
-  border-color: var(--line-strong);
-  background: var(--cream);
-}
-
-.ev__img {
-  position: relative;
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-}
-
-.ev__img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.ev__date {
-  position: absolute;
-  top: 0.8rem;
-  left: 0.8rem;
-  background: rgba(255, 255, 255, 0.94);
-  color: var(--evergreen);
-  border-radius: var(--r-pill);
-  padding: 0.34rem 0.72rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-
-.ev__body {
-  padding: clamp(1rem, 0.6rem + 1vw, 1.5rem);
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  flex: 1;
-}
-
-.ev__body h3 {
-  font-size: clamp(1.15rem, 1rem + 0.5vw, 1.5rem);
-  margin: 0;
-}
-
-.ev__body p {
-  margin: 0;
-  color: var(--ink-60);
-  font-size: 0.95rem;
-}
-
-.ev__foot {
-  margin-top: auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.6rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--moss);
-  padding-top: 0.5rem;
+/* ---------- event cards: moved to the Phase 1 block at the end of the file ---------- */
+.sec--forest .ev h3,
+.sec--forest .ev h2 {
+  color: var(--ink);
 }
 
 /* ---------- icons ---------- */
@@ -1601,16 +1551,18 @@ body.nav-open .mnav {
 }
 
 /* ---------- callouts ---------- */
+/* flat sheets only — the two gradients here (one of them the old beige/gold wash) were the last
+   leftovers of the palette docs/07 retired; `--gold` is now a status sheet in the brand tint */
 .callout {
   border-radius: var(--r-lg);
   padding: var(--pad);
-  background: linear-gradient(135deg, #eef4ea, var(--cream-2));
+  background: var(--cream-2);
   border: 1px solid var(--line);
 }
 
 .callout--gold {
-  background: linear-gradient(135deg, #f6e7c6, #f1dcab);
-  border-color: rgba(255, 255, 255, 0.07);
+  background: var(--sage);
+  border-color: var(--line-strong);
 }
 
 .callout h3 {
@@ -1684,7 +1636,684 @@ body.nav-open .mnav {
   background: var(--paper);
 }
 
+/* ===================================================================
+   Phase 1 — structure (docs/08 §4): the calendar is the product.
+   Date block, industry colour line, one row = one show.
+   =================================================================== */
+
+/* ------- /events/ : the table calendar ------- */
+.cal__filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1.5rem 0 1.1rem;
+}
+
+.cal__filter input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.cal__filter label {
+  cursor: pointer;
+  padding: 0.45rem 0.95rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  background: var(--paper);
+  font-size: 0.88rem;
+  color: var(--ink-60);
+  user-select: none;
+}
+
+.cal__filter input:checked + label {
+  background: var(--evergreen);
+  border-color: var(--evergreen);
+  color: #fff;
+}
+
+.cal__filter input:focus-visible + label {
+  outline: 2px solid var(--moss);
+  outline-offset: 2px;
+}
+
+.cal__ics {
+  margin-left: auto;
+  font-size: 0.86rem;
+  color: var(--ink-60);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line-strong);
+  padding-bottom: 1px;
+  white-space: nowrap;
+}
+
+.cal__ics:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+.cal {
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--paper);
+  overflow: hidden;
+}
+
+.cal__row {
+  display: grid;
+  grid-template-columns: 128px minmax(0, 1.25fr) 200px 128px minmax(170px, auto);
+  gap: 1.1rem;
+  align-items: center;
+  padding: 1.05rem 1.3rem;
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+  text-decoration: none;
+  color: inherit;
+}
+
+.cal__row:first-child {
+  border-top: 0;
+}
+
+.cal__row:hover {
+  background: var(--cream);
+}
+
+/* the date is the loudest figure in the row */
+.cal__date {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  line-height: 1;
+}
+
+.cal__date b {
+  font-family: var(--f-display);
+  font-size: var(--t-date);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.cal__date span {
+  font-family: var(--f-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-40);
+}
+
+/* industry colour: the 4px line, not a paint job */
+.cal__name {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  border-left: 4px solid var(--ic, var(--ink-40));
+  padding-left: 0.95rem;
+  min-width: 0;
+}
+
+.cal__name b {
+  font-family: var(--f-display);
+  font-size: 1.14rem;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cal__name small {
+  font-size: 0.84rem;
+  color: var(--ink-60);
+}
+
+.cal__ind {
+  font-size: 0.9rem;
+  color: var(--ink-60);
+}
+
+.cal__act {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.9rem;
+  white-space: nowrap;
+}
+
+.cal__act .txt {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line-strong);
+  padding-bottom: 1px;
+}
+
+.cal__act .txt:hover {
+  border-color: var(--ink);
+}
+
+/* pure-CSS industry filter (docs/08 §4.3): no JS, the checked radio wins */
+.cal-wrap:has(#f-food:checked) .cal__row:not([data-ind="food"]),
+.cal-wrap:has(#f-construction:checked) .cal__row:not([data-ind="construction"]),
+.cal-wrap:has(#f-agriculture:checked) .cal__row:not([data-ind="agriculture"]),
+.cal-wrap:has(#f-automotive:checked) .cal__row:not([data-ind="automotive"]),
+.cal-wrap:has(#f-ecommerce:checked) .cal__row:not([data-ind="ecommerce"]),
+.cal-wrap:has(#f-education:checked) .cal__row:not([data-ind="education"]) {
+  display: none;
+}
+
+@media (max-width: 1080px) {
+  .cal__row {
+    grid-template-columns: 104px minmax(0, 1fr) auto;
+    grid-template-areas:
+      "date name act"
+      "meta name act";
+    row-gap: 0.4rem;
+  }
+  .cal__date {
+    grid-area: date;
+  }
+  .cal__name {
+    grid-area: name;
+  }
+  .cal__act {
+    grid-area: act;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.35rem;
+  }
+  .cal__ind {
+    grid-area: meta;
+  }
+  .cal__status {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .cal__row {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "name"
+      "date"
+      "meta"
+      "act";
+    gap: 0.5rem;
+    padding: 1.1rem;
+  }
+  .cal__act {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.9rem;
+  }
+}
+
+/* ------- home: next-show hero + calendar rail ------- */
+.home-hero {
+  position: relative;
+  background: var(--evergreen);
+  color: rgba(255, 255, 255, 0.88);
+  overflow: hidden;
+}
+
+.home-hero__bg {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+}
+
+.home-hero__bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.38;
+}
+
+.home-hero__bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, var(--evergreen) 30%, rgba(15, 43, 28, 0.55) 70%, rgba(15, 43, 28, 0.35));
+}
+
+.home-hero__in {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
+  gap: clamp(1.6rem, 1rem + 3vw, 4rem);
+  align-items: end;
+  padding-block: clamp(3rem, 2rem + 4vw, 5.2rem) 0;
+}
+
+.home-hero__kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 1rem;
+  font-family: var(--f-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold-soft);
+}
+
+.home-hero__kicker .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold-soft);
+  flex: none;
+}
+
+.home-hero h1 {
+  margin: 0;
+  font-size: var(--t-hero);
+  letter-spacing: -0.02em;
+  color: #fff;
+  max-width: 16ch;
+}
+
+.home-hero__date {
+  display: flex;
+  align-items: baseline;
+  gap: 0.8rem;
+  margin: 0.9rem 0 0;
+}
+
+.home-hero__date b {
+  font-family: var(--f-display);
+  font-size: clamp(2.6rem, 1.9rem + 3.4vw, 4.3rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: #fff;
+}
+
+.home-hero__date span {
+  font-family: var(--f-mono);
+  font-size: clamp(1rem, 0.85rem + 0.7vw, 1.35rem);
+  letter-spacing: 0.08em;
+  color: var(--gold-soft);
+}
+
+.home-hero__lead {
+  margin: 1.1rem 0 0;
+  max-width: 52ch;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: var(--t-lead);
+}
+
+.home-hero .btn-row {
+  margin-top: 1.6rem;
+}
+
+/* the fact card: venue line + countdown, one quiet panel */
+.home-hero__side {
+  display: grid;
+  gap: 1.1rem;
+  justify-self: end;
+  width: min(360px, 100%);
+  padding: 1.4rem 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: var(--r-lg);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.home-hero__side .mono-label {
+  color: var(--gold-soft);
+  margin: 0 0 0.2rem;
+}
+
+.home-hero__venue {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.9rem;
+  margin: 0.35rem 0 0;
+  font-family: var(--f-display);
+  font-size: 1.06rem;
+  color: #fff;
+}
+
+.home-hero__venue span {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* calendar rail: next four shows, one line each, scroll on mobile */
+.home-hero .rail {
+  position: relative;
+  margin-top: clamp(2.2rem, 1.4rem + 2vw, 3.6rem);
+  padding-bottom: clamp(2rem, 1.4rem + 1.6vw, 3rem);
+}
+
+.rail {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(215px, 1fr);
+  gap: 1px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  overflow-x: auto;
+}
+
+.rail a {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem 1.2rem;
+  background: var(--evergreen-2);
+  text-decoration: none;
+  color: inherit;
+  border-left: 4px solid var(--ic, var(--gold-soft));
+}
+
+.rail a:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.rail b {
+  font-family: var(--f-display);
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rail .rail__date {
+  font-family: var(--f-mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  color: var(--gold-soft);
+}
+
+.rail .rail__ind {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.62);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 940px) {
+  .home-hero__in {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+  .home-hero__side {
+    justify-self: start;
+    width: min(440px, 100%);
+  }
+}
+
+/* ------- home: the venue in one line (no table) ------- */
+.venue-strip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: clamp(1.2rem, 0.8rem + 2.4vw, 3rem);
+  align-items: center;
+  padding-block: clamp(1.6rem, 1rem + 1.6vw, 2.6rem);
+}
+
+.venue-strip__nums {
+  display: flex;
+  gap: clamp(1.2rem, 0.8rem + 1.6vw, 2.4rem);
+}
+
+.venue-strip__nums div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.venue-strip__nums b {
+  font-family: var(--f-display);
+  font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2.1rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.venue-strip__nums b small {
+  font-size: 0.55em;
+  font-weight: 600;
+  color: var(--ink-60);
+}
+
+.venue-strip__nums span {
+  font-size: 0.8rem;
+  color: var(--ink-40);
+}
+
+.venue-strip__txt {
+  max-width: 46ch;
+}
+
+.venue-strip__txt h2 {
+  margin: 0 0 0.4rem;
+}
+
+.venue-strip__txt p {
+  margin: 0;
+  color: var(--ink-60);
+  font-size: 0.95rem;
+}
+
+.venue-strip__links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.venue-strip__links a {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+  width: fit-content;
+  border-bottom: 1px solid var(--line-strong);
+  padding-bottom: 1px;
+}
+
+.venue-strip__links a:hover {
+  border-color: var(--ink);
+}
+
+.venue-strip__img {
+  width: clamp(200px, 22vw, 320px);
+  flex: none;
+}
+
+.venue-strip__img img {
+  border-radius: var(--r-lg);
+  display: block;
+  width: 100%;
+}
+
+@media (max-width: 1080px) {
+  .venue-strip {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .venue-strip__img {
+    width: min(480px, 100%);
+    order: -1;
+  }
+}
+
+/* ------- event card (docs/08 §4.4): date big, one number instead of chips ------- */
+.ev {
+  display: grid;
+  gap: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--paper);
+  overflow: hidden;
+  transition: border-color var(--tr);
+}
+
+.ev:hover {
+  border-color: var(--ink);
+}
+
+.ev__top {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--line);
+}
+
+.ev__date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.1rem;
+  min-width: 96px;
+  padding: 0.9rem 0.6rem;
+  background: var(--cream);
+  border-right: 1px solid var(--line);
+  color: inherit;
+}
+
+.ev__date b {
+  font-family: var(--f-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.ev__date span {
+  font-family: var(--f-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-40);
+}
+
+.ev__img {
+  position: relative;
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.ev__img img {
+  width: 100%;
+  height: 100%;
+  min-height: 120px;
+  object-fit: cover;
+  display: block;
+}
+
+.ev__body {
+  padding: 1.1rem 1.25rem 1.2rem;
+}
+
+.ev__body h3 {
+  margin: 0.2rem 0 0.4rem;
+  font-size: 1.2rem;
+}
+
+.ev__body h3 a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.ev__body h3 a:hover {
+  color: var(--moss);
+}
+
+.ev__tagline {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--ink-60);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ev__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-top: 0.9rem;
+  font-size: 0.85rem;
+  color: var(--ink-40);
+}
+
+.ev__sections {
+  font-family: var(--f-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  color: var(--ink-40);
+}
+
+/* wide variant (featured show) */
+.ev--wide .ev__top {
+  border-bottom: 0;
+}
+
+.ev--wide .ev__img {
+  min-height: 260px;
+}
+
+.ev--wide .ev__body {
+  padding: 1.6rem 1.8rem;
+}
+
+@media (max-width: 720px) {
+  .ev__top {
+    border-bottom: 1px solid var(--line);
+  }
+  .ev--wide .ev__top {
+    flex-direction: column;
+  }
+  .ev--wide .ev__img {
+    min-height: 180px;
+  }
+  .ev--wide .ev__img img {
+    aspect-ratio: 16 / 9;
+    height: auto;
+  }
+  .ev--wide .ev__date {
+    flex-direction: row;
+    gap: 0.5rem;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    padding: 0.6rem 0.8rem;
+  }
+}
+
+/* Scroll reveal (user-approved, 2026-09-22): a single, quiet entrance for sections
+   below the first view — fade + 8px over 200ms. JS-gated: without JavaScript the
+   .reveal-pending class is never added, so content is always visible. Elements
+   already in the first viewport are skipped entirely (no load flash).
+   prefers-reduced-motion: the block below zeroes every transition, so the entrance
+   is also skipped there. docs/08 §5c */
+.reveal-pending {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+.reveal-in {
+  opacity: 1;
+  transform: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .reveal-pending {
+    opacity: 1;
+    transform: none;
+  }
   *,
   *::before,
   *::after {
@@ -1700,6 +2329,11 @@ body.nav-open .mnav {
   .topbar,
   .btn {
     display: none !important;
+  }
+  /* a not-yet-revealed section must never print invisible */
+  .reveal-pending {
+    opacity: 1 !important;
+    transform: none !important;
   }
   body {
     background: #fff;

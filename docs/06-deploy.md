@@ -30,8 +30,31 @@
     node scripts/build-one-host.mjs ecomretail.sofexpo.org
     node scripts/build-one-host.mjs sofexpo.org
 
-Центральный проект дополнительно кладёт `dist/_redirects` (40 правил 301 на поддомены) —
-Pages их подхватывает автоматически, руками ничего не вклеивается.
+Центральный проект дополнительно кладёт `dist/_redirects` (301 на поддомены + правило
+корня) — Pages их подхватывает автоматически, руками ничего не вклеивается.
+
+### Корень `/` → `/en/` (docs/08 §7, Q1)
+
+Каждый хост пишет в свой `_redirects` строку `/ /en/ 301`. HTML-фолбэк (`index.html`)
+подхватывает хосты, которые `_redirects` не читают: meta-refresh + явная ссылка
+«→ Главная на русском». `x-default` hreflang указывает на `/en/`.
+
+Если хочется делить трафик по `Accept-Language` (RU-аудитория → `/ru/`), включите
+**Redirect Rule** (Cloudflare Rules → Redirect Rules) — она сработает раньше `_redirects`:
+
+```
+Expression:  (http.host in {"sofexpo.org","www.sofexpo.org","foodera.sofexpo.org",
+                            "buildpro.sofexpo.org","agropro.sofexpo.org",
+                            "worldedu.sofexpo.org","ecomretail.sofexpo.org"}
+              and http.request.uri.path == "/"
+              and http.request.headers.accept_language["ru"] =~ "ru")
+Action:      Static Redirect
+Target URL:  /ru/
+Status code: 301 (Permanent)
+```
+
+Порядок: Redirect Rules → `_redirects` → HTML-фолбэк, поэтому правило не конфликтует
+с базовым 301 — оно просто перехватывает RU-запросы корня.
 
 ## 2. Альтернатива: свой VPS (nginx или Caddy)
 
@@ -52,10 +75,14 @@ Caddy (автоматический TLS, wildcard не обязателен — 
     }
 
 nginx — по одному `server`-блоку на `server_name`, `root` на соответствующий каталог,
-`location / { try_files $uri $uri/ /index.html; }`. Правила 301 для переехавших путей уже лежат в
-`dist-hosts/sofexpo.org/_redirects` (`from to 301`), для nginx они конвертируются на месте:
+`location / { try_files $uri $uri/ /index.html; }`. Правило корня вынесенным блоком:
 
-    awk '{print "rewrite ^" $1 "$ " $2 " permanent;"}' dist-hosts/sofexpo.org/_redirects
+    location = / { return 301 /en/; }
+
+Остальные 301 (переехавшие пути) лежат в `dist-hosts/sofexpo.org/_redirects` (`from to 301`)
+и конвертируются на месте (строку корня пропустить — она уже в `location = /`):
+
+    awk '$1 != "/" {print "rewrite ^" $1 "$ " $2 " permanent;"}' dist-hosts/sofexpo.org/_redirects
 
 ## 3. DNS
 

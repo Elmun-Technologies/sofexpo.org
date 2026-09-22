@@ -1,13 +1,14 @@
 ---
 /**
- * Site-wide announcement strip (the pattern AGRAVIA and Textilelegprom put above the fold):
- * the next edition, the one fact that creates urgency, and the two actions that convert.
+ * Next-event strip (docs/08 §3.1): one line, 36px, only on the pages that need the calendar
+ * — the home and the line-up. Every other page has its own CTA; the strip used to sit above
+ * the fold on all 152 pages and pushed the content 40px down.
  * Driven entirely by `events.ts` — when the date passes, the strip moves to the next show,
- * and if nothing is upcoming the strip is not rendered at all.
+ * and if nothing is upcoming it is not rendered at all.
  */
 import { localize, type Locale } from '@/i18n/config';
 import { nextEvent } from '@/data/events';
-import { site } from '@/data/site';
+import { daysUntil } from '@/lib/labels';
 import Icon from '@/components/Icon.astro';
 
 const { locale, hideFor = '' } = Astro.props as { locale: Locale; hideFor?: string };
@@ -15,38 +16,42 @@ const ru = locale === 'ru';
 const L = (p: string) => localize(locale, p);
 
 const event = nextEvent();
-const isUpcoming = !!event && event.status !== 'past' && !!event.highlight;
-/** on the event's own page the same facts are already in the hero */
-const show = isUpcoming && !hideFor.startsWith(`/events/${event!.slug}/`) && hideFor !== `/events/${event!.slug}/`;
+/** home and the line-up only; not on the event's own page (its hero already says all this) */
+const show =
+  !!event &&
+  event.status !== 'past' &&
+  !!event.highlight &&
+  (hideFor === '/' || (hideFor.startsWith('/events/') && !hideFor.startsWith(`/events/${event.slug}/`)));
+const days = daysUntil(event?.dates.start ?? '');
+const countdown =
+  days > 1
+    ? ru
+      ? `через ${days} ${days === 1 ? 'день' : days < 5 ? 'дня' : days < 21 || days > 24 ? 'дней' : 'дня'}`
+      : `in ${days} days`
+    : days === 1
+      ? ru
+        ? 'завтра'
+        : 'tomorrow'
+      : ru
+        ? 'идёт сейчас'
+        : 'running now';
 ---
 
 {
   show && (
     <div class="promo" data-promo={event!.slug}>
       <div class="wrap promo__in">
-        <p class="promo__txt">
+        <a class="promo__txt" href={L(`/events/${event!.slug}/`)}>
           <span class="dot" aria-hidden="true"></span>
-          <b>
-            {event!.highlight!.label[locale]} · {event!.brand[locale]}{' '}
-            {event!.dates.display[locale]}
-          </b>
-          <span class="promo__note">{event!.highlight!.text[locale]}</span>
-        </p>
-        <div class="promo__act">
-          <a class="btn btn--sm btn--light" href={`${L('/request-stand/')}?event=${event!.slug}`}>
-            <Icon name="sparkle" size={15} />
-            {ru ? 'Забронировать стенд' : 'Book a stand'}
-          </a>
-          <a href={L(`/events/${event!.slug}/`)}>
-            {ru ? 'Об этой выставке' : 'About this edition'} <Icon name="arrow" size={14} />
-          </a>
-          <a href={L('/visitors/tickets/')}>
-            {ru ? 'Пригласительный билет' : 'Get an entry pass'} <Icon name="arrow" size={14} />
-          </a>
-          <a href={`tel:${site.contacts.phoneMain.replace(/\s/g, '')}`}>
-            <Icon name="phone" size={14} /> {site.contacts.phoneMain}
-          </a>
-        </div>
+          <b>{event!.brand[locale]}</b>
+          <span class="promo__date">{event!.dates.display[locale]}</span>
+          <span class="promo__count">{countdown}</span>
+          <Icon name="arrow" size={13} />
+        </a>
+        <a class="btn btn--sm btn--light" href={`${L('/request-stand/')}?event=${event!.slug}`}>
+          <Icon name="sparkle" size={14} />
+          {ru ? 'Стенд' : 'Stand'}
+        </a>
       </div>
     </div>
   )

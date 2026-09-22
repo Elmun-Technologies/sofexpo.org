@@ -10,7 +10,7 @@ import { pages, type PageDef } from '@/data/pages';
 import { isBuiltHere } from '@/data/hosts';
 import Base from '@/layouts/Base.astro';
 import Blocks from '@/components/Blocks.astro';
-import { breadcrumbJsonLd, organizationJsonLd, abs, faqJsonLd } from '@/lib/seo';
+import { breadcrumbJsonLd, organizationJsonLd, abs, faqJsonLd, serviceJsonLd } from '@/lib/seo';
 import { pageCrumbs } from '@/lib/nav';
 
 export const getStaticPaths = (async () => {
@@ -38,6 +38,8 @@ const hero = blocks.find((b) => b.type === 'hero');
 const faq = blocks.find((b) => b.type === 'faq');
 const ld: Record<string, unknown>[] = [organizationJsonLd()];
 if (faq?.items?.length) ld.push(faqJsonLd(faq.items as never, abs(localize(locale, page.path))));
+/* hall-rental is a commercial query cluster — give it a Service entity (docs/08 §5c) */
+if (page.path === '/organizers/') ld.push(serviceJsonLd(locale, abs(localize(locale, page.path))));
 ---
 
 <Base

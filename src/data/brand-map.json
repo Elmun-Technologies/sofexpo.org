@@ -42,6 +42,135 @@
         "ornament": "#bbd8ee",
         "mark": "#2c7fbb",
         "_markNote": "graphic only: 4.12 on paper, 2.52 on the host ground -> on dark the square is drawn white and the diamond gold-soft (BrandMark tone rules)"
+      },
+      "mark": "star"
+    },
+    "buildpro-expo": {
+      "id": "buildpro",
+      "host": "buildpro.sofexpo.org",
+      "name": {
+        "ru": "BUILDPRO",
+        "en": "BUILDPRO"
+      },
+      "sub": {
+        "ru": "EXPO 2026",
+        "en": "EXPO 2026"
+      },
+      "ornament": null,
+      "mark": null,
+      "contrast": "white/#23282e 14.85 · white/#39424c 10.21 · #171b1f/#f7f7f6 16.15 · #4b535b/#f7f7f6 7.29 · #c9973c/#23282e 5.64 · #cf8a2c graphic-only (favicon/OG corner)",
+      "palette": {
+        "evergreen": "#23282e",
+        "evergreen2": "#39424c",
+        "moss": "#39424c",
+        "ink": "#171b1f",
+        "ink60": "#4b535b",
+        "ink40": "#5a626a",
+        "line": "#d8dbde",
+        "lineStrong": "#b2b8be",
+        "cream": "#f7f7f6",
+        "cream2": "#eef0f1",
+        "gold": "#9a6a1f",
+        "goldSoft": "#c9973c",
+        "ornament": "#c9d0d6",
+        "mark": "#cf8a2c",
+        "_markNote": "graphite ground, steel second tone, construction amber accent; wordmark only until the organiser badge arrives (mark: null)"
+      }
+    },
+    "agropro-expo": {
+      "id": "agropro",
+      "host": "agropro.sofexpo.org",
+      "name": {
+        "ru": "AGROPRO",
+        "en": "AGROPRO"
+      },
+      "sub": {
+        "ru": "EXPO 2027",
+        "en": "EXPO 2027"
+      },
+      "ornament": null,
+      "mark": null,
+      "contrast": "white/#2c421f 11.02 · white/#40592a 7.83 · #1d2517/#f8f9f4 14.93 · #4b5842/#f8f9f4 7.16 · #c9ad58/#2c421f 5.04 · #5d7f35/#f8f9f4 4.36",
+      "palette": {
+        "evergreen": "#2c421f",
+        "evergreen2": "#40592a",
+        "moss": "#40592a",
+        "ink": "#1d2517",
+        "ink60": "#4b5842",
+        "ink40": "#56624c",
+        "line": "#d9e0d0",
+        "lineStrong": "#b6c2a4",
+        "cream": "#f8f9f4",
+        "cream2": "#eff2e8",
+        "gold": "#8a6d1c",
+        "goldSoft": "#c9ad58",
+        "ornament": "#cfdcc0",
+        "mark": "#5d7f35",
+        "_markNote": "field green (darker, yellower than the centre evergreen), wheat accent; wordmark only until the organiser badge arrives (mark: null)"
+      }
+    },
+    "world-edu-expo": {
+      "id": "world-edu",
+      "host": "worldedu.sofexpo.org",
+      "name": {
+        "ru": "WORLD EDU",
+        "en": "WORLD EDU"
+      },
+      "sub": {
+        "ru": "EXPO 2027",
+        "en": "EXPO 2027"
+      },
+      "ornament": null,
+      "mark": null,
+      "contrast": "white/#46242e 13.53 · white/#5f3442 10.21 · #2a1a20/#fbf8f9 15.70 · #5d4a52/#fbf8f9 7.75 · #c09a4e/#46242e 5.14 · #7a4456/#fbf8f9 7.13",
+      "palette": {
+        "evergreen": "#46242e",
+        "evergreen2": "#5f3442",
+        "moss": "#5f3442",
+        "ink": "#2a1a20",
+        "ink60": "#5d4a52",
+        "ink40": "#66525b",
+        "line": "#e8dce0",
+        "lineStrong": "#cbb4bc",
+        "cream": "#fbf8f9",
+        "cream2": "#f4edef",
+        "gold": "#8a5a1c",
+        "goldSoft": "#c09a4e",
+        "ornament": "#e3cdd4",
+        "mark": "#7a4456",
+        "_markNote": "burgundy ground, warm gold accent; wordmark only until the organiser badge arrives (mark: null)"
+      }
+    },
+    "ecom-retail-expo": {
+      "id": "ecom-retail",
+      "host": "ecomretail.sofexpo.org",
+      "name": {
+        "ru": "ECOM & RETAIL",
+        "en": "ECOM & RETAIL"
+      },
+      "sub": {
+        "ru": "EXPO 2027",
+        "en": "EXPO 2027"
+      },
+      "ornament": null,
+      "mark": null,
+      "contrast": "white/#123c42 11.99 · white/#1d565f 8.24 · #102226/#f7fbfb 15.75 · #43585c/#f7fbfb 7.22 · #e08a58/#123c42 4.54 · #2a7a85/#f7fbfb 4.77",
+      "palette": {
+        "evergreen": "#123c42",
+        "evergreen2": "#1d565f",
+        "moss": "#1d565f",
+        "ink": "#102226",
+        "ink60": "#43585c",
+        "ink40": "#4a5e62",
+        "line": "#d4e2e3",
+        "lineStrong": "#aac6c8",
+        "cream": "#f7fbfb",
+        "cream2": "#edf4f4",
+        "gold": "#a34a1c",
+        "goldSoft": "#e08a58",
+        "ornament": "#c4dede",
+        "mark": "#2a7a85",
+        "_markNote": "petrol ground, warm coral accent; wordmark only until the organiser badge arrives (mark: null)"
       }
     }
   }

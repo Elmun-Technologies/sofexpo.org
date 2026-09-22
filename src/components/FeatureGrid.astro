@@ -11,6 +11,9 @@ const { locale, items, cols = 3 } = Astro.props as {
     text?: string;
     href?: string;
     meta?: string;
+    /** optional photo at the top of the card */
+    image?: string;
+    imageAlt?: string;
   }[];
 };
 ---
@@ -20,6 +23,11 @@ const { locale, items, cols = 3 } = Astro.props as {
       const Tag = item.href ? 'a' : 'div';
       return (
         <Tag class="feature" href={item.href} {...item.href ? { rel: 'noopener' } : {}}>
+          {item.image && (
+            <figure class="feature__media">
+              <img src={item.image} alt={item.imageAlt ?? item.title} width="640" height="400" loading="lazy" decoding="async" />
+            </figure>
+          )}
           {item.icon && (
             <span class="ico-tile">
               <Icon name={item.icon} size={24} />
@@ -70,5 +78,15 @@ const { locale, items, cols = 3 } = Astro.props as {
   }
   .feature:hover .feature__go {
     opacity: 1;
+  }
+  .feature__media {
+    margin: 0 0 1rem;
+  }
+  .feature__media img {
+    display: block;
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: var(--r-sm);
   }
 </style>

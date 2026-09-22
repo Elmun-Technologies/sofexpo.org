@@ -1,0 +1,143 @@
+---
+/**
+ * The venue as a one-screen schematic (docs/08 §4.8): zones, areas and access points on a
+ * single line drawing. Dimensions are the known facts from `site.ts` (4 400 / 5 000 / 350);
+ * exact wall sizes and the floor-load numbers arrive with the client's tech sheet (Phase 3)
+ * and replace this drawing 1:1 without moving any layout — hence «схема, не в масштабе».
+ */
+import { localize, type Locale } from '@/i18n/config';
+
+const { locale } = Astro.props as { locale: Locale };
+const ru = locale === 'ru';
+const H = (p: string) => localize(locale, p);
+
+const z = {
+  hall: { t: ru ? 'Главный зал' : 'Main hall', a: '4 400 м²' },
+  open: { t: ru ? 'Открытая площадка' : 'Open-air area', a: '5 000 м²' },
+  conf: { t: ru ? 'Конференц-зал' : 'Conference hall', a: ru ? 'до 350 мест' : 'up to 350 seats' },
+  cafe: { t: ru ? 'Кафе' : 'Cafés', a: ru ? '350 мест' : '350 seats' },
+  entrance: ru ? 'Вход посетителей' : 'Visitor entrance',
+  dock: ru ? 'Крытый маневрирующий двор' : 'Loading yard',
+  parking: ru ? 'Парковка' : 'Parking',
+  power: ru ? 'Щитовая · 700 кВт' : 'Switchroom · 700 kW',
+};
+---
+
+<figure class="plan" role="img" aria-label={ru ? 'Схема выставочного центра' : 'Schematic plan of the exhibition centre'}>
+  <svg viewBox="0 0 860 470" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- site boundary -->
+    <rect x="20" y="20" width="820" height="430" stroke="var(--line-strong)" stroke-width="1.5" />
+
+    <!-- main hall -->
+    <rect x="40" y="40" width="470" height="290" fill="var(--sage)" fill-opacity=".35" stroke="var(--evergreen)" stroke-width="2" />
+    <text x="60" y="72" class="plan__t">{z.hall.t}</text>
+    <text x="60" y="94" class="plan__a">{z.hall.a}</text>
+    <!-- stand grid hint: the 64px module the halls are planned on -->
+    <g stroke="var(--evergreen)" stroke-opacity=".18" stroke-width="1">
+      <line x1="150" y1="40" x2="150" y2="330" /><line x1="260" y1="40" x2="260" y2="330" />
+      <line x1="370" y1="40" x2="370" y2="330" /><line x1="480" y1="40" x2="480" y2="330" />
+      <line x1="40" y1="150" x2="510" y2="150" /><line x1="40" y1="240" x2="510" y2="240" />
+    </g>
+    <text x="490" y="316" class="plan__s" text-anchor="end">{ru ? 'свободная сетка стендов' : 'open stand grid'}</text>
+
+    <!-- open area -->
+    <rect x="530" y="40" width="300" height="290" stroke="var(--moss)" stroke-width="2" stroke-dasharray="7 5" />
+    <g stroke="var(--moss)" stroke-opacity=".25" stroke-width="1">
+      <line x1="530" y1="40" x2="830" y2="330" />
+      <line x1="630" y1="40" x2="830" y2="210" />
+      <line x1="530" y1="140" x2="730" y2="330" />
+    </g>
+    <text x="550" y="72" class="plan__t">{z.open.t}</text>
+    <text x="550" y="94" class="plan__a">{z.open.a}</text>
+    <text x="550" y="316" class="plan__s">{ru ? 'подъезд фур · кран' : 'truck access · crane'}</text>
+
+    <!-- conference + cafés -->
+    <rect x="40" y="350" width="200" height="90" fill="var(--paper)" stroke="var(--evergreen)" stroke-width="1.5" />
+    <text x="56" y="380" class="plan__t">{z.conf.t}</text>
+    <text x="56" y="400" class="plan__a">{z.conf.a}</text>
+
+    <rect x="250" y="350" width="140" height="90" fill="var(--paper)" stroke="var(--evergreen)" stroke-width="1.5" />
+    <text x="266" y="380" class="plan__t">{z.cafe.t}</text>
+    <text x="266" y="400" class="plan__a">{z.cafe.a}</text>
+
+    <!-- services row -->
+    <rect x="400" y="350" width="110" height="90" fill="var(--paper)" stroke="var(--line-strong)" stroke-width="1.5" />
+    <text x="412" y="380" class="plan__s">{ru ? 'Регистрация' : 'Registration'}</text>
+    <text x="412" y="400" class="plan__s">{ru ? 'Хранение' : 'Storage'}</text>
+
+    <rect x="520" y="350" width="120" height="90" fill="var(--paper)" stroke="var(--line-strong)" stroke-width="1.5" />
+    <text x="532" y="380" class="plan__s">{z.power}</text>
+    <text x="532" y="400" class="plan__s">{ru ? '220/380 В' : '220/380 V'}</text>
+
+    <!-- access points -->
+    <g>
+      <circle cx="690" cy="395" r="17" fill="var(--evergreen)" />
+      <text x="690" y="401" class="plan__p" text-anchor="middle">P</text>
+      <text x="714" y="400" class="plan__s">{z.parking}</text>
+    </g>
+    <g>
+      <rect x="730" y="368" width="70" height="54" fill="var(--paper)" stroke="var(--moss)" stroke-width="1.5" />
+      <path d="M742 402 v-14 l10 -8 h26 l10 8 v14 z M742 398 h44" stroke="var(--moss)" stroke-width="1.6" fill="none" />
+      <text x="765" y="436" class="plan__s" text-anchor="middle">{ru ? 'грузовой двор' : 'loading dock'}</text>
+    </g>
+    <g>
+      <path d="M560 340 v-18 M552 328 l8 -10 8 10" stroke="var(--moss)" stroke-width="2" fill="none" />
+      <text x="580" y="324" class="plan__s">{z.entrance}</text>
+    </g>
+
+    <!-- north + scale note -->
+    <g transform="translate(816, 66)">
+      <path d="M0 14 V-10 M0 -10 l-5 8 M0 -10 l5 8" stroke="var(--ink-40)" stroke-width="1.5" fill="none" />
+      <text x="0" y="30" class="plan__s" text-anchor="middle">N</text>
+    </g>
+  </svg>
+  <figcaption class="plan__note">
+    {ru ? 'Схема, не в масштабе: зоны, площади и точки доступа. Точные габариты, высота и нагрузка на пол — в' : 'Schematic, not to scale: zones, areas and access points. Exact dimensions, ceiling height and floor load — in the'}{' '}
+    <a href={H('/venue/tech-specs/')}>{ru ? 'технической спецификации' : 'technical data sheet'}</a>.
+  </figcaption>
+</figure>
+
+<style>
+  .plan {
+    margin: 0;
+  }
+  .plan svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--paper);
+  }
+  .plan__t {
+    font-family: var(--f-display);
+    font-size: 19px;
+    font-weight: 600;
+    fill: var(--ink);
+  }
+  .plan__a {
+    font-family: var(--f-mono);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    fill: var(--moss);
+  }
+  .plan__s {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    fill: var(--ink-60);
+  }
+  .plan__p {
+    font-family: var(--f-display);
+    font-size: 15px;
+    font-weight: 700;
+    fill: var(--gold-soft);
+  }
+  .plan__note {
+    margin-top: 0.8rem;
+    font-size: 0.85rem;
+    color: var(--ink-60);
+  }
+  .plan__note a {
+    color: var(--ink);
+  }
+</style>

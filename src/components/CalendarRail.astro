@@ -1,0 +1,59 @@
+---
+/**
+ * The calendar rail: upcoming shows, one line each — industry colour line, big date, name
+ * (docs/08 §4.2). Horizontal on phones. The "calendar first" mechanic every CIS top-3
+ * expo site runs. `tone="dark"` for the home hero, `tone="light"` for bright sections
+ * (/visitors/, /exhibitors/).
+ */
+import { localize, type Locale } from '@/i18n/config';
+import { upcoming, type ExpoEvent } from '@/data/events';
+import { bigDate, industryColor, industryLabel } from '@/lib/labels';
+
+const { locale, tone = 'dark', count = 4 } = Astro.props as {
+  locale: Locale;
+  tone?: 'dark' | 'light';
+  count?: number;
+};
+const ru = locale === 'ru';
+const L = (p: string) => localize(locale, p);
+const shows = upcoming.slice(0, count);
+---
+
+<nav class:list={['rail', `rail--${tone}`]} aria-label={ru ? 'Календарь выставок' : 'Exhibition calendar'}>
+  {shows.map((e: ExpoEvent) => {
+    const d = bigDate(e.dates.start, e.dates.end, locale);
+    return (
+      <a href={L(`/events/${e.slug}/`)} style={{ '--ic': industryColor(e.industry) } as Record<string, string>}>
+        <span class="rail__date">
+          {d.days} {d.month} {d.year}
+        </span>
+        <b>{e.brand[locale]}</b>
+        <span class="rail__ind">{industryLabel(e.industry, locale)}</span>
+      </a>
+    );
+  })}
+</nav>
+
+<style>
+  /* dark tone lives in global.css (.home-hero .rail / .rail); this is the light variant */
+  .rail--light {
+    background: var(--line);
+    border-color: var(--line);
+  }
+  .rail--light a {
+    background: var(--paper);
+    color: inherit;
+  }
+  .rail--light a:hover {
+    background: var(--cream);
+  }
+  .rail--light b {
+    color: var(--ink);
+  }
+  .rail--light .rail__date {
+    color: var(--moss);
+  }
+  .rail--light .rail__ind {
+    color: var(--ink-40);
+  }
+</style>

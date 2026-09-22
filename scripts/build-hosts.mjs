@@ -69,10 +69,14 @@ function robotsFor(host) {
 
 /** Path-based 301s for the site's own `_redirects` file (Cloudflare Pages / Netlify). */
 function redirectsFor(host) {
-  if (host !== map.root) return "";
-  return movedRedirects(mode)
-    .map((r) => `${r.from} ${r.to} 301`)
-    .join("\n");
+  /* Q1 (docs/08 §7): the bare root 301s to the EN home on every host; the
+     centre additionally carries the legacy event-path redirects. */
+  const lines = [`/ /en/ 301`];
+  if (host !== map.root) return lines.join("\n");
+  lines.push(
+    ...movedRedirects(mode).map((r) => `${r.from} ${r.to} 301`),
+  );
+  return lines.join("\n");
 }
 
 /**

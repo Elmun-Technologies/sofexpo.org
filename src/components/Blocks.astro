@@ -10,6 +10,9 @@ import Icon from '@/components/Icon.astro';
 import StatBand from '@/components/StatBand.astro';
 import LeadForm from '@/components/LeadForm.astro';
 import Faq from '@/components/Faq.astro';
+import CalendarRail from '@/components/CalendarRail.astro';
+import VenuePlan from '@/components/VenuePlan.astro';
+import MapSchema from '@/components/MapSchema.astro';
 
 const { blocks, locale } = Astro.props as { blocks: Block[]; locale: Locale };
 const t = useUI(locale);
@@ -26,10 +29,20 @@ const H = (p?: string) => {
 ---
 
 {
-  blocks.map((b) => {
+  blocks.map((b, idx) => {
     const wide = b.width !== 'narrow';
+    /* Rhythm: a section heading (`h2`) belongs to the block that follows it, and two blocks
+       on the same ground are one story, not two pages. Before this every block carried the full
+       `--sec` padding on both sides, so a heading floated ~170px above its own cards. */
+    const ground = (x?: Block) => (x?.tone === 'paper' || x?.tone === 'forest' || x?.tone === 'sand' ? x.tone : 'default');
+    const prev = idx > 0 ? blocks[idx - 1] : undefined;
+    const afterHead = prev?.type === 'h2' && ground(prev) === ground(b);
+    /* `faq` paints its own paper sheet and `hero` is the page opening — both are real boundaries */
+    const boundary = (x?: Block) => !x || x.type === 'hero' || x.type === 'faq';
+    const sameGround = !boundary(prev) && b.type !== 'faq' && ground(prev) === ground(b);
+    const leadsIn = b.type === 'h2';
     return (
-      <section class:list={['sec', 'block', `block--${b.type}`, b.tone === 'paper' && 'sec--paper', b.tone === 'forest' && 'sec--forest', b.tone === 'sand' && 'sec--sand', b.anchor && 'has-anchor']} id={b.id}>
+      <section class:list={['sec', 'block', 'reveal', `block--${b.type}`, b.tone === 'paper' && 'sec--paper', b.tone === 'forest' && 'sec--forest', b.tone === 'sand' && 'sec--sand', b.anchor && 'has-anchor', leadsIn && 'block--head', afterHead && 'block--after-head', sameGround && !afterHead && 'block--cont']} id={b.id}>
         <div class:list={['wrap', !wide && 'wrap--narrow']}>
           {b.type === 'hero' && (
             <div class="block__head">
@@ -75,13 +88,20 @@ const H = (p?: string) => {
           )}
 
           {b.type === 'text' && (
-            <div class="prose">
-              {(b.paragraphs ?? []).map((p) => (
-                <p set:html={p} />
-              ))}
-              {b.list?.length ? (
-                <ul>{b.list.map((x) => <li set:html={x} />)}</ul>
-              ) : null}
+            <div class:list={['prose-media', !b.image && 'prose-media--solo']}>
+              <div class="prose">
+                {(b.paragraphs ?? []).map((p) => (
+                  <p set:html={p} />
+                ))}
+                {b.list?.length ? (
+                  <ul>{b.list.map((x) => <li set:html={x} />)}</ul>
+                ) : null}
+              </div>
+              {b.image && (
+                <figure class="prose-media__fig">
+                  <img src={b.image} alt={b.imageAlt ?? b.title ?? ''} width="700" height="460" loading="lazy" decoding="async" />
+                </figure>
+              )}
             </div>
           )}
 
@@ -104,6 +124,11 @@ const H = (p?: string) => {
                 const Tag: any = href ? 'a' : 'div';
                 return (
                   <Tag class="feature" href={href}>
+                    {i.image && (
+                      <figure class="feature__media">
+                        <img src={i.image} alt={i.imageAlt ?? i.title} width="640" height="400" loading="lazy" decoding="async" />
+                      </figure>
+                    )}
                     {i.icon && (
                       <span class="ico-tile">
                         <Icon name={i.icon} size={24} />
@@ -178,12 +203,19 @@ const H = (p?: string) => {
           )}
 
           {b.type === 'callout' && (
-            <div class:list={['callout', b.tone === 'gold' && 'callout--gold']}>
-              {b.kicker && <p class="kicker">{b.kicker}</p>}
-              <h3>{b.title}</h3>
-              {b.text && <p class="muted" style="margin-bottom:1rem">{b.text}</p>}
-              {b.action && (
-                <a class="btn btn--sm" href={H(b.action.href)}>{b.action.label}</a>
+            <div class:list={['callout', b.tone === 'gold' && 'callout--gold', b.image && 'callout--media']}>
+              <div class="callout__body">
+                {b.kicker && <p class="kicker">{b.kicker}</p>}
+                <h3>{b.title}</h3>
+                {b.text && <p class="muted" style="margin-bottom:1rem">{b.text}</p>}
+                {b.action && (
+                  <a class="btn btn--sm" href={H(b.action.href)}>{b.action.label}</a>
+                )}
+              </div>
+              {b.image && (
+                <figure class="callout__fig">
+                  <img src={b.image} alt={b.imageAlt ?? b.title ?? ''} width="480" height="360" loading="lazy" decoding="async" />
+                </figure>
               )}
             </div>
           )}
@@ -215,6 +247,12 @@ const H = (p?: string) => {
               ))}
             </div>
           )}
+
+          {b.type === 'rail' && <CalendarRail locale={locale} tone="light" count={b.railCount ?? 4} />}
+
+          {b.type === 'plan' && <VenuePlan locale={locale} />}
+
+          {b.type === 'map' && <MapSchema locale={locale} />}
 
           {b.type === 'quote' && (
             <figure class="quote">
@@ -315,6 +353,23 @@ const H = (p?: string) => {
   }
   .block + .block--hero {
     border-top: 1px solid var(--line);
+  }
+  /* heading block: no bottom padding — its content follows immediately */
+  .block--head {
+    padding-bottom: 0;
+  }
+  .block--head :global(.sec-head) {
+    margin-bottom: clamp(1.1rem, 0.6rem + 1.4vw, 1.8rem);
+  }
+  .block--after-head {
+    padding-top: 0;
+  }
+  /* consecutive blocks on the same ground: half the gap, one section */
+  .block--cont {
+    padding-top: 0;
+  }
+  .block--cont > .wrap {
+    padding-top: calc(var(--sec) * 0.45);
   }
   .prose {
     max-width: 74ch;
@@ -623,5 +678,63 @@ const H = (p?: string) => {
   }
   .has-anchor {
     scroll-margin-top: 100px;
+  }
+  /* card with a photo on top (stock placeholder until client photos arrive) */
+  .feature__media {
+    margin: 0 0 1rem;
+  }
+  .feature__media img {
+    display: block;
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: var(--r-sm);
+  }
+  /* prose + photo side by side */
+  .prose-media {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: clamp(1.4rem, 1rem + 2vw, 2.8rem);
+    align-items: start;
+  }
+  .prose-media--solo {
+    display: block;
+  }
+  .prose-media .prose {
+    max-width: 64ch;
+  }
+  .prose-media__fig {
+    margin: 0;
+  }
+  .prose-media__fig img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--r-lg);
+  }
+  /* callout with a photo */
+  .callout--media {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 280px);
+    gap: clamp(1.2rem, 1rem + 1.6vw, 2rem);
+    align-items: center;
+  }
+  .callout__fig {
+    margin: 0;
+  }
+  .callout__fig img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--r-sm);
+  }
+  @media (max-width: 940px) {
+    .prose-media,
+    .callout--media {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .prose-media__fig {
+      order: -1;
+    }
   }
 </style>

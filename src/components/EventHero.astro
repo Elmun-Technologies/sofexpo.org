@@ -12,6 +12,7 @@ import Ornament from '@/components/Ornament.astro';
 import type { ExpoEvent } from '@/data/events';
 import Countdown from '@/components/Countdown.astro';
 import Icon from '@/components/Icon.astro';
+import { bigDate, industryLabel } from '@/lib/labels';
 
 const { locale, event, kicker, title, lead, variant = 'open' } = Astro.props as {
   locale: Locale;
@@ -25,6 +26,7 @@ const t = useUI(locale);
 const ru = locale === 'ru';
 const L = (p: string) => localize(locale, p);
 const upcoming = variant === 'open';
+const d = bigDate(event.dates.start, event.dates.end, locale);
 const days = Math.max(
   1,
   Math.round(
@@ -48,12 +50,15 @@ const actions = [
   <div class="wrap ehero__in">
     <div class="ehero__text">
       <p class="kicker">
-        {kicker ?? event.industry.toUpperCase()} · {event.edition[locale]}
+        {kicker ?? industryLabel(event.industry, locale)} · {event.edition[locale]}
       </p>
       <h1 set:html={title} />
+      <p class="ehero__date">
+        <b>{d.days}</b>
+        <span>{d.month} {d.year}</span>
+      </p>
       {lead && <p class="hero__lead">{lead}</p>}
       <ul class="ehero__facts">
-        <li><Icon name="calendar" size={17} /> {event.dates.display[locale]}</li>
         <li><Icon name="pin" size={17} /> {site.brand[locale]}</li>
         <li>
           <Icon name="clock" size={17} /> {days} {ru ? (days === 1 ? 'день' : days < 5 ? 'дня' : 'дней') : days === 1 ? 'day' : 'days'} · {ru ? 'Самарканд, Джамбайский район' : 'Samarkand, Dzhambay district'}
@@ -127,7 +132,28 @@ const actions = [
     color: #fff;
     font-size: var(--t-hero);
     max-width: 20ch;
-    margin: 0.3rem 0 0.6rem;
+    margin: 0.3rem 0 0;
+  }
+  /* the date is the loudest figure in the hero, like on the home */
+  .ehero__date {
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+    margin: 0.7rem 0 0;
+  }
+  .ehero__date b {
+    font-family: var(--f-display);
+    font-size: clamp(2.2rem, 1.7rem + 2.8vw, 3.6rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: #fff;
+  }
+  .ehero__date span {
+    font-family: var(--f-mono);
+    font-size: clamp(0.9rem, 0.8rem + 0.5vw, 1.15rem);
+    letter-spacing: 0.08em;
+    color: var(--gold-soft);
   }
   .ehero :global(.kicker) {
     color: var(--gold-soft);

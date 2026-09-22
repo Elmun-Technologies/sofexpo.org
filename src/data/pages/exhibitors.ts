@@ -35,8 +35,8 @@ export const exhibitorPages: PageDef[] = [
             { label: "Получить прайс и план зала", href: "/request-stand/" },
             { label: "Пакеты участия", href: "/exhibitors/packages/" },
           ],
-          image: "/images/event-foodera.jpg",
-          imageAlt: "Стенд производителя на выставке FOODERA EXPO",
+          image: "/images/hall-stand.jpg",
+          imageAlt: "Выставочный зал: стенды и поток посетителей",
         },
         {
           type: "stats",
@@ -62,6 +62,16 @@ export const exhibitorPages: PageDef[] = [
               en: "average manager response time",
             },
           ],
+        },
+        {
+          type: "h2",
+          kicker: "Календарь",
+          title: "Выберите свою выставку",
+          text: "Продажа площади открывается за 4–6 месяцев до даты: лучшие локации разбирают в первый месяц.",
+        },
+        {
+          type: "rail",
+          railCount: 4,
         },
         {
           type: "h2",
@@ -102,6 +112,33 @@ export const exhibitorPages: PageDef[] = [
               icon: "shield",
               title: "Госпрограммы",
               text: "На отраслевых выставках присутствуют банки, лизинг и регуляторы: субсидии и компенсации затрат.",
+            },
+          ],
+        },
+        {
+          type: "h2",
+          kicker: "Площадка",
+          title: "Так выглядят дни выставки",
+          text: "Съёмка делается в реальные дни монтажа и работы выставок — без рендеров и постановочных интерьеров.",
+        },
+        {
+          type: "gallery",
+          items: [
+            {
+              src: "/images/hall-crowd.jpg",
+              caption: "День выставки: поток посетителей в главном зале",
+            },
+            {
+              src: "/images/hall-walk.jpg",
+              caption: "Проход между стендами",
+            },
+            {
+              src: "/images/conference-audience.jpg",
+              caption: "Конференц-зал во время деловой программы",
+            },
+            {
+              src: "/images/food-tasting.jpg",
+              caption: "FOODERA EXPO: дегустационная линия",
             },
           ],
         },
@@ -228,8 +265,8 @@ export const exhibitorPages: PageDef[] = [
             { label: "Get rates and floor plan", href: "/request-stand/" },
             { label: "Participation packages", href: "/exhibitors/packages/" },
           ],
-          image: "/images/event-foodera.jpg",
-          imageAlt: "Producer stand at FOODERA EXPO",
+          image: "/images/hall-stand.jpg",
+          imageAlt: "Exhibition hall with stands and foot traffic",
         },
         {
           type: "stats",
@@ -255,6 +292,16 @@ export const exhibitorPages: PageDef[] = [
               en: "average manager response time",
             },
           ],
+        },
+        {
+          type: "h2",
+          kicker: "Calendar",
+          title: "Pick your show",
+          text: "Floor sales open 4–6 months before the date: the best positions go in the first month.",
+        },
+        {
+          type: "rail",
+          railCount: 4,
         },
         {
           type: "h2",
@@ -295,6 +342,33 @@ export const exhibitorPages: PageDef[] = [
               icon: "shield",
               title: "Public programmes",
               text: "Banks, leasing companies and regulators attend industry shows: subsidies and cost compensation.",
+            },
+          ],
+        },
+        {
+          type: "h2",
+          kicker: "The venue",
+          title: "What show days look like",
+          text: "Shot on real build-up and show days — no renders, no staged interiors.",
+        },
+        {
+          type: "gallery",
+          items: [
+            {
+              src: "/images/hall-crowd.jpg",
+              caption: "Show day: visitor flow in the main hall",
+            },
+            {
+              src: "/images/hall-walk.jpg",
+              caption: "Aisle between stands",
+            },
+            {
+              src: "/images/conference-audience.jpg",
+              caption: "Conference hall during the business programme",
+            },
+            {
+              src: "/images/food-tasting.jpg",
+              caption: "FOODERA EXPO: tasting line",
             },
           ],
         },
@@ -496,7 +570,7 @@ export const exhibitorPages: PageDef[] = [
           items: [
             {
               title: "Что считается отдельно",
-              text: "Индивидуальная застройка, дополнительное электричество, телевизоры, мебель сверх пакета, перевод, хостес, печать, доставка образцов, хранение, разгрузка фур, парковка для грузового транспорта.",
+              text: "Застройка по проекту, дополнительное электричество, телевизоры, мебель сверх пакета, перевод, хостес, печать, доставка образцов, хранение, разгрузка фур, парковка для грузового транспорта.",
             },
             {
               title: "Скидки и поддержки",
@@ -902,9 +976,9 @@ export const exhibitorPages: PageDef[] = [
           type: "hero",
           kicker: "Застройка",
           title: "Три уровня стенда и один вопрос: что вы показываете",
-          lead: "Если продукт нужно взять в руки — хватает готовой застройки. Если продукт нужно включить — планируйте индивидуальную. Если продукт едет на фурах — вам на открытую площадку.",
-          image: "/images/event-buildpro.jpg",
-          imageAlt: "Строительный стенд с образцами",
+          lead: "Если продукт нужно взять в руки — хватает готовой застройки. Если продукт нужно включить — планируйте собственную застройку. Если продукт едет на фурах — вам на открытую площадку.",
+          image: "/images/hall-stand.jpg",
+          imageAlt: "Стенды в монтаже: каркас и брендирование",
         },
         {
           type: "grid",
@@ -917,7 +991,7 @@ export const exhibitorPages: PageDef[] = [
             },
             {
               icon: "sparkle",
-              title: "Индивидуальная сборная",
+              title: "Сборная под заказ",
               text: "Своя геометрия, графика, медиа-экран, зона демо. Проект и расчёт нагрузок — за 45 дней до монтажа.",
             },
             {
@@ -985,8 +1059,8 @@ export const exhibitorPages: PageDef[] = [
           kicker: "Build",
           title: "Three stand levels and one question: what do you show",
           lead: "If the product is picked up, a shell scheme is enough. If it must be switched on, plan a custom build. If it arrives by truck, you belong on the open area.",
-          image: "/images/event-buildpro.jpg",
-          imageAlt: "Construction stand with samples",
+          image: "/images/hall-stand.jpg",
+          imageAlt: "Stands under construction: shell and branding",
         },
         {
           type: "grid",
@@ -1090,8 +1164,8 @@ export const exhibitorPages: PageDef[] = [
           kicker: "Сервис",
           title: "Соберите участие как конструктор — один бланк, один счёт",
           lead: "Все позиции подтверждаются до монтажа, поэтому в день заезда ничего «вдруг» не появляется. Ниже — то, что чаще всего заказывают.",
-          image: "/images/venue-conference.jpg",
-          imageAlt: "Конференц-зал центра",
+          image: "/images/hall-crowd.jpg",
+          imageAlt: "Сервис на площадке в день выставки",
         },
         {
           type: "grid",
@@ -1196,8 +1270,8 @@ export const exhibitorPages: PageDef[] = [
           title:
             "Assemble participation like a constructor — one form, one invoice",
           lead: 'Everything is confirmed before build-up, so nothing appears "suddenly" on arrival day. Below is what is ordered most often.',
-          image: "/images/venue-conference.jpg",
-          imageAlt: "Conference hall",
+          image: "/images/hall-crowd.jpg",
+          imageAlt: "On-site services on show day",
         },
         {
           type: "grid",
@@ -1316,8 +1390,8 @@ export const exhibitorPages: PageDef[] = [
           kicker: "Спонсорство",
           title: "Контент, который видит вся аудитория, а не только ваш проход",
           lead: "Спонсорский пакет — самый быстрый способ занять место в сценарии выставки: доклады, приветствие, награды, материалы в сумке участника.",
-          image: "/images/event-worldedu.jpg",
-          imageAlt: "Деловая программа выставки",
+          image: "/images/hall-stand.jpg",
+          imageAlt: "Зал с брендированными стендами",
         },
         {
           type: "table",
@@ -1404,8 +1478,8 @@ export const exhibitorPages: PageDef[] = [
           kicker: "Sponsorship",
           title: "Content the whole audience sees, not only your aisle",
           lead: "A sponsorship package is the fastest way to enter the script of the exhibition: talks, welcome word, awards, material in the participant bag.",
-          image: "/images/event-worldedu.jpg",
-          imageAlt: "Business programme",
+          image: "/images/hall-stand.jpg",
+          imageAlt: "Hall with branded stands",
         },
         {
           type: "table",
@@ -1509,6 +1583,8 @@ export const exhibitorPages: PageDef[] = [
           kicker: "Бюрократия",
           title: "Список документов, который экономит нервы на монтаже",
           lead: "Ниже — календарь paperwork для участника. Все бланки присылает менеджер; если чего-то не хватает, мы предупредим заранее, а не в день заезда.",
+          image: "/images/hall-stand.jpg",
+          imageAlt: "Выставочный зал: монтаж экспозиции",
         },
         {
           type: "table",
@@ -1607,6 +1683,8 @@ export const exhibitorPages: PageDef[] = [
           kicker: "Paperwork",
           title: "The document list that saves your nerves at build-up",
           lead: "Below is the participant calendar. All forms come from the account manager; if something is missing you hear it in advance, not on arrival day.",
+          image: "/images/hall-stand.jpg",
+          imageAlt: "Exhibition hall: stand build-up",
         },
         {
           type: "table",
@@ -1722,6 +1800,8 @@ export const exhibitorPages: PageDef[] = [
           kicker: "Каталог",
           title: "Кто выставляет и что искать",
           lead: "Каталог выходит в PDF перед каждой выставкой и обновляется на сайте после: с контактными данными, разделом и стендом участника. Для закупщиков — доступ открыт бесплатно.",
+          image: "/images/hall-crowd.jpg",
+          imageAlt: "Выставочный зал в день работы",
         },
         {
           type: "files",
@@ -1799,6 +1879,8 @@ export const exhibitorPages: PageDef[] = [
           kicker: "Catalogue",
           title: "Who exhibits and what to look for",
           lead: "The catalogue is published in PDF before every show and updated on the site afterwards: contacts, section and stand number. Free access for buyers.",
+          image: "/images/hall-crowd.jpg",
+          imageAlt: "Exhibition hall on a working day",
         },
         {
           type: "files",
@@ -1893,13 +1975,15 @@ export const exhibitorPages: PageDef[] = [
           kicker: "FAQ",
           title: "Вопросы, которые задают до подписания договора",
           lead: "Если ответа нет — напишите менеджеру, отвечает в рабочее время в течение 15 минут.",
+          image: "/images/hall-walk.jpg",
+          imageAlt: "Проход между стендами в выставочном зале",
         },
         {
           type: "faq",
           items: [
             {
               q: "Что входит в ставку за стенд?",
-              a: "Площадь, застройка (для пакета «стандарт» и «премиум»), брендирование, мебель, одна-две электрические точки, освещение, бейджи персонала и место в каталоге. Отдельно оплачиваются: индивидуальная застройка, дополнительное электричество, техника, печать, персонал, логистика.",
+              a: "Площадь, застройка (для пакета «стандарт» и «премиум»), брендирование, мебель, одна-две электрические точки, освещение, бейджи персонала и место в каталоге. Отдельно оплачиваются: застройка под проект, дополнительное электричество, техника, печать, персонал, логистика.",
             },
             {
               q: "Можно ли приехать со своей застройкой?",
@@ -1907,7 +1991,7 @@ export const exhibitorPages: PageDef[] = [
             },
             {
               q: "Какая максимальная высота стенда?",
-              a: "Стандарт — 2,5 м, для индивидуальных проектов при согласовании — до 6 м. Двухуровневые стенды требуют отдельного расчёта и проекта.",
+              a: "Стандарт — 2,5 м, для проектов под заказ при согласовании — до 6 м. Двухуровневые стенды требуют отдельного расчёта и проекта.",
             },
             {
               q: "Можно ли подключать оборудование?",
@@ -1955,6 +2039,8 @@ export const exhibitorPages: PageDef[] = [
           kicker: "FAQ",
           title: "Questions asked before signing the contract",
           lead: "If an answer is missing, write to the account manager — replies within 15 minutes during office hours.",
+          image: "/images/hall-walk.jpg",
+          imageAlt: "Aisle between stands in the exhibition hall",
         },
         {
           type: "faq",

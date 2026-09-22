@@ -1,60 +1,19 @@
 ---
 /**
- * Root document = x-default target and language gate.
- * Deliberately not a marketing landing: two doors, the facts a visitor needs to choose, nothing else.
+ * Root document = 301 to the EN home (docs/08 §7, Q1 — option A).
+ *
+ * The real redirect is a host-level rule: scripts/build-hosts.mjs writes
+ * `/ /en/ 301` into every host's `_redirects` (Cloudflare Pages / Netlify),
+ * and the CDN config (redirects.vanity.md) mirrors it for alias mode.
+ * This HTML page is the fallback for hosts that do not read `_redirects`:
+ * meta-refresh + two explicit links, so RU users are never stranded.
+ *
+ * hreflang x-default now points at /en/ (src/i18n/config.ts).
  */
-import '@/styles/global.css';
-import '@fontsource-variable/inter-tight/wght.css';
-import '@fontsource-variable/golos-text/wght.css';
-import '@fontsource-variable/jetbrains-mono/wght.css';
 import { SITE } from '@/lib/seo';
-import { site } from '@/data/site';
-import { upcoming, events } from '@/data/events';
-import { localize } from '@/i18n/config';
-import { CURRENT_EVENT, isRootHost } from '@/data/hosts';
-import Icon from '@/components/Icon.astro';
 
-const next = upcoming[0];
-/* On an exhibition hostname the gate offers the two languages of that show, not of the centre. */
-const hostEvent = CURRENT_EVENT ? events.find((e) => e.slug === CURRENT_EVENT) ?? null : null;
-const brand = hostEvent ? hostEvent.brand.ru : site.brand.ru;
-const sub = hostEvent ? `${hostEvent.brand.en}: ${hostEvent.dates.display.en}` : site.tagline.en;
-const media = hostEvent ? hostEvent.heroImage : '/images/venue-exterior.jpg';
-const centreLangs = [
-  {
-    code: 'ru',
-    label: 'Русский',
-    note: 'Раздел для рынка Узбекистана и СНГ',
-    title: 'Выставочный центр и отраслевые выставки в Самарканде',
-    text: 'Бронирование стендов, деловая программа, регистрация посетителей, аренда зала под своё событие.',
-  },
-  {
-    code: 'en',
-    label: 'English',
-    note: 'For foreign exhibitors and buyers',
-    title: 'Exhibition centre and trade shows in Samarkand',
-    text: 'Stand booking, business programme, visitor registration, hall rental for your own event.',
-  },
-];
-const eventLangs = hostEvent
-  ? [
-      {
-        code: 'ru',
-        label: 'Русский',
-        note: 'Язык деловой программы, каталога и договоров',
-        title: `${hostEvent.brand.ru}: ${hostEvent.dates.display.ru}`,
-        text: hostEvent.tagline.ru,
-      },
-      {
-        code: 'en',
-        label: 'English',
-        note: 'For international exhibitors and buyers',
-        title: `${hostEvent.brand.en}: ${hostEvent.dates.display.en}`,
-        text: hostEvent.tagline.en,
-      },
-    ]
-  : centreLangs;
-const langs = hostEvent ? eventLangs : centreLangs;
+const en = `${SITE}/en/`;
+const ru = `${SITE}/ru/`;
 ---
 
 <!doctype html>
@@ -62,229 +21,20 @@ const langs = hostEvent ? eventLangs : centreLangs;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>
-      {hostEvent
-        ? `${hostEvent.brand.ru} — ${hostEvent.dates.display.ru}`
-        : 'SOF EXPO Samarkand — выставочный центр · exhibition centre'}
-    </title>
-    <meta
-      name="description"
-      content={hostEvent
-        ? `${hostEvent.brand.en} ${hostEvent.dates.display.en} in Samarkand. Choose the Russian or English version of the show's site.`
-        : `${site.brand.ru}: ${site.venue.indoorM2} m² indoor, ${site.venue.outdoorM2} m² open-air, ${site.venue.eventsPerYear}+ events a year in Samarkand, Uzbekistan. Choose the Russian or English version of the site.`}
-    />
-    <link rel="canonical" href={`${SITE}/`} />
-    <link rel="alternate" hreflang="ru" href={`${SITE}/ru/`} />
-    <link rel="alternate" hreflang="en" href={`${SITE}/en/`} />
-    <link rel="alternate" hreflang="x-default" href={`${SITE}/`} />
-    <meta name="robots" content="index,follow,max-image-preview:large" />
-    <meta name="theme-color" content="#0f2b1c" />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="SOF EXPO Samarkand" />
-    <meta property="og:title" content="SOF EXPO Samarkand" />
-    <meta property="og:description" content="Exhibition centre and trade shows in Samarkand, Uzbekistan." />
-    <meta property="og:url" content={`${SITE}/`} />
-    <meta property="og:image" content={`${SITE}/og/default.jpg`} />
-    <meta property="og:locale" content="en_US" />
-    <meta property="og:locale:alternate" content="ru_RU" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/favicon.png" />
-    <link rel="manifest" href="/site.webmanifest" />
-    <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
-    {isRootHost && (
-      <link rel="alternate" type="application/rss+xml" title="SOF EXPO Samarkand" href={`${SITE}/ru/rss.xml`} />
-    )}
-    <link rel="preload" as="image" href={media} fetchpriority="high" />
-    <script type="application/ld+json" is:inline set:html={JSON.stringify({ '@context': 'https://schema.org', '@type': 'WebSite', name: 'SOF EXPO Samarkand', url: `${SITE}/`, inLanguage: ['ru', 'en'], alternateName: ['SOF EXPO SAMARKAND', 'Выставочный центр SOF EXPO'], workInProgress: false })} />
+    <meta name="robots" content="noindex" />
+    <meta http-equiv="refresh" content="0; url=/en/" />
+    <link rel="canonical" href={en} />
+    <title>SOF EXPO SAMARKAND — redirecting</title>
   </head>
-  <body class="gate">
-    <main class="gate__main">
-      <div class="gate__media"><img src={media} alt={brand} width="1600" height="1000" loading="eager" fetchpriority="high" decoding="async" /></div>
-      <div class="gate__panel">
-        <p class="kicker">{brand} · {site.location.city.en}, {site.location.country.en}</p>
-        <h1>{brand}</h1>
-        <p class="lead">{sub}</p>
-
-        <div class="gate__doors">
-          {langs.map((l) => (
-            <a class="door" href={`/${l.code}/`} hreflang={l.code}>
-              <span class="door__code">{l.label}</span>
-              <b>{l.title}</b>
-              <p>{l.text}</p>
-              <span class="door__go">
-                {l.note}
-                <Icon name="arrow" size={17} />
-              </span>
-            </a>
-          ))}
-        </div>
-
-        <ul class="gate__facts">
-          <li><b class="num">{site.venue.indoorM2.toLocaleString('en-US')}</b> m² indoor</li>
-          <li><b class="num">{site.venue.outdoorM2.toLocaleString('en-US')}</b> m² open-air</li>
-          <li><b class="num">{site.venue.eventsPerYear}+</b> events / year</li>
-          <li><b class="num">{(site.venue.visitorsTotal / 1000).toFixed(0)}K+</b> visitors</li>
-        </ul>
-
-        {next && (
-          <p class="gate__next">
-            <span class="mono-label">{next.shortName}</span>
-            {next.dates.display.en} · {site.location.city.en}
-            <a href={localize('en', '/events/')}>All events →</a>
-          </p>
-        )}
-
-        <p class="gate__foot">
-          <a href={`tel:${site.contacts.phoneMain.replace(/[^\d+]/g, '')}`}>{site.contacts.phoneMain}</a>
-          · <a href={`mailto:${site.contacts.email}`}>{site.contacts.email}</a>
-          · <a href={localize('ru', '/')}>Рус</a> / <a href={localize('en', '/')}>Eng</a>
-        </p>
-      </div>
+  <body>
+    <main style="font-family: system-ui, sans-serif; max-width: 40rem; margin: 15vh auto 0; padding: 0 1.25rem; line-height: 1.6">
+      <p>
+        <a href="/en/">EN home →</a>
+      </p>
+      <p lang="ru">
+        <a href="/ru/">→ Главная на русском</a>
+      </p>
+      <noscript>JavaScript is off — use the links above.</noscript>
     </main>
-
-    <style is:global>
-      body.gate {
-        background: var(--evergreen);
-        color: rgba(255,255,255,.86);
-        min-height: 100vh;
-      }
-    </style>
-    <style>
-      .gate__main {
-        display: grid;
-        grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-        min-height: 100vh;
-        align-items: stretch;
-      }
-      .gate__media {
-        position: relative;
-        overflow: hidden;
-      }
-      .gate__media img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
-      .gate__media::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(180deg, rgba(10, 26, 17, 0.15), rgba(10, 26, 17, 0.55));
-      }
-      .gate__panel {
-        padding: clamp(1.6rem, 1rem + 3vw, 3.4rem) clamp(1.2rem, .6rem + 2vw, 3rem);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        gap: 1rem;
-      }
-      .gate__panel h1 {
-        color: #fff;
-        font-size: clamp(1.7rem, 1.35rem + 1.4vw, 2.35rem);
-        margin: 0;
-      }
-      .gate__panel .lead {
-        color: rgba(255, 255, 255, 0.82);
-        max-width: 44ch;
-      }
-      .gate__panel .kicker {
-        color: var(--gold-soft);
-      }
-      .gate__doors {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 0.8rem;
-        margin-top: 0.6rem;
-      }
-      .door {
-        display: grid;
-        gap: 0.4rem;
-        padding: 1.15rem 1.2rem;
-        border-radius: var(--r-lg);
-        background: rgba(255, 255, 255, 0.07);
-        border: 1px solid rgba(255, 255, 255, 0.18);
-        color: inherit;
-        text-decoration: none;
-        transition: border-color var(--tr), background-color var(--tr);
-      }
-      .door:hover {
-        border-color: rgba(255, 255, 255, 0.6);
-        border-color: var(--gold-soft);
-        background: rgba(255, 255, 255, 0.11);
-      }
-      .door__code {
-        font-family: var(--f-display);
-        font-size: 0.78rem;
-        letter-spacing: 0.14em;
-        color: var(--gold-soft);
-      }
-      .door b {
-        font-size: 1.06rem;
-        line-height: 1.3;
-      }
-      .door p {
-        margin: 0;
-        font-size: 0.9rem;
-        color: rgba(255, 255, 255, 0.74);
-      }
-      .door__go {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 0.5rem;
-        margin-top: 0.3rem;
-        font-size: 0.8rem;
-        color: rgba(255, 255, 255, 0.6);
-      }
-      .gate__facts {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.4rem 1.6rem;
-        list-style: none;
-        padding: 0;
-        margin: 0.8rem 0 0;
-        font-size: 0.86rem;
-        color: rgba(255, 255, 255, 0.72);
-      }
-      .gate__facts b {
-        font-family: var(--f-display);
-        font-size: 1.15rem;
-        color: #fff;
-        margin-right: 0.25rem;
-      }
-      .gate__next {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: baseline;
-        gap: 0.6rem;
-        margin: 1rem 0 0;
-        padding-top: 1rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.16);
-        font-size: 0.9rem;
-        color: rgba(255, 255, 255, 0.78);
-      }
-      .gate__next a {
-        color: var(--gold-soft);
-        text-decoration: none;
-      }
-      .gate__foot {
-        margin: 0.6rem 0 0;
-        font-size: 0.85rem;
-        color: rgba(255, 255, 255, 0.6);
-      }
-      .gate__foot a {
-        color: inherit;
-      }
-      @media (max-width: 900px) {
-        .gate__main {
-          grid-template-columns: minmax(0, 1fr);
-        }
-        .gate__media {
-          min-height: 240px;
-        }
-      }
-    </style>
   </body>
 </html>

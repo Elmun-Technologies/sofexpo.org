@@ -22,7 +22,7 @@ export interface ExpoEvent {
   pitch: L;
   categories: { name: L; icon: string }[];
   benefits: { title: L; text: L }[];
-  program: { title: L; text: L }[];
+  program: { title: L; text: L; /** 1-based show day, for the by-day programme */ day?: number }[];
   audience: { label: L; value: string }[];
   facts: { value: string; label: L }[];
   stands: { name: L; area: string; note: L }[];
@@ -52,7 +52,7 @@ export const events: ExpoEvent[] = [
     },
     edition: { ru: 'Специализированная выставка продуктов и напитков в Узбекистане', en: 'The food and beverage exhibition for Uzbekistan and Central Asia' },
     status: 'open',
-    heroImage: '/images/event-foodera.jpg',
+    heroImage: '/images/food-tasting.jpg',
     tagline: {
       ru: 'Место встречи производителей, дистрибьюторов и покупателей пищевой отрасли Центральной Азии.',
       en: 'Where producers, distributors and buyers of the Central Asian food industry meet.',
@@ -86,10 +86,10 @@ export const events: ExpoEvent[] = [
       { title: { ru: 'Деловые связи', en: 'Business connections' }, text: { ru: 'Переговоры с закупщиками сетей, опта и HoReCa, договоры на площадке.', en: 'Negotiations with chain, wholesale and HoReCa buyers, contracts signed on site.' } },
     ],
     program: [
-      { title: { ru: 'Дегустационная зона', en: 'Tasting area' }, text: { ru: 'Слепые дегустации для закупщиков сетей и голосование за лучший продукт выставки.', en: 'Blind tastings for retail buyers and voting for the best product of the show.' } },
-      { title: { ru: 'Закупочная биржа', en: 'Buying marketplace' }, text: { ru: 'Pre-matched 15-minute meetings с категорийными менеджерами розничных сетей.', en: 'Pre-matched 15-minute meetings with category managers of retail chains.' } },
-      { title: { ru: 'Форум Food Retail', en: 'Food Retail forum' }, text: { ru: 'Полки, логистика, ценообразование и private label в Узбекистане.', en: 'Shelves, logistics, pricing and private label in Uzbekistan.' } },
-      { title: { ru: 'Конкурс «Лучший продукт»', en: 'Best Product contest' }, text: { ru: 'Экспертное жюри и награждение участников в первый день выставки.', en: 'Expert jury and awards for exhibitors on the opening day.' } },
+      { title: { ru: 'Дегустационная зона', en: 'Tasting area' }, text: { ru: 'Слепые дегустации для закупщиков сетей и голосование за лучший продукт выставки.', en: 'Blind tastings for retail buyers and voting for the best product of the show.' } , day: 1},
+      { title: { ru: 'Закупочная биржа', en: 'Buying marketplace' }, text: { ru: 'Pre-matched 15-minute meetings с категорийными менеджерами розничных сетей.', en: 'Pre-matched 15-minute meetings with category managers of retail chains.' } , day: 2},
+      { title: { ru: 'Форум Food Retail', en: 'Food Retail forum' }, text: { ru: 'Полки, логистика, ценообразование и private label в Узбекистане.', en: 'Shelves, logistics, pricing and private label in Uzbekistan.' } , day: 2},
+      { title: { ru: 'Конкурс «Лучший продукт»', en: 'Best Product contest' }, text: { ru: 'Экспертное жюри и награждение участников в первый день выставки.', en: 'Expert jury and awards for exhibitors on the opening day.' } , day: 1},
     ],
     audience: [
       { label: { ru: 'Товароведческие сети', en: 'Retail chains' }, value: 'buyer' },
@@ -106,7 +106,7 @@ export const events: ExpoEvent[] = [
     stands: [
       { name: { ru: 'Стандартный стенд', en: 'Standard stand' }, area: '9 м²', note: { ru: 'Готовая застройка, брендирование и мебель включены.', en: 'Shell scheme, branding and furniture included.' } },
       { name: { ru: 'Премиум-стенд', en: 'Premium stand' }, area: '18 м²', note: { ru: 'Улучшенная локация и увеличенная рекламная поверхность.', en: 'Better location and larger advertising surface.' } },
-      { name: { ru: 'Свободная площадь', en: 'Raw space' }, area: '36 м²+', note: { ru: 'Индивидуальная застройка по вашему брендбуку.', en: 'Custom build following your brand book.' } },
+      { name: { ru: 'Свободная площадь', en: 'Raw space' }, area: '36 м²+', note: { ru: 'Застройка по вашему брендбуку.', en: 'Custom build following your brand book.' } },
     ],
     speakers: [],
     materials: [
@@ -172,9 +172,9 @@ export const events: ExpoEvent[] = [
       { title: { ru: 'Анализ конкурентов', en: 'Competitive intelligence' }, text: { ru: 'Оцените предложения рынка, позиционирование и новые тренды отрасли.', en: 'Assess market offers, positioning and emerging industry trends.' } },
     ],
     program: [
-      { title: { ru: 'Форум архитекторов и дизайнеров', en: 'Architects and designers forum' }, text: { ru: '10+ сессий о материалах, световых решениях и частном домостроении.', en: '10+ sessions on materials, lighting design and private housing.' } },
-      { title: { ru: 'Демонстрации технологий', en: 'Live technology demos' }, text: { ru: 'Живые показы на площади: монтаж фасадов, работа инструмента, образцы покрытий.', en: 'Live demonstrations on the open area: facade installation, tool handling, coating samples.' } },
-      { title: { ru: 'Биржа контактов', en: 'Business matchmaking' }, text: { ru: 'Встречи производителей с девелоперами и закупщиками сетей.', en: 'Meetings between manufacturers, developers and chain buyers.' } },
+      { title: { ru: 'Форум архитекторов и дизайнеров', en: 'Architects and designers forum' }, text: { ru: '10+ сессий о материалах, световых решениях и частном домостроении.', en: '10+ sessions on materials, lighting design and private housing.' } , day: 1},
+      { title: { ru: 'Демонстрации технологий', en: 'Live technology demos' }, text: { ru: 'Живые показы на площади: монтаж фасадов, работа инструмента, образцы покрытий.', en: 'Live demonstrations on the open area: facade installation, tool handling, coating samples.' } , day: 2},
+      { title: { ru: 'Биржа контактов', en: 'Business matchmaking' }, text: { ru: 'Встречи производителей с девелоперами и закупщиками сетей.', en: 'Meetings between manufacturers, developers and chain buyers.' } , day: 3},
     ],
     audience: [
       { label: { ru: 'Девелоперы', en: 'Developers' }, value: 'dev' },
@@ -190,7 +190,7 @@ export const events: ExpoEvent[] = [
     ],
     stands: [
       { name: { ru: 'Готовый стенд Octanorm', en: 'Ready-made Octanorm stand' }, area: 'за м²', note: { ru: 'Стандартная застройка с расчётом стоимости за квадратный метр.', en: 'Shell scheme priced per square metre.' } },
-      { name: { ru: 'Индивидуальная застройка', en: 'Custom build' }, area: 'по проекту', note: { ru: 'Стенд по дизайну и брендбуку вашей компании.', en: 'A stand built to your design and brand book.' } },
+      { name: { ru: 'Застройка по проекту', en: 'Custom build' }, area: 'по проекту', note: { ru: 'Стенд по дизайну и брендбуку вашей компании.', en: 'A stand built to your design and brand book.' } },
       { name: { ru: 'Рекламные поверхности', en: 'Advertising surfaces' }, area: 'в зале', note: { ru: 'Баннеры и медиа-поверхности внутри выставочного зала.', en: 'Banners and media surfaces inside the exhibition hall.' } },
     ],
     speakers: [],
@@ -256,9 +256,9 @@ export const events: ExpoEvent[] = [
       { title: { ru: 'Сезон под рукой', en: 'Right before the season' }, text: { ru: 'Март — момент закупки техники и семян перед полевым сезоном.', en: 'March is the buying moment for machinery and seeds before the field season.' } },
     ],
     program: [
-      { title: { ru: 'Практикум по капельному орошению', en: 'Drip irrigation practicum' }, text: { ru: 'Проектирование, монтаж и расчёт окупаемости системы.', en: 'Design, installation and payback calculation of a system.' } },
-      { title: { ru: 'Семинар агрохимии', en: 'Agrochemistry seminar' }, text: { ru: 'Нормы внесения, лаборатории и сертификация препаратов.', en: 'Application rates, laboratories and product certification.' } },
-      { title: { ru: 'Ярмарка вакансий АПК', en: 'Agri careers fair' }, text: { ru: 'Колледжи и хозяйства о подготовке механизаторов и агрономов.', en: 'Colleges and farms on training mechanics and agronomists.' } },
+      { title: { ru: 'Практикум по капельному орошению', en: 'Drip irrigation practicum' }, text: { ru: 'Проектирование, монтаж и расчёт окупаемости системы.', en: 'Design, installation and payback calculation of a system.' } , day: 1},
+      { title: { ru: 'Семинар агрохимии', en: 'Agrochemistry seminar' }, text: { ru: 'Нормы внесения, лаборатории и сертификация препаратов.', en: 'Application rates, laboratories and product certification.' } , day: 2},
+      { title: { ru: 'Ярмарка вакансий АПК', en: 'Agri careers fair' }, text: { ru: 'Колледжи и хозяйства о подготовке механизаторов и агрономов.', en: 'Colleges and farms on training mechanics and agronomists.' } , day: 3},
     ],
     audience: [
       { label: { ru: 'Фермерские хозяйства', en: 'Farm holdings' }, value: 'farms' },
@@ -339,10 +339,10 @@ export const events: ExpoEvent[] = [
       { title: { ru: 'Продукт в действии', en: 'Product in action' }, text: { ru: 'Химия, плёнки, звук и свет демонстрируются в работе, а не на полке.', en: 'Chemistry, films, audio and lighting are shown working, not on a shelf.' } },
     ],
     program: [
-      { title: { ru: 'Чемпионат по дрифту', en: 'Drift championship' }, text: { ru: 'Заявки через Telegram @sofexpomgr. Заднеприводный автомобиль, ручной гидроручник, экипировка и шлем обязательны.', en: 'Entries via Telegram @sofexpomgr. Rear-wheel drive, hydraulic handbrake, suit and helmet mandatory.' } },
-      { title: { ru: 'Гонки на безмоторных машинах', en: 'Non-motorized racing' }, text: { ru: 'Гран-при 10 млн сумов, 6 млн за дизайн, 4 млн за командную форму. Команда до 4 человек, масса машины до 80 кг.', en: 'Grand Prix 10 mln UZS, 6 mln for design, 4 mln for team uniforms. Up to 4 crew, car under 80 kg.' } },
-      { title: { ru: 'SPL автотюнинг', en: 'SPL autotuning' }, text: { ru: 'Два класса — новички и профессионалы; кузов, салон, подкапотное пространство, мультимедиа.', en: 'Two classes — rookies and professionals; body, interior, engine bay, multimedia.' } },
-      { title: { ru: 'Пит-зона и маркет', en: 'Pit zone and market' }, text: { ru: 'Продажи запчастей, аксессуаров, химии и атрибутики.', en: 'Sales of parts, accessories, chemicals and merch.' } },
+      { title: { ru: 'Чемпионат по дрифту', en: 'Drift championship' }, text: { ru: 'Заявки через Telegram @sofexpomgr. Заднеприводный автомобиль, ручной гидроручник, экипировка и шлем обязательны.', en: 'Entries via Telegram @sofexpomgr. Rear-wheel drive, hydraulic handbrake, suit and helmet mandatory.' } , day: 1},
+      { title: { ru: 'Гонки на безмоторных машинах', en: 'Non-motorized racing' }, text: { ru: 'Гран-при 10 млн сумов, 6 млн за дизайн, 4 млн за командную форму. Команда до 4 человек, масса машины до 80 кг.', en: 'Grand Prix 10 mln UZS, 6 mln for design, 4 mln for team uniforms. Up to 4 crew, car under 80 kg.' } , day: 1},
+      { title: { ru: 'SPL автотюнинг', en: 'SPL autotuning' }, text: { ru: 'Два класса — новички и профессионалы; кузов, салон, подкапотное пространство, мультимедиа.', en: 'Two classes — rookies and professionals; body, interior, engine bay, multimedia.' } , day: 2},
+      { title: { ru: 'Пит-зона и маркет', en: 'Pit zone and market' }, text: { ru: 'Продажи запчастей, аксессуаров, химии и атрибутики.', en: 'Sales of parts, accessories, chemicals and merch.' } , day: 1},
     ],
     audience: [
       { label: { ru: 'Владельцы СТО и моек', en: 'Service and wash owners' }, value: 'service' },
@@ -417,10 +417,10 @@ export const events: ExpoEvent[] = [
       { title: { ru: 'Экспорт', en: 'Export' }, text: { ru: 'Заказы у узбекских производителей — вход на рынки соседних стран.', en: 'Orders from Uzbek manufacturers open doors to neighbouring markets.' } },
     ],
     program: [
-      { title: { ru: 'Пленарная сессия ритейла', en: 'Retail plenary' }, text: { ru: 'Ритейл Узбекистана сегодня и завтра: полки, цены, сети.', en: 'Retail in Uzbekistan today and tomorrow: shelves, prices, chains.' } },
-      { title: { ru: 'Трек маркетплейсов', en: 'Marketplace track' }, text: { ru: 'Как зайти и продавать: комиссии, карточки, реклама, возвраты.', en: 'How to enter and sell: fees, product cards, ads, returns.' } },
-      { title: { ru: 'Трек логистики', en: 'Logistics track' }, text: { ru: 'Доставка последней мили, фулфилмент и склад.', en: 'Last-mile delivery, fulfillment and warehousing.' } },
-      { title: { ru: 'Биржа контактов', en: 'Matchmaking' }, text: { ru: 'Производитель — селлер: 10-минутные встречи по предварительному отбору.', en: 'Manufacturer — seller: pre-matched 10-minute meetings.' } },
+      { title: { ru: 'Пленарная сессия ритейла', en: 'Retail plenary' }, text: { ru: 'Ритейл Узбекистана сегодня и завтра: полки, цены, сети.', en: 'Retail in Uzbekistan today and tomorrow: shelves, prices, chains.' } , day: 1},
+      { title: { ru: 'Трек маркетплейсов', en: 'Marketplace track' }, text: { ru: 'Как зайти и продавать: комиссии, карточки, реклама, возвраты.', en: 'How to enter and sell: fees, product cards, ads, returns.' } , day: 1},
+      { title: { ru: 'Трек логистики', en: 'Logistics track' }, text: { ru: 'Доставка последней мили, фулфилмент и склад.', en: 'Last-mile delivery, fulfillment and warehousing.' } , day: 2},
+      { title: { ru: 'Биржа контактов', en: 'Matchmaking' }, text: { ru: 'Производитель — селлер: 10-минутные встречи по предварительному отбору.', en: 'Manufacturer — seller: pre-matched 10-minute meetings.' } , day: 2},
     ],
     audience: [
       { label: { ru: 'Онлайн-продавцы', en: 'Online sellers' }, value: 'sellers' },
@@ -500,9 +500,9 @@ export const events: ExpoEvent[] = [
       { title: { ru: 'Финансирование', en: 'Funding' }, text: { ru: 'Полное и частичное финансирование обучения, гранты, образовательные кредиты.', en: 'Full and partial tuition funding, grants, education loans.' } },
     ],
     program: [
-      { title: { ru: 'Презентации вузов', en: 'University presentations' }, text: { ru: 'Требования к поступлению и стоимости обучения — от первых лиц.', en: 'Admission and tuition requirements from the people who decide.' } },
-      { title: { ru: 'Профориентация', en: 'Career guidance' }, text: { ru: 'Тесты и консультации для старшеклассников и родителей.', en: 'Tests and consultations for high-school students and parents.' } },
-      { title: { ru: 'Розыгрыш призов', en: 'Prize draw' }, text: { ru: 'Смартфоны, подписки на языковые курсы и профильные курсы. Розыгрыш в дни выставки, при личном присутствии.', en: 'Smartphones, language-course subscriptions and professional courses. Drawn during the show with the visitor present.' } },
+      { title: { ru: 'Презентации вузов', en: 'University presentations' }, text: { ru: 'Требования к поступлению и стоимости обучения — от первых лиц.', en: 'Admission and tuition requirements from the people who decide.' } , day: 1},
+      { title: { ru: 'Профориентация', en: 'Career guidance' }, text: { ru: 'Тесты и консультации для старшеклассников и родителей.', en: 'Tests and consultations for high-school students and parents.' } , day: 2},
+      { title: { ru: 'Розыгрыш призов', en: 'Prize draw' }, text: { ru: 'Смартфоны, подписки на языковые курсы и профильные курсы. Розыгрыш в дни выставки, при личном присутствии.', en: 'Smartphones, language-course subscriptions and professional courses. Drawn during the show with the visitor present.' } , day: 2},
     ],
     audience: [
       { label: { ru: 'Абитуриенты и студенты', en: 'Applicants and students' }, value: 'students' },

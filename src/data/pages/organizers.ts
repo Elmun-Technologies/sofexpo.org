@@ -1,4 +1,29 @@
 import type { PageDef } from "./types";
+import { events } from "@/data/events";
+
+/**
+ * Booked windows, computed from events.ts (docs/08 §4.7): every own show holds the venue
+ * for build-up (−2 days) through dismantling (+2 days). Rebuilds automatically when the
+ * line-up changes; no second source to keep in sync by hand.
+ */
+function busyWindows(locale: "ru" | "en"): [string, string][] {
+  const fmt = (iso: string) =>
+    new Intl.DateTimeFormat(locale === "ru" ? "ru-RU" : "en-GB", {
+      day: "numeric",
+      month: "long",
+      timeZone: "Asia/Samarkand",
+    }).format(new Date(`${iso}T12:00:00+05:00`));
+  const shift = (iso: string, n: number) => {
+    const d = new Date(`${iso}T12:00:00+05:00`);
+    d.setDate(d.getDate() + n);
+    const p = (x: number) => String(x).padStart(2, "0");
+    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+  };
+  return events
+    .filter((e) => e.status !== "past")
+    .sort((a, b) => a.dates.start.localeCompare(b.dates.start))
+    .map((e) => [e.brand[locale], `${fmt(shift(e.dates.start, -2))} — ${fmt(shift(e.dates.end, 2))}`]);
+}
 
 export const organizerPages: PageDef[] = [
   {
@@ -71,6 +96,29 @@ export const organizerPages: PageDef[] = [
           ],
         },
         {
+          type: "h2",
+          kicker: "Площадка",
+          title: "Как проходят события в центре",
+          text: "Съёмка — с реальных событий: конференции, выставки и фестивали на этой площадке.",
+        },
+        {
+          type: "gallery",
+          items: [
+            {
+              src: "/images/conference-audience.jpg",
+              caption: "Конференция в конференц-зале на 350 мест",
+            },
+            {
+              src: "/images/hall-stand.jpg",
+              caption: "Монтаж экспозиции в главном зале",
+            },
+            {
+              src: "/images/hall-crowd.jpg",
+              caption: "День мероприятия: поток посетителей",
+            },
+          ],
+        },
+        {
           type: "rows",
           items: [
             {
@@ -94,6 +142,17 @@ export const organizerPages: PageDef[] = [
               text: "Отчёт: посещаемость, активность, логистические замечания, рекомендации к следующей дате.",
             },
           ],
+        },
+        {
+          type: "h2",
+          kicker: "Календарь",
+          title: "Занятые даты — собственные выставки",
+          text: "Каждая выставка занимает площадку с монтажом за два дня и демонтажом два дня после. Любая другая дата свободна — пришлите бриф, вернёмся с расчётом за рабочий день.",
+        },
+        {
+          type: "table",
+          head: ["Собственная выставка", "Площадка занята: монтаж + работа + демонтаж"],
+          rows: busyWindows("ru"),
         },
         {
           type: "callout",
@@ -181,6 +240,29 @@ export const organizerPages: PageDef[] = [
           ],
         },
         {
+          type: "h2",
+          kicker: "The venue",
+          title: "How events run at the centre",
+          text: "Shot at real events: conferences, exhibitions and festivals on this site.",
+        },
+        {
+          type: "gallery",
+          items: [
+            {
+              src: "/images/conference-audience.jpg",
+              caption: "Conference in the 350-seat hall",
+            },
+            {
+              src: "/images/hall-stand.jpg",
+              caption: "Exhibition build-up in the main hall",
+            },
+            {
+              src: "/images/hall-crowd.jpg",
+              caption: "Event day: visitor flow",
+            },
+          ],
+        },
+        {
           type: "rows",
           items: [
             {
@@ -204,6 +286,17 @@ export const organizerPages: PageDef[] = [
               text: "Attendance, activity, logistics notes and a recommendation for the next date.",
             },
           ],
+        },
+        {
+          type: "h2",
+          kicker: "Calendar",
+          title: "Booked dates — our own exhibitions",
+          text: "Each show holds the venue for build-up two days before and dismantling two days after. Any other date is free — send a brief and we reply with a quote within one business day.",
+        },
+        {
+          type: "table",
+          head: ["Own exhibition", "Venue booked: build-up + run + dismantling"],
+          rows: busyWindows("en"),
         },
         {
           type: "callout",
@@ -460,8 +553,8 @@ export const organizerPages: PageDef[] = [
           kicker: "Конгресс-сервис",
           title: "Программа, которую слышно и видно",
           lead: "Собираем деловую часть под ключ: от сцены и звука до регистрации делегатов и записи выступлений. Можно заказать как весь контур, так и отдельные позиции.",
-          image: "/images/venue-conference.jpg",
-          imageAlt: "Конференц-зал",
+          image: "/images/conference-audience.jpg",
+          imageAlt: "Конференция в конференц-зале",
           actions: [{ label: "Заказать программу", href: "/contacts/" }],
         },
         {
@@ -531,8 +624,8 @@ export const organizerPages: PageDef[] = [
           kicker: "Congress service",
           title: "A programme you can hear and see",
           lead: "We build the business side turnkey: from stage and sound to delegate registration and session recording. Order the whole contour or single items.",
-          image: "/images/venue-conference.jpg",
-          imageAlt: "Conference hall",
+          image: "/images/conference-audience.jpg",
+          imageAlt: "Conference in the conference hall",
           actions: [{ label: "Order a programme", href: "/contacts/" }],
         },
         {
@@ -616,6 +709,8 @@ export const organizerPages: PageDef[] = [
           kicker: "Чек-лист",
           title: "Календарь организатора: 90 дней до входа посетителя",
           lead: "Этот список мы используем сами на своих выставках. Скачайте и адаптируйте под своё событие — он снимает 90% вопросов на монтаже.",
+          image: "/images/conference-audience.jpg",
+          imageAlt: "Конференц-зал во время события",
         },
         {
           type: "steps",
@@ -630,7 +725,7 @@ export const organizerPages: PageDef[] = [
             },
             {
               title: "За 30 дней: техника и застройка",
-              text: "Технические заявки участников, электричество, заявки по высоте, проекты индивидуальных стендов, страховка.",
+              text: "Технические заявки участников, электричество, заявки по высоте, проекты стендов под заказ, страховка.",
             },
             {
               title: "За 14 дней: аудитория",
@@ -694,6 +789,8 @@ export const organizerPages: PageDef[] = [
           kicker: "Checklist",
           title: "The organizer calendar: 90 days before the doors open",
           lead: "We use this list for our own shows. Download it and adapt it to your event — it removes 90% of the questions at build-up.",
+          image: "/images/conference-audience.jpg",
+          imageAlt: "Conference hall during an event",
         },
         {
           type: "steps",

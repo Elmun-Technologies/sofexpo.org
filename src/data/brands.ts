@@ -38,6 +38,8 @@ export type HostBrand = {
   name: Record<Locale, string>;
   sub: Record<Locale, string>;
   ornament: "islimi" | null;
+  /** 'star' = the organiser's eight-pointed badge (FOODERA); null = wordmark only until their logo file arrives */
+  mark: "star" | null;
   contrast: string;
   palette: BrandPalette;
 };

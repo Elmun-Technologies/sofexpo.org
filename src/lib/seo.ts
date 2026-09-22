@@ -125,6 +125,29 @@ export function eventJsonLd(e: {
   };
 }
 
+/** Commercial "service" signal for the hall-rental hub: a searcher typing
+ *  «аренда выставочного зала Самарканд» / «exhibition hall rental Samarkand»
+ *  matches an entity-level Service, not just a page (docs/08 §5c). */
+export function serviceJsonLd(locale: Locale, url: string) {
+  return {
+    '@type': 'Service',
+    name:
+      locale === 'ru' ? 'Аренда выставочного зала в Самарканде' : 'Exhibition hall rental in Samarkand',
+    alternateName:
+      locale === 'ru' ? 'Exhibition hall rental in Samarkand' : 'Аренда выставочного зала в Самарканде',
+    serviceType: 'Exhibition hall rental',
+    description:
+      locale === 'ru'
+        ? 'Аренда выставочных площадей 13 680 м², логистика, строительство стендов и организационное сопровождение мероприятий в выставочном центре SOF EXPO, Самарканд.'
+        : 'Rental of 13,680 m² of exhibition space plus logistics, stand construction and event management at the SOF EXPO exhibition centre, Samarkand.',
+    url,
+    provider: { '@id': `${SITE}/#organization` },
+    serviceLocation: { '@id': `${SITE}/#venue` },
+    serviceArea: { '@type': 'AdministrativeArea', name: 'Samarkand Region' },
+    areaServed: { '@type': 'Country', name: 'Uzbekistan' },
+  };
+}
+
 export function breadcrumbJsonLd(items: { name: string; url: string }[]) {
   return {
     '@type': 'BreadcrumbList',
@@ -190,6 +213,16 @@ export function rootJsonLd() {
       alternateName: ['Выставочный центр SOF EXPO', 'SOF EXPO Exhibition Centre'],
       inLanguage: ['ru', 'en'],
       publisher: { '@id': `${SITE}/#organization` },
+      /* site search in Google sitelinks (docs/08 §5c): the search page reads ?q=
+         on load, so the template is honest */
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: {
+          '@type': 'EntryPoint',
+          urlTemplate: `${SITE}/en/search/?q={search_term_string}`,
+        },
+        'query-input': 'required name=search_term_string',
+      },
     },
     {
       '@type': 'Organization',

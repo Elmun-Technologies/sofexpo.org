@@ -53,6 +53,9 @@ const internalHrefs = new Set();
 
 for (const file of files) {
   const url = urlOf(file);
+  /* the bare root is a 301 redirect document (docs/08 §7, Q1), not a content
+     page: no h1/og/hreflang contract — the existence check below still runs */
+  if (url === "/") continue;
   const isPost = /^\/(ru|en)\/(news|articles)\/[^/]+\/$/.test(url);
   const htmlRaw = readFileSync(file, "utf8");
   const html = htmlRaw.replace(/<script[\s\S]*?<\/script>/g, "");
@@ -251,7 +254,7 @@ for (const url of allUrls) {
 }
 
 const indexHtml = existsSync(join(ROOT, "index.html"));
-if (!indexHtml) warn("/", "missing root language gate");
+if (!indexHtml) warn("/", "missing root redirect page (301 to /en/)");
 for (const asset of [
   "robots.txt",
   "sitemap-index.xml",

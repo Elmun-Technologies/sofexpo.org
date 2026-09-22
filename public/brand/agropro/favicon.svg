@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="AGROPRO">
+  <!-- centre hall mark retyped in the show palette; replaced by the organiser's badge file when it arrives -->
+  <rect width="64" height="64" rx="6" fill="#2c421f"/>
+  <g fill="none">
+    <rect x="10" y="12" width="44" height="34" stroke="#f8f9f4" stroke-width="2.4"/>
+    <rect x="15" y="17" width="9" height="9" fill="#f8f9f4"/>
+    <rect x="27.5" y="17" width="9" height="9" fill="#f8f9f4"/>
+    <rect x="40" y="17" width="9" height="9" fill="#f8f9f4"/>
+    <rect x="15" y="31" width="34" height="3" fill="#f8f9f4" opacity=".6"/>
+    <rect x="10" y="49" width="44" height="3" fill="#f8f9f4"/>
+  </g>
+</svg>

@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import { icsIntegration } from './scripts/ics.mjs';
 
 // SOF EXPO SAMARKAND — international exhibition centre website.
 // Static output (SSG): fastest Core Web Vitals, CDN friendly, no client JS framework.
@@ -19,13 +20,19 @@ export default defineConfig({
   devToolbar: { enabled: false },
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/404'),
+      /* /404 is not indexable; the bare root / is a 301 to /en/ (docs/08 §7, Q1) */
+      filter: (page) => {
+        const p = new URL(page).pathname.replace(/\/+$/, '');
+        return p !== '' && !page.includes('/404');
+      },
       i18n: {
         defaultLocale: 'en',
         locales: { ru: 'ru-RU', en: 'en-US' },
       },
       serialize: (item) => ({ ...item, lastmod: new Date('2026-09-18') }),
     }),
+    /* /sofexpo-calendar.ics — the line-up as an iCal file, kept in sync with events.ts */
+    icsIntegration(),
   ],
   vite: {
     build: { cssMinify: true },

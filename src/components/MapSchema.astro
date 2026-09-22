@@ -1,0 +1,178 @@
+---
+/**
+ * Location map (docs/08 §4.11): a static schematic — zero external requests, no cookies,
+ * the same line-drawing language as the venue plan. Distances are the published facts
+ * (airport 16 km, station 23 km, Termez road). The pin uses `site.location.lat/lng`,
+ * which is `needsVerification` — the note says so, and the links hand the real coordinates
+ * to Yandex/Google/2GIS once they are confirmed.
+ */
+import { localize, type Locale } from '@/i18n/config';
+import { site } from '@/data/site';
+
+const { locale } = Astro.props as { locale: Locale };
+const ru = locale === 'ru';
+const H = (p: string) => localize(locale, p);
+const { lat, lng } = site.location;
+
+const mapLinks = [
+  { label: 'Yandex', href: `https://yandex.ru/maps/?pt=${lng},${lat}&z=15` },
+  { label: 'Google', href: `https://www.google.com/maps/search/?api=1&query=${lat},${lng}` },
+  { label: '2GIS', href: `https://2gis.uz/samarkand/geo/${lng},${lat}` },
+];
+
+const how = ru
+  ? [
+      { k: 'Аэропорт', v: '16 км · такси ~25 мин' },
+      { k: 'Вокзал', v: '23 км · такси ~30 мин' },
+      { k: 'Термез (М-40)', v: 'южный выезд, фуры' },
+    ]
+  : [
+      { k: 'Airport', v: '16 km · taxi ~25 min' },
+      { k: 'Railway station', v: '23 km · taxi ~30 min' },
+      { k: 'Termez road (M-40)', v: 'south exit, trucks' },
+    ];
+---
+
+<figure class="map" role="img" aria-label={ru ? 'Схема расположения' : 'Location schematic'}>
+  <svg viewBox="0 0 720 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Samarkand road ring -->
+    <path d="M60 300 C 140 120, 420 80, 620 160" stroke="var(--line-strong)" stroke-width="10" stroke-linecap="round" />
+    <path d="M60 300 C 140 120, 420 80, 620 160" stroke="var(--paper)" stroke-width="2" stroke-dasharray="8 10" />
+    <text x="196" y="150" class="map__s" transform="rotate(-18 196 150)">{ru ? 'кольцо Самарканда' : 'Samarkand ring'}</text>
+
+    <!-- airport arm -->
+    <line x1="620" y1="160" x2="688" y2="96" stroke="var(--line-strong)" stroke-width="4" />
+    <g transform="translate(688, 96)">
+      <circle r="5" fill="var(--ink-40)" />
+      <path d="M10 -2 l16 -8 v6 l-12 4 12 4 v6 l-16 -8 z" fill="var(--ink-40)" />
+    </g>
+    <text x="668" y="60" class="map__t" text-anchor="middle">{ru ? 'Аэропорт' : 'Airport'}</text>
+    <text x="668" y="78" class="map__km" text-anchor="middle">16 км</text>
+
+    <!-- station arm -->
+    <line x1="60" y1="300" x2="18" y2="352" stroke="var(--line-strong)" stroke-width="4" />
+    <g transform="translate(18, 352)">
+      <rect x="-10" y="-7" width="20" height="14" rx="2" fill="var(--ink-40)" />
+      <circle cx="-4" cy="7" r="2.5" fill="var(--paper)" />
+      <circle cx="4" cy="7" r="2.5" fill="var(--paper)" />
+    </g>
+    <text x="40" y="382" class="map__t">{ru ? 'Вокзал' : 'Station'}</text>
+    <text x="40" y="396" class="map__km">23 км</text>
+
+    <!-- Termez road south -->
+    <line x1="360" y1="330" x2="360" y2="392" stroke="var(--line-strong)" stroke-width="4" />
+    <text x="374" y="384" class="map__s">{ru ? 'на Термез · М-40' : 'to Termez · M-40'}</text>
+
+    <!-- venue: the pin -->
+    <g transform="translate(470, 240)">
+      <circle r="34" stroke="var(--moss)" stroke-opacity=".4" stroke-width="1.5" />
+      <path d="M0 -22 C 12 -22 20 -13 20 -3 C 20 10 0 24 0 24 C 0 24 -20 10 -20 -3 C -20 -13 -12 -22 0 -22 Z" fill="var(--evergreen)" />
+      <circle cy="-4" r="7.5" fill="var(--gold-soft)" />
+    </g>
+    <text x="470" y="208" class="map__v" text-anchor="middle">SOF EXPO</text>
+    <text x="470" y="290" class="map__s" text-anchor="middle">{ru ? 'Джамбайский район · въезд с кольца' : 'Dzhambay district · off the ring road'}</text>
+
+    <!-- city centre hint -->
+    <circle cx="150" cy="330" r="4" fill="var(--ink-40)" />
+    <text x="150" y="352" class="map__s" text-anchor="middle">{ru ? 'центр города' : 'city centre'}</text>
+  </svg>
+
+  <figcaption class="map__note">
+    {ru ? 'Точка ориентировочная — координаты подтверняются.' : 'Pin is approximate — coordinates being confirmed.'}
+    <span class="map__links">
+      {mapLinks.map((l) => <a href={l.href} target="_blank" rel="noopener">{l.label} ↗</a>)}
+    </span>
+  </figcaption>
+
+  <div class="map__how">
+    {how.map((r) => (
+      <div>
+        <b>{r.k}</b>
+        <span>{r.v}</span>
+      </div>
+    ))}
+  </div>
+</figure>
+
+<style>
+  .map {
+    margin: 0;
+  }
+  .map svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--paper);
+  }
+  .map__t {
+    font-family: var(--f-display);
+    font-size: 16px;
+    font-weight: 600;
+    fill: var(--ink);
+  }
+  .map__km {
+    font-family: var(--f-mono);
+    font-size: 12.5px;
+    fill: var(--moss);
+  }
+  .map__s {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    fill: var(--ink-60);
+  }
+  .map__v {
+    font-family: var(--f-display);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    fill: var(--evergreen);
+  }
+  .map__note {
+    margin-top: 0.8rem;
+    font-size: 0.85rem;
+    color: var(--ink-60);
+  }
+  .map__links {
+    display: inline-flex;
+    gap: 1rem;
+    margin-left: 0.6rem;
+  }
+  .map__links a {
+    color: var(--ink);
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid var(--line-strong);
+    padding-bottom: 1px;
+  }
+  .map__links a:hover {
+    border-color: var(--ink);
+  }
+  .map__how {
+    margin-top: 1.1rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.8rem;
+  }
+  .map__how div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    padding: 0.8rem 0.95rem;
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+  }
+  .map__how b {
+    font-size: 0.92rem;
+  }
+  .map__how span {
+    font-size: 0.82rem;
+    color: var(--ink-60);
+  }
+  @media (max-width: 640px) {
+    .map__how {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

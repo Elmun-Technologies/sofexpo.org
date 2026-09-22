@@ -8,3 +8,6 @@ dist/
 
 # multi-host build output (docs/05)
 dist-hosts/
+
+# stock-photo research scratch (temp; approved copies live in public/images/)
+image-search/

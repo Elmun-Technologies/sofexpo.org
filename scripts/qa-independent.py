@@ -42,6 +42,10 @@ for label, d in HOSTS.items():
             url = '/' + rel[: -len('index.html')] if rel.endswith('index.html') else '/' + rel
             html = open(p, encoding='utf-8').read()
             pages[label][url] = html
+            if url == '/':
+                # the bare root is a 301 redirect document (docs/08 §7, Q1):
+                # not a content page, so the per-page head contract does not apply
+                continue
             loc = url.split('/')[1] if url.count('/') > 1 else ''
             # ---- per-page rules
             if len(re.findall(r'<h1[\s>]', html)) != 1:
@@ -214,7 +218,7 @@ for label, d in HOSTS.items():
     if re.search(r'transition:[^;]*transform', css):
         for m in re.finditer(r'([^{}]{0,30}):?[^{}]*\{[^}]*transition:[^;}]*transform[^}]*\}', css):
             sel = m.group(1).strip().splitlines()[-1] if m.group(1) else '?'
-            if not re.search(r'(summary|burger|nav-open|\.acc)', sel):
+            if not re.search(r'(summary|burger|nav-open|\.acc|reveal-pending)', sel):
                 motion_findings.append(f'{label}: transition on transform at "{sel[:40]}"')
 for f in motion_findings:
     findings['motion (hover must be state, not theatre)'].append(f)

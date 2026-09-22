@@ -21,8 +21,13 @@ const ru = locale === 'ru';
     <div class="ftr__grid">
       <div>
         <a class="logo" href={P('/')} style="color:#ffffff">
-          {CURRENT_BRAND?.id ? (
+          {CURRENT_BRAND?.mark === 'star' ? (
             <BrandMark brand={CURRENT_BRAND} locale={locale} withWordmark size={30} tone="on-dark" />
+          ) : CURRENT_BRAND ? (
+            <span class="logo__txt">
+              <b style="color:#ffffff">{CURRENT_BRAND.name[locale]}</b>
+              <span style="color:rgba(255, 255, 255, .6)">{CURRENT_BRAND.sub[locale]}</span>
+            </span>
           ) : (
             <>
               <span class="logo__mark" aria-hidden="true">SE</span>

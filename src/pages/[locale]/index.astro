@@ -4,23 +4,21 @@ import { localize } from '@/i18n/config';
 import { useUI } from '@/i18n/ui';
 import { localePaths } from '@/lib/pages';
 import { site } from '@/data/site';
-import { telHref } from '@/lib/nav';
 import { upcoming, events } from '@/data/events';
 import { CURRENT_EVENT } from '@/data/hosts';
 import { eventPages } from '@/data/pages/event-pages';
 import EventPage from '@/components/EventPage.astro';
 import { getCollection } from 'astro:content';
-import { rootJsonLd, breadcrumbJsonLd, itemListJsonLd, faqJsonLd, abs } from '@/lib/seo';
+import { rootJsonLd, breadcrumbJsonLd, itemListJsonLd, faqJsonLd } from '@/lib/seo';
+import { bigDate, daysUntil, industryLabel } from '@/lib/labels';
 import Icon from '@/components/Icon.astro';
-import SectionHead from '@/components/SectionHead.astro';
-import EventCard from '@/components/EventCard.astro';
-import StatBand from '@/components/StatBand.astro';
-import PageHero from '@/components/PageHero.astro';
-import FeatureGrid from '@/components/FeatureGrid.astro';
+import CalendarRail from '@/components/CalendarRail.astro';
 import Countdown from '@/components/Countdown.astro';
 import Faq from '@/components/Faq.astro';
-import CtaBand from '@/components/CtaBand.astro';
 import LeadForm from '@/components/LeadForm.astro';
+import FeatureGrid from '@/components/FeatureGrid.astro';
+import StatBand from '@/components/StatBand.astro';
+import PostCard from '@/components/PostCard.astro';
 
 export function getStaticPaths() {
   return localePaths();
@@ -36,191 +34,106 @@ const t = useUI(locale);
 const P = (p: string) => localize(locale, p);
 const ru = locale === 'ru';
 const next = upcoming[0];
-const later = upcoming.slice(1);
+const d = bigDate(next.dates.start, next.dates.end, locale);
+const days = daysUntil(next.dates.start);
+const countdownLine =
+  days > 1
+    ? ru
+      ? `До старта — ${days} ${days < 5 ? 'дня' : days < 21 || days > 24 ? 'дней' : 'дня'}`
+      : `${days} days to opening`
+    : days === 1
+      ? ru
+        ? 'До старта — завтра'
+        : 'Opening tomorrow'
+      : ru
+        ? 'Выставка идёт сейчас'
+        : 'The show is running now';
 
 const copy = {
   ru: {
     title: 'SOF EXPO Samarkand — экспоцентр и выставки в Самарканде',
     desc:
       'Экспоцентр SOF EXPO Samarkand: 4 400 м² зала и 5 000 м² улицы, 20+ событий, 70 000+ посетителей в год. Бронирование стендов, аренда под своё событие, деловая программа.',
-    heroKicker: 'Выставочный центр · Самарканд, Узбекистан',
-    h1: 'Здесь отрасль встречается <em>лицом к лицу</em>',
+    heroKicker: (e: string, ind: string) => `Ближайшая выставка · ${ind}`,
     lead:
-      'SOF EXPO Samarkand — крытый экспоцентр и оператор международных отраслевых выставок в центре Узбекистана. Один зал 4 400 м², открытая площадка 5 000 м², конференц-зал, кафе на 350 мест и парковка при въезде.',
-    bullets: ['Заявка на стенд — ответ за 24 часа', 'Техспецификация и планировка — по запросу', 'Русский, английский, узбекский языки сервиса'],
-    upcomingText:
-      'Шесть собственных выставок в год: продукты и напитки, строительство, агропром, автоиндустрия, e-commerce и образование. Каждая — с деловой программой и биржей контактов.',
-    venue: {
-      kicker: 'Площадка',
-      title: 'Один корпус, две площади, ноль сюрпризов при монтаже',
-      text: 'Всё, что нужно для экспозиции, уже в здании: электричество 700 кВт, климат-контроль, аудиосистема, интернет и подъезд для фур. Технические детали высылаем до подписания договора.',
-      links: [
-        { href: '/venue/halls/', label: 'Залы и площади' },
-        { href: '/venue/tech-specs/', label: 'Техническая спецификация' },
-        { href: '/venue/how-to-get-there/', label: 'Как добраться' },
-      ],
-      specs: [
-        ['Крытая площадь', '4 400 м², свободная планировка'],
-        ['Открытая площадь', '5 000 м², подъезд фур и кран'],
-        ['Электричество', '700 кВт, 220 / 380 В'],
-        ['Конференц-зал', 'до 350 мест, аудио/видео, проекция'],
-        ['Климат', 'охлаждение, обогрев, вентиляция'],
-        ['Парковка', 'бесплатно, при въезде в центр'],
-      ],
-    },
-    audiences: {
-      kicker: 'Аудиториям',
-      title: 'Выберите свою дверь',
-      items: [
-        { title: 'Экспонентам', text: 'Площадь, застройка, услуга «стенд под ключ», реклама на площадке и список закупщиков до старта выставки.', href: '/exhibitors/', label: 'Пакеты и цены' },
-        { title: 'Посетителям', text: 'Билеты и бесплатная регистрация, расписание докладов, маршрут, отели и что взять с собой.', href: '/visitors/', label: 'Как посетить' },
-        { title: 'Организаторам событий', text: 'Аренда зала под свою выставку, конференцию или фестиваль — с техподдержкой и сервисом на площадку.', href: '/organizers/', label: 'Забронировать площадку' },
-        { title: 'Прессе и партнёрам', text: 'Аккредитация, пресс-релизы, фото- и видеоматериалы, логотипы и фактшит центра.', href: '/news/media-kit/', label: 'Медиа-кит' },
-      ],
-    },
-    market: {
-      kicker: 'Почему Самарканд',
-      title: 'Транзитный узел между шестью рынками',
-      text: 'Узбекистан — крупнейший по населению рынок Центральной Азии: более 125 млн потребителей в зоне прямого доступа, розница Узбекистана — 182 трлн сумов за 2024 год. От Самарканда до Ташкента, Душанбе, Ашхабада и Кабула — один перелёт или одна ночная фура.',
-      countries: [
-        ['Узбекистан', '125 млн потребителей региона'],
-        ['Казахстан', 'крупнейший импортёр продуктов питания в CA'],
-        ['Таджикистан', 'высокая доля узбекского импорта'],
-        ['Кыргызстан', 'розничные сети и опт'],
-        ['Туркменистан', 'госзакупки и тендеры'],
-        ['Афганистан', 'приграничная торговля через Термез'],
-      ],
-    },
-    stands: {
-      kicker: 'Форматы участия',
-      title: 'От готового стенда 9 м² до острова с индивидуальной застройкой',
-      text: 'В стоимость входит площадь, брендирование, мебель, электричество, интернет и регистрация персонала. Сверх — застройка по брендбуку, перевод, промо-персонал и каталог.',
-      items: [
-        { name: 'Стандарт 9 м²', note: 'Готовая застройка, стол, два стула, свет, вывеска', icon: 'cube' },
-        { name: 'Премиум 18 м²', note: 'Улучшенная локация, больше рекламной поверхности, переговорная зона', icon: 'star' },
-        { name: 'Свободная площадь 36 м²+', note: 'Застройка по вашему проекту, согласование с технологами', icon: 'building' },
-        { name: 'Конференц-сессия', note: 'Доклад в программе, зал, техника, модератор, трансляция', icon: 'mic' },
-      ],
-    },
-    program: {
-      kicker: 'Деловая программа',
-      title: 'Не только экспозиция: форумы, панели и биржа контактов',
-      text: 'На каждой выставке работает конференц-зал и сцена в зале. Мы собираем аудиторию заранее: категорийные менеджеры, закупщики сетей, архитекторы, агрономы, селлеры маркетплейсов.',
-      points: ['10+ сессий и форумов на крупной выставке', 'Pre-matched переговоры «15 минут»', 'Модератор, техника и трансляция', 'Итоговый отчёт с контактами для экспонентов'],
-    },
-    services: {
-      kicker: 'Сервис на площадке',
-      title: 'Всё включено в ставку — или заказывается отдельно',
-      text: 'Аренда оборудования, мебель, ТВ, печать, перевод, хостес, промо, клининг, хранение, встреча делегаций. Заявка подаётся одним бланком до монтажа.',
-    },
-    media: { kicker: 'Медиа', title: 'Новости выставки и аналитика рынков' },
-    partners: {
-      kicker: 'Поддержки и партнёры',
-      title: 'С кем мы делаем выставки',
-      text: 'Государственные органы Самаркандской области, отраслевые ассоциации, международные организаторы и инфраструктурные партнёры.',
-    },
-    form: {
-      kicker: 'Заявка',
-      title: 'Получить планировку, цены и свободные места',
-      text: 'Укажите выставку и площадь — пришлём прайс, floor plan и профиль аудитории. Без оплаты сейчас.',
-    },
+      'Один зал 4 400 м², открытая площадка 5 000 м², конференц-зал на 350 мест. Бронирование стенда — ответ за 24 часа; техспецификация и планировка — до договора.',
+    stand: 'Забронировать стенд',
+    ticket: 'Билет посетителя',
+    more: 'Про выставку',
+    venueTitle: 'Один корпус, две площади, ноль сюрпризов при монтаже',
+    venueText: 'Электричество 700 кВт, климат-контроль, аудио, интернет и подъезд для фур уже в здании. Технические детали высылаем до подписания договора.',
+    doorsTitle: 'Выберите свою дверь',
+    doors: [
+      { title: 'Экспонентам', text: 'Площадь, застройка, услуга «стенд под ключ», реклама на площадке и список закупщиков до старта выставки.', href: '/exhibitors/', meta: 'Пакеты и цены', image: '/images/hall-stand.jpg', imageAlt: 'Выставочный зал: стенды на монтаже' },
+      { title: 'Посетителям', text: 'Билеты и бесплатная регистрация, расписание докладов, маршрут, отели и что взять с собой.', href: '/visitors/', meta: 'Как посетить', image: '/images/hall-crowd.jpg', imageAlt: 'Посетители в зале в день выставки' },
+      { title: 'Организаторам событий', text: 'Аренда зала под свою выставку, конференцию или фестиваль — с техподдержкой и сервисом на площадке.', href: '/organizers/', meta: 'Забронировать площадку', image: '/images/conference-audience.jpg', imageAlt: 'Конференц-зал: деловая программа' },
+    ],
+    marketKicker: 'Почему Самарканд',
+    marketTitle: 'Транзитный узел между шестью рынками',
+    marketText:
+      'Узбекистан — крупнейший по населению рынок Центральной Азии: более 125 млн потребителей в зоне прямого доступа, розница Узбекистана — 182 трлн сумов за 2024 год. От Самарканда до Ташкента, Душанбе, Ашхабада и Кабула — один перелёт или одна ночная фура.',
+    countries: [
+      ['Узбекистан', '125 млн потребителей региона'],
+      ['Казахстан', 'крупнейший импортёр продуктов питания в CA'],
+      ['Таджикистан', 'высокая доля узбекского импорта'],
+      ['Кыргызстан', 'розничные сети и опт'],
+      ['Туркменистан', 'госзакупки и тендеры'],
+      ['Афганистан', 'приграничная торговля через Термез'],
+    ],
+    mediaKicker: 'Медиа',
+    mediaTitle: 'Новости выставки и аналитика рынков',
+    allNews: 'Все новости',
+    formTitle: 'Получить планировку, цены и свободные места',
+    formText: 'Укажите выставку и площадь — пришлём прайс, floor plan и профиль аудитории. Без оплаты сейчас.',
+    formTitleCard: 'Заявка на стенд',
+    formSub: '30 секунд — без оплаты сейчас.',
+    formList: ['Прайс-лист и план зала в PDF', 'Профиль аудитории и список участников', 'Фиксация цены раннего бронирования', 'Подбор места с учётом вашего продукта'],
   },
   en: {
     title: 'SOF EXPO Samarkand — exhibition centre and trade shows in Uzbekistan',
     desc:
       'SOF EXPO Samarkand: 4,400 m² hall and 5,000 m² outdoors, 20+ events and 70,000+ visitors a year. Book a stand or rent the hall for your own event.',
-    heroKicker: 'Exhibition centre · Samarkand, Uzbekistan',
-    h1: 'Where an industry meets <em>face to face</em>',
+    heroKicker: (e: string, ind: string) => `Next show · ${ind}`,
     lead:
-      'SOF EXPO Samarkand is an indoor exhibition centre and the operator of international trade shows in the heart of Uzbekistan. One hall of 4,400 m², 5,000 m² of open ground, a conference hall, cafés for 350 guests and parking at the gate.',
-    bullets: ['Booth request answered within 24 hours', 'Technical data sheet and floor plan on request', 'Service in Russian, English and Uzbek'],
-    upcomingText:
-      'Six owned exhibitions a year: food and drink, construction, agriculture, automotive, e-commerce and education. Each one runs with a business programme and a contact exchange.',
-    venue: {
-      kicker: 'The venue',
-      title: 'One building, two areas, no surprises at build-up',
-      text: 'Everything an exhibition needs is already in the shell: 700 kW power, climate control, hall audio, internet and truck access. Technical details go out before the contract is signed.',
-      links: [
-        { href: '/venue/halls/', label: 'Halls and areas' },
-        { href: '/venue/tech-specs/', label: 'Technical data sheet' },
-        { href: '/venue/how-to-get-there/', label: 'Getting there' },
-      ],
-      specs: [
-        ['Indoor area', '4,400 m², open plan'],
-        ['Open-air area', '5,000 m², truck and crane access'],
-        ['Power', '700 kW, 220 / 380 V'],
-        ['Conference hall', 'up to 350 seats, AV and projection'],
-        ['Climate', 'cooling, heating, ventilation'],
-        ['Parking', 'free, right at the entrance'],
-      ],
-    },
-    audiences: {
-      kicker: 'Audiences',
-      title: 'Pick your door',
-      items: [
-        { title: 'For exhibitors', text: 'Space, shell scheme, turnkey stands, on-site advertising and a buyer list before the doors open.', href: '/exhibitors/', label: 'Packages and rates' },
-        { title: 'For visitors', text: 'Tickets and free registration, talk schedule, route plan, hotels and what to bring.', href: '/visitors/', label: 'How to attend' },
-        { title: 'For event organizers', text: 'Hall rental for your own show, conference or festival, with technical and visitor services.', href: '/organizers/', label: 'Book the venue' },
-        { title: 'For press and partners', text: 'Accreditation, press releases, photo and video material, logos and venue fact sheet.', href: '/news/media-kit/', label: 'Media kit' },
-      ],
-    },
-    market: {
-      kicker: 'Why Samarkand',
-      title: 'A transit node between six markets',
-      text: 'Uzbekistan is the most populous market in Central Asia: more than 125 million consumers within direct reach, retail turnover of UZS 182 trillion in 2024. From Samarkand to Tashkent, Dushanbe, Ashgabat or Kabul is one flight or one overnight truck.',
-      countries: [
-        ['Uzbekistan', '125 M consumers in the region'],
-        ['Kazakhstan', 'largest food importer in CA'],
-        ['Tajikistan', 'high share of Uzbek imports'],
-        ['Kyrgyzstan', 'retail chains and wholesale'],
-        ['Turkmenistan', 'state procurement and tenders'],
-        ['Afghanistan', 'border trade via Termez'],
-      ],
-    },
-    stands: {
-      kicker: 'Participation',
-      title: 'From a 9 m² ready-made stand to a custom-built island',
-      text: 'Rate includes space, branding, furniture, power, internet and staff badges. On top: custom build, interpreting, promo staff and catalogue listing.',
-      items: [
-        { name: 'Standard 9 m²', note: 'Shell scheme, table, two chairs, lighting, fascia board', icon: 'cube' },
-        { name: 'Premium 18 m²', note: 'Better location, more ad surface, meeting area', icon: 'star' },
-        { name: 'Raw space 36 m²+', note: 'Build to your design, engineering approval included', icon: 'building' },
-        { name: 'Conference slot', note: 'A talk in the programme, hall, tech, moderator, stream', icon: 'mic' },
-      ],
-    },
-    program: {
-      kicker: 'Business programme',
-      title: 'More than an expo: forums, panels and a contact exchange',
-      text: 'Every show runs a conference hall and a stage inside the hall. We build the audience in advance: category managers, chain buyers, architects, agronomists and marketplace sellers.',
-      points: ['10+ sessions and forums at a major show', 'Pre-matched 15-minute meetings', 'Moderator, AV and live stream', 'Post-show report with contacts for exhibitors'],
-    },
-    services: {
-      kicker: 'On-site services',
-      title: 'Included in the rate — or ordered separately',
-      text: 'Equipment rental, furniture, screens, print, interpreting, hostesses, promo staff, cleaning, storage and delegation pickup. Ordered in a single form before build-up.',
-    },
-    media: { kicker: 'Media', title: 'Show news and market analysis' },
-    partners: {
-      kicker: 'Support and partners',
-      title: 'Who we build exhibitions with',
-      text: 'Samarkand regional authorities, industry associations, international organizers and infrastructure partners.',
-    },
-    form: {
-      kicker: 'Request',
-      title: 'Get the floor plan, rates and free spots',
-      text: 'Name the exhibition and the area — we send the price list, floor plan and audience profile. No payment now.',
-    },
+      'One 4,400 m² hall, 5,000 m² of open ground, a 350-seat conference hall. Stand request answered within 24 hours; technical data sheet and floor plan before the contract.',
+    stand: 'Book a stand',
+    ticket: 'Visitor pass',
+    more: 'About the show',
+    venueTitle: 'One building, two areas, no surprises at build-up',
+    venueText: '700 kW power, climate control, audio, internet and truck access are already in the shell. Technical details go out before the contract is signed.',
+    doorsTitle: 'Pick your door',
+    doors: [
+      { title: 'For exhibitors', text: 'Space, shell scheme, turnkey stands, on-site advertising and a buyer list before the doors open.', href: '/exhibitors/', meta: 'Packages and rates', image: '/images/hall-stand.jpg', imageAlt: 'Exhibition hall: stands during build-up' },
+      { title: 'For visitors', text: 'Tickets and free registration, talk schedule, route plan, hotels and what to bring.', href: '/visitors/', meta: 'How to attend', image: '/images/hall-crowd.jpg', imageAlt: 'Visitors in the hall on show day' },
+      { title: 'For event organizers', text: 'Hall rental for your own show, conference or festival, with technical and visitor services.', href: '/organizers/', meta: 'Book the venue', image: '/images/conference-audience.jpg', imageAlt: 'Conference hall: business programme' },
+    ],
+    marketKicker: 'Why Samarkand',
+    marketTitle: 'A transit node between six markets',
+    marketText:
+      'Uzbekistan is the most populous market in Central Asia: more than 125 million consumers within direct reach, retail turnover of UZS 182 trillion in 2024. From Samarkand to Tashkent, Dushanbe, Ashgabat or Kabul is one flight or one overnight truck.',
+    countries: [
+      ['Uzbekistan', '125 M consumers in the region'],
+      ['Kazakhstan', 'largest food importer in CA'],
+      ['Tajikistan', 'high share of Uzbek imports'],
+      ['Kyrgyzstan', 'retail chains and wholesale'],
+      ['Turkmenistan', 'state procurement and tenders'],
+      ['Afghanistan', 'border trade via Termez'],
+    ],
+    mediaKicker: 'Media',
+    mediaTitle: 'Show news and market analysis',
+    allNews: 'All news',
+    formTitle: 'Get the floor plan, rates and free spots',
+    formText: 'Name the exhibition and the area — we send the price list, floor plan and audience profile. No payment now.',
+    formTitleCard: 'Stand request',
+    formSub: '30 seconds — no payment now.',
+    formList: ['Price list and hall plan in PDF', 'Audience profile and exhibitor list', 'Early-booking price lock', 'Location picked around your product'],
   },
 }[locale];
 
 const news = (await getCollection('news'))
   .filter((e) => e.id.startsWith(`${locale}/`))
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-  .slice(0, 3);
-const articles = (await getCollection('articles'))
-  .filter((e) => e.id.startsWith(`${locale}/`))
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-  .slice(0, 3);
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const [newsLead, ...newsRest] = news;
 
 const faq = (ru
   ? [
@@ -254,118 +167,97 @@ const jsonLd = [
   title={copy.title}
   description={copy.desc}
   jsonLd={jsonLd}
-  image="/images/hero-hall.jpg"
-  preload="/images/hero-hall.jpg"
+  image={next.heroImage}
+  preload={next.heroImage}
 >
-  <PageHero
-    locale={locale}
-    kicker={copy.heroKicker}
-    title={copy.h1}
-    lead={copy.lead}
-    bullets={copy.bullets}
-    image="/images/hero-hall.jpg"
-    actions={[
-      { label: t('cta.stand'), href: P('/request-stand/'), tone: 'gold' },
-      { label: t('cta.all'), href: P('/events/'), tone: 'ghost' },
-    ]}
->
-    <div class="hero__side" slot="side">
-      <p class="mono-label" style="margin:0 0 .5rem">{ru ? 'Ближайшее событие' : 'Next event'}</p>
-      <a href={P(`/events/${next.slug}/`)} style="text-decoration:none;color:#fff">
-        <h3 style="margin:0 0 .3rem;font-size:1.35rem">{next.brand[locale]}</h3>
-      </a>
-      <p style="margin:0;color:rgba(255, 255, 255, .8);font-size:.92rem">{next.tagline[locale]}</p>
-      <Countdown locale={locale} target={next.dates.start} label={ru ? 'До старта' : 'Opening in'} />
-      <div class="btn-row">
-        <a class="btn btn--sm" style="background:rgba(255,255,255,.86);color:var(--evergreen)" href={P(`/events/${next.slug}/`)}>{t('cta.details')}</a>
-        <a class="btn btn--sm btn--ghost" style="border-color:rgba(255, 255, 255, .4);color:rgba(255,255,255,.86)" href={P('/request-stand/')}>{t('cta.stand')}</a>
-      </div>
-    </div>
-  </PageHero>
-
-  <section class="sec--tight sec" style="padding-block:clamp(1.2rem,.6rem + 1.6vw,2rem)">
-    <div class="wrap"><StatBand locale={locale} /></div>
-  </section>
-
-  <section class="sec" id="events">
+  <!-- 1 · hero = the next show: the date is the biggest element on the page -->
+  <section class="home-hero">
+    <figure class="home-hero__bg">
+      <img src={next.heroImage} alt={next.tagline[locale]} width="1600" height="900" loading="eager" fetchpriority="high" />
+    </figure>
     <div class="wrap">
-      <SectionHead locale={locale} kicker={t('kicker.upcoming')} title={ru ? 'Афиша выставок 2026–2027' : 'Exhibition line-up 2026–2027'} text={copy.upcomingText}>
-        <a slot="aside" class="btn btn--ghost btn--sm" href={P('/events/')}>{t('cta.all')} <Icon name="arrow" size={16} /></a>
-      </SectionHead>
-      <div class="grid g3">
-        {upcoming.map((e, i) => <div><EventCard locale={locale} event={e} priority={i === 0} /></div>)}
-      </div>
-    </div>
-  </section>
-
-  <section class="sec sec--paper">
-    <div class="wrap">
-      <div class="grid g-sidebar">
+      <div class="home-hero__in">
         <div>
-          <p class="kicker">{copy.venue.kicker}</p>
-          <h2 set:html={copy.venue.title} />
-          <p class="lead">{copy.venue.text}</p>
-          <div class="btn-row" style="margin-top:1.4rem">
-            {copy.venue.links.map((l) => <a class="chip" href={P(l.href)}>{l.label} →</a>)}
-          </div>
-          <div style="margin-top:1.6rem;border-radius:var(--r-lg);overflow:hidden">
-            <img src="/images/venue-exterior.jpg" alt={ru ? 'Экстерьер выставочного центра SOF EXPO Samarkand' : 'Exterior of SOF EXPO Samarkand exhibition centre'} width="900" height="560" loading="lazy" decoding="async" />
+          <p class="home-hero__kicker">
+            <span class="dot" aria-hidden="true"></span>
+            {copy.heroKicker(next.slug, industryLabel(next.industry, locale))}
+          </p>
+          <h1>{next.brand[locale]}</h1>
+          <p class="home-hero__date">
+            <b>{d.days}</b>
+            <span>{d.month} {d.year}</span>
+          </p>
+          <p class="home-hero__lead">{copy.lead}</p>
+          <div class="btn-row">
+            <a class="btn" href={P(`/request-stand/`) + `?event=${next.slug}`}>
+              <Icon name="sparkle" size={16} /> {copy.stand}
+            </a>
+            <a class="btn btn--ghost" style="border-color:rgba(255,255,255,.4);color:rgba(255,255,255,.88)" href={P('/visitors/tickets/')}>{copy.ticket}</a>
+            <a class="home-hero__more" href={P(`/events/${next.slug}/`)}>{copy.more} <Icon name="arrow" size={15} /></a>
           </div>
         </div>
-        <div class="card card--sand">
-          <h3 style="font-size:1.15rem;margin-bottom:1rem">{ru ? 'Параметры площадки' : 'Venue parameters'}</h3>
-          <table class="table">
-            <tbody>
-              {copy.venue.specs.map(([k, v]) => <tr><th>{k}</th><td>{v}</td></tr>)}
-            </tbody>
-          </table>
-          <a class="btn btn--sm" style="margin-top:1rem" href={P('/venue/tech-specs/')}>{ru ? 'Затребовать техспецификацию' : 'Request the data sheet'}</a>
+        <aside class="home-hero__side">
+          <div>
+            <p class="mono-label">{ru ? 'До старта' : 'Opening in'}</p>
+            <Countdown locale={locale} target={next.dates.start} />
+          </div>
+          <div>
+            <p class="mono-label" style="margin:0">{ru ? 'Площадка' : 'The venue'}</p>
+            <p class="home-hero__venue">
+              4 400 м² <span>·</span> 5 000 м² <span>·</span> 700 кВт <span>·</span> 350 мест
+            </p>
+            <p class="mono-label" style="margin:.5rem 0 0">{ru ? 'Самарканд, Узбекистан' : 'Samarkand, Uzbekistan'}</p>
+          </div>
+        </aside>
+      </div>
+      <CalendarRail locale={locale} />
+    </div>
+  </section>
+
+  <!-- 2 · the venue in one line (the table lives on /venue/) -->
+  <section class="sec--tight reveal">
+    <div class="wrap">
+      <div class="venue-strip">
+        <div class="venue-strip__nums">
+          <div><b>4 400<small> м²</small></b><span>{ru ? 'зал' : 'hall'}</span></div>
+          <div><b>5 000<small> м²</small></b><span>{ru ? 'улица' : 'outdoor'}</span></div>
+          <div><b>700<small> кВт</small></b><span>{ru ? '220/380 В' : '220/380 V'}</span></div>
+          <div><b>350</b><span>{ru ? 'мест, кафе' : 'seats, café'}</span></div>
         </div>
+        <div class="venue-strip__txt">
+          <h2>{copy.venueTitle}</h2>
+          <p>{copy.venueText}</p>
+          <div class="venue-strip__links">
+            <a href={P('/venue/halls/')}>{ru ? 'Залы и площади' : 'Halls and areas'} →</a>
+            <a href={P('/venue/tech-specs/')}>{ru ? 'Техническая спецификация' : 'Technical data sheet'} →</a>
+            <a href={P('/venue/how-to-get-there/')}>{ru ? 'Как добраться' : 'Getting there'} →</a>
+          </div>
+        </div>
+        <figure class="venue-strip__img">
+          <img src="/images/venue-exterior.jpg" alt={ru ? 'Экстерьер выставочного центра SOF EXPO Samarkand' : 'Exterior of SOF EXPO Samarkand exhibition centre'} width="640" height="480" loading="lazy" decoding="async" />
+        </figure>
       </div>
     </div>
   </section>
 
-  <section class="sec">
+  <!-- 3 · three doors -->
+  <section class="sec reveal">
     <div class="wrap">
-      <SectionHead locale={locale} kicker={copy.audiences.kicker} title={copy.audiences.title} />
-      <FeatureGrid locale={locale} cols={4} items={copy.audiences.items.map((i) => ({ title: i.title, text: i.text, href: P(i.href), meta: i.label }))} />
+      <h2 class="sec-title">{copy.doorsTitle}</h2>
+      <FeatureGrid locale={locale} cols={3} items={copy.doors.map((i) => ({ title: i.title, text: i.text, href: P(i.href), meta: i.meta, image: i.image, imageAlt: i.imageAlt }))} />
     </div>
   </section>
 
-  <section class="sec sec--forest">
-    <div class="wrap">
-      <div class="grid g2" style="align-items:center">
-        <div>
-          <p class="kicker">{copy.stands.kicker}</p>
-          <h2 set:html={copy.stands.title} />
-          <p class="lead" style="color:rgba(255, 255, 255, .85)">{copy.stands.text}</p>
-          <div class="btn-row" style="margin-top:1.4rem">
-            <a class="btn btn--light" href={P('/exhibitors/packages/')}>{ru ? 'Все пакеты участия' : 'All participation packages'}</a>
-            <a class="btn btn--ghost" style="border-color:rgba(255, 255, 255, .4);color:rgba(255,255,255,.86)" href={P('/exhibitors/floor-plan/')}>{ru ? 'Планировка зала' : 'Floor plan'}</a>
-          </div>
-        </div>
-        <div class="grid g2">
-          {copy.stands.items.map((i) => (
-            <div class="stand-card">
-              <span class="ico-tile"><Icon name={i.icon} size={22} /></span>
-              <h3>{i.name}</h3>
-              <p>{i.note}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="sec">
+  <!-- 4 · why Samarkand: one stat band, once -->
+  <section class="sec sec--paper reveal">
     <div class="wrap">
       <div class="grid g-sidebar" style="align-items:center">
         <div>
-          <p class="kicker">{copy.market.kicker}</p>
-          <h2 set:html={copy.market.title} />
-          <p class="lead">{copy.market.text}</p>
+          <p class="kicker">{copy.marketKicker}</p>
+          <h2 set:html={copy.marketTitle} />
+          <p class="lead">{copy.marketText}</p>
           <div class="grid g2" style="margin-top:1.4rem">
-            {copy.market.countries.map(([c, note]) => (
+            {copy.countries.map(([c, note]) => (
               <div class="mini">
                 <b>{c}</b>
                 <span>{note}</span>
@@ -374,199 +266,127 @@ const jsonLd = [
           </div>
         </div>
         <div>
-          <img src="/images/samarkand.jpg" alt={ru ? 'Регистан в Самарканде' : 'Registan in Samarkand'} width="900" height="620" loading="lazy" decoding="async" style="border-radius:var(--r-lg)" />
-          <div class="stats" style="margin-top:1rem">
-            {site.stats.map((s) => (
-              <div class="stat">
-                <b class="num">{s.value}<small style="font-size:.5em"> {s.unit}</small></b>
-                <span>{ru ? s.ru : s.en}</span>
-              </div>
-            ))}
+          <img src="/images/samarkand-real.jpg" alt={ru ? 'Регистан в Самарканде' : 'Registan in Samarkand'} width="900" height="620" loading="lazy" decoding="async" style="border-radius:var(--r-lg)" />
+          <div style="margin-top:1rem">
+            <StatBand locale={locale} />
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="sec sec--paper">
+  <!-- 5 · media: one lead with a photo, three rows -->
+  <section class="sec reveal">
     <div class="wrap">
-      <SectionHead locale={locale} kicker={copy.program.kicker} title={copy.program.title} text={copy.program.text}>
-        <a slot="aside" class="btn btn--ghost btn--sm" href={P('/visitors/programme/')}>{ru ? 'Программа выставок' : 'Show programmes'} →</a>
-      </SectionHead>
-      <div class="rows">
-        {copy.program.points.map((p, i) => (
-          <div class="row">
-            <span class="row__n num">{String(i + 1).padStart(2, '0')}</span>
-            <h3>{p}</h3>
-            <p>{i === 0 ? (ru ? 'Каждая отраслевая выставка сопровождается форумами, круглыми столами и практическими сессиями.' : 'Every trade show runs with forums, round tables and hands-on sessions.') : i === 1 ? (ru ? 'Вы указываете, с кем хотите говорить, — мы присылаем список участников до старта.' : 'Tell us who you want to meet — we send the attendee list before the opening.') : i === 2 ? (ru ? 'Звук, свет, проекция, синхронный перевод и запись докладов по запросу.' : 'Sound, lighting, projection, interpreting and recorded talks on request.') : (ru ? 'Через две недели после выставки вы получаете отчёт со статистикой и контактами.' : 'Two weeks after the show you get a report with statistics and contacts.')}</p>
-          </div>
-        ))}
+      <div class="sec-head">
+        <div>
+          <p class="kicker">{copy.mediaKicker}</p>
+          <h2>{copy.mediaTitle}</h2>
+        </div>
+        <a class="txt-link" href={P('/news/')}>{copy.allNews} <Icon name="arrow" size={15} /></a>
+      </div>
+      {newsLead && (
+        <div style="margin-top:1.4rem">
+          <PostCard locale={locale} post={newsLead} path="/news/" variant="lead" priority />
+        </div>
+      )}
+      <div class="home-news-rows">
+        {newsRest.slice(0, 3).map((n) => <PostCard locale={locale} post={n} path="/news/" variant="row" />)}
       </div>
     </div>
   </section>
 
-  <section class="sec">
+  <!-- 6 · request + FAQ, full width, no empty column -->
+  <section class="sec sec--paper reveal" id="booking">
     <div class="wrap">
-      <SectionHead locale={locale} kicker={copy.services.kicker} title={copy.services.title} text={copy.services.text}>
-        <a slot="aside" class="btn btn--ghost btn--sm" href={P('/venue/services/')}>{ru ? 'Полный прайс услуг' : 'Full service price list'} →</a>
-      </SectionHead>
-      <FeatureGrid
+      <div class="grid g2" style="align-items:start">
+        <Faq locale={locale} items={faq} title={ru ? 'Частые вопросы' : 'Frequently asked questions'} />
+        <div>
+          <p class="kicker">{ru ? 'Заявка' : 'Request'}</p>
+          <h2 set:html={copy.formTitle} />
+          <p class="lead">{copy.formText}</p>
+          <ul class="form-list">
+            {copy.formList.map((x) => <li>{x}</li>)}
+          </ul>
+        </div>
+      </div>
+      <LeadForm
         locale={locale}
-        cols={4}
-        items={site.venue.services.slice(0, 8).map((s) => ({ icon: s.icon, title: s[locale].name, text: s[locale].text }))}
+        title={copy.formTitleCard}
+        subtitle={copy.formSub}
+        eventName={next.brand[locale]}
+        directions={ru
+          ? ['Продукты питания', 'Напитки', 'Стройматериалы', 'Агро', 'Авто', 'E-commerce и ритейл', 'Образование', 'Услуги', 'Другое']
+          : ['Food products', 'Drinks', 'Building materials', 'Agriculture', 'Automotive', 'E-commerce and retail', 'Education', 'Services', 'Other']}
       />
     </div>
   </section>
-
-  <section class="sec sec--paper">
-    <div class="wrap">
-      <SectionHead locale={locale} kicker={copy.media.kicker} title={copy.media.title} />
-      <div class="grid g3">
-        {news.map((n) => (
-          <a class="media-card" href={P(`/news/${n.id.split('/')[1]}/`)}>
-            <span class="mono-label">{ru ? 'Новость' : 'News'} · {n.data.date.toISOString().slice(0, 10)}</span>
-            <h3>{n.data.title}</h3>
-            <p>{n.data.description}</p>
-            <span class="media-card__go">→</span>
-          </a>
-        ))}
-      </div>
-      <div class="grid g3" style="margin-top:1rem">
-        {articles.map((a) => (
-          <a class="media-card" href={P(`/articles/${a.id.split('/')[1]}/`)}>
-            <span class="mono-label">{ru ? 'Аналитика' : 'Insight'} · {a.data.date.toISOString().slice(0, 10)}</span>
-            <h3>{a.data.title}</h3>
-            <p>{a.data.description}</p>
-            <span class="media-card__go">→</span>
-          </a>
-        ))}
-      </div>
-      <div class="btn-row" style="margin-top:1.4rem">
-        <a class="chip" href={P('/news/')}>{ru ? 'Все новости' : 'All news'} →</a>
-        <a class="chip" href={P('/articles/')}>{ru ? 'Аналитика рынков' : 'Market insights'} →</a>
-        <a class="chip" href={P('/news/media-kit/')}>{ru ? 'Медиа-кит' : 'Media kit'} →</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="sec">
-    <div class="wrap">
-      <SectionHead locale={locale} kicker={copy.partners.kicker} title={copy.partners.title} text={copy.partners.text} />
-      <div class="logos">
-        {['Управление Самаркандской области', 'Sellers Association of Uzbekistan', 'Uzbektourism', 'Iteca Exhibitions', 'Reikartz Hotel Group', 'Ticketon.uz', 'UFI — Global Association of the Industry', 'Drift Federation of Uzbekistan'].map((p) => <div>{p}</div>)}
-      </div>
-      <p class="small muted" style="margin-top:.9rem">{ru ? 'Станьте партнёром или информационным партнёром выставки — условия вышлем по запросу.' : 'Become a partner or media partner of an exhibition — terms on request.'} <a href={P('/about/partners/')}>{ru ? 'Подробнее' : 'Details'} →</a></p>
-    </div>
-  </section>
-
-  <Faq locale={locale} items={faq} />
-
-  <section class="sec sec--paper" id="booking">
-    <div class="wrap">
-      <div class="grid g-sidebar" style="align-items:start">
-        <div>
-          <p class="kicker">{copy.form.kicker}</p>
-          <h2 set:html={copy.form.title} />
-          <p class="lead">{copy.form.text}</p>
-          <ul style="padding-left:1.1rem;margin-top:1rem">
-            {(ru
-              ? ['Прайс-лист и план зала в PDF', 'Профиль аудитории и список участников', 'Фиксация цены раннего бронирования', 'Подбор места с учётом вашего продукта']
-              : ['Price list and hall plan in PDF', 'Audience profile and exhibitor list', 'Early-booking price lock', 'Location picked around your product']).map((x) => (
-              <li>{x}</li>
-            ))}
-          </ul>
-          <hr class="hairline" />
-          <p class="small muted" style="margin:0">
-            {ru ? 'Или свяжитесь напрямую:' : 'Or reach us directly:'}
-            <br />
-            <a href={telHref(site.contacts.phoneMain)}>{site.contacts.phoneMain}</a> · <a href={`mailto:${site.contacts.email}`}>{site.contacts.email}</a>
-          </p>
-        </div>
-        <LeadForm
-          locale={locale}
-          title={ru ? 'Заявка на стенд' : 'Stand request'}
-          subtitle={ru ? '30 секунд — без оплаты сейчас.' : '30 seconds — no payment now.'}
-          eventName={next.brand[locale]}
-          directions={ru
-            ? ['Продукты питания', 'Напитки', 'Стройматериалы', 'Агро', 'Авто', 'E-commerce и ритейл', 'Образование', 'Услуги', 'Другое']
-            : ['Food products', 'Drinks', 'Building materials', 'Agriculture', 'Automotive', 'E-commerce and retail', 'Education', 'Services', 'Other']}
-        />
-      </div>
-    </div>
-  </section>
-
-  <CtaBand
-    locale={locale}
-    kicker={ru ? 'Своё событие' : 'Your own event'}
-    title={ru ? 'Нужен зал под выставку, форум или фестиваль?' : 'Need a hall for a show, forum or festival?'}
-    text={ru ? '4 400 м² внутри, 5 000 м² снаружи, 700 кВт, парковка и кафе на территории. Пришлём свободные даты и ставку за кв. м.' : '4,400 m² indoors, 5,000 m² outside, 700 kW, parking and cafés on site. We send free dates and the per-m² rate.'}
-    primary={{ label: ru ? 'Расчёт даты и ставки' : 'Get dates and rates', href: P('/organizers/') }}
-    secondary={{ label: ru ? 'Техническая спецификация' : 'Technical data sheet', href: P('/venue/tech-specs/') }}
-  />
 </Base>}
 
 <style>
-  .stand-card {
-    background: rgba(255, 255, 255, 0.07);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    border-radius: var(--r-lg);
-    padding: clamp(1rem, .6rem + 1.4vw, 1.6rem);
+  .home-hero__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+    padding-bottom: 1px;
   }
-  .stand-card h3 {
-    font-size: 1.05rem;
-    margin: 0 0 .3em;
+  .home-hero__more:hover {
+    color: #fff;
+    border-color: var(--gold-soft);
   }
-  .stand-card p {
-    margin: 0;
-    font-size: .9rem;
-    color: rgba(255, 255, 255, .75);
+  .sec--tight {
+    padding-block: clamp(1.6rem, 1rem + 2vw, 3rem);
+  }
+  .sec-title {
+    margin: 0 0 1.6rem;
+    font-size: var(--t-h2);
   }
   .mini {
     display: flex;
     flex-direction: column;
-    gap: .1rem;
-    padding: .85rem 1rem;
+    gap: 0.1rem;
+    padding: 0.85rem 1rem;
     background: var(--paper);
     border: 1px solid var(--line);
     border-radius: var(--r);
   }
   .mini b {
     font-family: var(--f-display);
-    font-size: .98rem;
-    letter-spacing: -.01em;
+    font-size: 0.98rem;
+    letter-spacing: -0.01em;
   }
   .mini span {
-    font-size: .85rem;
+    font-size: 0.85rem;
     color: var(--ink-60);
   }
-  .media-card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: .4rem;
-    background: var(--cream);
-    border: 1px solid var(--line);
-    border-radius: var(--r-lg);
-    padding: clamp(1.1rem, .7rem + 1.2vw, 1.6rem);
+  .txt-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--ink);
     text-decoration: none;
-    transition: border-color var(--tr), background-color var(--tr);
+    border-bottom: 1px solid var(--line-strong);
+    padding-bottom: 1px;
   }
-  .media-card:hover {
+  .txt-link:hover {
     border-color: var(--ink);
-    box-shadow: var(--shadow-soft);
   }
-  .media-card h3 {
-    font-size: 1.12rem;
-    margin: 0;
+  .home-news-rows {
+    margin-top: 0.8rem;
+    border-top: 1px solid var(--line);
   }
-  .media-card p {
-    margin: 0;
-    font-size: .92rem;
+  .form-list {
+    padding-left: 1.1rem;
+    margin-top: 1rem;
+    display: grid;
+    gap: 0.4rem;
     color: var(--ink-60);
-  }
-  .media-card__go {
-    margin-top: auto;
-    color: var(--moss);
-    font-weight: 700;
   }
 </style>

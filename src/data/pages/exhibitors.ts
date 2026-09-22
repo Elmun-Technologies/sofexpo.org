@@ -35,8 +35,8 @@ export const exhibitorPages: PageDef[] = [
             { label: "Получить прайс и план зала", href: "/request-stand/" },
             { label: "Пакеты участия", href: "/exhibitors/packages/" },
           ],
-          image: "/images/event-foodera.jpg",
-          imageAlt: "Стенд производителя на выставке FOODERA EXPO",
+          image: "/images/hall-stand.jpg",
+          imageAlt: "Выставочный зал: стенды и поток посетителей",
         },
         {
           type: "stats",
@@ -112,6 +112,33 @@ export const exhibitorPages: PageDef[] = [
               icon: "shield",
               title: "Госпрограммы",
               text: "На отраслевых выставках присутствуют банки, лизинг и регуляторы: субсидии и компенсации затрат.",
+            },
+          ],
+        },
+        {
+          type: "h2",
+          kicker: "Площадка",
+          title: "Так выглядят дни выставки",
+          text: "Съёмка делается в реальные дни монтажа и работы выставок — без рендеров и постановочных интерьеров.",
+        },
+        {
+          type: "gallery",
+          items: [
+            {
+              src: "/images/hall-crowd.jpg",
+              caption: "День выставки: поток посетителей в главном зале",
+            },
+            {
+              src: "/images/hall-walk.jpg",
+              caption: "Проход между стендами",
+            },
+            {
+              src: "/images/conference-audience.jpg",
+              caption: "Конференц-зал во время деловой программы",
+            },
+            {
+              src: "/images/food-tasting.jpg",
+              caption: "FOODERA EXPO: дегустационная линия",
             },
           ],
         },
@@ -238,8 +265,8 @@ export const exhibitorPages: PageDef[] = [
             { label: "Get rates and floor plan", href: "/request-stand/" },
             { label: "Participation packages", href: "/exhibitors/packages/" },
           ],
-          image: "/images/event-foodera.jpg",
-          imageAlt: "Producer stand at FOODERA EXPO",
+          image: "/images/hall-stand.jpg",
+          imageAlt: "Exhibition hall with stands and foot traffic",
         },
         {
           type: "stats",
@@ -315,6 +342,33 @@ export const exhibitorPages: PageDef[] = [
               icon: "shield",
               title: "Public programmes",
               text: "Banks, leasing companies and regulators attend industry shows: subsidies and cost compensation.",
+            },
+          ],
+        },
+        {
+          type: "h2",
+          kicker: "The venue",
+          title: "What show days look like",
+          text: "Shot on real build-up and show days — no renders, no staged interiors.",
+        },
+        {
+          type: "gallery",
+          items: [
+            {
+              src: "/images/hall-crowd.jpg",
+              caption: "Show day: visitor flow in the main hall",
+            },
+            {
+              src: "/images/hall-walk.jpg",
+              caption: "Aisle between stands",
+            },
+            {
+              src: "/images/conference-audience.jpg",
+              caption: "Conference hall during the business programme",
+            },
+            {
+              src: "/images/food-tasting.jpg",
+              caption: "FOODERA EXPO: tasting line",
             },
           ],
         },

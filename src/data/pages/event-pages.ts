@@ -107,6 +107,8 @@ export const eventPages: Record<string, EventPages> = {
                 "FOODERA проходит в Самарканде не случайно: город — логистический узел юга Узбекистана, где сходятся потоки из Ташкента, Бухары, Карши и пограничных регионов. Для поставщика это способ за три дня покрыть переговоры, которые иначе растягиваются на сезон объезда.",
                 "Рынок одновременно и щедрый, и придирчивый: розница Узбекистана выросла до 182 трлн сумов за 2024 год, но полка ограничена. Побеждает тот, кто приехал с образцом, ценой и готовностью к первой поставке.",
               ],
+              image: "/images/food-tasting.jpg",
+              imageAlt: "Дегустации на FOODERA EXPO",
             },
             {
               type: "callout",
@@ -155,6 +157,8 @@ export const eventPages: Record<string, EventPages> = {
                 "FOODERA is held in Samarkand for a reason: the city is a logistics node of southern Uzbekistan where flows from Tashkent, Bukhara, Karshi and the border regions meet. For a supplier it is three days that replace a season of field trips.",
                 "The market is generous and demanding at once: Uzbekistan retail reached 182 billion UZS in 2024, but shelf space is finite. The one who arrives with a sample, a price and a first delivery date wins.",
               ],
+              image: "/images/food-tasting.jpg",
+              imageAlt: "Tastings at FOODERA EXPO",
             },
             {
               type: "callout",
@@ -660,6 +664,8 @@ eventPages["buildpro-expo"] = {
             "BUILD PRO вырос из региональной строительной выставки в площадку, куда приезжают за поставщиками из Турции и Китая: на площадке работают переводчики, а деловая программа ведётся на четырёх языках.",
             "Отдельная часть — форум архитекторов и дизайнеров: сессии о материалах, световых решениях и частном домостроении. Для поставщика это шанс попасть в спецификации объектов, которые строятся в 2027 году.",
           ],
+          image: "/images/hall-stand.jpg",
+          imageAlt: "Выставочный зал BUILD PRO EXPO",
         },
         {
           type: "callout",
@@ -724,6 +730,8 @@ eventPages["buildpro-expo"] = {
             "BUILD PRO grew from a regional construction show into a venue where suppliers from Turkey and China look for partners. Interpreters work on site and the business programme runs in four languages.",
             "A separate track is the architects and designers forum: sessions on materials, lighting and private housing. For a supplier this is a way into the specifications of objects built in 2027.",
           ],
+          image: "/images/hall-stand.jpg",
+          imageAlt: "BUILD PRO EXPO exhibition hall",
         },
         {
           type: "callout",
@@ -1185,6 +1193,8 @@ eventPages["agropro-expo"] = {
             "Весенняя полевая подготовка в Узбекистане начинается раньше, чем в соседних странах: техника и запчасти должны быть в хозяйстве к марту, семена и средства защиты — к посевной. Выставка стоит ровно на границе этого окна, поэтому решения о закупке здесь принимаются на месте, а не «после возвращения».",
             "Второй фактор — деньги. На площадке работают лизинговые компании, банки с льготными линиями и представители программ господдержки: условия финансирования обсуждаются с теми, кто их утверждает.",
           ],
+          image: "/images/greenhouse-tomatoes.jpg",
+          imageAlt: "Тепличное овощеводство — раздел AGROPRO EXPO",
         },
         {
           type: "grid",
@@ -1243,6 +1253,8 @@ eventPages["agropro-expo"] = {
             'Spring field preparation in Uzbekistan starts earlier than in neighbouring countries: machinery and spare parts must reach the farm by March, seeds and crop protection by sowing. The exhibition sits exactly on the edge of that window, which is why purchase decisions are taken on site rather than "after the trip".',
             "The second factor is money. Leasing companies, banks with concessional lines and representatives of state support programs work at the venue: financing terms are discussed with the people who approve them.",
           ],
+          image: "/images/greenhouse-tomatoes.jpg",
+          imageAlt: "Greenhouse vegetables — an AGROPRO EXPO section",
         },
         {
           type: "grid",
@@ -2141,6 +2153,8 @@ eventPages["world-edu-expo"] = {
             "Выставка проходит в апреле, когда решение уже созрело, но до подачи документов ещё есть время: это последний шанс изменить подготовку, а не просто посмотреть буклеты.",
             "Мы просим вузы приносить не только буклеты, а конкретные цифры: конкурс на направление, стоимость, стипендиальные места и требования к языку. Без этого разговор с абитуриентом не сложится.",
           ],
+          image: "/images/students-campus.jpg",
+          imageAlt: "Студенты на кампусе — аудитория WORLD EDU EXPO",
         },
         {
           type: "quote",
@@ -2196,6 +2210,8 @@ eventPages["world-edu-expo"] = {
             "The show runs in April, when the decision has formed but applications are still ahead: it is the last chance to change your preparation, not just collect brochures.",
             "We ask universities to bring numbers, not only leaflets: competition per program, tuition, scholarship seats and language requirements. Without that, a conversation with an applicant does not happen.",
           ],
+          image: "/images/students-campus.jpg",
+          imageAlt: "Students on campus — the WORLD EDU EXPO audience",
         },
         {
           type: "quote",
@@ -2591,6 +2607,8 @@ eventPages["ecom-retail-expo"] = {
             "Логика выставки простая: узбекский производитель умеет делать продукт, но не умеет продавать онлайн; предприниматель умеет продавать, но не имеет производства. White Label смыкает эти две компетенции в одну сделку — контрактное производство под брендом продавца.",
             "Отсюда и состав участников: фабрики и цеха, селлеры маркетплейсов, фулфилмент, эквайринг и рассрочки, IT-сервисы для торговли, упаковка и фото-продакшн.",
           ],
+          image: "/images/supermarket-aisle.jpg",
+          imageAlt: "Розничная полка — раздел E-COM & RETAIL EXPO",
         },
         {
           type: "grid",
@@ -2659,6 +2677,8 @@ eventPages["ecom-retail-expo"] = {
             "The logic is simple: an Uzbek manufacturer can produce but cannot sell online; an entrepreneur can sell but has no production. White Label closes those two competencies into one deal — contract manufacturing under the seller\u2019s brand.",
             "That defines the line-up: factories and workshops, marketplace sellers, fulfilment, acquiring and instalments, IT services for retail, packaging and photo production.",
           ],
+          image: "/images/supermarket-aisle.jpg",
+          imageAlt: "Retail shelf — an E-COM & RETAIL EXPO section",
         },
         {
           type: "grid",

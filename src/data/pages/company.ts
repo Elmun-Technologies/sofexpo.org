@@ -227,8 +227,8 @@ export const companyPages: PageDef[] = [
           title: "У каждого вопроса — своё имя",
           lead: "Мы принципиально не прячем контакты за общей почтой. Ниже — роли и зоны ответственности; имя конкретного менеджера по вашей выставке вы получите в первом же письме.",
           actions: [{ label: "Написать в отдел продаж", href: "/contacts/" }],
-          image: "/images/event-ecom.jpg",
-          imageAlt: "Команда на площадке",
+          image: "/images/office-people.jpg",
+          imageAlt: "Команда за работой",
         },
         {
           type: "rows",
@@ -282,8 +282,8 @@ export const companyPages: PageDef[] = [
           title: "Every question has a name",
           lead: "We do not hide contacts behind a generic mailbox. Below are the roles and what they own; the specific manager for your show is named in the first reply.",
           actions: [{ label: "Write to sales", href: "/contacts/" }],
-          image: "/images/event-ecom.jpg",
-          imageAlt: "Team on site",
+          image: "/images/office-people.jpg",
+          imageAlt: "The team at work",
         },
         {
           type: "rows",

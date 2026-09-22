@@ -96,6 +96,29 @@ export const organizerPages: PageDef[] = [
           ],
         },
         {
+          type: "h2",
+          kicker: "Площадка",
+          title: "Как проходят события в центре",
+          text: "Съёмка — с реальных событий: конференции, выставки и фестивали на этой площадке.",
+        },
+        {
+          type: "gallery",
+          items: [
+            {
+              src: "/images/conference-audience.jpg",
+              caption: "Конференция в конференц-зале на 350 мест",
+            },
+            {
+              src: "/images/hall-stand.jpg",
+              caption: "Монтаж экспозиции в главном зале",
+            },
+            {
+              src: "/images/hall-crowd.jpg",
+              caption: "День мероприятия: поток посетителей",
+            },
+          ],
+        },
+        {
           type: "rows",
           items: [
             {
@@ -213,6 +236,29 @@ export const organizerPages: PageDef[] = [
               icon: "chart",
               title: "Marketing and media",
               text: "Announcements, mailing from our database, a press area and streaming.",
+            },
+          ],
+        },
+        {
+          type: "h2",
+          kicker: "The venue",
+          title: "How events run at the centre",
+          text: "Shot at real events: conferences, exhibitions and festivals on this site.",
+        },
+        {
+          type: "gallery",
+          items: [
+            {
+              src: "/images/conference-audience.jpg",
+              caption: "Conference in the 350-seat hall",
+            },
+            {
+              src: "/images/hall-stand.jpg",
+              caption: "Exhibition build-up in the main hall",
+            },
+            {
+              src: "/images/hall-crowd.jpg",
+              caption: "Event day: visitor flow",
             },
           ],
         },

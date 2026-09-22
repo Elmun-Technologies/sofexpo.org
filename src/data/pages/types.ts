@@ -47,6 +47,9 @@ export interface BlockCard {
   text?: string;
   meta?: string;
   href?: string;
+  /** optional photo at the top of the card (stock placeholder until client photos arrive) */
+  image?: string;
+  imageAlt?: string;
 }
 export interface BlockRow {
   title: string;

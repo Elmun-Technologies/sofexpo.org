@@ -394,8 +394,8 @@ export const venuePages: PageDef[] = [
           kicker: "Залы",
           title: "Планировки, которые выдерживают и выставку, и фестиваль",
           lead: "Ниже — базовые конфигурации, которые мы используем в своих выставках. Они же служат отправной точкой для сторонних организаторов: меняются только плотность стендов и место сцены.",
-          image: "/images/hero-hall.jpg",
-          imageAlt: "Выставочный зал SOF EXPO Samarkand",
+          image: "/images/hall-stand.jpg",
+          imageAlt: "Выставочный зал SOF EXPO Samarkand со стендами",
           actions: [
             { label: "Запросить план в PDF", href: "/venue/tech-specs/" },
             { label: "Обсудить конфигурацию", href: "/contacts/" },
@@ -500,8 +500,8 @@ export const venuePages: PageDef[] = [
           kicker: "Halls",
           title: "Layouts that carry both a trade show and a festival",
           lead: "Below are the baseline configurations we run for our own shows. They are also the starting point for external organizers: only stand density and stage position change.",
-          image: "/images/hero-hall.jpg",
-          imageAlt: "SOF EXPO Samarkand exhibition hall",
+          image: "/images/hall-stand.jpg",
+          imageAlt: "SOF EXPO Samarkand exhibition hall with stands",
           actions: [
             { label: "Request the plan (PDF)", href: "/venue/tech-specs/" },
             { label: "Discuss a layout", href: "/contacts/" },
@@ -1148,8 +1148,8 @@ export const venuePages: PageDef[] = [
           kicker: "Логистика",
           title: "16 км от аэропорта, 23 км от вокзала",
           lead: "Центр стоит на выезде из Самарканда, поэтому до нас одинаково удобно ехать и из города, и напрямую из аэропорта — без транзита через центр. Парковка при въезде, свободная, без оплаты.",
-          image: "/images/samarkand.jpg",
-          imageAlt: "Самарканд",
+          image: "/images/samarkand-real.jpg",
+          imageAlt: "Регистан в Самарканде",
           actions: [
             {
               label: "Открыть в картах",
@@ -1254,8 +1254,8 @@ export const venuePages: PageDef[] = [
           kicker: "Logistics",
           title: "16 km from the airport, 23 km from the station",
           lead: "The centre sits on the outbound side of Samarkand, so it is equally easy to reach from the city and straight from the airport without crossing the centre. Parking is at the gate, free and open.",
-          image: "/images/samarkand.jpg",
-          imageAlt: "Samarkand",
+          image: "/images/samarkand-real.jpg",
+          imageAlt: "Registan in Samarkand",
           actions: [
             {
               label: "Open in Maps",
@@ -1374,40 +1374,32 @@ export const venuePages: PageDef[] = [
           type: "gallery",
           items: [
             {
-              src: "/images/hero-hall.jpg",
+              src: "/images/hall-stand.jpg",
               caption: "Главный зал: экспозиция и переговорные зоны",
+            },
+            {
+              src: "/images/hall-crowd.jpg",
+              caption: "День выставки: поток посетителей в главном зале",
             },
             {
               src: "/images/venue-exterior.jpg",
               caption: "Входная группа и парковка",
             },
             {
-              src: "/images/venue-conference.jpg",
-              caption: "Конференц-зал во время форума",
+              src: "/images/conference-audience.jpg",
+              caption: "Конференц-зал во время деловой программы",
             },
             {
-              src: "/images/event-buildpro.jpg",
-              caption: "BUILD PRO EXPO: материалы и оборудование",
+              src: "/images/food-tasting.jpg",
+              caption: "FOODERA EXPO: дегустационный стенд",
             },
             {
-              src: "/images/event-foodera.jpg",
-              caption: "FOODERA EXPO: стенды производителей",
+              src: "/images/food-tasting-counter.jpg",
+              caption: "FOODERA EXPO: дегустационная линия",
             },
             {
-              src: "/images/event-agropro.jpg",
-              caption: "AGROPRO EXPO: техника в зале и на улице",
-            },
-            {
-              src: "/images/event-promotors.jpg",
-              caption: "PROMOTORS SHOW: шоу-программа на открытой площадке",
-            },
-            {
-              src: "/images/event-worldedu.jpg",
-              caption: "WORLD EDU: консультации абитуриентов",
-            },
-            {
-              src: "/images/event-ecom.jpg",
-              caption: "ECOM & RETAIL: сцена форума и фото-зона",
+              src: "/images/hall-walk.jpg",
+              caption: "Проход между стендами в главный зал",
             },
           ],
         },
@@ -1451,40 +1443,32 @@ export const venuePages: PageDef[] = [
           type: "gallery",
           items: [
             {
-              src: "/images/hero-hall.jpg",
+              src: "/images/hall-stand.jpg",
               caption: "Main hall: expo and meeting zones",
+            },
+            {
+              src: "/images/hall-crowd.jpg",
+              caption: "Show day: visitor flow in the main hall",
             },
             {
               src: "/images/venue-exterior.jpg",
               caption: "Entrance and parking",
             },
             {
-              src: "/images/venue-conference.jpg",
-              caption: "Conference hall during a forum",
+              src: "/images/conference-audience.jpg",
+              caption: "Conference hall during the business programme",
             },
             {
-              src: "/images/event-buildpro.jpg",
-              caption: "BUILD PRO EXPO: materials and equipment",
+              src: "/images/food-tasting.jpg",
+              caption: "FOODERA EXPO: tasting stand",
             },
             {
-              src: "/images/event-foodera.jpg",
-              caption: "FOODERA EXPO: producer stands",
+              src: "/images/food-tasting-counter.jpg",
+              caption: "FOODERA EXPO: tasting line",
             },
             {
-              src: "/images/event-agropro.jpg",
-              caption: "AGROPRO EXPO: machinery indoors and outdoors",
-            },
-            {
-              src: "/images/event-promotors.jpg",
-              caption: "PROMOTORS SHOW: open-air programme",
-            },
-            {
-              src: "/images/event-worldedu.jpg",
-              caption: "WORLD EDU: student consultations",
-            },
-            {
-              src: "/images/event-ecom.jpg",
-              caption: "ECOM & RETAIL: forum stage and photo zone",
+              src: "/images/hall-walk.jpg",
+              caption: "Aisle between stands to the main hall",
             },
           ],
         },

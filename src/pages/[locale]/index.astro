@@ -64,9 +64,9 @@ const copy = {
     venueText: 'Электричество 700 кВт, климат-контроль, аудио, интернет и подъезд для фур уже в здании. Технические детали высылаем до подписания договора.',
     doorsTitle: 'Выберите свою дверь',
     doors: [
-      { title: 'Экспонентам', text: 'Площадь, застройка, услуга «стенд под ключ», реклама на площадке и список закупщиков до старта выставки.', href: '/exhibitors/', meta: 'Пакеты и цены' },
-      { title: 'Посетителям', text: 'Билеты и бесплатная регистрация, расписание докладов, маршрут, отели и что взять с собой.', href: '/visitors/', meta: 'Как посетить' },
-      { title: 'Организаторам событий', text: 'Аренда зала под свою выставку, конференцию или фестиваль — с техподдержкой и сервисом на площадке.', href: '/organizers/', meta: 'Забронировать площадку' },
+      { title: 'Экспонентам', text: 'Площадь, застройка, услуга «стенд под ключ», реклама на площадке и список закупщиков до старта выставки.', href: '/exhibitors/', meta: 'Пакеты и цены', image: '/images/hall-stand.jpg', imageAlt: 'Выставочный зал: стенды на монтаже' },
+      { title: 'Посетителям', text: 'Билеты и бесплатная регистрация, расписание докладов, маршрут, отели и что взять с собой.', href: '/visitors/', meta: 'Как посетить', image: '/images/hall-crowd.jpg', imageAlt: 'Посетители в зале в день выставки' },
+      { title: 'Организаторам событий', text: 'Аренда зала под свою выставку, конференцию или фестиваль — с техподдержкой и сервисом на площадке.', href: '/organizers/', meta: 'Забронировать площадку', image: '/images/conference-audience.jpg', imageAlt: 'Конференц-зал: деловая программа' },
     ],
     marketKicker: 'Почему Самарканд',
     marketTitle: 'Транзитный узел между шестью рынками',
@@ -103,9 +103,9 @@ const copy = {
     venueText: '700 kW power, climate control, audio, internet and truck access are already in the shell. Technical details go out before the contract is signed.',
     doorsTitle: 'Pick your door',
     doors: [
-      { title: 'For exhibitors', text: 'Space, shell scheme, turnkey stands, on-site advertising and a buyer list before the doors open.', href: '/exhibitors/', meta: 'Packages and rates' },
-      { title: 'For visitors', text: 'Tickets and free registration, talk schedule, route plan, hotels and what to bring.', href: '/visitors/', meta: 'How to attend' },
-      { title: 'For event organizers', text: 'Hall rental for your own show, conference or festival, with technical and visitor services.', href: '/organizers/', meta: 'Book the venue' },
+      { title: 'For exhibitors', text: 'Space, shell scheme, turnkey stands, on-site advertising and a buyer list before the doors open.', href: '/exhibitors/', meta: 'Packages and rates', image: '/images/hall-stand.jpg', imageAlt: 'Exhibition hall: stands during build-up' },
+      { title: 'For visitors', text: 'Tickets and free registration, talk schedule, route plan, hotels and what to bring.', href: '/visitors/', meta: 'How to attend', image: '/images/hall-crowd.jpg', imageAlt: 'Visitors in the hall on show day' },
+      { title: 'For event organizers', text: 'Hall rental for your own show, conference or festival, with technical and visitor services.', href: '/organizers/', meta: 'Book the venue', image: '/images/conference-audience.jpg', imageAlt: 'Conference hall: business programme' },
     ],
     marketKicker: 'Why Samarkand',
     marketTitle: 'A transit node between six markets',
@@ -244,7 +244,7 @@ const jsonLd = [
   <section class="sec">
     <div class="wrap">
       <h2 class="sec-title">{copy.doorsTitle}</h2>
-      <FeatureGrid locale={locale} cols={3} items={copy.doors.map((i) => ({ title: i.title, text: i.text, href: P(i.href), meta: i.meta }))} />
+      <FeatureGrid locale={locale} cols={3} items={copy.doors.map((i) => ({ title: i.title, text: i.text, href: P(i.href), meta: i.meta, image: i.image, imageAlt: i.imageAlt }))} />
     </div>
   </section>
 
@@ -266,7 +266,7 @@ const jsonLd = [
           </div>
         </div>
         <div>
-          <img src="/images/samarkand.jpg" alt={ru ? 'Регистан в Самарканде' : 'Registan in Samarkand'} width="900" height="620" loading="lazy" decoding="async" style="border-radius:var(--r-lg)" />
+          <img src="/images/samarkand-real.jpg" alt={ru ? 'Регистан в Самарканде' : 'Registan in Samarkand'} width="900" height="620" loading="lazy" decoding="async" style="border-radius:var(--r-lg)" />
           <div style="margin-top:1rem">
             <StatBand locale={locale} />
           </div>

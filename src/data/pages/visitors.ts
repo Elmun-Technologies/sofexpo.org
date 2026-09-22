@@ -719,8 +719,8 @@ export const visitorPages: PageDef[] = [
           kicker: "Программа",
           title: "Сессии, которые экономят месяц переписки",
           lead: "Деловая программа идёт параллельно с экспозицией: сцена в зале и конференц-зал. Вход на доклады включён в билет посетителя, на закрытые сессии — по списку.",
-          image: "/images/venue-conference.jpg",
-          imageAlt: "Конференц-зал во время форума",
+          image: "/images/conference-audience.jpg",
+          imageAlt: "Конференц-зал: деловая программа",
           actions: [
             { label: "Предложить спикера", href: "/contacts/" },
             { label: "Заказать сессию", href: "/organizers/conferences/" },
@@ -834,8 +834,8 @@ export const visitorPages: PageDef[] = [
           kicker: "Programme",
           title: "Sessions that save you a month of email",
           lead: "The business programme runs alongside the expo: a stage in the hall and a conference hall. Talks are included in the visitor ticket; closed sessions are on a list.",
-          image: "/images/venue-conference.jpg",
-          imageAlt: "Conference during a forum",
+          image: "/images/conference-audience.jpg",
+          imageAlt: "Conference hall: business programme",
           actions: [
             { label: "Propose a speaker", href: "/contacts/" },
             { label: "Order a session", href: "/organizers/conferences/" },

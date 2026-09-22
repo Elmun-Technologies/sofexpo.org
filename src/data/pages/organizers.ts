@@ -553,8 +553,8 @@ export const organizerPages: PageDef[] = [
           kicker: "Конгресс-сервис",
           title: "Программа, которую слышно и видно",
           lead: "Собираем деловую часть под ключ: от сцены и звука до регистрации делегатов и записи выступлений. Можно заказать как весь контур, так и отдельные позиции.",
-          image: "/images/venue-conference.jpg",
-          imageAlt: "Конференц-зал",
+          image: "/images/conference-audience.jpg",
+          imageAlt: "Конференция в конференц-зале",
           actions: [{ label: "Заказать программу", href: "/contacts/" }],
         },
         {
@@ -624,8 +624,8 @@ export const organizerPages: PageDef[] = [
           kicker: "Congress service",
           title: "A programme you can hear and see",
           lead: "We build the business side turnkey: from stage and sound to delegate registration and session recording. Order the whole contour or single items.",
-          image: "/images/venue-conference.jpg",
-          imageAlt: "Conference hall",
+          image: "/images/conference-audience.jpg",
+          imageAlt: "Conference in the conference hall",
           actions: [{ label: "Order a programme", href: "/contacts/" }],
         },
         {

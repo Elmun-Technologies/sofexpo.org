@@ -620,8 +620,8 @@ export const venuePages: PageDef[] = [
           kicker: "Сервис",
           title: "Всё, что делает стенд рабочим, заказывается одним бланком",
           lead: "Мы не делим услуги на «обязательные у партнёров» и «только свои». Форма подается до монтажа, позиции подтверждаются вместе со сметой — так на площадке не появляется ситуация «а этого у нас нет».",
-          image: "/images/venue-conference.jpg",
-          imageAlt: "Конференц-зал экспоцентра",
+          image: "/images/hall-walk.jpg",
+          imageAlt: "Зал в день работы: услуги площадки",
           actions: [
             { label: "Заказать услуги", href: "/contacts/" },
             { label: "Скачать бланк заявки", href: "/files/service-order.pdf" },
@@ -770,8 +770,8 @@ export const venuePages: PageDef[] = [
           kicker: "Services",
           title: "Everything that makes a stand work is ordered on one form",
           lead: 'We do not split services into "mandatory via partners" and "ours only". The order form goes in before build-up and every line is confirmed with the quote — so nothing is missing on site.',
-          image: "/images/venue-conference.jpg",
-          imageAlt: "Conference hall at the centre",
+          image: "/images/hall-walk.jpg",
+          imageAlt: "Hall on a working day: venue services",
           actions: [
             { label: "Order services", href: "/contacts/" },
             {

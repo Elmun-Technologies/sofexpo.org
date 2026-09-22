@@ -977,8 +977,8 @@ export const exhibitorPages: PageDef[] = [
           kicker: "Застройка",
           title: "Три уровня стенда и один вопрос: что вы показываете",
           lead: "Если продукт нужно взять в руки — хватает готовой застройки. Если продукт нужно включить — планируйте собственную застройку. Если продукт едет на фурах — вам на открытую площадку.",
-          image: "/images/event-buildpro.jpg",
-          imageAlt: "Строительный стенд с образцами",
+          image: "/images/hall-stand.jpg",
+          imageAlt: "Стенды в монтаже: каркас и брендирование",
         },
         {
           type: "grid",
@@ -1059,8 +1059,8 @@ export const exhibitorPages: PageDef[] = [
           kicker: "Build",
           title: "Three stand levels and one question: what do you show",
           lead: "If the product is picked up, a shell scheme is enough. If it must be switched on, plan a custom build. If it arrives by truck, you belong on the open area.",
-          image: "/images/event-buildpro.jpg",
-          imageAlt: "Construction stand with samples",
+          image: "/images/hall-stand.jpg",
+          imageAlt: "Stands under construction: shell and branding",
         },
         {
           type: "grid",
@@ -1164,8 +1164,8 @@ export const exhibitorPages: PageDef[] = [
           kicker: "Сервис",
           title: "Соберите участие как конструктор — один бланк, один счёт",
           lead: "Все позиции подтверждаются до монтажа, поэтому в день заезда ничего «вдруг» не появляется. Ниже — то, что чаще всего заказывают.",
-          image: "/images/venue-conference.jpg",
-          imageAlt: "Конференц-зал центра",
+          image: "/images/hall-crowd.jpg",
+          imageAlt: "Сервис на площадке в день выставки",
         },
         {
           type: "grid",
@@ -1270,8 +1270,8 @@ export const exhibitorPages: PageDef[] = [
           title:
             "Assemble participation like a constructor — one form, one invoice",
           lead: 'Everything is confirmed before build-up, so nothing appears "suddenly" on arrival day. Below is what is ordered most often.',
-          image: "/images/venue-conference.jpg",
-          imageAlt: "Conference hall",
+          image: "/images/hall-crowd.jpg",
+          imageAlt: "On-site services on show day",
         },
         {
           type: "grid",
@@ -1390,8 +1390,8 @@ export const exhibitorPages: PageDef[] = [
           kicker: "Спонсорство",
           title: "Контент, который видит вся аудитория, а не только ваш проход",
           lead: "Спонсорский пакет — самый быстрый способ занять место в сценарии выставки: доклады, приветствие, награды, материалы в сумке участника.",
-          image: "/images/event-worldedu.jpg",
-          imageAlt: "Деловая программа выставки",
+          image: "/images/hall-stand.jpg",
+          imageAlt: "Зал с брендированными стендами",
         },
         {
           type: "table",
@@ -1478,8 +1478,8 @@ export const exhibitorPages: PageDef[] = [
           kicker: "Sponsorship",
           title: "Content the whole audience sees, not only your aisle",
           lead: "A sponsorship package is the fastest way to enter the script of the exhibition: talks, welcome word, awards, material in the participant bag.",
-          image: "/images/event-worldedu.jpg",
-          imageAlt: "Business programme",
+          image: "/images/hall-stand.jpg",
+          imageAlt: "Hall with branded stands",
         },
         {
           type: "table",

@@ -134,13 +134,6 @@ async function one(name, [file]) {
   const maxW = hero ? Math.min(1600, Math.max(640, (meta.width ?? 0) * 3)) : Math.min(1600, meta.width ?? 1600);
   let bytes = 0;
 
-  const base = () => {
-    const p = sharp(src, { failOn: 'none' }).rotate();
-    return NO_CROP.has(name)
-      ? p
-      : p.resize({ width: maxW, kernel: 'lanczos3', withoutEnlargement: !hero });
-  };
-
   const crop = (w) => {
     const p = sharp(src, { failOn: 'none' }).rotate();
     if (NO_CROP.has(name)) return p.resize({ width: Math.min(w, maxW), withoutEnlargement: true });
@@ -155,8 +148,31 @@ async function one(name, [file]) {
     return hero && (meta.width ?? 0) < w ? out.sharpen({ sigma: 0.8, m1: 0.6, m2: 1.4 }) : out;
   };
 
+  /* The JPEG has two jobs and neither of them needs 1600 pixels:
+     1. the <picture> fallback, which in practice only fires for a browser with no WebP —
+        that population is ancient hardware on a small screen, not a 4K desktop;
+     2. the og:image, and the Open Graph spec's own recommendation is 1200x630.
+     Capping it at 1200w turns the biggest single file on the site (hero-hall.jpg, 274 KB)
+     into something a third the size while the WebP ladder — which every real visitor
+     actually receives — is untouched. */
+  const JPEG_MAX = 1200;
   const jpg = path.join(OUT, `${name}.jpg`);
-  await base().jpeg({ quality: 78, progressive: true, mozjpeg: true }).toFile(jpg);
+  await sharp(src, { failOn: 'none' })
+    .rotate()
+    .resize(
+      NO_CROP.has(name)
+        ? { width: Math.min(JPEG_MAX, maxW), withoutEnlargement: true }
+        : {
+            width: Math.min(JPEG_MAX, maxW),
+            height: Math.round(Math.min(JPEG_MAX, maxW) / ratio),
+            fit: 'cover',
+            position: 'attention',
+            kernel: 'lanczos3',
+            withoutEnlargement: !hero,
+          },
+    )
+    .jpeg({ quality: 76, progressive: true, mozjpeg: true, chromaSubsampling: '4:2:0' })
+    .toFile(jpg);
   bytes += statSync(jpg).size;
 
   for (const w of WIDTHS) {
@@ -246,3 +262,17 @@ for (const f of await readdir(OUT)) {
 for (const k of Object.keys(manifest)) manifest[k].sort((a, b) => a - b);
 writeFileSync('src/data/photos.json', JSON.stringify(manifest, null, 2) + '\n');
 console.log(`manifest: ${Object.keys(manifest).length} photos`);
+
+/* The .jpg doubles as the og:image, and Facebook/Telegram/WhatsApp all trust the declared
+   og:image:width/height over the bytes. Hard-coding 1200x630 was a lie for every photo
+   whose source was smaller, which makes a scraper reserve the wrong box and crop the
+   preview. Measure them instead. */
+const dims = {};
+for (const f of await readdir(OUT)) {
+  const mm = /^([a-z0-9-]+)\.jpg$/.exec(f);
+  if (!mm) continue;
+  const { width, height } = await sharp(path.join(OUT, f)).metadata();
+  dims[mm[1]] = [width, height];
+}
+writeFileSync('src/data/photo-dims.json', JSON.stringify(dims, null, 2) + '\n');
+console.log(`og dimensions: ${Object.keys(dims).length} photos`);

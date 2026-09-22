@@ -8,6 +8,7 @@ import { CURRENT_BRAND, isRootHost } from '@/data/hosts';
 import { brandCss } from '@/data/brands';
 import { useUI } from '@/i18n/ui';
 import photos from '@/data/photos.json';
+import photoDims from '@/data/photo-dims.json';
 import Header from '@/components/Header.astro';
 import PromoBar from '@/components/PromoBar.astro';
 import Footer from '@/components/Footer.astro';
@@ -97,6 +98,12 @@ const crumbs = [{ name: t('breadcrumbs.home'), path: '/' }, ...breadcrumbs];
 /* The LCP hero is served as WebP through <Photo>; preloading the JPEG would download the
    picture twice. Resolve the same ladder here so the preload hint matches what the browser
    will actually pick. */
+/* Scrapers trust og:image:width/height over the bytes, so a hard-coded 1200x630 makes
+   Telegram and WhatsApp reserve the wrong box and crop the card. photo-dims.json carries
+   what the build actually wrote. */
+const ogName = /^https?:\/\/[^/]+\/images\/([a-z0-9-]+)\.jpg$/.exec(meta.og.image)?.[1];
+const ogSize: [number, number] = (ogName && (photoDims as Record<string, [number, number]>)[ogName]) || [1200, 630];
+
 const preloadName = props.preload ? /^\/images\/([a-z0-9-]+)\./.exec(props.preload)?.[1] : undefined;
 const preloadRungs: number[] = (preloadName && (photos as Record<string, number[]>)[preloadName]) || [];
 const preload = props.preload
@@ -173,8 +180,8 @@ const preload = props.preload
     <meta property="og:description" content={meta.og.description} />
     <meta property="og:url" content={meta.og.url} />
     <meta property="og:image" content={meta.og.image} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    <meta property="og:image:width" content={String(ogSize[0])} />
+    <meta property="og:image:height" content={String(ogSize[1])} />
     <meta property="og:image:alt" content={props.title} />
     {meta.og.publishedTime && <meta property="article:published_time" content={meta.og.publishedTime} />}
     {meta.og.modifiedTime && <meta property="article:modified_time" content={meta.og.modifiedTime} />}

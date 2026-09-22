@@ -1,9 +1,7 @@
 ---
+import '@/styles/fonts.css';
 import '@/styles/global.css';
 /* display: Inter Tight (has the Cyrillic subset Archivo lacks) · body: Golos Text · data: JetBrains Mono */
-import '@fontsource-variable/inter-tight/wght.css';
-import '@fontsource-variable/golos-text/wght.css';
-import '@fontsource-variable/jetbrains-mono/wght.css';
 import { buildMeta, entityNodes, SITE } from '@/lib/seo';
 import { localize, localeMeta, type Locale } from '@/i18n/config';
 import { CURRENT_BRAND, isRootHost } from '@/data/hosts';
@@ -135,6 +133,24 @@ const preload = props.preload
       <link rel="alternate" type="application/rss+xml" title="SOF EXPO Samarkand" href={`/${locale}/rss.xml`} />
     )}
     {props.redirect && <meta http-equiv="refresh" content={`0; url=${props.redirect}`} />}
+    {/* The two faces that render above the fold in this locale. They are declared inside
+        fonts.css, so without these hints the browser cannot discover them until the
+        stylesheet has parsed — a whole round trip of FOUT on the headline. Only the
+        matching script is preloaded: an English visitor never fetches the Cyrillic cut. */}
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+      href={locale === 'ru' ? '/fonts/inter-tight-cyrillic.woff2' : '/fonts/inter-tight-latin.woff2'}
+    />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+      href={locale === 'ru' ? '/fonts/golos-text-cyrillic.woff2' : '/fonts/golos-text-latin.woff2'}
+    />
     <link rel="icon" href={`${ICON}/favicon.svg`} type="image/svg+xml" />
     <link rel="apple-touch-icon" href={`${ICON}/apple-touch-icon.png`} />
     <link rel="manifest" href="/site.webmanifest" />

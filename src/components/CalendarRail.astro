@@ -19,7 +19,11 @@ const L = (p: string) => localize(locale, p);
 const shows = upcoming.slice(0, count);
 ---
 
-<nav class:list={['rail', `rail--${tone}`]} aria-label={ru ? 'Календарь выставок' : 'Exhibition calendar'}>
+<nav
+  class:list={['rail', `rail--${tone}`]}
+  aria-label={ru ? 'Календарь выставок' : 'Exhibition calendar'}
+  tabindex="0"
+>
   {shows.map((e: ExpoEvent) => {
     const d = bigDate(e.dates.start, e.dates.end, locale);
     return (

@@ -1191,10 +1191,12 @@ body.nav-open .burger span::after {
 .mnav {
   position: fixed;
   inset: var(--header-h) 0 0;
-  background: var(--cream);
+  background: var(--paper);
   z-index: 39;
   overflow-y: auto;
-  padding: 1.2rem var(--gutter) 3rem;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding: 1.2rem var(--gutter) max(3rem, env(safe-area-inset-bottom));
   display: none;
 }
 
@@ -1221,6 +1223,14 @@ body.nav-open .mnav {
 .mnav summary::after {
   content: "+";
   color: var(--moss);
+  font-family: var(--f-display);
+  font-size: 1.3rem;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.mnav details[open] summary::after {
+  transform: rotate(45deg);
 }
 
 .mnav__list {
@@ -1231,10 +1241,18 @@ body.nav-open .mnav {
 
 .mnav__list a {
   text-decoration: none;
-  padding: 0.5rem 0.7rem;
+  padding: 0.7rem 0.85rem;
   border-radius: var(--r-sm);
-  background: var(--paper);
+  background: var(--cream);
   font-size: 0.95rem;
+  /* a 44px touch target is the floor on a phone */
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+.mnav__list a:active {
+  background: var(--cream-2);
 }
 
 /* ---------- hero ---------- */
@@ -1310,9 +1328,22 @@ body.nav-open .mnav {
 
 /* page hero (inner pages) */
 .phero {
+  position: relative;
   background: var(--cream);
   border-bottom: 1px solid var(--line);
-  padding-block: clamp(1.4rem, 0.95rem + 1.5vw, 2.4rem);
+  padding-block: clamp(1.8rem, 1.1rem + 2.2vw, 3.2rem);
+}
+
+/* a hairline of the accent under the section title anchors the page to the brand without
+   painting another coloured band */
+.phero::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: clamp(80px, 12vw, 160px);
+  height: 2px;
+  background: var(--accent);
 }
 
 /* the inner-page headline is the same size as any other h1 — a page does not become important by
@@ -1330,14 +1361,15 @@ body.nav-open .mnav {
 .cd {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 0.5rem;
+  gap: 0.45rem;
   margin: 0 0 1rem;
 }
 
 .cd > div {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.09);
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: var(--r);
+  font-variant-numeric: tabular-nums;
   padding: 0.6rem 0.4rem;
   text-align: center;
 }
@@ -2188,7 +2220,9 @@ body.nav-open .mnav {
   }
 }
 
-/* ------- photo strip / gallery of the real halls ------- */
+/* ------- photo strip / gallery of the real halls -------
+   A bento grid: one large frame carries the scene, five smaller ones carry the detail.
+   Every tile is a real photograph from a past edition, so the grid doubles as proof. */
 .gallery {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -2199,6 +2233,12 @@ body.nav-open .mnav {
 .gallery > * {
   overflow: hidden;
   border-radius: var(--r-img);
+  box-shadow: var(--shadow-soft);
+  transition: box-shadow var(--tr);
+}
+
+.gallery > *:hover {
+  box-shadow: var(--shadow-lift);
 }
 
 .gallery > :nth-child(1) {
@@ -2575,4 +2615,87 @@ body.nav-open .mnav {
    only warm element on a light ground */
 .hairline {
   background: linear-gradient(to right, var(--accent) 0 56px, var(--line) 56px);
+}
+
+
+/* the light calendar rail sits on paper, so it gets the card treatment rather than the
+   translucent-on-photo treatment of the hero rail */
+.rail--light {
+  box-shadow: var(--shadow-soft);
+}
+
+.rail--light a {
+  backdrop-filter: none;
+  transition: background-color var(--tr), border-color var(--tr);
+}
+
+/* ---------- phone pass (≤560px) ----------
+   Everything above is authored desktop-first with fluid clamps, which holds down to about
+   600px. Below that a trade-show page has three specific failures: the hero date competes
+   with the headline, the glass fact panel eats a whole screen, and the horizontal rails
+   give no hint that they scroll. These rules fix exactly those. */
+@media (max-width: 560px) {
+  .home-hero__in {
+    padding-block: clamp(2.4rem, 1.6rem + 4vw, 3.4rem) 0;
+  }
+
+  .home-hero h1 {
+    max-width: none;
+  }
+
+  /* the fact panel is reference material on a phone, not the pitch: it goes quiet and short */
+  .home-hero__side {
+    width: 100%;
+    padding: 1.15rem 1.2rem;
+    gap: 1rem;
+  }
+
+  .home-hero__venue {
+    font-size: 0.95rem;
+  }
+
+  /* a rail that scrolls must look like it scrolls: the last card is deliberately clipped */
+  .rail {
+    grid-auto-columns: minmax(78vw, 1fr);
+    scroll-snap-type: x mandatory;
+  }
+
+  .rail a {
+    scroll-snap-align: start;
+  }
+
+  .btn-row .btn,
+  .btn-row .home-hero__more {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+
+  /* section rhythm tightens, but the dark bands keep their air so they still read as breaks */
+  :root {
+    --sec: 2.6rem;
+  }
+
+  .sec--forest {
+    padding-block: 3rem;
+  }
+
+  /* tables on a phone scroll rather than squeeze to 3 characters a column */
+  .table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .table th,
+  .table td {
+    padding: 0.7rem 0.8rem;
+  }
+}
+
+/* A horizontally scrolling region must be reachable from the keyboard, otherwise the cards
+   past the fold are unreachable without a mouse. */
+.rail:focus-visible,
+.table:focus-visible {
+  outline: 2px solid var(--moss);
+  outline-offset: 3px;
 }

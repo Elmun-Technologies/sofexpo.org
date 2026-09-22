@@ -194,12 +194,28 @@ const areaList = areas.length ? areas : L.areaOptions.filter(Boolean);
 <style>
   .form-wrap {
     display: grid;
-    gap: 1rem;
+    gap: 1.2rem;
     scroll-margin-top: 110px;
+    border-radius: var(--r-img);
+    box-shadow: var(--shadow);
+    padding: clamp(1.4rem, 1rem + 1.6vw, 2.2rem);
+  }
+  /* the submit row reads as the end of the form, not another field */
+  .form-wrap :global(.btn) {
+    width: 100%;
+    padding-block: 0.95rem;
+    font-size: 1.02rem;
+  }
+  @media (min-width: 620px) {
+    .form-wrap :global(.btn) {
+      width: auto;
+      min-width: 260px;
+      justify-self: start;
+    }
   }
   .form--compact {
-    padding: clamp(1rem, 0.7rem + 1.2vw, 1.5rem);
-    border-radius: var(--r);
+    padding: clamp(1.1rem, 0.8rem + 1.2vw, 1.6rem);
+    border-radius: var(--r-lg);
   }
   .form__msg {
     margin: 0;

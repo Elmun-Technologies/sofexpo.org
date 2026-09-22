@@ -140,6 +140,30 @@ export const exhibitorPages: PageDef[] = [
               src: "/images/food-tasting.jpg",
               caption: "FOODERA EXPO: дегустационная линия",
             },
+            {
+              src: "/images/stand-agro-chem.jpg",
+              caption: "Стенд агрохимии: продукция на полках и консультанты",
+            },
+            {
+              src: "/images/stand-fertilizer.jpg",
+              caption: "Стенд производителя удобрений: демонстрация линейки",
+            },
+            {
+              src: "/images/stand-industrial.jpg",
+              caption: "Промышленный стенд: оборудование в рабочем виде",
+            },
+            {
+              src: "/images/stand-modern.jpg",
+              caption: "Индивидуальная застройка: остров с переговорной зоной",
+            },
+            {
+              src: "/images/buyers-talk.jpg",
+              caption: "Переговоры закупщика с экспонентом на стенде",
+            },
+            {
+              src: "/images/hall-aisle-red.jpg",
+              caption: "Центральный проход зала в день работы выставки",
+            },
           ],
         },
         {
@@ -370,7 +394,31 @@ export const exhibitorPages: PageDef[] = [
               src: "/images/food-tasting.jpg",
               caption: "FOODERA EXPO: tasting line",
             },
-          ],
+                      {
+              src: "/images/stand-agro-chem.jpg",
+              caption: "Agrochemistry stand: product on the shelves and consultants on hand",
+            },
+            {
+              src: "/images/stand-fertilizer.jpg",
+              caption: "Fertiliser maker's stand: the range on display",
+            },
+            {
+              src: "/images/stand-industrial.jpg",
+              caption: "Industrial stand: equipment shown in working condition",
+            },
+            {
+              src: "/images/stand-modern.jpg",
+              caption: "Custom build: an island stand with a meeting area",
+            },
+            {
+              src: "/images/buyers-talk.jpg",
+              caption: "A buyer in conversation with an exhibitor",
+            },
+            {
+              src: "/images/hall-aisle-red.jpg",
+              caption: "The central aisle of the hall on show day",
+            },
+],
         },
         {
           type: "table",
@@ -786,6 +834,27 @@ export const exhibitorPages: PageDef[] = [
           imageAlt: "Экспозиция на выставке техники",
         },
         {
+          type: "gallery",
+          items: [
+            {
+              src: "/images/floor-plan.jpg",
+              caption: "Рабочий чертёж главного зала: сетка стендов, оси колонн и проходы",
+            },
+            {
+              src: "/images/hall-plan.jpg",
+              caption: "Схема застройки: B2B-зоны, VIP-переговорные, регистрация и главный вход",
+            },
+            {
+              src: "/images/site-plan.jpg",
+              caption: "Генплан площадки: крытый и внешний павильоны, ресторан, парковки",
+            },
+            {
+              src: "/images/site-section.jpg",
+              caption: "Разрез комплекса: отель, хостел, павильон и техническая зона",
+            },
+          ],
+        },
+        {
           type: "rows",
           items: [
             {
@@ -872,6 +941,27 @@ export const exhibitorPages: PageDef[] = [
           lead: "We send the live floor plan with the grid, aisle widths and free spots. Below are the rules to choose by when you book yourself.",
           image: "/images/event-agropro.jpg",
           imageAlt: "Machinery expo",
+        },
+        {
+          type: "gallery",
+          items: [
+            {
+              src: "/images/floor-plan.jpg",
+              caption: "Working drawing of the main hall: stand grid, column axes and aisles",
+            },
+            {
+              src: "/images/hall-plan.jpg",
+              caption: "Build layout: B2B zones, VIP meeting rooms, registration and the main entrance",
+            },
+            {
+              src: "/images/site-plan.jpg",
+              caption: "Site master plan: indoor and outdoor pavilions, restaurant, parking",
+            },
+            {
+              src: "/images/site-section.jpg",
+              caption: "Section through the complex: hotel, hostel, pavilion and the technical zone",
+            },
+          ],
         },
         {
           type: "rows",
@@ -1394,6 +1484,15 @@ export const exhibitorPages: PageDef[] = [
           imageAlt: "Зал с брендированными стендами",
         },
         {
+          type: "callout",
+          kicker: "Носители",
+          title: "Где именно висит реклама спонсора",
+          text: "Схема рекламных поверхностей зала: баннеры у главного входа и регистрации, брендирование VIP-переговорных, B2B-зон и conference room. Размеры каждой поверхности — в спонсорском пакете.",
+          image: "/images/expo-banner.jpg",
+          imageAlt: "Схема рекламных носителей в зале SOF EXPO Samarkand",
+          action: { label: "Запросить спонсорский пакет", href: "/request-stand/" },
+        },
+        {
           type: "table",
           head: ["Пакет", "Что включает", "Кому подходит"],
           rows: [
@@ -1480,6 +1579,15 @@ export const exhibitorPages: PageDef[] = [
           lead: "A sponsorship package is the fastest way to enter the script of the exhibition: talks, welcome word, awards, material in the participant bag.",
           image: "/images/hall-stand.jpg",
           imageAlt: "Hall with branded stands",
+        },
+        {
+          type: "callout",
+          kicker: "Carriers",
+          title: "Exactly where the sponsor's advertising hangs",
+          text: "The hall's advertising surfaces: banners at the main entrance and registration, branding of the VIP meeting rooms, the B2B zones and the conference room. Each surface is dimensioned in the sponsorship pack.",
+          image: "/images/expo-banner.jpg",
+          imageAlt: "Advertising-carrier layout in the SOF EXPO Samarkand hall",
+          action: { label: "Request the sponsorship pack", href: "/request-stand/" },
         },
         {
           type: "table",
@@ -1583,8 +1691,8 @@ export const exhibitorPages: PageDef[] = [
           kicker: "Бюрократия",
           title: "Список документов, который экономит нервы на монтаже",
           lead: "Ниже — календарь paperwork для участника. Все бланки присылает менеджер; если чего-то не хватает, мы предупредим заранее, а не в день заезда.",
-          image: "/images/hall-stand.jpg",
-          imageAlt: "Выставочный зал: монтаж экспозиции",
+          image: "/images/documents.jpg",
+          imageAlt: "Пакет документов участника выставки",
         },
         {
           type: "table",
@@ -1683,8 +1791,8 @@ export const exhibitorPages: PageDef[] = [
           kicker: "Paperwork",
           title: "The document list that saves your nerves at build-up",
           lead: "Below is the participant calendar. All forms come from the account manager; if something is missing you hear it in advance, not on arrival day.",
-          image: "/images/hall-stand.jpg",
-          imageAlt: "Exhibition hall: stand build-up",
+          image: "/images/documents.jpg",
+          imageAlt: "An exhibitor's document pack",
         },
         {
           type: "table",

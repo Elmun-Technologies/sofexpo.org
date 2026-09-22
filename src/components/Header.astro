@@ -39,7 +39,17 @@ const items = nav.filter((i) => i.key !== 'nav.news');
         </span>
       ) : (
         <>
-          <span class="logo__mark" aria-hidden="true">SE</span>
+          {/* the centre's real mark (three figures around the SOF EXPO roundel), not a
+              two-letter placeholder — served at 2x for retina, sized in CSS */}
+          <img
+            class="logo__img"
+            src="/brand/sofexpo-logo.png"
+            srcset="/brand/sofexpo-logo.png 1x, /brand/sofexpo-logo@2x.png 2x"
+            alt=""
+            width="180"
+            height="193"
+            decoding="async"
+          />
           <span class="logo__txt">
             <b>{site.brand[locale]}</b>
             <span>{t('brand.sub')}</span>

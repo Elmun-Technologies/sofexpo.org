@@ -1425,6 +1425,22 @@ export const venuePages: PageDef[] = [
               src: "/images/venue-facade.jpg",
               caption: "Фасад павильона и рекламные носители",
             },
+            {
+              src: "/images/machinery-outdoor.jpg",
+              caption: "Крупногабаритная техника на открытой площадке",
+            },
+            {
+              src: "/images/stand-agro.jpg",
+              caption: "Стенд агротехники: демонстрация мотоблоков и навесного",
+            },
+            {
+              src: "/images/visitors-flowers.jpg",
+              caption: "Цветочная экспозиция: посетители на садовом разделе",
+            },
+            {
+              src: "/images/samarkand.jpg",
+              caption: "Самарканд: город, в который приезжает аудитория выставок",
+            },
           ],
         },
         {
@@ -1517,6 +1533,22 @@ export const venuePages: PageDef[] = [
             {
               src: "/images/venue-facade.jpg",
               caption: "Pavilion facade and advertising carriers",
+            },
+            {
+              src: "/images/machinery-outdoor.jpg",
+              caption: "Large machinery on the open-air area",
+            },
+            {
+              src: "/images/stand-agro.jpg",
+              caption: "Agri-machinery stand: power tillers and implements on show",
+            },
+            {
+              src: "/images/visitors-flowers.jpg",
+              caption: "Horticulture display: visitors in the garden section",
+            },
+            {
+              src: "/images/samarkand.jpg",
+              caption: "Samarkand: the city the show audience travels to",
             },
           ],
         },

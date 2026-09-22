@@ -67,6 +67,21 @@ const MAP = {
   'floor-plan': ['17-2048x1449.png', 'centre'],
   'hall-plan': ['222.png', 'centre'],
 
+  /* ── more of the floor: the client sent far more than six usable frames ── */
+  'stand-agro-chem': ['2-1-768x512.webp', 'centre'],
+  'opening-ceremony': ['3-1-768x512.webp', 'centre'],
+  'stand-fertilizer': ['agro-expo-2-768x512.webp', 'centre'],
+  'stand-industrial': ['agro-expo-samarkand-2-768x512.webp', 'centre'],
+  'conference-room': ['1-qu1l7uif3w9j7ew408ye9jrl52s6o6fzabnn8rr8hk.jpg', 'centre'],
+  'hall-aisle-red': ['4-1-qu1l7uif3w9j7ew408ye9jrl52s6o6fzabnn8rr8hk.jpg', 'centre'],
+  'cafe-interior': ['4-qu1l7uif3w9j7ew408ye9jrl52s6o6fzabnn8rr8hk.jpg', 'centre'],
+  'venue-aerial': ['5-qu1l7uif3w9j7ew408ye9jrl52s6o6fzabnn8rr8hk.jpg', 'centre'],
+
+  /* ── plans and identity ─────────────────────────────────────────── */
+  'site-plan': ['Ресурс-1map1-1536x794.png', 'centre'],
+  'site-section': ['Ресурс-2map2-1536x711.png', 'centre'],
+  'expo-banner': ['Banners-1-2048x1287.png', 'centre'],
+
   /* ── travel & stay ───────────────────────────────────────────────── */
   'hotel-room': ['1-1-1536x864.jpg', 'centre'],
   'hotel-facade': ['2-1-1536x864.jpg', 'centre'],
@@ -74,7 +89,7 @@ const MAP = {
 };
 
 /** names that must keep the source aspect (plans/diagrams must not be cropped) */
-const NO_CROP = new Set(['floor-plan', 'hall-plan']);
+const NO_CROP = new Set(['floor-plan', 'hall-plan', 'site-plan', 'site-section', 'expo-banner']);
 
 /**
  * Full-bleed heroes. The client's show photography is mostly 768px wide, which is fine for a
@@ -95,6 +110,13 @@ const HERO = new Set([
   'hall-stand',
   'venue-conference',
   'conference-audience',
+  /* the four 300x300 thumbnails the client's CMS produced: they are the only frame we have
+     of the meeting room, the café, the red aisle and the site from the air, so they are
+     upscaled to a usable card size rather than dropped */
+  'conference-room',
+  'hall-aisle-red',
+  'cafe-interior',
+  'venue-aerial',
 ]);
 
 const ratio = 16 / 10;
@@ -107,7 +129,9 @@ async function one(name, [file]) {
   }
   const meta = await sharp(src).metadata();
   const hero = HERO.has(name);
-  const maxW = hero ? 1600 : Math.min(1600, meta.width ?? 1600);
+  /* a tiny source is never blown up to 1600: it is capped at 3x, which keeps the artefacts
+     below what a card-sized viewport can resolve */
+  const maxW = hero ? Math.min(1600, Math.max(640, (meta.width ?? 0) * 3)) : Math.min(1600, meta.width ?? 1600);
   let bytes = 0;
 
   const base = () => {
@@ -178,6 +202,38 @@ for (const f of await readdir(OUT)) {
   console.log(`· ${name} (legacy)`);
 }
 
+
+/**
+ * Speaker cards for E-COM & RETAIL EXPO SAMARKAND.
+ *
+ * The client shot two poster series for the business programme — a dark "Biz Network" set
+ * (April edition) and a teal set (20-21 May) — 37 finished 4:5 artboards in total. They are
+ * not photographs to be cropped: each one is a designed card with type on it, so the ladder
+ * keeps the full frame at 4:5 and only ever scales down.
+ */
+const SPEAKERS = [
+  ...(await readdir(SRC)).filter((f) => /^1-1-\d+\.png$/.test(f)),
+  ...['2.jpg', '4.jpg', '5.jpg', '7.jpg', '9.jpg', '10.jpg', '11.jpg', '12.jpg', '13.jpg', '14.jpg', '15.jpg', '16.jpg', '17.jpg', '18.jpg', '19.jpg'],
+].sort();
+
+mkdirSync(`${OUT}/speakers`, { recursive: true });
+let n = 0;
+for (const f of SPEAKERS) {
+  const src = path.join(SRC, f);
+  if (!existsSync(src)) continue;
+  const name = `speaker-${String(++n).padStart(2, '0')}`;
+  for (const w of [400, 800]) {
+    await sharp(src)
+      .resize({ width: w, height: Math.round((w * 5) / 4), fit: 'contain', background: '#ffffff', kernel: 'lanczos3' })
+      .webp({ quality: w >= 800 ? 72 : 76, effort: 6 })
+      .toFile(path.join(OUT, 'speakers', `${name}-${w}.webp`));
+  }
+  await sharp(src)
+    .resize({ width: 800, kernel: 'lanczos3' })
+    .jpeg({ quality: 78, progressive: true, mozjpeg: true })
+    .toFile(path.join(OUT, 'speakers', `${name}.jpg`));
+}
+console.log(`${n} speaker cards built`);
 
 /* A manifest so <Photo> can emit a srcset of files that actually exist: a 768px source
    has no 1600w rung, and pointing at one would be a 404 per card. */

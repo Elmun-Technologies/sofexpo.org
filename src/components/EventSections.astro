@@ -16,6 +16,8 @@ import StatBand from '@/components/StatBand.astro';
 import Faq from '@/components/Faq.astro';
 import EventCard from '@/components/EventCard.astro';
 import Icon from '@/components/Icon.astro';
+import SpeakerWall from '@/components/SpeakerWall.astro';
+import { speakers as posterSpeakers } from '@/data/speakers';
 
 export type SectionKey =
   | 'facts'
@@ -53,6 +55,10 @@ const head = {
 }[section];
 
 const peers = events.filter((e) => e.slug !== event.slug).slice(0, 3);
+
+/* E-COM & RETAIL is the one show whose speaker line-up arrived as finished poster artwork
+   (37 cards, two editions). Where that exists it replaces the text-only cards entirely. */
+const hasPosters = event.slug === 'ecom-retail-expo' && posterSpeakers.length > 0;
 
 /* Programme grouped by show day: the number becomes a real date (20 октября), the way
    Ekspocentr and Crocus present theirs. Entries without `day` fall into day 1. */
@@ -197,7 +203,24 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
 }
 
 {
-  section === 'speakers' && event.speakers.length > 0 && (
+  section === 'speakers' && hasPosters && (
+    <section class:list={['sec', 'reveal', `sec--${tone}`]}>
+      <div class="wrap">
+        <SpeakerWall
+          locale={locale}
+          kicker={head.k}
+          title={ru ? 'Спикеры деловой программы' : 'Business programme speakers'}
+          text={ru
+            ? 'Практики рынка: маркетплейсы, фулфилмент, финтех и топ-селлеры Uzum Market — те, кто реально считает юнит-экономику, а не рассказывает о ней.'
+            : 'Market practitioners: marketplaces, fulfilment, fintech and the top Uzum Market sellers — people who actually run the unit economics.'}
+        />
+      </div>
+    </section>
+  )
+}
+
+{
+  section === 'speakers' && !hasPosters && event.speakers.length > 0 && (
     <section class:list={['sec', 'reveal', `sec--${tone}`]}>
       <div class="wrap">
         <SectionHead locale={locale} kicker={head.k} title={head.t} />

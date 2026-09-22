@@ -10,6 +10,9 @@
   "buyers-talk": [
     640
   ],
+  "cafe-interior": [
+    640
+  ],
   "car-road": [
     640,
     1024,
@@ -19,6 +22,9 @@
     640,
     1024,
     1600
+  ],
+  "conference-room": [
+    640
   ],
   "documents": [
     640,
@@ -55,6 +61,11 @@
     1024,
     1600
   ],
+  "expo-banner": [
+    640,
+    1024,
+    1600
+  ],
   "floor-plan": [
     640,
     1024,
@@ -70,6 +81,9 @@
     640,
     1024,
     1600
+  ],
+  "hall-aisle-red": [
+    640
   ],
   "hall-crowd": [
     640,
@@ -123,6 +137,9 @@
   "officials-tour": [
     640
   ],
+  "opening-ceremony": [
+    640
+  ],
   "outdoor-area": [
     640
   ],
@@ -137,16 +154,35 @@
     640,
     1024
   ],
+  "site-plan": [
+    640,
+    1024,
+    1600
+  ],
+  "site-section": [
+    640,
+    1024,
+    1600
+  ],
   "stand-agro": [
     640
   ],
+  "stand-agro-chem": [
+    640
+  ],
   "stand-equipment": [
+    640
+  ],
+  "stand-fertilizer": [
     640
   ],
   "stand-green": [
     640,
     1024,
     1600
+  ],
+  "stand-industrial": [
+    640
   ],
   "stand-modern": [
     640,
@@ -156,6 +192,9 @@
     640
   ],
   "supermarket-aisle": [
+    640
+  ],
+  "venue-aerial": [
     640
   ],
   "venue-conference": [

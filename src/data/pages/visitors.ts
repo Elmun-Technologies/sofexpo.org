@@ -113,8 +113,8 @@ export const visitorPages: PageDef[] = [
           kicker: "Проживание",
           title: "Отели: скидка 15% в Reikartz",
           text: "Для партнёров и участников SOF EXPO — назовите код выставки при бронировании. Список отелей с расстояниями — в разделе «Проезд».",
-          image: "/images/hotel-room.jpg",
-          imageAlt: "Номер отеля-партнёра в Самарканде",
+          image: "/images/hotel-facade.jpg",
+          imageAlt: "Фасад отеля-партнёра в центре Самарканда",
           action: { label: "Маршрут и отели", href: "/visitors/travel/" },
         },
         {
@@ -243,8 +243,8 @@ export const visitorPages: PageDef[] = [
           kicker: "Stay",
           title: "Hotels: 15% off at Reikartz",
           text: "For SOF EXPO partners and participants — name the show code when booking. The hotel list with distances is in the travel section.",
-          image: "/images/hotel-room.jpg",
-          imageAlt: "Partner hotel room in Samarkand",
+          image: "/images/hotel-facade.jpg",
+          imageAlt: "Partner hotel facade in central Samarkand",
           action: { label: "Route and hotels", href: "/visitors/travel/" },
         },
         {
@@ -305,8 +305,8 @@ export const visitorPages: PageDef[] = [
             { label: "Заявка на регистрацию", href: "/contacts/" },
             { label: "Билеты PROMOTORS", href: "https://ticketon.uz" },
           ],
-          image: "/images/event-promotors.jpg",
-          imageAlt: "Фестивальная аудитория",
+          image: "/images/badge-lanyard.jpg",
+          imageAlt: "Бейдж участника выставки на ленте",
         },
         {
           type: "table",
@@ -399,8 +399,8 @@ export const visitorPages: PageDef[] = [
             { label: "Request registration", href: "/contacts/" },
             { label: "PROMOTORS tickets", href: "https://ticketon.uz" },
           ],
-          image: "/images/event-promotors.jpg",
-          imageAlt: "Festival audience",
+          image: "/images/badge-lanyard.jpg",
+          imageAlt: "Exhibition badge on a lanyard",
         },
         {
           type: "table",

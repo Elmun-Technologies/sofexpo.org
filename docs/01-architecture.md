@@ -10,7 +10,7 @@ up to six hostnames from the same build (docs/05-subdomains.md).
 | -------------- | ---------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Rendering      | Astro 7, `output: 'static'`                                                                                            | Every page is a plain HTML file: fastest Core Web Vitals, cheapest hosting, crawlable without JS. No hydration = no framework budget.                                                                                                                                                              |
 | Client JS      | ~1.5 KB total (countdown, search, menu, form)                                                                          | Only three behaviours need JS; everything else is CSS. No React/Svelte runtime.                                                                                                                                                                                                                    |
-| Styling        | Hand-written CSS with design tokens (`src/styles/global.css`)                                                          | Full control of the "photo-led, no fluff" look; no utility-class dependency. One global stylesheet plus per-component scoped chunks — 5 files, 45.6 KB / 12.3 KB gzip on the current build (each chunk compressed on its own, as a browser fetches them) — hashed and cached across all 152 pages. |
+| Styling        | Hand-written CSS with design tokens (`src/styles/global.css`)                                                          | Full control of the "photo-led, no fluff" look; no utility-class dependency. One global stylesheet plus per-component scoped chunks — 5 files, 64.4 KB / 16.1 KB gzip on the current build (each chunk compressed on its own, as a browser fetches them) — hashed and cached across all 152 pages. |
 | Fonts          | Self-hosted `@fontsource-variable/inter-tight` (display) + `golos-text` (body) + `jetbrains-mono` (labels and figures) | No third-party request, no CLS from remote fonts; every one of them ships a Cyrillic subset — Archivo was dropped in favour of Inter Tight exactly because fontsource has no `archivo-cyrillic-*`.                                                                                                 |
 | i18n           | `src/pages/[locale]/…` with explicit `/ru/` and `/en/` prefixes                                                        | Prefixed URLs keep hreflang/canonical unambiguous and per-locale sitemaps/RSS; hreflang `x-default` points at `/en/`.                                                                                                                                                                              |
 | Default locale | `en` (`astro.config.mjs` → `i18n.defaultLocale`)                                                                       | International buyers (organizers, foreign exhibitors) are the money audience; RU is fully mirrored, not a fallback.                                                                                                                                                                                |
@@ -31,7 +31,7 @@ sofexpo.org/
 │   ├── seo-audit.mjs        # SERP-readiness gate over dist/ (exits 1 on findings)
 │   └── prune-sitemap.mjs    # drops noindex URLs from sitemap-0.xml (runs after astro build)
 ├── public/                 # copied verbatim to dist/
-│   ├── images/*.jpg        # 10 photos: venue, halls, conference, exterior, 6 event posters
+│   ├── images/*.jpg        # 25 photos: venue, halls, conference, exterior, event posters, travel
 │   ├── files/*.pdf         # 21 documents (exhibitor forms, tech sheet, catalogues) — placeholders until real PDFs land
 │   ├── robots.txt          # sitemap refs, per-locale allow, no /404
 │   ├── llms.txt            # assistant-facing summary of venue, events, contacts
@@ -42,16 +42,16 @@ sofexpo.org/
     │   ├── site.ts              # brand, contacts, venue, halls, services, stats, files, nav, footer
     │   ├── events.ts            # 6 ExpoEvent: dates, categories, stands, programme, FAQ, materials
     │   ├── archive.ts           # past editions (results, catalogue, photo) for /events/past/
-    │   ├── posts.ts             # news + articles (front-matter-equivalent objects, both locales)
     │   └── pages/*.ts           # 32 authored pages + event-pages.ts (24 per-event pages)
+    ├── content/{news,articles}/ # Markdown bodies, ru/ and en/ side by side (5 + 8 pieces per locale)
     ├── lib/
     │   ├── seo.ts               # buildMeta, JSON-LD node factories, abs()
     │   ├── pages.ts             # authored-page index/getters, getStaticPaths helpers
     │   ├── nav.ts               # nav tree, pageCrumbs()
     │   └── search.ts            # search index builder (used by /search/index.json.ts)
-    ├── styles/global.css        # tokens + all component CSS (single file, ~1500 lines)
+    ├── styles/global.css        # tokens + all component CSS (single file, ~2 340 lines)
     ├── layouts/Base.astro       # <head>, OG/Twitter, hreflang, JSON-LD graph, Header/Footer
-    ├── components/              # 18 components, Blocks.astro is the content renderer
+    ├── components/              # 27 components, Blocks.astro is the content renderer
     └── pages/
         ├── index.astro              # 301 to /en/ (HTML fallback for hosts without _redirects)
         ├── 404.astro                  # noindex,follow
@@ -84,7 +84,7 @@ Three page families, one renderer each:
 2. **Event pages** — `getEvent(slug)` + `eventPages` from `src/data/pages/event-pages.ts`;
    4 pages per event (main, `/exhibitors/`, `/visitors/`, `/program/`), assembled by
    `EventPage.astro` from `hero`, optional `before`/`after` arrays and event-specific data.
-3. **Editorial** — `posts.ts` → `news` and `articles` clusters; `PostDetail` +
+3. **Editorial** — `src/content/{news,articles}/**` → `news` and `articles` clusters; `PostDetail` +
    `PostBody` render markdown bodies with a sidebar layout.
 
 ## 4. Build & asset pipeline
@@ -128,9 +128,9 @@ Notes for whoever deploys:
 
 | Metric                 | Value                                                                                                                                             |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| HTML per page          | 34–96 KB raw → 8–20 KB gzip over the 150 content pages, median 10 KB; the 2 stub files are 4.8–7.9 KB (content is the payload, not the framework) |
-| CSS                    | 5 files, 45.6 KB → 12.3 KB gzip, shared by every page (hashed, cacheable forever)                                                                 |
-| Requests per page      | 1 HTML + 1 CSS + 2 font files + 1–4 images = 5–7                                                                                                  |
+| HTML per page          | 30–74 KB raw → 7–16 KB gzip over the 150 content pages (mean 46.6 KB raw / 10.5 KB gzip, median 10.2 KB); the root redirect stub is 663 B and `/404` is 5.4 KB (content is the payload, not the framework) |
+| CSS                    | 5 files, 64.4 KB → 16.1 KB gzip (a page requests 2–4 of them), hashed and cacheable forever                                                        |
+| Requests per page      | 1 HTML + 2–4 CSS chunks + self-hosted font files + 1–8 images (median 1 image per page)                                                          |
 | Third-party calls      | **0** — fonts self-hosted, no analytics, maps are link-outs                                                                                       |
 | JS                     | 0 external files — inline blocks only: menu, countdown, FAQ, form (0.7–2 KB typical; 22 KB on `/search/`, which embeds the index)                 |
 | `preconnect`/`preload` | emitted by `Base.astro` only where the page needs the hero image                                                                                  |
@@ -150,6 +150,7 @@ Run `npm run build && npm run audit:seo`.
 `<slug>.md` per cluster if there is news. The event routes, breadcrumbs, `Event` JSON-LD,
 RSS item and both locales' cross-links are derived automatically.
 
-**New article:** one object in `src/data/posts.ts` (+ body in `src/content/`), both locales.
+**New article:** one Markdown file per locale in `src/content/{articles,news}/{ru,en}/<slug>.md`
+(same filename in both locales, different body), frontmatter as in `src/content.config.ts`.
 Titles and descriptions may run longer here than on commercial pages — the audit allows
 ≤96/≤210 for `/news|articles/{slug}` and ≤78/≤185 elsewhere.

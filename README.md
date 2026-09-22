@@ -18,8 +18,8 @@ same source tree.
 
 - **Nima bu.** SOF EXPO Samarkand ekspomarkazi va uning 6 ta ko'rgazmasining sayti: statik
   (Astro 7), RU/EN ikki tilda, 152 sahifa, reaktiv freymvorksiz (React/Vue yo'q).
-- **Ishga tushirish.** `npm ci` → `npm run dev` → `http://localhost:4321/en/` (`/ru/` ham bor,
-  `/` esa `/en/` ga 301).
+- **Ishga tushirish.** `npm ci` → `npm run dev` → `http://localhost:4321/` (`/` avtomatik `/en/`
+  ga o'tadi, `/ru/` ham ishlaydi).
 - **Tekshirish.** `npm run check` = build + SEO/accessibility auditi (0 topilma bo'lishi shart).
 - **Ko'p host.** `npm run build:hosts` — markaz + `foodera / buildpro / agropro / worldedu /
   ecomretail` subdomenlari; har biri o'z sitemap, robots, `_redirects` va brendi bilan.
@@ -74,7 +74,7 @@ native type stripping) and npm ≥ 10. No database, no API keys, no services to 
 git clone https://github.com/Elmun-Technologies/sofexpo.org.git
 cd sofexpo.org
 npm ci
-npm run dev            # http://localhost:4321/en/  (and /ru/)
+npm run dev            # http://localhost:4321/  → 301 to /en/  (/ru/ also live)
 ```
 
 Other useful entry points:
@@ -91,7 +91,7 @@ node scripts/build-one-host.mjs foodera.sofexpo.org   # exactly what a deploy ta
 
 | Command                        | What it does                                                                                   |
 | ------------------------------ | ---------------------------------------------------------------------------------------------- |
-| `npm run dev`                  | Astro dev server on `0.0.0.0:4321`, both locales live                                           |
+| `npm run dev`                  | Astro dev server on `0.0.0.0:4321`; `/` 301s to `/en/`, both locales live                      |
 | `npm run build`                | Regenerates the editorial ownership map, builds `dist/`, prunes `noindex` URLs from the sitemap |
 | `npm run preview`              | Serves `dist/` (host allow-list open, for sandbox/preview proxies)                              |
 | `npm run audit:seo`            | SEO + accessibility gate over `dist/` — exits non-zero on any finding                           |

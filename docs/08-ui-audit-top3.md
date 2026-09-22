@@ -403,6 +403,33 @@ Phase 1 kodda hech narsani buzmaydi: URL, host-model, SEO-kontrakt, audit qoidal
 `Blocks` tizimiga 3 yangi blok turi qo'shiladi (`calendar`, `plan`, `map`), qolgani — mavjud bloklar
 kompozitsiyasi va tokenlar.
 
+## 5c. Rasmlar: 1:1 almashtirish ro'yxati (2026-09-22)
+
+Har bir fayl `public/images/` da — mijozning haqiqiy kadri **shu nom bilan** qo'yilsa, saytga qo'shimcha
+o'zgarish kerak bo'lmaydi. «Aynan ham shu» = allaqachon haqiqiy (stock emas), tekshirib qoldirish mumkin.
+
+| Fayl | Tushuntirish | Qayerda ishlatiladi | Almashtirish uchun |
+| --- | --- | --- | --- |
+| `samarkand-real.jpg` | **Aynan ham shu** — Registon, shom, turistlar | home «Nega Samarqand», /visitors/travel/, /venue/how-to-get-there/ | mijozning Samarqand kadri (yoki qoldirish) |
+| `afrosiyob-train.jpg` | **Aynan ham shu** — Afrosiyob poyezdi, platforma | /visitors/ + /visitors/travel/ karta | mijozning vokzal/poyezd kadri (yoki qoldirish) |
+| `hall-crowd.jpg` | zal potoki (motion) | /visitors/ hero, home «esiklar», galeriyalar | **mijozning zal-kadri** (prioritet) |
+| `hall-stand.jpg` | zal + stanoklar | /exhibitors/, /venue/halls/, /stand-construction/, /sponsorship/ hero, tadbir kartalari | **mijozning zal+stand kadri** (prioritet) |
+| `hall-walk.jpg` | zal yo'lagi | galeriyalar, /venue/services/ hero | mijozning zal kadri |
+| `conference-audience.jpg` | biznes-konferensiya auditoriyasi | home «esiklar», /visitors/programme/, /organizers/conferences/ hero, program callout'lari | **mijozning konferens-kadri** |
+| `food-tasting.jpg` | food-expo dasturxona (uchinchi tomon logo ko'rinadi) | FOODERA hero (home + tadbir), galeriyalar | FOODERA'nin 22 kadr to'plamidan |
+| `food-tasting-counter.jpg` | dasturxona close-up | FOODERA galeriya + visitors karta | shu to'plamdan |
+| `hotel-room.jpg` | mehmonxona (stock) | /visitors/ + travel callout/karta | **Reikartzning haqiqiy kadr** (shartnoma bor) |
+| `car-road.jpg` | tog' trassasi (stock) | /visitors/ + travel karta | M39ning haqiqiy kadri |
+| `plane-window.jpg` | samolyot oyna + qanot (stock) | /visitors/ + travel karta | TAS–SKD rejisi kadri (yoki qoldirish) |
+| `students-campus.jpg` | kampusda talabalar (stock) | WORLD EDU overview + program callout | WORLD EDU kadri |
+| `greenhouse-tomatoes.jpg` | issiqxona pomidori (stock) | AGROPRO overview | AGROPRO/mayda kadri |
+| `supermarket-aisle.jpg` | supermarket yo'lagi (stock) | ECOM overview + visitors karta | ECOM/retail kadri |
+| `office-people.jpg` | ofisda muloqot (stock) | /about/team/ hero | **jamoa kadri** (mijozdan faqat shu) |
+
+AI-renderlar (`event-*.jpg`, `hero-hall.jpg`, `venue-*.jpg`) zaxira sifatida joyida turibdi —
+brend hero/OG-kartalar hali ularni ishlatadi.
+
+
 ---
 
 ## 7. Sizdan qaror kutiladigan savollar

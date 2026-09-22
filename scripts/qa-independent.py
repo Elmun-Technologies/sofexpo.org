@@ -4,10 +4,12 @@ so a bug in scripts/seo-audit.mjs cannot hide here. Reads dist/ and dist-hosts/*
 import json, os, re, statistics, sys, hashlib
 from collections import Counter, defaultdict
 
-ROOT = '/home/user/sofexpo.org'
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # repo root, wherever it is checked out
 HOSTS = {'sofexpo.org (alias, dist/)': f'{ROOT}/dist'}
-for h in sorted(os.listdir(f'{ROOT}/dist-hosts')):
-    HOSTS[f'{h} (subdomain)'] = f'{ROOT}/dist-hosts/{h}'
+_shared = f'{ROOT}/dist-hosts'
+if os.path.isdir(_shared):  # absent until `npm run build:hosts` has been run once
+    for h in sorted(os.listdir(_shared)):
+        HOSTS[f'{h} (subdomain)'] = f'{_shared}/{h}'
 
 pages = defaultdict(dict)      # host -> url -> html
 findings = defaultdict(list)   # rule -> messages

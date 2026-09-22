@@ -3,6 +3,7 @@ import { localize, type Locale } from '@/i18n/config';
 import type { ExpoEvent } from '@/data/events';
 import { bigDate, industryColor, industryLabel } from '@/lib/labels';
 import Icon from '@/components/Icon.astro';
+import Photo from '@/components/Photo.astro';
 
 interface Props {
   locale: Locale;
@@ -20,21 +21,21 @@ const ic = industryColor(event.industry);
 
 <article class:list={['ev', { 'ev--wide': variant === 'wide' }]}>
   <div class="ev__top">
-    <a class="ev__date" href={href} aria-label={event.dates.display[locale]} style={`border-left:4px solid ${ic}`}>
+    <a class="ev__date" href={href} aria-label={event.dates.display[locale]} style={`border-bottom:3px solid ${ic}`}>
       <b>{d.days}</b>
       <span>{d.month} {d.year}</span>
     </a>
-    <figure class="ev__img">
-      <img
+    <a class="ev__img-link" href={href} tabindex="-1" aria-hidden="true">
+      <Photo
+        class="ev__img"
         src={event.heroImage}
         alt={event.tagline[locale]}
-        width="800"
-        height="500"
-        loading={priority ? 'eager' : 'lazy'}
-        decoding="async"
-        fetchpriority={priority ? 'high' : 'auto'}
+        ratio={variant === 'wide' ? '4/3' : '16/10'}
+        rounded={false}
+        priority={priority}
+        sizes={variant === 'wide' ? '(max-width: 860px) 100vw, 55vw' : '(max-width: 720px) 100vw, (max-width: 1080px) 50vw, 33vw'}
       />
-    </figure>
+    </a>
   </div>
   <div class="ev__body">
     <p class="mono-label" style="margin:0">{industryLabel(event.industry, locale)}</p>

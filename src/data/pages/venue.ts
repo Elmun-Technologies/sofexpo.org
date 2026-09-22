@@ -1401,6 +1401,46 @@ export const venuePages: PageDef[] = [
               src: "/images/hall-walk.jpg",
               caption: "Проход между стендами в главный зал",
             },
+            {
+              src: "/images/hall-empty.jpg",
+              caption: "Зал 4 400 м² без застройки: шаг колонн и высота потолка",
+            },
+            {
+              src: "/images/hall-windows.jpg",
+              caption: "Витражи и ворота для заезда техники",
+            },
+            {
+              src: "/images/outdoor-area.jpg",
+              caption: "Открытая площадка 5 000 м²: крупногабаритная техника",
+            },
+            {
+              src: "/images/stand-green.jpg",
+              caption: "Индивидуальная застройка стенда",
+            },
+            {
+              src: "/images/officials-tour.jpg",
+              caption: "Официальная делегация на обходе экспозиции",
+            },
+            {
+              src: "/images/venue-facade.jpg",
+              caption: "Фасад павильона и рекламные носители",
+            },
+            {
+              src: "/images/machinery-outdoor.jpg",
+              caption: "Крупногабаритная техника на открытой площадке",
+            },
+            {
+              src: "/images/stand-agro.jpg",
+              caption: "Стенд агротехники: демонстрация мотоблоков и навесного",
+            },
+            {
+              src: "/images/visitors-flowers.jpg",
+              caption: "Цветочная экспозиция: посетители на садовом разделе",
+            },
+            {
+              src: "/images/samarkand.jpg",
+              caption: "Самарканд: город, в который приезжает аудитория выставок",
+            },
           ],
         },
         {
@@ -1469,6 +1509,46 @@ export const venuePages: PageDef[] = [
             {
               src: "/images/hall-walk.jpg",
               caption: "Aisle between stands to the main hall",
+            },
+            {
+              src: "/images/hall-empty.jpg",
+              caption: "The 4,400 m² hall before build-up: column grid and clear height",
+            },
+            {
+              src: "/images/hall-windows.jpg",
+              caption: "Glazing and the drive-in gates",
+            },
+            {
+              src: "/images/outdoor-area.jpg",
+              caption: "The 5,000 m² open-air area: large machinery",
+            },
+            {
+              src: "/images/stand-green.jpg",
+              caption: "Custom stand build",
+            },
+            {
+              src: "/images/officials-tour.jpg",
+              caption: "An official delegation touring the exhibition",
+            },
+            {
+              src: "/images/venue-facade.jpg",
+              caption: "Pavilion facade and advertising carriers",
+            },
+            {
+              src: "/images/machinery-outdoor.jpg",
+              caption: "Large machinery on the open-air area",
+            },
+            {
+              src: "/images/stand-agro.jpg",
+              caption: "Agri-machinery stand: power tillers and implements on show",
+            },
+            {
+              src: "/images/visitors-flowers.jpg",
+              caption: "Horticulture display: visitors in the garden section",
+            },
+            {
+              src: "/images/samarkand.jpg",
+              caption: "Samarkand: the city the show audience travels to",
             },
           ],
         },

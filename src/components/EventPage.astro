@@ -19,6 +19,7 @@ import SectionHead from '@/components/SectionHead.astro';
 import { getCollection } from 'astro:content';
 import { events } from '@/data/events';
 import { brandForEvent } from '@/data/brands';
+import { speakers as speakerWall } from '@/data/speakers';
 
 const { locale, event, page } = Astro.props as { locale: Locale; event: ExpoEvent; page: EventPage };
 /* a branded show unfurls with its own social card, not the AI hall render */
@@ -37,7 +38,21 @@ const trail = [
   { name: event.brand[locale], url: abs(L(`/events/${event.slug}/`)) },
   ...(page.path === `/events/${event.slug}/` ? [] : [{ name: meta.title.split(' — ')[0], url: abs(L(page.path)) }]),
 ];
-const ld: Record<string, unknown>[] = [organizationJsonLd(), eventJsonLd({ ...event, locale })];
+/* The 37 poster speakers live in their own dataset keyed by nothing but the edition, so the
+   e-com show is the one event that can currently name a line-up. Other shows carry the
+   text-only `speakers` array on the event record; both feed the same Person markup. */
+const posterSpeakers = event.slug === 'ecom-retail-expo'
+  ? speakerWall.map((s) => ({ name: s.name[locale], jobTitle: s.role[locale], org: s.org }))
+  : (event.speakers ?? []).map((s) => ({
+      name: s.name,
+      jobTitle: s.role[locale],
+      org: s.org,
+    }));
+
+const ld: Record<string, unknown>[] = [
+  organizationJsonLd(),
+  eventJsonLd({ ...event, locale, performers: posterSpeakers }),
+];
 const faq = blocks.find((b) => b.type === 'faq');
 if (faq?.items?.length) ld.push(faqJsonLd(faq.items as never, abs(L(page.path))));
 ld.push(breadcrumbJsonLd(trail));

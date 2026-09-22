@@ -1,0 +1,175 @@
+---
+/**
+ * The speaker wall of the E-COM & RETAIL business programme.
+ *
+ * The client's posters are finished 4:5 artboards — the name and the role are printed on the
+ * card itself. So the card is shown whole (never cropped), and the text beneath it exists for
+ * the people the picture cannot serve: screen readers, search engines and anyone who needs to
+ * copy a name. Two editions are shown as two rows of the same wall.
+ */
+import type { Locale } from '@/i18n/config';
+import { speakers as all, type Speaker } from '@/data/speakers';
+
+const {
+  locale,
+  edition,
+  limit,
+  title,
+  kicker,
+  text,
+} = Astro.props as {
+  locale: Locale;
+  edition?: Speaker['edition'];
+  limit?: number;
+  title?: string;
+  kicker?: string;
+  text?: string;
+};
+
+const ru = locale === 'ru';
+let list = edition ? all.filter((s) => s.edition === edition) : all;
+const total = list.length;
+if (limit) list = list.slice(0, limit);
+
+/* The wall is the only place these 37 people are named on the site, and a speaker line-up is
+   exactly the kind of thing people search for by name. Without Person markup the poster is an
+   opaque image and the caption is loose text; with it each speaker becomes an addressable
+   entity that can surface for "<name> Samarkand" queries. ItemList preserves the running
+   order, which is the programme order. */
+const speakerLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  itemListElement: list.map((s, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    item: {
+      '@type': 'Person',
+      name: s.name[locale],
+      jobTitle: s.role[locale],
+      image: `https://sofexpo.org/images/speakers/${s.card}.jpg`,
+      ...(s.org ? { worksFor: { '@type': 'Organization', name: s.org } } : {}),
+    },
+  })),
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(speakerLd)} is:inline />
+
+<div class="spk">
+  {(kicker || title || text) && (
+    <div class="sec-head">
+      <div>
+        {kicker && <p class="kicker">{kicker}</p>}
+        {title && <h2>{title}</h2>}
+        {text && <p style="margin-top:.6rem">{text}</p>}
+      </div>
+      <p class="mono-label spk__count">
+        {total} {ru ? 'спикеров' : 'speakers'}
+      </p>
+    </div>
+  )}
+
+  <ul class="spk__grid">
+    {list.map((s, i) => (
+      <li class="spk__item">
+        <figure class="spk__card">
+          <picture>
+            <source
+              type="image/webp"
+              srcset={`/images/speakers/${s.card}-400.webp 400w, /images/speakers/${s.card}-800.webp 800w`}
+              sizes="(max-width: 560px) 50vw, (max-width: 900px) 33vw, 20vw"
+            />
+            <img
+              src={`/images/speakers/${s.card}.jpg`}
+              alt={`${s.name[locale]} — ${s.role[locale]}${s.org ? `, ${s.org}` : ''}`}
+              width="800"
+              height="1000"
+              loading={i < 5 ? 'eager' : 'lazy'}
+              decoding="async"
+            />
+          </picture>
+        </figure>
+        <div class="spk__meta">
+          <b>{s.name[locale]}</b>
+          <span>{s.role[locale]}</span>
+          {s.org && <em>{s.org}</em>}
+        </div>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .spk__count {
+    white-space: nowrap;
+  }
+  .spk__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: clamp(0.8rem, 0.4rem + 1.2vw, 1.6rem);
+  }
+  .spk__item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .spk__card {
+    margin: 0;
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    background: var(--cream-2);
+    box-shadow: var(--shadow-soft);
+    transition:
+      transform var(--tr),
+      box-shadow var(--tr);
+  }
+  .spk__item:hover .spk__card {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lift);
+  }
+  .spk__card img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+  }
+  .spk__meta {
+    display: grid;
+    gap: 0.1rem;
+    line-height: 1.35;
+  }
+  .spk__meta b {
+    font-family: var(--f-display);
+    font-size: 0.99rem;
+    letter-spacing: -0.012em;
+  }
+  .spk__meta span {
+    font-size: 0.83rem;
+    color: var(--ink-60);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .spk__meta em {
+    font-style: normal;
+    font-family: var(--f-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--moss);
+  }
+  @media (max-width: 900px) {
+    .spk__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 560px) {
+    .spk__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

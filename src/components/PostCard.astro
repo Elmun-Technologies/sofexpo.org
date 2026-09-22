@@ -5,6 +5,7 @@ import { formatDate } from '@/lib/nav';
 import { getEvent } from '@/data/events';
 import { industryLabel } from '@/lib/labels';
 import Icon from '@/components/Icon.astro';
+import Photo from '@/components/Photo.astro';
 
 const { locale, post, path, variant = 'default', priority = false } = Astro.props as {
   locale: Locale;
@@ -38,7 +39,7 @@ const hero = post.data.hero ?? relatedEvent?.heroImage ?? '/images/hero-hall.jpg
 <article class:list={['pc', `pc--${variant}`]}>
   {variant !== 'row' && (
     <a class="pc__media" href={href} tabindex="-1" aria-hidden="true">
-      <img src={hero} alt={post.data.title} width={variant === 'lead' ? 1200 : 800} height={variant === 'lead' ? 700 : 520} loading={priority ? 'eager' : 'lazy'} decoding="async" />
+      <Photo src={hero} alt={post.data.title} ratio={variant === 'lead' ? '3/2' : '16/10'} rounded={false} zoom priority={priority} sizes={variant === 'lead' ? '(max-width: 900px) 100vw, 55vw' : '(max-width: 680px) 100vw, 33vw'} />
     </a>
   )}
   <div class="pc__body">
@@ -70,9 +71,15 @@ const hero = post.data.hero ?? relatedEvent?.heroImage ?? '/images/hero-hall.jpg
     gap: 0.9rem;
     background: var(--paper);
     border: 1px solid var(--line);
-    border-radius: var(--r-lg);
+    border-radius: var(--r-img);
     overflow: hidden;
     padding-bottom: clamp(1rem, .7rem + 1vw, 1.4rem);
+    transition: box-shadow var(--tr), border-color var(--tr), transform var(--tr);
+  }
+  .pc:not(.pc--row):hover {
+    border-color: transparent;
+    box-shadow: var(--shadow-lift);
+    transform: translateY(-3px);
   }
   .pc__media {
     display: block;
@@ -121,13 +128,14 @@ const hero = post.data.hero ?? relatedEvent?.heroImage ?? '/images/hero-hall.jpg
   }
   .pc__t,
   .pc__t--lead {
-    margin: 0 0 0.4rem;
-    font-size: 1.02rem;
-    line-height: 1.22;
+    margin: 0 0 0.45rem;
+    font-size: 1.08rem;
+    line-height: 1.25;
+    letter-spacing: -0.012em;
   }
   .pc__t--lead {
-    font-size: clamp(1.12rem, 1.04rem + 0.35vw, 1.3rem);
-    max-width: 26ch;
+    font-size: clamp(1.3rem, 1.05rem + 1vw, 1.85rem);
+    max-width: 22ch;
   }
   .pc h3 a {
     color: inherit;

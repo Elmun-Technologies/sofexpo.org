@@ -1,6 +1,7 @@
 ---
 import type { Locale } from '@/i18n/config';
 import Icon from '@/components/Icon.astro';
+import Photo from '@/components/Photo.astro';
 
 const { locale, items, cols = 3 } = Astro.props as {
   locale: Locale;
@@ -24,9 +25,14 @@ const { locale, items, cols = 3 } = Astro.props as {
       return (
         <Tag class="feature" href={item.href} {...item.href ? { rel: 'noopener' } : {}}>
           {item.image && (
-            <figure class="feature__media">
-              <img src={item.image} alt={item.imageAlt ?? item.title} width="640" height="400" loading="lazy" decoding="async" />
-            </figure>
+            <Photo
+              class="feature__media"
+              src={item.image}
+              alt={item.imageAlt ?? item.title}
+              ratio="16/10"
+              zoom
+              sizes={cols === 2 ? '(max-width: 680px) 100vw, 50vw' : cols === 4 ? '(max-width: 680px) 100vw, (max-width: 1080px) 50vw, 25vw' : '(max-width: 680px) 100vw, (max-width: 1080px) 50vw, 33vw'}
+            />
           )}
           {item.icon && (
             <span class="ico-tile">
@@ -46,18 +52,21 @@ const { locale, items, cols = 3 } = Astro.props as {
 <style>
   .feature {
     position: relative;
-    display: block;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     background: var(--paper);
     border: 1px solid var(--line);
-    border-radius: var(--r-lg);
+    border-radius: var(--r-img);
     padding: clamp(1.1rem, .7rem + 1.4vw, 1.7rem);
     text-decoration: none;
     color: inherit;
-    transition: border-color var(--tr), background-color var(--tr);
+    transition: box-shadow var(--tr), border-color var(--tr), transform var(--tr);
   }
-  .feature:hover {
-    border-color: var(--ink);
-      border-color: var(--sage);
+  a.feature:hover {
+    border-color: transparent;
+    box-shadow: var(--shadow-lift);
+    transform: translateY(-3px);
   }
   .feature__t {
     font-size: clamp(1.05rem, .98rem + .35vw, 1.25rem);
@@ -80,13 +89,23 @@ const { locale, items, cols = 3 } = Astro.props as {
     opacity: 1;
   }
   .feature__media {
-    margin: 0 0 1rem;
+    margin: calc(-1 * clamp(1.1rem, .7rem + 1.4vw, 1.7rem)) calc(-1 * clamp(1.1rem, .7rem + 1.4vw, 1.7rem)) 1.2rem;
+    border-radius: 0;
+    border-top-left-radius: calc(var(--r-img) - 1px);
+    border-top-right-radius: calc(var(--r-img) - 1px);
   }
-  .feature__media img {
+  .feature__go {
+    margin-top: auto;
+    position: static;
+    align-self: flex-start;
+    padding-top: .9rem;
+  }
+  .feature .mono-label {
     display: block;
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-    border-radius: var(--r-sm);
+    margin-top: .8rem;
+    font-size: .74rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--moss);
   }
 </style>

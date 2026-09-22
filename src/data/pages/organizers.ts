@@ -116,6 +116,22 @@ export const organizerPages: PageDef[] = [
               src: "/images/hall-crowd.jpg",
               caption: "День мероприятия: поток посетителей",
             },
+            {
+              src: "/images/conference-room.jpg",
+              caption: "Переговорная комната для деловой программы и жюри",
+            },
+            {
+              src: "/images/opening-ceremony.jpg",
+              caption: "Церемония открытия: официальная часть на красной дорожке",
+            },
+            {
+              src: "/images/venue-aerial.jpg",
+              caption: "Комплекс целиком: павильон, гостиница и парковки",
+            },
+            {
+              src: "/images/cafe-interior.jpg",
+              caption: "Кафе на площадке: питание участников и зона отдыха",
+            },
           ],
         },
         {
@@ -259,6 +275,22 @@ export const organizerPages: PageDef[] = [
             {
               src: "/images/hall-crowd.jpg",
               caption: "Event day: visitor flow",
+            },
+            {
+              src: "/images/conference-room.jpg",
+              caption: "Meeting room for the business programme and the jury",
+            },
+            {
+              src: "/images/opening-ceremony.jpg",
+              caption: "Opening ceremony: the official part on the red carpet",
+            },
+            {
+              src: "/images/venue-aerial.jpg",
+              caption: "The complex as a whole: pavilion, hotel and parking",
+            },
+            {
+              src: "/images/cafe-interior.jpg",
+              caption: "On-site café: catering for participants and a rest area",
             },
           ],
         },

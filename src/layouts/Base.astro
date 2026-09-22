@@ -1,14 +1,14 @@
 ---
+import '@/styles/fonts.css';
 import '@/styles/global.css';
 /* display: Inter Tight (has the Cyrillic subset Archivo lacks) · body: Golos Text · data: JetBrains Mono */
-import '@fontsource-variable/inter-tight/wght.css';
-import '@fontsource-variable/golos-text/wght.css';
-import '@fontsource-variable/jetbrains-mono/wght.css';
 import { buildMeta, entityNodes, SITE } from '@/lib/seo';
 import { localize, localeMeta, type Locale } from '@/i18n/config';
 import { CURRENT_BRAND, isRootHost } from '@/data/hosts';
 import { brandCss } from '@/data/brands';
 import { useUI } from '@/i18n/ui';
+import photos from '@/data/photos.json';
+import photoDims from '@/data/photo-dims.json';
 import Header from '@/components/Header.astro';
 import PromoBar from '@/components/PromoBar.astro';
 import Footer from '@/components/Footer.astro';
@@ -94,6 +94,28 @@ const graph = {
   }),
 };
 const crumbs = [{ name: t('breadcrumbs.home'), path: '/' }, ...breadcrumbs];
+
+/* The LCP hero is served as WebP through <Photo>; preloading the JPEG would download the
+   picture twice. Resolve the same ladder here so the preload hint matches what the browser
+   will actually pick. */
+/* Scrapers trust og:image:width/height over the bytes, so a hard-coded 1200x630 makes
+   Telegram and WhatsApp reserve the wrong box and crop the card. photo-dims.json carries
+   what the build actually wrote. */
+const ogName = /^https?:\/\/[^/]+\/images\/([a-z0-9-]+)\.jpg$/.exec(meta.og.image)?.[1];
+const ogSize: [number, number] = (ogName && (photoDims as Record<string, [number, number]>)[ogName]) || [1200, 630];
+
+const preloadName = props.preload ? /^\/images\/([a-z0-9-]+)\./.exec(props.preload)?.[1] : undefined;
+const preloadRungs: number[] = (preloadName && (photos as Record<string, number[]>)[preloadName]) || [];
+const preload = props.preload
+  ? {
+      href: preloadRungs.length
+        ? `/images/${preloadName}-${preloadRungs[preloadRungs.length - 1]}.webp`
+        : props.preload,
+      srcset: preloadRungs.length
+        ? preloadRungs.map((w) => `/images/${preloadName}-${w}.webp ${w}w`).join(', ')
+        : undefined,
+    }
+  : undefined;
 ---
 
 <!doctype html>
@@ -118,11 +140,38 @@ const crumbs = [{ name: t('breadcrumbs.home'), path: '/' }, ...breadcrumbs];
       <link rel="alternate" type="application/rss+xml" title="SOF EXPO Samarkand" href={`/${locale}/rss.xml`} />
     )}
     {props.redirect && <meta http-equiv="refresh" content={`0; url=${props.redirect}`} />}
+    {/* The two faces that render above the fold in this locale. They are declared inside
+        fonts.css, so without these hints the browser cannot discover them until the
+        stylesheet has parsed — a whole round trip of FOUT on the headline. Only the
+        matching script is preloaded: an English visitor never fetches the Cyrillic cut. */}
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+      href={locale === 'ru' ? '/fonts/inter-tight-cyrillic.woff2' : '/fonts/inter-tight-latin.woff2'}
+    />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+      href={locale === 'ru' ? '/fonts/golos-text-cyrillic.woff2' : '/fonts/golos-text-latin.woff2'}
+    />
     <link rel="icon" href={`${ICON}/favicon.svg`} type="image/svg+xml" />
     <link rel="apple-touch-icon" href={`${ICON}/apple-touch-icon.png`} />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
-    {props.preload && <link rel="preload" as="image" href={props.preload} fetchpriority="high" />}
+    {preload && (
+      <link
+        rel="preload"
+        as="image"
+        href={preload.href}
+        imagesrcset={preload.srcset}
+        imagesizes={preload.srcset ? '100vw' : undefined}
+        fetchpriority="high"
+      />
+    )}
     <meta property="og:type" content={meta.og.type} />
     <meta property="og:site_name" content={CURRENT_BRAND ? `${CURRENT_BRAND.name.en} ${CURRENT_BRAND.sub.en}` : "SOF EXPO Samarkand"} />
     <meta property="og:locale" content={meta.og.locale} />
@@ -131,8 +180,8 @@ const crumbs = [{ name: t('breadcrumbs.home'), path: '/' }, ...breadcrumbs];
     <meta property="og:description" content={meta.og.description} />
     <meta property="og:url" content={meta.og.url} />
     <meta property="og:image" content={meta.og.image} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    <meta property="og:image:width" content={String(ogSize[0])} />
+    <meta property="og:image:height" content={String(ogSize[1])} />
     <meta property="og:image:alt" content={props.title} />
     {meta.og.publishedTime && <meta property="article:published_time" content={meta.og.publishedTime} />}
     {meta.og.modifiedTime && <meta property="article:modified_time" content={meta.og.modifiedTime} />}

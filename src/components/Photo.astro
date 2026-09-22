@@ -1,0 +1,110 @@
+---
+/**
+ * One image element for the whole site.
+ *
+ * Every photograph in `public/images/` is built by `scripts/build-photos.mjs` into a
+ * 640/1024/1600 WebP ladder plus a JPEG fallback, so a call site only ever names the
+ * photo and the shape it should take — never a width, never a format:
+ *
+ *   <Photo src="/images/hall-stand.jpg" alt="…" ratio="16/10" sizes="(max-width:900px) 100vw, 33vw" />
+ *
+ * `priority` marks the LCP image (eager + high fetch priority + no lazy decode); everything
+ * else is lazy and async, which is what keeps a photo-led page cheap. The wrapper carries the
+ * aspect ratio so the layout never shifts while the bytes are in flight.
+ */
+import photos from '@/data/photos.json';
+
+const {
+  src,
+  alt,
+  ratio = '16/10',
+  sizes = '100vw',
+  priority = false,
+  class: klass = '',
+  rounded = true,
+  zoom = false,
+  fit = 'cover',
+  position = 'center',
+  loading,
+} = Astro.props as {
+  src: string;
+  alt: string;
+  ratio?: string;
+  sizes?: string;
+  priority?: boolean;
+  class?: string;
+  rounded?: boolean;
+  zoom?: boolean;
+  fit?: 'cover' | 'contain';
+  position?: string;
+  loading?: 'eager' | 'lazy';
+};
+
+/** "/images/hall-stand.jpg" → "/images/hall-stand" (a built ladder) or null (a stray asset) */
+const m = /^\/images\/([a-z0-9-]+)\.(jpg|jpeg|png|webp)$/i.exec(src);
+const name = m?.[1];
+/* the manifest is written by scripts/build-photos.mjs: it lists the rungs that were actually
+   produced for each photo, so a 768px original never advertises a 1600w candidate (a 404 per
+   card) and a 2048px one is not capped at 1024 for no reason. */
+const rungs: number[] = (name && (photos as Record<string, number[]>)[name]) || [];
+const srcset = rungs.length
+  ? rungs.map((w) => `/images/${name}-${w}.webp ${w}w`).join(', ')
+  : undefined;
+const fallback = name ? `/images/${name}.jpg` : src;
+const [rw, rh] = ratio.split('/').map((n) => Number(n.trim()) || 1);
+---
+
+<figure
+  class:list={['ph', klass, { 'ph--round': rounded, 'ph--zoom': zoom }]}
+  style={`--ph-ratio:${rw} / ${rh};--ph-fit:${fit};--ph-pos:${position}`}
+>
+  <picture>
+    {srcset && <source type="image/webp" srcset={srcset} sizes={sizes} />}
+    <img
+      src={fallback}
+      alt={alt}
+      width={1600}
+      height={Math.round((1600 * rh) / rw)}
+      loading={loading ?? (priority ? 'eager' : 'lazy')}
+      decoding={priority ? 'sync' : 'async'}
+      fetchpriority={priority ? 'high' : 'auto'}
+      sizes={sizes}
+    />
+  </picture>
+  <slot />
+</figure>
+
+<style>
+  .ph {
+    position: relative;
+    margin: 0;
+    overflow: hidden;
+    display: block;
+    background: var(--cream-2);
+    aspect-ratio: var(--ph-ratio);
+  }
+  .ph--round {
+    border-radius: var(--r-img);
+  }
+  .ph img {
+    width: 100%;
+    height: 100%;
+    object-fit: var(--ph-fit);
+    object-position: var(--ph-pos);
+    display: block;
+    transition: transform 600ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .ph--zoom:hover img,
+  a:hover > .ph--zoom img,
+  a:hover .ph--zoom img {
+    transform: scale(1.045);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ph img {
+      transition: none;
+    }
+    .ph--zoom:hover img {
+      transform: none;
+    }
+  }
+</style>

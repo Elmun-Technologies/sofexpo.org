@@ -12,6 +12,7 @@ import Ornament from '@/components/Ornament.astro';
 import type { ExpoEvent } from '@/data/events';
 import Countdown from '@/components/Countdown.astro';
 import Icon from '@/components/Icon.astro';
+import Photo from '@/components/Photo.astro';
 import { bigDate, industryLabel } from '@/lib/labels';
 
 const { locale, event, kicker, title, lead, variant = 'open' } = Astro.props as {
@@ -47,6 +48,15 @@ const actions = [
 <!-- the hero carries a measured hall grid, not a blurred render: on an expo site the first
      screen owes the visitor facts (dates, venue, countdown), not an impression of a crowd -->
 <section class:list={['ehero', { 'ehero--past': !upcoming }]}>
+  <Photo
+    class="ehero__bg"
+    src={event.heroImage}
+    alt={event.tagline[locale]}
+    ratio="16/9"
+    rounded={false}
+    priority
+    sizes="100vw"
+  />
   <div class="wrap ehero__in">
     <div class="ehero__text">
       <p class="kicker">
@@ -102,20 +112,23 @@ const actions = [
     color: rgba(255,255,255,.86);
     isolation: isolate;
   }
-  .ehero::before {
-    content: '';
+  .ehero__bg {
     position: absolute;
     inset: 0;
-    /* a plain ground with one hairline — the module grid was texture for texture's sake */
-    background: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.14);
     z-index: -2;
+    aspect-ratio: auto !important;
+    border-radius: 0;
+  }
+  .ehero__bg img {
+    object-position: center 42%;
   }
   .ehero::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(100deg, rgba(10, 26, 17, 0.94) 0%, rgba(10, 26, 17, 0.66) 46%, rgba(10, 26, 17, 0.24) 100%);
+    background:
+      linear-gradient(100deg, rgba(8, 22, 14, 0.95) 0%, rgba(8, 22, 14, 0.82) 44%, rgba(8, 22, 14, 0.42) 100%),
+      linear-gradient(to top, rgba(8, 22, 14, 0.85), rgba(8, 22, 14, 0) 55%);
     z-index: -1;
   }
   .ehero--past::after {
@@ -130,8 +143,10 @@ const actions = [
   }
   .ehero h1 {
     color: #fff;
-    font-size: var(--t-hero);
-    max-width: 20ch;
+    font-size: clamp(2.1rem, 1.4rem + 3vw, 3.6rem);
+    letter-spacing: -0.032em;
+    line-height: 1.04;
+    max-width: 18ch;
     margin: 0.3rem 0 0;
   }
   /* the date is the loudest figure in the hero, like on the home */
@@ -210,11 +225,12 @@ const actions = [
   .ehero__key {
     margin: 0;
     display: grid;
-    gap: 0.5rem;
-    padding: 1rem 1.1rem;
-    border-radius: var(--r);
-    background: rgba(10, 26, 17, 0.42);
-    border: 1px solid rgba(255, 255, 255, 0.16);
+    gap: 0.6rem;
+    padding: 1.2rem 1.3rem;
+    border-radius: var(--r-lg);
+    background: rgba(10, 26, 17, 0.5);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     font-size: 0.85rem;
   }
   .ehero__key div {

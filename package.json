@@ -13,7 +13,9 @@
     "build:alias": "node scripts/build-hosts.mjs --mode alias",
     "check:hosts": "node scripts/build-hosts.mjs --mode subdomain && node scripts/check-hosts.mjs --mode subdomain",
     "build:host": "node scripts/build-one-host.mjs",
-    "editorial:map": "node scripts/gen-editorial-map.mjs"
+    "editorial:map": "node scripts/gen-editorial-map.mjs",
+    "photos": "node scripts/build-photos.mjs",
+    "fonts:sync": "node scripts/sync-fonts.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",

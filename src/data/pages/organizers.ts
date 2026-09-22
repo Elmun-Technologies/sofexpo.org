@@ -709,6 +709,8 @@ export const organizerPages: PageDef[] = [
           kicker: "Чек-лист",
           title: "Календарь организатора: 90 дней до входа посетителя",
           lead: "Этот список мы используем сами на своих выставках. Скачайте и адаптируйте под своё событие — он снимает 90% вопросов на монтаже.",
+          image: "/images/conference-audience.jpg",
+          imageAlt: "Конференц-зал во время события",
         },
         {
           type: "steps",
@@ -787,6 +789,8 @@ export const organizerPages: PageDef[] = [
           kicker: "Checklist",
           title: "The organizer calendar: 90 days before the doors open",
           lead: "We use this list for our own shows. Download it and adapt it to your event — it removes 90% of the questions at build-up.",
+          image: "/images/conference-audience.jpg",
+          imageAlt: "Conference hall during an event",
         },
         {
           type: "steps",

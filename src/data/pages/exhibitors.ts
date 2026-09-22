@@ -1583,6 +1583,8 @@ export const exhibitorPages: PageDef[] = [
           kicker: "Бюрократия",
           title: "Список документов, который экономит нервы на монтаже",
           lead: "Ниже — календарь paperwork для участника. Все бланки присылает менеджер; если чего-то не хватает, мы предупредим заранее, а не в день заезда.",
+          image: "/images/hall-stand.jpg",
+          imageAlt: "Выставочный зал: монтаж экспозиции",
         },
         {
           type: "table",
@@ -1681,6 +1683,8 @@ export const exhibitorPages: PageDef[] = [
           kicker: "Paperwork",
           title: "The document list that saves your nerves at build-up",
           lead: "Below is the participant calendar. All forms come from the account manager; if something is missing you hear it in advance, not on arrival day.",
+          image: "/images/hall-stand.jpg",
+          imageAlt: "Exhibition hall: stand build-up",
         },
         {
           type: "table",
@@ -1796,6 +1800,8 @@ export const exhibitorPages: PageDef[] = [
           kicker: "Каталог",
           title: "Кто выставляет и что искать",
           lead: "Каталог выходит в PDF перед каждой выставкой и обновляется на сайте после: с контактными данными, разделом и стендом участника. Для закупщиков — доступ открыт бесплатно.",
+          image: "/images/hall-crowd.jpg",
+          imageAlt: "Выставочный зал в день работы",
         },
         {
           type: "files",
@@ -1873,6 +1879,8 @@ export const exhibitorPages: PageDef[] = [
           kicker: "Catalogue",
           title: "Who exhibits and what to look for",
           lead: "The catalogue is published in PDF before every show and updated on the site afterwards: contacts, section and stand number. Free access for buyers.",
+          image: "/images/hall-crowd.jpg",
+          imageAlt: "Exhibition hall on a working day",
         },
         {
           type: "files",
@@ -1967,6 +1975,8 @@ export const exhibitorPages: PageDef[] = [
           kicker: "FAQ",
           title: "Вопросы, которые задают до подписания договора",
           lead: "Если ответа нет — напишите менеджеру, отвечает в рабочее время в течение 15 минут.",
+          image: "/images/hall-walk.jpg",
+          imageAlt: "Проход между стендами в выставочном зале",
         },
         {
           type: "faq",
@@ -2029,6 +2039,8 @@ export const exhibitorPages: PageDef[] = [
           kicker: "FAQ",
           title: "Questions asked before signing the contract",
           lead: "If an answer is missing, write to the account manager — replies within 15 minutes during office hours.",
+          image: "/images/hall-walk.jpg",
+          imageAlt: "Aisle between stands in the exhibition hall",
         },
         {
           type: "faq",

@@ -60,7 +60,8 @@ export function alternates(path: string) {
   return {
     ru: localizeSameHost("ru", path),
     en: localizeSameHost("en", path),
-    "x-default": "/",
+    /* Q1 (docs/08 §7): the root 301s to /en/, so x-default follows the redirect */
+    "x-default": "/en/",
   };
 }
 

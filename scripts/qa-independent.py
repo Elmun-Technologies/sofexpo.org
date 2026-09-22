@@ -42,6 +42,10 @@ for label, d in HOSTS.items():
             url = '/' + rel[: -len('index.html')] if rel.endswith('index.html') else '/' + rel
             html = open(p, encoding='utf-8').read()
             pages[label][url] = html
+            if url == '/':
+                # the bare root is a 301 redirect document (docs/08 §7, Q1):
+                # not a content page, so the per-page head contract does not apply
+                continue
             loc = url.split('/')[1] if url.count('/') > 1 else ''
             # ---- per-page rules
             if len(re.findall(r'<h1[\s>]', html)) != 1:

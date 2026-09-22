@@ -31,8 +31,8 @@ takrorlanishi. **Phase 1** (§5b) bilan 3, 4, 8, 9 va 10 yopildi — kalendar bi
 eng katta element, header 1 bar, bosh sahifa 14 → 6 seksiya, mobil 19 549 → 9 235 px, `/events/`
 jadval-kalendar + filtr + `.ics`, tadbir overview 16 → ~10 blok, `/venue/` SVG-reja, `/contacts/`
 statik xarita, `/organizers/` band sanalar, `/visitors/` bitta-oqim (rail → bilet → yo'l → mehmonxona
-→ FAQ), `/exhibitors/` kalendar-reyka, mobil tadbir sahifasida sticky «Стенд» bari. Qolganlari —
-materialga bog'liq (Phase 2/3) va §7 qarorlari.
+→ FAQ), `/exhibitors/` kalendar-reyka, mobil tadbir sahifasida sticky «Стенд» bari, `/` gate yopildi
+(301 → `/en/`). Qolganlari — materialga bog'liq (Phase 2/3) va §7 ning Q4/Q5/Q7 qarorlari.
 
 ---
 
@@ -154,6 +154,11 @@ Format: **Hozir** → **Xato** → **Bo'lishi kerak** (wireframe) → **Priorite
   - A. `/` = `Accept-Language` bo'yicha 302 → `/ru/` yoki `/en/` (Netlify/Cloudflare `_redirects` bilan,
     statik), `x-default` hreflang `/en/` ga. Darvoza yo'qoladi.
   - B. `/` = to'liq **EN bosh sahifa** (kanonik), RU — switcher orqali. Xalqaro auditoriya birinchi.
+- ✅ **2026-09-22 qo'llandi (Q1 → A)**: darvoza olib tashlandi — har hostning `_redirects` ga
+  `/ /en/ 301` yoziladi (build: `scripts/build-hosts.mjs`), `x-default` → `/en/`; statik hostlar
+  uchun HTML-fallback (meta-refresh + «→ Главная на русском» havolasi). `_redirects` header'larni
+  o'qimaydi, shuning uchun `Accept-Language` bo'yicha RU/EN kasrli variant sifatida
+  `docs/06-deploy.md` da Cloudflare Redirect Rule (expression) tayyor turadi — istalgan payt yoqiladi.
 - **P1.**
 
 ### 4.2 `/ru/`, `/en/` — bosh sahifa (14 seksiya, 10 667 px desktop / 19 549 px mobil)
@@ -376,10 +381,10 @@ headless Chromium'da tekshirildi (6 → 1 qator). `.ics` valid VCALENDAR (6 VEVE
 (FOODERA host, 390 px: bar hero'dan footergacha yopishib turadi). `/ru/visitors/` (4 530 px
 desktop / 6 301 px mobil) va `/ru/exhibitors/` (4 706 px) ssuralari ko'rib chiqildi.
 
-**Qolgan (Phase 1 dan tushib qolgan):** `/` gate — §7 Q1 qarori kerak (hozircha darvoza turibdi);
-tadbir kartasidagi «rang chizig'i» endi tarmoq rangida, lekin **ko'rgazma brendi/logotipi** —
-Phase 2 (material). `/exhibitors/` narx jadvali va real PDF'lar — Phase 3 (Q4). Bilet-oqimi
-narxlarsiz qurildi (trade = bepul registratsiya, festival = Ticketon) — narx chiqqach 1 satr.
+**Qolgan (Phase 1 dan tushib qolgan):** tadbir kartasidagi «rang chizig'i» endi tarmoq rangida,
+lekin **ko'rgazma brendi/logotipi** — Phase 2 (material). `/exhibitors/` narx jadvali va real
+PDF'lar — Phase 3 (Q4). Bilet-oqimi narxlarsiz qurildi (trade = bepul registratsiya,
+festival = Ticketon) — narx chiqqach 1 satr. **`/` gate — 2026-09-22 yopildi** (Q1 → A: 301).
 
 ---
 
@@ -388,7 +393,7 @@ narxlarsiz qurildi (trade = bepul registratsiya, festival = Ticketon) — narx c
 | Faza | Muddat | Nima | Sizdan kerak |
 | --- | --- | --- | --- |
 | **0 · Buglar** | ✅ 2026-09-21 | §5 | — |
-| **1 · Tuzilma** | ✅ 2026-09-21 | §5b — tuzilma qismi to'liq (kalendar-first, /visitors/ oqimi, /exhibitors/ rail, mobil sticky-CTA). Qolgan: `/` gate (Q1), narx/PDF (Q4, Phase 3), zal o'lchamlari (Phase 3) | Q1; Q4 (narxlar) |
+| **1 · Tuzilma** | ✅ 2026-09-22 | §5b — to'liq: kalendar-first, /visitors/ oqimi, /exhibitors/ rail, mobil sticky-CTA, `/` gate yopildi (Q1 → A, 301 → /en/) | — (narx/PDF Phase 3, zal o'lchamlari Phase 3) |
 | **2 · Identifikatsiya** | fotolar kelgach, 3–4 kun | 6 ko'rgazma: logotip + rang `brand-map.json` (5 yozuv); real fotolar 1:1 fayl nomi bo'yicha; hamkor logotiplari; jamoa fotolari; OG-kartalar har ko'rgazma uchun | Logotiplar (SVG/AI), 22 kadr (`docs/07 §4`), hamkor logotiplari |
 | **3 · Kommersiya** | narxlar kelgach, 2 kun | Rate-card jadvallari (`/packages/`, `/organizers/rates/`, tadbir sahifasi), «уточняется» 6 joy o'rniga qiymatlar, real PDF (21 fayl) | Narxlar, texspes qiymatlari, PDF'lar |
 
@@ -400,8 +405,9 @@ kompozitsiyasi va tokenlar.
 
 ## 7. Sizdan qaror kutiladigan savollar
 
-1. **`/` darvoza**: A (til bo'yicha redirect) yoki B (`/` = EN bosh sahifa)? Tavsiya: **A** — hosting
-   `_redirects` bilan, SEO yo'qotilmaydi (`x-default` → `/en/`).
+1. **`/` darvoza**: A (til bo'yicha redirect) yoki B (`/` = EN bosh sahifa)? ✅ **Yopildi 2026-09-22 → A**:
+   `_redirects` ga `/ /en/ 301` (har host), `x-default` → `/en/`, HTML-fallback sahifa.
+   `Accept-Language` kasrli variant — `docs/06-deploy.md` (Cloudflare Redirect Rule).
 2. **Hero yo'nalishi**: «keyingi ko'rgazma» (kalendar-birinchi, tavsiya) yoki «markaz» (hozirgi)?
 3. **Xarita**: statik rasm (0 tashqi so'rov, tez, klik → Yandex/Google) yoki iframe (interaktiv, +1 tashqi
    so'rov, cookie)? Tavsiya: **statik**, tagida 3 havola (Yandex · Google · 2GIS).

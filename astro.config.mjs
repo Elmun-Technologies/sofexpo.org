@@ -20,7 +20,11 @@ export default defineConfig({
   devToolbar: { enabled: false },
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/404'),
+      /* /404 is not indexable; the bare root / is a 301 to /en/ (docs/08 §7, Q1) */
+      filter: (page) => {
+        const p = new URL(page).pathname.replace(/\/+$/, '');
+        return p !== '' && !page.includes('/404');
+      },
       i18n: {
         defaultLocale: 'en',
         locales: { ru: 'ru-RU', en: 'en-US' },

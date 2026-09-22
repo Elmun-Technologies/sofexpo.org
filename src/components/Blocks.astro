@@ -7,6 +7,7 @@ import type { Block, BlockCard, BlockFile, BlockLink, BlockRow, BlockShot, Block
 import { localize, type Locale } from '@/i18n/config';
 import { useUI } from '@/i18n/ui';
 import Icon from '@/components/Icon.astro';
+import Photo from '@/components/Photo.astro';
 import StatBand from '@/components/StatBand.astro';
 import LeadForm from '@/components/LeadForm.astro';
 import Faq from '@/components/Faq.astro';
@@ -70,9 +71,7 @@ const H = (p?: string) => {
                 ) : null}
               </div>
               {b.image && (
-                <figure class="block__media">
-                  <img src={b.image} alt={b.imageAlt ?? ''} width="900" height="620" loading="eager" decoding="async" />
-                </figure>
+                <Photo class="block__media" src={b.image} alt={b.imageAlt ?? ''} ratio="4/3" priority sizes="(max-width: 1080px) 100vw, 45vw" />
               )}
             </div>
           )}
@@ -98,9 +97,7 @@ const H = (p?: string) => {
                 ) : null}
               </div>
               {b.image && (
-                <figure class="prose-media__fig">
-                  <img src={b.image} alt={b.imageAlt ?? b.title ?? ''} width="700" height="460" loading="lazy" decoding="async" />
-                </figure>
+                <Photo class="prose-media__fig" src={b.image} alt={b.imageAlt ?? b.title ?? ''} ratio="3/2" sizes="(max-width: 1080px) 100vw, 40vw" />
               )}
             </div>
           )}
@@ -125,9 +122,7 @@ const H = (p?: string) => {
                 return (
                   <Tag class="feature" href={href}>
                     {i.image && (
-                      <figure class="feature__media">
-                        <img src={i.image} alt={i.imageAlt ?? i.title} width="640" height="400" loading="lazy" decoding="async" />
-                      </figure>
+                      <Photo class="feature__media" src={i.image} alt={i.imageAlt ?? i.title} ratio="16/10" zoom sizes="(max-width: 680px) 100vw, (max-width: 1080px) 50vw, 33vw" />
                     )}
                     {i.icon && (
                       <span class="ico-tile">
@@ -213,9 +208,7 @@ const H = (p?: string) => {
                 )}
               </div>
               {b.image && (
-                <figure class="callout__fig">
-                  <img src={b.image} alt={b.imageAlt ?? b.title ?? ''} width="480" height="360" loading="lazy" decoding="async" />
-                </figure>
+                <Photo class="callout__fig" src={b.image} alt={b.imageAlt ?? b.title ?? ''} ratio="4/3" sizes="(max-width: 780px) 100vw, 320px" />
               )}
             </div>
           )}
@@ -240,10 +233,10 @@ const H = (p?: string) => {
           {b.type === 'gallery' && (
             <div class="gal">
               {((b.items ?? []) as BlockShot[]).map((g, i) => (
-                <figure>
-                  <img src={g.src} alt={g.alt ?? g.caption ?? ''} width="800" height="560" loading={i === 0 ? 'eager' : 'lazy'} decoding="async" />
-                  {g.caption && <figcaption>{g.caption}</figcaption>}
-                </figure>
+                <div class="gal__item">
+                  <Photo src={g.src} alt={g.alt ?? g.caption ?? ''} ratio="4/3" zoom priority={i === 0} sizes="(max-width: 680px) 100vw, (max-width: 1080px) 50vw, 33vw" />
+                  {g.caption && <p class="gal__cap">{g.caption}</p>}
+                </div>
               ))}
             </div>
           )}
@@ -504,24 +497,16 @@ const H = (p?: string) => {
   }
   .gal {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: clamp(.7rem, .4rem + .8vw, 1.1rem);
   }
-  .gal figure {
-    margin: 0;
-    border-radius: var(--r-lg);
-    overflow: hidden;
-    background: var(--paper);
-    border: 1px solid var(--line);
+  .gal__item :global(.ph) {
+    box-shadow: var(--shadow-soft);
   }
-  .gal img {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-  }
-  .gal figcaption {
-    padding: .7rem .95rem;
-    font-size: .85rem;
+  .gal__cap {
+    margin: .65rem 0 0;
+    font-size: .86rem;
+    line-height: 1.45;
     color: var(--ink-60);
   }
   .quote {

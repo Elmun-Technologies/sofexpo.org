@@ -19,6 +19,8 @@ import LeadForm from '@/components/LeadForm.astro';
 import FeatureGrid from '@/components/FeatureGrid.astro';
 import StatBand from '@/components/StatBand.astro';
 import PostCard from '@/components/PostCard.astro';
+import Photo from '@/components/Photo.astro';
+import EventCard from '@/components/EventCard.astro';
 
 export function getStaticPaths() {
   return localePaths();
@@ -88,6 +90,14 @@ const copy = {
     formTitleCard: 'Заявка на стенд',
     formSub: '30 секунд — без оплаты сейчас.',
     formList: ['Прайс-лист и план зала в PDF', 'Профиль аудитории и список участников', 'Фиксация цены раннего бронирования', 'Подбор места с учётом вашего продукта'],
+    lineupKicker: 'Календарь',
+    lineupTitle: 'Ближайшие выставки сезона',
+    lineupText: 'Шесть отраслевых проектов в одном центре: продукты и напитки, стройматериалы, агро, авто, e-commerce и образование.',
+    allEvents: 'Весь календарь',
+    galleryKicker: 'Площадка в деле',
+    galleryTitle: 'Как это выглядит на самом деле',
+    galleryText: 'Снимки с прошедших выставок в SOF EXPO Samarkand: зал на 4 400 м², застройка стендов, открытая площадка и деловая программа.',
+    galleryCta: 'Смотреть площадку',
   },
   en: {
     title: 'SOF EXPO Samarkand — exhibition centre and trade shows in Uzbekistan',
@@ -127,6 +137,14 @@ const copy = {
     formTitleCard: 'Stand request',
     formSub: '30 seconds — no payment now.',
     formList: ['Price list and hall plan in PDF', 'Audience profile and exhibitor list', 'Early-booking price lock', 'Location picked around your product'],
+    lineupKicker: 'Calendar',
+    lineupTitle: 'The season ahead',
+    lineupText: 'Six industry projects under one roof: food and drink, building materials, agriculture, automotive, e-commerce and education.',
+    allEvents: 'Full calendar',
+    galleryKicker: 'The venue at work',
+    galleryTitle: 'What it actually looks like',
+    galleryText: 'Photographs from past editions at SOF EXPO Samarkand: the 4,400 m² hall, stand build-up, the open-air area and the business programme.',
+    galleryCta: 'See the venue',
   },
 }[locale];
 
@@ -168,13 +186,19 @@ const jsonLd = [
   description={copy.desc}
   jsonLd={jsonLd}
   image={next.heroImage}
-  preload={next.heroImage}
+  preload="/images/hero-hall.jpg"
 >
   <!-- 1 · hero = the next show: the date is the biggest element on the page -->
   <section class="home-hero">
-    <figure class="home-hero__bg">
-      <img src={next.heroImage} alt={next.tagline[locale]} width="1600" height="900" loading="eager" fetchpriority="high" />
-    </figure>
+    <Photo
+      class="home-hero__bg"
+      src="/images/hero-hall.jpg"
+      alt={ru ? 'Выставочный зал SOF EXPO Samarkand в день открытия' : 'SOF EXPO Samarkand hall on opening day'}
+      ratio="16/9"
+      rounded={false}
+      priority
+      sizes="100vw"
+    />
     <div class="wrap">
       <div class="home-hero__in">
         <div>
@@ -233,9 +257,13 @@ const jsonLd = [
             <a href={P('/venue/how-to-get-there/')}>{ru ? 'Как добраться' : 'Getting there'} →</a>
           </div>
         </div>
-        <figure class="venue-strip__img">
-          <img src="/images/venue-exterior.jpg" alt={ru ? 'Экстерьер выставочного центра SOF EXPO Samarkand' : 'Exterior of SOF EXPO Samarkand exhibition centre'} width="640" height="480" loading="lazy" decoding="async" />
-        </figure>
+        <Photo
+          class="venue-strip__img"
+          src="/images/venue-exterior.jpg"
+          alt={ru ? 'Экстерьер выставочного центра SOF EXPO Samarkand' : 'Exterior of SOF EXPO Samarkand exhibition centre'}
+          ratio="4/3"
+          sizes="(max-width: 1080px) 100vw, 320px"
+        />
       </div>
     </div>
   </section>
@@ -245,6 +273,46 @@ const jsonLd = [
     <div class="wrap">
       <h2 class="sec-title">{copy.doorsTitle}</h2>
       <FeatureGrid locale={locale} cols={3} items={copy.doors.map((i) => ({ title: i.title, text: i.text, href: P(i.href), meta: i.meta, image: i.image, imageAlt: i.imageAlt }))} />
+    </div>
+  </section>
+
+
+  <!-- 3.5 · the real hall: photographs, not renders -->
+  <section class="sec sec--paper reveal">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="kicker">{copy.galleryKicker}</p>
+          <h2>{copy.galleryTitle}</h2>
+          <p style="margin-top:.6rem">{copy.galleryText}</p>
+        </div>
+        <a class="btn btn--ghost" href={P('/venue/')}>{copy.galleryCta}</a>
+      </div>
+      <div class="gallery">
+        <Photo src="/images/hall-crowd.jpg" alt={ru ? 'Посетители в главном зале в день открытия' : 'Visitors in the main hall on opening day'} zoom sizes="(max-width: 780px) 100vw, 50vw" />
+        <Photo src="/images/stand-equipment.jpg" alt={ru ? 'Стенд с оборудованием на выставке' : 'Equipment stand at the show'} zoom sizes="(max-width: 780px) 50vw, 25vw" />
+        <Photo src="/images/hall-empty.jpg" alt={ru ? 'Зал 4 400 м² до монтажа' : 'The 4,400 m² hall before build-up'} zoom sizes="(max-width: 780px) 50vw, 25vw" />
+        <Photo src="/images/officials-tour.jpg" alt={ru ? 'Делегация на обходе экспозиции' : 'A delegation touring the exhibition'} zoom sizes="(max-width: 780px) 50vw, 25vw" />
+        <Photo src="/images/stand-green.jpg" alt={ru ? 'Застройка стенда' : 'Custom stand build'} zoom sizes="(max-width: 780px) 50vw, 25vw" />
+        <Photo src="/images/outdoor-area.jpg" alt={ru ? 'Открытая площадка 5 000 м²' : 'The 5,000 m² open-air area'} zoom sizes="(max-width: 780px) 100vw, 50vw" />
+      </div>
+    </div>
+  </section>
+
+  <!-- 3.6 · the line-up -->
+  <section class="sec reveal">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="kicker">{copy.lineupKicker}</p>
+          <h2>{copy.lineupTitle}</h2>
+          <p style="margin-top:.6rem">{copy.lineupText}</p>
+        </div>
+        <a class="txt-link" href={P('/events/')}>{copy.allEvents} <Icon name="arrow" size={15} /></a>
+      </div>
+      <div class="grid g3">
+        {upcoming.slice(0, 6).map((e, i) => <EventCard locale={locale} event={e} priority={false} />)}
+      </div>
     </div>
   </section>
 
@@ -266,7 +334,7 @@ const jsonLd = [
           </div>
         </div>
         <div>
-          <img src="/images/samarkand-real.jpg" alt={ru ? 'Регистан в Самарканде' : 'Registan in Samarkand'} width="900" height="620" loading="lazy" decoding="async" style="border-radius:var(--r-lg)" />
+          <Photo src="/images/samarkand-real.jpg" alt={ru ? 'Регистан в Самарканде' : 'Registan in Samarkand'} ratio="3/2" sizes="(max-width: 1080px) 100vw, 340px" />
           <div style="margin-top:1rem">
             <StatBand locale={locale} />
           </div>

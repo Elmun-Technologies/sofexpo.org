@@ -9,6 +9,7 @@ import { localize, localeMeta, type Locale } from '@/i18n/config';
 import { CURRENT_BRAND, isRootHost } from '@/data/hosts';
 import { brandCss } from '@/data/brands';
 import { useUI } from '@/i18n/ui';
+import photos from '@/data/photos.json';
 import Header from '@/components/Header.astro';
 import PromoBar from '@/components/PromoBar.astro';
 import Footer from '@/components/Footer.astro';
@@ -94,6 +95,22 @@ const graph = {
   }),
 };
 const crumbs = [{ name: t('breadcrumbs.home'), path: '/' }, ...breadcrumbs];
+
+/* The LCP hero is served as WebP through <Photo>; preloading the JPEG would download the
+   picture twice. Resolve the same ladder here so the preload hint matches what the browser
+   will actually pick. */
+const preloadName = props.preload ? /^\/images\/([a-z0-9-]+)\./.exec(props.preload)?.[1] : undefined;
+const preloadRungs: number[] = (preloadName && (photos as Record<string, number[]>)[preloadName]) || [];
+const preload = props.preload
+  ? {
+      href: preloadRungs.length
+        ? `/images/${preloadName}-${preloadRungs[preloadRungs.length - 1]}.webp`
+        : props.preload,
+      srcset: preloadRungs.length
+        ? preloadRungs.map((w) => `/images/${preloadName}-${w}.webp ${w}w`).join(', ')
+        : undefined,
+    }
+  : undefined;
 ---
 
 <!doctype html>
@@ -122,7 +139,16 @@ const crumbs = [{ name: t('breadcrumbs.home'), path: '/' }, ...breadcrumbs];
     <link rel="apple-touch-icon" href={`${ICON}/apple-touch-icon.png`} />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
-    {props.preload && <link rel="preload" as="image" href={props.preload} fetchpriority="high" />}
+    {preload && (
+      <link
+        rel="preload"
+        as="image"
+        href={preload.href}
+        imagesrcset={preload.srcset}
+        imagesizes={preload.srcset ? '100vw' : undefined}
+        fetchpriority="high"
+      />
+    )}
     <meta property="og:type" content={meta.og.type} />
     <meta property="og:site_name" content={CURRENT_BRAND ? `${CURRENT_BRAND.name.en} ${CURRENT_BRAND.sub.en}` : "SOF EXPO Samarkand"} />
     <meta property="og:locale" content={meta.og.locale} />

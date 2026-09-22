@@ -21,7 +21,7 @@ const { locale, kicker, title, text, primary, secondary, dark = true } = Astro.p
         {text && <p class="lead" style={dark ? 'color:rgba(255, 255, 255, .82)' : undefined}>{text}</p>}
       </div>
       <div class="cta-band__actions">
-        <a class="btn" href={primary.href}>
+        <a class:list={['btn', { 'btn--light': dark }]} href={primary.href}>
           <Icon name="arrow" size={17} /> {primary.label}
         </a>
         {secondary && (
@@ -40,6 +40,26 @@ const { locale, kicker, title, text, primary, secondary, dark = true } = Astro.p
     grid-template-columns: minmax(0, 1.4fr) minmax(0, auto);
     gap: 1.6rem 2.5rem;
     align-items: center;
+  }
+  .cta-band.sec--forest {
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-band.sec--forest::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(70% 140% at 88% 10%, rgba(29, 122, 72, 0.5), transparent 60%),
+      radial-gradient(50% 120% at 8% 100%, rgba(200, 136, 44, 0.16), transparent 62%);
+    pointer-events: none;
+  }
+  .cta-band > :global(.wrap) {
+    position: relative;
+  }
+  .cta-band h2 {
+    font-size: clamp(1.7rem, 1.25rem + 1.8vw, 2.7rem);
+    letter-spacing: -0.028em;
   }
   .cta-band h2 {
     max-width: 26ch;

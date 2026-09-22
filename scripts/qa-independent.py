@@ -218,7 +218,7 @@ for label, d in HOSTS.items():
     if re.search(r'transition:[^;]*transform', css):
         for m in re.finditer(r'([^{}]{0,30}):?[^{}]*\{[^}]*transition:[^;}]*transform[^}]*\}', css):
             sel = m.group(1).strip().splitlines()[-1] if m.group(1) else '?'
-            if not re.search(r'(summary|burger|nav-open|\.acc)', sel):
+            if not re.search(r'(summary|burger|nav-open|\.acc|reveal-pending)', sel):
                 motion_findings.append(f'{label}: transition on transform at "{sel[:40]}"')
 for f in motion_findings:
     findings['motion (hover must be state, not theatre)'].append(f)

@@ -403,6 +403,14 @@ Phase 1 kodda hech narsani buzmaydi: URL, host-model, SEO-kontrakt, audit qoidal
 `Blocks` tizimiga 3 yangi blok turi qo'shiladi (`calendar`, `plan`, `map`), qolgani — mavjud bloklar
 kompozitsiyasi va tokenlar.
 
+**SEO top-3 qo'shimchalari (2026-09-22):** WebSite skemasiga `SearchAction` (Google sitelinks qidiruvi;
+`/search/?q=` sahifa hozirda load'da `?q=` o'qiydi — target rost). `/organizers/` ga `Service` skemasi
+(«аренда выставочного зала Самарканд» — kommersiya so'rov klasteri, RU+EN). Sitemap'da xhtml:link
+hreflang alternativalari allaqachon bor. Qo'shimcha animatsiya — **scroll-reveal** (foydalanuvchi
+tasdig'i bilan): faqat birinchi ekran ostidagi `main` bo'limlari, 200ms fade + 8px, IntersectionObserver;
+JS ishtimolsiz/`prefers-reduced-motion` da hech narsa yashirinmaydi, birinchi ekranda flash yo'q,
+print'da `reveal-pending` ko'rinadi. QA `qa-independent.py` transform-allowlistiga `reveal-pending` qo'shildi.
+
 ## 5c. Rasmlar: 1:1 almashtirish ro'yxati (2026-09-22)
 
 Har bir fayl `public/images/` da — mijozning haqiqiy kadri **shu nom bilan** qo'yilsa, saytga qo'shimcha

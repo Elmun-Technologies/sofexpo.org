@@ -42,7 +42,7 @@ const H = (p?: string) => {
     const sameGround = !boundary(prev) && b.type !== 'faq' && ground(prev) === ground(b);
     const leadsIn = b.type === 'h2';
     return (
-      <section class:list={['sec', 'block', `block--${b.type}`, b.tone === 'paper' && 'sec--paper', b.tone === 'forest' && 'sec--forest', b.tone === 'sand' && 'sec--sand', b.anchor && 'has-anchor', leadsIn && 'block--head', afterHead && 'block--after-head', sameGround && !afterHead && 'block--cont']} id={b.id}>
+      <section class:list={['sec', 'block', 'reveal', `block--${b.type}`, b.tone === 'paper' && 'sec--paper', b.tone === 'forest' && 'sec--forest', b.tone === 'sand' && 'sec--sand', b.anchor && 'has-anchor', leadsIn && 'block--head', afterHead && 'block--after-head', sameGround && !afterHead && 'block--cont']} id={b.id}>
         <div class:list={['wrap', !wide && 'wrap--narrow']}>
           {b.type === 'hero' && (
             <div class="block__head">

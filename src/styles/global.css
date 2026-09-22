@@ -2291,7 +2291,29 @@ body.nav-open .mnav {
   }
 }
 
+/* Scroll reveal (user-approved, 2026-09-22): a single, quiet entrance for sections
+   below the first view — fade + 8px over 200ms. JS-gated: without JavaScript the
+   .reveal-pending class is never added, so content is always visible. Elements
+   already in the first viewport are skipped entirely (no load flash).
+   prefers-reduced-motion: the block below zeroes every transition, so the entrance
+   is also skipped there. docs/08 §5c */
+.reveal-pending {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+.reveal-in {
+  opacity: 1;
+  transform: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .reveal-pending {
+    opacity: 1;
+    transform: none;
+  }
   *,
   *::before,
   *::after {
@@ -2307,6 +2329,11 @@ body.nav-open .mnav {
   .topbar,
   .btn {
     display: none !important;
+  }
+  /* a not-yet-revealed section must never print invisible */
+  .reveal-pending {
+    opacity: 1 !important;
+    transform: none !important;
   }
   body {
     background: #fff;

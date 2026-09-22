@@ -73,7 +73,7 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
 
 {
   section === 'facts' && (
-    <section class:list={['sec', `sec--${tone}`]}>
+    <section class:list={['sec', 'reveal', `sec--${tone}`]}>
       <div class="wrap">
         <SectionHead locale={locale} kicker={head.k} title={head.t} text={head.text} />
         <StatBand
@@ -87,7 +87,7 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
 
 {
   section === 'categories' && (
-    <section class:list={['sec', `sec--${tone}`]}>
+    <section class:list={['sec', 'reveal', `sec--${tone}`]}>
       <div class="wrap">
         <SectionHead locale={locale} kicker={head.k} title={head.t} text={head.text} />
         <div class="cats">
@@ -105,7 +105,7 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
 
 {
   section === 'benefits' && (
-    <section class:list={['sec', `sec--${tone}`]}>
+    <section class:list={['sec', 'reveal', `sec--${tone}`]}>
       <div class="wrap">
         <SectionHead locale={locale} kicker={head.k} title={head.t} text={head.text} />
         <FeatureGrid
@@ -120,7 +120,7 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
 
 {
   section === 'programme' && (
-    <section class:list={['sec', `sec--${tone}`]}>
+    <section class:list={['sec', 'reveal', `sec--${tone}`]}>
       <div class="wrap">
         <SectionHead locale={locale} kicker={head.k} title={head.t} text={head.text}>
           <a slot="aside" class="btn btn--sm btn--ghost" href={L('/visitors/programme/')}>
@@ -155,7 +155,7 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
 
 {
   section === 'audience' && (
-    <section class:list={['sec', `sec--${tone}`]}>
+    <section class:list={['sec', 'reveal', `sec--${tone}`]}>
       <div class="wrap">
         <SectionHead locale={locale} kicker={head.k} title={head.t} text={head.text} />
         <ul class="aud">
@@ -173,7 +173,7 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
 
 {
   section === 'stands' && (
-    <section class:list={['sec', `sec--${tone}`]}>
+    <section class:list={['sec', 'reveal', `sec--${tone}`]}>
       <div class="wrap">
         <SectionHead locale={locale} kicker={head.k} title={head.t} text={head.text} />
         <div class="pkg">
@@ -198,7 +198,7 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
 
 {
   section === 'speakers' && event.speakers.length > 0 && (
-    <section class:list={['sec', `sec--${tone}`]}>
+    <section class:list={['sec', 'reveal', `sec--${tone}`]}>
       <div class="wrap">
         <SectionHead locale={locale} kicker={head.k} title={head.t} />
         <div class="grid g4">
@@ -217,7 +217,7 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
 
 {
   section === 'materials' && (
-    <section class:list={['sec', `sec--${tone}`]}>
+    <section class:list={['sec', 'reveal', `sec--${tone}`]}>
       <div class="wrap">
         <SectionHead locale={locale} kicker={head.k} title={head.t} text={head.text} />
         <div class="files">
@@ -245,7 +245,7 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
 
 {
   section === 'related' && (
-    <section class:list={['sec', `sec--${tone}`]}>
+    <section class:list={['sec', 'reveal', `sec--${tone}`]}>
       <div class="wrap">
         <SectionHead locale={locale} kicker={head.k} title={head.t} text={head.text} />
         <div class="grid g3">
@@ -258,7 +258,7 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
 
 {
   section === 'venue' && (
-    <section class:list={['sec', `sec--${tone}`]}>
+    <section class:list={['sec', 'reveal', `sec--${tone}`]}>
       <div class="wrap">
         <SectionHead locale={locale} kicker={head.k} title={head.t} text={head.text}>
           <a slot="aside" class="btn btn--sm btn--ghost" href={L('/venue/')}>

@@ -215,7 +215,7 @@ const jsonLd = [
   </section>
 
   <!-- 2 · the venue in one line (the table lives on /venue/) -->
-  <section class="sec--tight">
+  <section class="sec--tight reveal">
     <div class="wrap">
       <div class="venue-strip">
         <div class="venue-strip__nums">
@@ -241,7 +241,7 @@ const jsonLd = [
   </section>
 
   <!-- 3 · three doors -->
-  <section class="sec">
+  <section class="sec reveal">
     <div class="wrap">
       <h2 class="sec-title">{copy.doorsTitle}</h2>
       <FeatureGrid locale={locale} cols={3} items={copy.doors.map((i) => ({ title: i.title, text: i.text, href: P(i.href), meta: i.meta, image: i.image, imageAlt: i.imageAlt }))} />
@@ -249,7 +249,7 @@ const jsonLd = [
   </section>
 
   <!-- 4 · why Samarkand: one stat band, once -->
-  <section class="sec sec--paper">
+  <section class="sec sec--paper reveal">
     <div class="wrap">
       <div class="grid g-sidebar" style="align-items:center">
         <div>
@@ -276,7 +276,7 @@ const jsonLd = [
   </section>
 
   <!-- 5 · media: one lead with a photo, three rows -->
-  <section class="sec">
+  <section class="sec reveal">
     <div class="wrap">
       <div class="sec-head">
         <div>
@@ -297,7 +297,7 @@ const jsonLd = [
   </section>
 
   <!-- 6 · request + FAQ, full width, no empty column -->
-  <section class="sec sec--paper" id="booking">
+  <section class="sec sec--paper reveal" id="booking">
     <div class="wrap">
       <div class="grid g2" style="align-items:start">
         <Faq locale={locale} items={faq} title={ru ? 'Частые вопросы' : 'Frequently asked questions'} />

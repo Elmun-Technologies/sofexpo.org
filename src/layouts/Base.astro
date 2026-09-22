@@ -170,6 +170,33 @@ const crumbs = [{ name: t('breadcrumbs.home'), path: '/' }, ...breadcrumbs];
       <slot />
     </main>
     <Footer locale={locale} />
+    <script>
+      /* Subtle scroll reveal (user-approved 2026-09-22): fade + 8px over 200ms for
+         sections below the first view only. JS-gated — without JavaScript the
+         pending class is never added, so the site is fully visible without JS.
+         Skipped under prefers-reduced-motion. docs/08 §5c */
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const vh = window.innerHeight;
+        const els = Array.from(document.querySelectorAll('main .reveal')).filter(
+          (el) => el.getBoundingClientRect().top > vh,
+        );
+        if (els.length) {
+          els.forEach((el) => el.classList.add('reveal-pending'));
+          const io = new IntersectionObserver(
+            (entries) => {
+              for (const entry of entries) {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add('reveal-in');
+                  io.unobserve(entry.target);
+                }
+              }
+            },
+            { rootMargin: '0px 0px -8% 0px', threshold: 0.05 },
+          );
+          els.forEach((el) => io.observe(el));
+        }
+      }
+    </script>
   </body>
 </html>
 

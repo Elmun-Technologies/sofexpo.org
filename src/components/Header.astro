@@ -1,6 +1,7 @@
 ---
 import { nav, site } from '@/data/site';
 import { CURRENT_BRAND } from '@/data/hosts';
+import { events } from '@/data/events';
 import BrandMark from '@/components/BrandMark.astro';
 import { localize, localeMeta, supportedLocales, type SourceLocale as Locale } from '@/i18n/config';
 import { useUI } from '@/i18n/ui';
@@ -18,6 +19,9 @@ const current = localize(locale, path);
 const t0 = localize(locale, '/');
 const P = (p: string) => localize(locale, p);
 const active = (base: string) => (base === '/' ? current === '/' : path.startsWith(base));
+/* event page context: the quiz dialog focuses on this show instead of asking a general question */
+const pageEvent = events.find((e) => path.startsWith(`/events/${e.slug}/`));
+const quizEvent = pageEvent ? pageEvent.brand[locale] : undefined;
 /**
  * One bar, six items (docs/08 §3.1). The old utility bar (address · phone · hours · telegram)
  * moved to /contacts/ and the footer; «Новости» is in the footer — the first screen belongs
@@ -96,7 +100,7 @@ const items = nav.filter((i) => i.key !== 'nav.news');
         </div>
       </details>
       <a class="header-search" href={P('/search/')} aria-label={t('cta.search')}><Icon name="search" size={19} /></a>
-      <a class="btn btn--sm btn--desk" href={P('/request-stand/')}>
+      <a class="btn btn--sm btn--desk" href={P('/request-stand/')} data-quiz-open data-quiz-event={quizEvent}>
         <Icon name="sparkle" size={16} /> {t('cta.stand')}
       </a>
       <button class="burger" type="button" aria-controls="mnav" aria-expanded="false" aria-label={t('nav.menu')}>
@@ -124,7 +128,7 @@ const items = nav.filter((i) => i.key !== 'nav.news');
       }
       <div class="mnav__ctas">
         <a class="btn btn--ghost" href={P('/search/')}>{t('cta.search')}</a>
-        <a class="btn" href={P('/request-stand/')}>{t('cta.stand')}</a>
+        <a class="btn" href={P('/request-stand/')} data-quiz-open data-quiz-event={quizEvent}>{t('cta.stand')}</a>
         <a class="btn btn--ghost" href={P('/visitors/tickets/')}>{t('cta.ticket')}</a>
         <a class="btn btn--ghost" href={P('/events/')}>{locale === 'ru' ? 'Афиша и программа' : 'Line-up and programme'}</a>
         <a class="btn btn--ghost" href={`tel:${site.contacts.phoneMain.replace(/\s/g, '')}`}>

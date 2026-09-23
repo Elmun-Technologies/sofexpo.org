@@ -257,6 +257,11 @@ export const exhibitorPages: PageDef[] = [
           ],
         },
         {
+          type: "quiz",
+          title: "Подберём стенд за 4 шага",
+          text: "Четыре вопроса — и менеджер пришлёт план зала, свободные метры и расчёт пакета.",
+        },
+        {
           type: "form",
           formType: "exhibitor",
           title: "Заявка на стенд",
@@ -507,6 +512,11 @@ export const exhibitorPages: PageDef[] = [
             { label: "Exhibitor catalogue", href: "/exhibitors/catalogue/" },
             { label: "Exhibitor FAQ", href: "/exhibitors/faq/" },
           ],
+        },
+        {
+          type: "quiz",
+          title: "Find your stand in four steps",
+          text: "Four questions — and the manager sends the hall plan, free metres and the package quote.",
         },
         {
           type: "form",

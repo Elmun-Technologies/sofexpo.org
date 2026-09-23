@@ -21,7 +21,8 @@
     "i18n:extract": "node scripts/extract-translations.mjs",
     "audit:translations": "node scripts/audit-translations.mjs",
     "audit:downloads": "node scripts/audit-downloads.mjs",
-    "check:release": "npm run check && npm run audit:downloads -- --require-final"
+    "check:release": "npm run check && npm run audit:downloads -- --require-final",
+    "lead-webhook": "node scripts/lead-webhook.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",
@@ -35,6 +36,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
+    "jsdom": "^30.1.1",
     "typescript": "^5.9.3"
   }
 }

@@ -14,6 +14,7 @@ import TableEnhancements from '@/components/TableEnhancements.astro';
 import Header from '@/components/Header.astro';
 import PromoBar from '@/components/PromoBar.astro';
 import Footer from '@/components/Footer.astro';
+import StandQuizModal from '@/components/StandQuizModal.astro';
 import LiveChat from '@/components/conversion/LiveChat.astro';
 import PopupSystem from '@/components/conversion/PopupSystem.astro';
 import FloatingContacts from '@/components/conversion/FloatingContacts.astro';
@@ -227,6 +228,9 @@ const preload = props.preload
       <slot />
     </main>
     <Footer locale={locale} />
+    {/* The Rush-style quiz dialog: any [data-quiz-open] CTA opens it in place,
+        the header CTA falls back to /request-stand/ without JavaScript. */}
+    <StandQuizModal locale={locale} />
     <!-- Conversion system: CTA, popups, livechat, contact hold -->
     <Tracking locale={locale} path={path} />
     <FormHandler />

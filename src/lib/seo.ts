@@ -226,7 +226,7 @@ export function rootJsonLd() {
       url: `${SITE}/`,
       name: 'SOF EXPO Samarkand',
       alternateName: ['Выставочный центр SOF EXPO', 'SOF EXPO Exhibition Centre'],
-      inLanguage: ['ru', 'en', 'zh-CN', 'tr'],
+      inLanguage: ['ru', 'en', 'zh-CN', 'tr', 'uz'],
       publisher: { '@id': `${SITE}/#organization` },
       /* site search in Google sitelinks (docs/08 §5c): the search page reads ?q=
          on load, so the template is honest */
@@ -274,7 +274,7 @@ export function entityNodes() {
       '@id': `${SITE}/#website`,
       url: `${SITE}/`,
       name: ORG,
-      inLanguage: ['ru', 'en', 'zh-CN', 'tr'],
+      inLanguage: ['ru', 'en', 'zh-CN', 'tr', 'uz'],
       publisher: { '@id': `${SITE}/#organization` },
     },
     {

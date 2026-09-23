@@ -9,12 +9,18 @@ import ts from 'typescript';
 import reviewed from '../src/i18n/reviewed.json' with { type: 'json' };
 import zh from '../src/i18n/catalogs/zh.json' with { type: 'json' };
 import tr from '../src/i18n/catalogs/tr.json' with { type: 'json' };
+import uz from '../src/i18n/catalogs/uz.json' with { type: 'json' };
 
-export const editions = ['zh', 'tr'];
-export const languageTags = { en: 'en', ru: 'ru', zh: 'zh-CN', tr: 'tr' };
-const ogTags = { en: 'en_US', ru: 'ru_RU', zh: 'zh_CN', tr: 'tr_TR' };
-const dictionaries = { zh: { ...zh }, tr: { ...tr } };
-for (const [source, values] of Object.entries(reviewed)) { dictionaries.zh[source] = values[0]; dictionaries.tr[source] = values[1]; }
+export const editions = ['zh', 'tr', 'uz'];
+/** editions that must be 100% translated at build time; the rest publish page-by-page
+ *  (an incomplete page is noindex, gets no hreflang and stays out of the sitemap) */
+export const strictEditions = ['zh', 'tr'];
+/** every edition fails the build on a missing string; uz keeps page-level linking via strictEditions */
+export const failOnMissing = ['zh', 'tr', 'uz'];
+export const languageTags = { en: 'en', ru: 'ru', zh: 'zh-CN', tr: 'tr', uz: 'uz' };
+const ogTags = { en: 'en_US', ru: 'ru_RU', zh: 'zh_CN', tr: 'tr_TR', uz: 'uz_UZ' };
+const dictionaries = { zh: { ...zh }, tr: { ...tr }, uz: { ...uz } };
+for (const [source, values] of Object.entries(reviewed)) { dictionaries.zh[source] = values[0]; dictionaries.tr[source] = values[1]; if (values[2]) dictionaries.uz[source] = values[2]; }
 export const normalize = s => s.replace(/\s+/g, ' ').trim();
 const protectedText = /^(?:(?:SOF EXPO(?: SAMARKAND| Samarkand)?|RESOF EXPO|FOODERA(?: EXPO)?|BUILDPRO(?: EXPO)?|BUILD PRO(?: EXPO)?|AGROPRO(?: EXPO)?|WORLD EDU(?: EXPO)?|PROMOTORS(?: SHOW SAMARKAND)?|ECOM & RETAIL(?: EXPO(?: SAMARKAND)?)?)(?: 20\d\d)?|PDF|QR|B2B|B2C|Wi-Fi|Telegram|Instagram|YouTube|Facebook|LinkedIn|TikTok|WhatsApp|English|Türkçe|Русский|EN|RU|TR|UZ|USD|UZS|HoReCa|IELTS|GMAT|SAT|PR|SKU|VIP|SPL|DJ|ISO|EXPO 20\d\d|SAMARKAND|RSS|CBDO|CIO \/ CTO|WYZO|RESOF|EXPO|SOF)$/i;
 export function isCopy(value) {
@@ -38,6 +44,7 @@ export function localizedURL(value, locale) {
   return value.replace(/(^|https?:\/\/(?:[a-z0-9-]+\.)?sofexpo\.org)\/en(?=\/|$|[?#])/g, `$1/${locale}`);
 }
 function dynamicText(text, locale, translate) {
+  if (locale === 'uz') return dynamicUz(text, translate);
   const home = /^(.*?) — Home$/.exec(text);
   if (home && protectedText.test(home[1])) return `${home[1]} — ${locale === 'zh' ? '首页' : 'Ana sayfa'}`;
   const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -196,7 +203,7 @@ export function localizeHTML(html, locale, options = {}) {
       }
       if (tag === 'link' && attr(node,'hreflang') === 'zh') put(node,'hreflang','zh-CN');
       if (tag === 'summary' && node.parentNode?.attrs?.some(a => a.name === 'class' && a.value.includes('language-picker'))) {
-        for (const child of node.childNodes ?? []) if (child.tagName === 'span' && !attr(child,'aria-hidden')) child.childNodes = [{nodeName:'#text',value:locale === 'zh' ? '中文' : 'TR',parentNode:child}];
+        for (const child of node.childNodes ?? []) if (child.tagName === 'span' && !attr(child,'aria-hidden')) child.childNodes = [{nodeName:'#text',value:locale === 'zh' ? '中文' : locale === 'uz' ? 'UZ' : 'TR',parentNode:child}];
       }
     }
     if (tag === 'script') {
@@ -228,4 +235,48 @@ export function localizeRSS(xml, locale, options = {}) {
 
 export function localizeSearchJSON(source, locale, options = {}) {
   return JSON.stringify(rewriteJSON(JSON.parse(source),translator(locale,options),locale));
+}
+
+/* ---------- Uzbek (Latin) parameterised strings ---------- */
+const uzMonths = ['yanvar','fevral','mart','aprel','may','iyun','iyul','avgust','sentabr','oktabr','noyabr','dekabr'];
+function dynamicUz(text, translate) {
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const mi = w => monthNames.findIndex(m => m.toLowerCase().startsWith(w.toLowerCase()));
+  const home = /^(.*?) — Home$/.exec(text);
+  if (home && protectedText.test(home[1])) return `${home[1]} — Bosh sahifa`;
+  const date = /^(?:(.*?) [·—] )?(\d{1,2})(?:[–-](\d{1,2}))? ([A-Za-z]+) (\d{4})$/.exec(text);
+  if (date && mi(date[4]) >= 0 && (!date[1] || protectedText.test(date[1]))) {
+    const [, prefix, start, end, month, year] = date;
+    const r = `${+start}${end ? `–${+end}` : ''} ${uzMonths[mi(month)]} ${year}`;
+    return prefix ? `${prefix} · ${r}` : r;
+  }
+  const range = /^(\d{1,2}) ([A-Za-z]+) — (\d{1,2}) ([A-Za-z]+)$/.exec(text);
+  if (range && mi(range[2]) >= 0 && mi(range[4]) >= 0) return `${+range[1]} ${uzMonths[mi(range[2])]} — ${+range[3]} ${uzMonths[mi(range[4])]}`;
+  const my = /^([A-Za-z]+) (\d{4})$/.exec(text);
+  if (my && mi(my[1]) >= 0) return `${uzMonths[mi(my[1])]} ${my[2]}`;
+  const cd = /^(.*?)in (\d+) d$/.exec(text);
+  if (cd) { const d = cd[1].replace(/\s*[·—]\s*$/, '').trim(); return (d ? `${translate(d)} · ` : '') + `${cd[2]} kundan keyin`; }
+  let m;
+  if ((m = /^(\d+) (?:person|people)$/.exec(text))) return `${m[1]} kishi`;
+  if ((m = /^day (\d+)$/i.exec(text))) return `${m[1]}-kun`;
+  if ((m = /^(\d+(?:[–-]\d+)?) days (ahead|out|after)$/.exec(text))) return `${m[1]} kun ${m[2] === 'after' ? 'keyin' : 'oldin'}`;
+  const tpl = [
+    [/^Put “(.+)” to the test: at the show these people and offers are in one hall\.$/, m => `“${translate(m[1])}” mavzusini ko‘rgazmada sinab ko‘ring: bu odamlar va takliflar bitta zalda.`],
+    [/^Next step after “(.+)”: a stand request, answered within the business day\.$/, m => `“${translate(m[1])}”dan keyingi qadam: stendga ariza, ish kuni davomida javob beramiz.`],
+    [/^Still have a question about (.+)\? Message the manager — we reply within 15 minutes during office hours\.$/, m => `${m[1]} haqida savolingiz qoldimi? Menejerga yozing — ish vaqtida 15 daqiqada javob beramiz.`],
+    [/^(.+): frequently asked questions$/, m => `${m[1]}: ko‘p beriladigan savollar`],
+    [/^Per-m² rates and services for (.+) are in the packages section\.$/, m => `${m[1]} uchun m² narxlari va xizmatlar paketlar bo‘limida.`],
+    [/^(.+), (\d{1,2}(?:–\d{1,2})? [A-Za-z]+ \d{4}), Samarkand\. Name your product and area — we send the floor plan and a quote\.$/, m => `${m[1]}, ${translate(m[2])}, Samarqand. Mahsulotingiz va maydonni ayting — zal rejasi va narx taklifini yuboramiz.`],
+    [/^Space at (.+) goes in order of request: we hold the location you pick for 3–5 days, no payment\.$/, m => `${m[1]}dagi maydonlar ariza tartibida beriladi: tanlagan joyingizni to‘lovsiz 3–5 kun band qilib turamiz.`],
+    [/^Want to show your own product at (.+), not just walk the aisles\? Stands can be booked until opening\.$/, m => `${m[1]}da shunchaki aylanib emas, o‘z mahsulotingizni ko‘rsatmoqchimisiz? Stendlarni ochilishgacha band qilish mumkin.`],
+    [/^Business-programme slots at (.+) go to exhibitors and partners first — a stand request opens the door to a talk\.$/, m => `${m[1]} biznes-dasturidagi chiqishlar avvalo ishtirokchilar va hamkorlarga beriladi — stendga ariza chiqish imkonini ochadi.`],
+    [/^(.+) has closed\. Leave a request and we will send the next edition's dates and early-booking terms\.$/, m => `${m[1]} yakunlandi. Ariza qoldiring — keyingi ko‘rgazma sanalari va erta bron shartlarini yuboramiz.`],
+    [/^Getting to (.+): 16 km from Samarkand International Airport · 23 km from the railway station$/, m => `${m[1]}ga qanday borish: Samarqand xalqaro aeroportidan 16 km · temir yo‘l vokzalidan 23 km`],
+  ];
+  for (const [re, fn] of tpl) { const x = re.exec(text); if (x) return fn(x); }
+  if ((m = /^(\d+) days\.$/.exec(text))) return `${m[1]} kun.`;
+  if ((m = /^(\d+) min$/.exec(text))) return `${m[1]} daq`;
+  if ((m = /^in (\d+) days$/.exec(text))) return `${m[1]} kundan keyin`;
+  if ((m = /^(\d+) min read$/.exec(text))) return `${m[1]} daqiqada o‘qiladi`;
+  return null;
 }

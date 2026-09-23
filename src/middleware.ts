@@ -5,17 +5,17 @@ import { localizeHTML, localizeRSS, localizeSearchJSON } from '../scripts/locali
 export const onRequest = defineMiddleware(async (context, next) => {
   // Passed by the development server adapter, not by client headers or query parameters.
   const locale = context.locals.sofexpoLocale;
-  if (locale !== 'zh' && locale !== 'tr') return next();
+  if (locale !== 'zh' && locale !== 'tr' && locale !== 'uz') return next();
   const response = await next();
   // The shared 404 is intentionally multilingual and has no translated route sibling.
   if (response.status === 404) return response;
   const contentType = response.headers.get('content-type') || '';
   if (!/html|xml|json/.test(contentType)) return response;
   const body = await response.text();
-  const options = { strict: true };
+  const options = { strict: locale !== 'uz' };
   const html = contentType.includes('html') ? localizeHTML(body, locale, options) : contentType.includes('json') ? localizeSearchJSON(body, locale, options) : localizeRSS(body, locale, options);
   const headers = new Headers(response.headers);
   headers.delete('content-length');
-  headers.set('content-language', locale === 'zh' ? 'zh-CN' : 'tr');
+  headers.set('content-language', locale === 'zh' ? 'zh-CN' : locale);
   return new Response(html, { status: response.status, statusText: response.statusText, headers });
 });

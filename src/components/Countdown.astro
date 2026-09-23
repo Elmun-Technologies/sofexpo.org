@@ -62,7 +62,7 @@ const units = { h: ru ? 'часов' : 'hours', m: ru ? 'минут' : 'min', s:
       const m = Math.floor(diff / 6e4);
       const s = Math.floor((diff - m * 6e4) / 1e3);
       out.d.textContent = pad(day);
-      if (dl) { const lang = document.documentElement.lang; dl.textContent = lang.startsWith('zh') ? '天' : lang === 'tr' ? 'gün' : ru ? plural(day, ['день', 'дня', 'дней']) : day === 1 ? 'day' : 'days'; }
+      if (dl) { const lang = document.documentElement.lang; dl.textContent = lang.startsWith('zh') ? '天' : lang === 'tr' ? 'gün' : lang === 'uz' ? 'kun' : ru ? plural(day, ['день', 'дня', 'дней']) : day === 1 ? 'day' : 'days'; }
       out.h.textContent = pad(h);
       out.m.textContent = pad(m);
       out.s.textContent = pad(s);

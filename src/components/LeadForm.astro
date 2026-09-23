@@ -15,6 +15,7 @@ const {
   compact = false,
   note = '',
   id = 'lead',
+  level = 3,
 } = Astro.props as {
   locale: 'ru' | 'en';
   title: string;
@@ -25,6 +26,7 @@ const {
   compact?: boolean;
   note?: string;
   id?: string;
+  level?: 2 | 3;
 };
 
 const ru = locale === 'ru';
@@ -58,11 +60,12 @@ const L = {
   areaOptions: ['9 m²', '18 m²', '27 m²', '36 m²', '50+ m²', ''],
 };
 const areaList = areas.length ? areas : L.areaOptions.filter(Boolean);
+const Hf = level === 2 ? 'h2' : 'h3';
 ---
 
 <form class:list={['card', 'form-wrap', { 'form--compact': compact }]} id={id} data-lead-form data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} data-fallback={L.fallback} novalidate>
   <div>
-    <h3 style="margin-bottom:.25em">{title}</h3>
+    <Hf class="h3" style="margin-bottom:.25em">{title}</Hf>
     {subtitle && <p class="muted small" style="margin:0">{subtitle}</p>}
   </div>
 

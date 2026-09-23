@@ -36,6 +36,8 @@ const H = (p?: string) => {
 
 {
   blocks.map((b, idx) => {
+    /* outline: card titles are h3 only once a section h2 exists above them; otherwise h2 */
+    const H3 = blocks.slice(0, idx).some((x) => x.type === 'h2' || x.type === 'cta') ? 'h3' : 'h2';
     const wide = b.width !== 'narrow';
     /* Rhythm: a section heading (`h2`) belongs to the block that follows it, and two blocks
        on the same ground are one story, not two pages. Before this every block carried the full
@@ -134,7 +136,7 @@ const H = (p?: string) => {
                         <Icon name={i.icon} size={24} />
                       </span>
                     )}
-                    <h3>{i.title}</h3>
+                    <H3 class="h3">{i.title}</H3>
                     {i.text && <p>{i.text}</p>}
                     {i.meta && <span class="mono-label">{i.meta}</span>}
                     {href && <span class="feature__go">→</span>}
@@ -149,7 +151,7 @@ const H = (p?: string) => {
               {((b.items ?? []) as BlockRow[]).map((i, n) => (
                 <article class="row">
                   <span class="row__n num">{String(n + 1).padStart(2, '0')}</span>
-                  <h3>{i.title}</h3>
+                  <H3 class="h3">{i.title}</H3>
                   <p>{i.text}</p>
                 </article>
               ))}
@@ -183,7 +185,7 @@ const H = (p?: string) => {
                 <li>
                   <span class="steps__n num">{i + 1}</span>
                   <div>
-                    <h3>{s.title}</h3>
+                    <H3 class="h3">{s.title}</H3>
                     <p>{s.text}</p>
                   </div>
                 </li>
@@ -206,7 +208,7 @@ const H = (p?: string) => {
             <div class:list={['callout', b.tone === 'gold' && 'callout--gold', b.image && 'callout--media']}>
               <div class="callout__body">
                 {b.kicker && <p class="kicker">{b.kicker}</p>}
-                <h3>{b.title}</h3>
+                <H3 class="h3">{b.title}</H3>
                 {b.text && <p class="muted" style="margin-bottom:1rem">{b.text}</p>}
                 {b.action && (
                   <a class="btn btn--sm" href={H(b.action.href)}>{b.action.label}</a>
@@ -283,6 +285,7 @@ const H = (p?: string) => {
 
           {b.type === 'form' && (
             <LeadForm
+              level={H3 === 'h2' ? 2 : 3}
               locale={locale}
               title={b.title}
               subtitle={b.text}
@@ -413,7 +416,7 @@ const H = (p?: string) => {
     place-items: center;
     font-size: .95rem;
   }
-  .steps h3 {
+  .steps :is(h2, h3) {
     margin: 0 0 .3em;
     font-size: 1.12rem;
   }
@@ -590,7 +593,7 @@ const H = (p?: string) => {
   .feature:hover {
     border-color: var(--ink);
     }
-  .feature h3 {
+  .feature :is(h2, h3) {
     font-size: clamp(1.02rem, .96rem + .3vw, 1.2rem);
     margin: 0 0 .35em;
   }

@@ -356,7 +356,7 @@ a.feature:hover .feature__media img {
   .pc:hover img {
     transform: scale(1.05);
   }
-  .pc:hover h3 {
+  .pc:hover :is(h2, h3) {
     color: var(--moss);
   }
 

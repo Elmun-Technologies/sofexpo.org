@@ -149,7 +149,7 @@ const L = {
   }
   .form-vi__grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 10px;
   }
   .form-vi__full {
@@ -183,9 +183,9 @@ const L = {
     text-transform: uppercase;
     color: var(--ink-40);
   }
-  @media (max-width: 560px) {
+  @media (min-width: 560px) {
     .form-vi__grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr 1fr;
     }
   }
 </style>

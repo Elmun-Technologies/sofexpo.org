@@ -149,10 +149,11 @@ const how = ru
   .map__links a:hover {
     border-color: var(--ink);
   }
+  /* mobile-first: one instruction per row on a phone, three from ≥640px */
   .map__how {
     margin-top: 1.1rem;
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
     gap: 0.8rem;
   }
   .map__how div {
@@ -170,9 +171,9 @@ const how = ru
     font-size: 0.82rem;
     color: var(--ink-60);
   }
-  @media (max-width: 640px) {
+  @media (min-width: 640px) {
     .map__how {
-      grid-template-columns: minmax(0, 1fr);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
 </style>

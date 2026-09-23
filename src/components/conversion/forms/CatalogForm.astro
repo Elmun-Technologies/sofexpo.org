@@ -64,9 +64,11 @@ const L = {
 </form>
 
 <style>
+  /* mobile-first: photo and form stack on a phone; the 300px photo rail is
+     a ≥700px enhancement (docs/04 §5) */
   .form-cat {
     display: grid;
-    grid-template-columns: 300px 1fr;
+    grid-template-columns: 1fr;
     gap: 0;
     background: var(--paper);
     border: 1px solid var(--line);
@@ -78,6 +80,7 @@ const L = {
     position: relative;
     background: var(--cream-2);
     min-height: 100%;
+    max-height: 200px;
   }
   .form-cat__media img {
     width: 100%;
@@ -118,7 +121,7 @@ const L = {
     padding: 0;
     margin: 0;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 6px;
   }
   .form-cat__includes li {
@@ -134,7 +137,7 @@ const L = {
   }
   .form-cat__grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 10px;
   }
   .form-cat__full { grid-column: 1 / -1; }
@@ -168,18 +171,18 @@ const L = {
     text-transform: uppercase;
     letter-spacing: 0.06em;
   }
-  @media (max-width: 700px) {
+  @media (min-width: 700px) {
     .form-cat {
-      grid-template-columns: 1fr;
+      grid-template-columns: 300px 1fr;
     }
     .form-cat__media {
-      max-height: 200px;
+      max-height: none;
     }
     .form-cat__grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr 1fr;
     }
     .form-cat__includes {
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr 1fr;
     }
   }
 </style>

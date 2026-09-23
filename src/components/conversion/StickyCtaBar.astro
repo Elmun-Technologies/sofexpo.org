@@ -79,11 +79,13 @@ const L = {
 </div>
 
 <style>
+  /* mobile-first: on a phone the bar floats above the contact bar (bottom: 64px)
+     and runs compact; the full-height desktop bar is a ≥901px tier */
   .s-cta {
     position: fixed;
     left: 0;
     right: 0;
-    bottom: 0;
+    bottom: 64px; /* above mobile contact bar */
     z-index: 38;
     background: rgba(255,255,255,0.96);
     backdrop-filter: blur(18px) saturate(160%);
@@ -107,7 +109,8 @@ const L = {
     justify-content: space-between;
     gap: 16px;
     padding-block: 10px;
-    min-height: 64px;
+    padding-inline: 14px;
+    min-height: 56px;
   }
   .s-cta__txt {
     display: flex;
@@ -117,7 +120,7 @@ const L = {
   }
   .s-cta__title {
     font-family: var(--f-display);
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 650;
     letter-spacing: -0.01em;
     line-height: 1.2;
@@ -126,13 +129,15 @@ const L = {
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  /* the sub-line drops out on the smallest phones; it returns at ≥481px */
   .s-cta__sub {
-    font-size: 12px;
+    font-size: 11px;
     color: var(--ink-60);
     line-height: 1.3;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: none;
   }
   .s-cta__actions {
     display: flex;
@@ -141,14 +146,14 @@ const L = {
     flex: none;
   }
   .s-cta__btn {
-    min-height: 40px;
-    padding: 0 18px;
-    font-size: 13px;
+    min-height: 36px;
+    padding: 0 14px;
+    font-size: 12px;
     font-weight: 600;
     white-space: nowrap;
   }
   .s-cta__messengers {
-    display: flex;
+    display: none;
     gap: 6px;
   }
   .s-cta__m {
@@ -188,37 +193,42 @@ const L = {
     border-color: var(--ink-40);
   }
 
-  @media (max-width: 900px) {
-    .s-cta {
-      bottom: 64px; /* above mobile contact bar */
-    }
-    .s-cta__in {
-      padding-inline: 14px;
-      min-height: 56px;
-    }
-    .s-cta__title {
-      font-size: 13px;
-    }
+  @media (min-width: 481px) {
     .s-cta__sub {
-      font-size: 11px;
-    }
-    .s-cta__btn {
-      padding: 0 14px;
-      font-size: 12px;
-      min-height: 36px;
-    }
-    .s-cta__messengers {
-      display: none;
+      display: block;
     }
   }
-  @media (max-width: 480px) {
+  @media (min-width: 901px) {
+    .s-cta {
+      bottom: 0;
+    }
+    .s-cta__in {
+      /* back to the .wrap gutter (the mobile tier used a fixed 14px) */
+      padding-inline: var(--gutter);
+      min-height: 64px;
+    }
+    .s-cta__title {
+      font-size: 15px;
+    }
     .s-cta__sub {
-      display: none;
+      font-size: 12px;
+    }
+    .s-cta__btn {
+      padding: 0 18px;
+      font-size: 13px;
+      min-height: 40px;
+    }
+    .s-cta__messengers {
+      display: flex;
     }
   }
 </style>
 
 <script>
+  /* NOTE: must stay a plain <script> (no is:inline / no translate="no"): Astro then
+     transpiles this TypeScript and bundles it as a deferred module. Extra attributes
+     make Astro emit it raw, which breaks in every browser. The i18n build pass
+     rewrites only the known UI strings inside it (scripts/localization.mjs). */
   (() => {
     const bar = document.getElementById('sticky-cta');
     if (!bar) return;

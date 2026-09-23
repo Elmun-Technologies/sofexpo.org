@@ -73,9 +73,14 @@ const uid = `orn-${variant}-${height}-${flip ? 'f' : 'n'}`;
     transform: scaleY(-1);
   }
 
-  @media (max-width: 640px) {
+  /* mobile-first: the scroll band is quieter on a phone, gains its full
+     presence from ≥640px (docs/04 §5) */
+  .orn--band {
+    opacity: 0.4;
+  }
+  @media (min-width: 640px) {
     .orn--band {
-      opacity: 0.4;
+      opacity: 0.5;
     }
   }
 </style>

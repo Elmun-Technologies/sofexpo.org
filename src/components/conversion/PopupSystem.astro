@@ -228,15 +228,17 @@ const L = {
     backdrop-filter: blur(8px);
     animation: popup-fade 0.28s ease;
   }
+  /* mobile-first: the dialog is a near-full-bleed single column on a phone;
+     the split media/content layout is a ≥640px enhancement (docs/04 §5) */
   .popup__box {
     position: relative;
-    width: min(560px, calc(100vw - 24px));
-    max-height: min(88dvh, 720px);
+    width: calc(100vw - 16px);
+    max-height: calc(100dvh - 16px);
     overflow: auto;
     display: grid;
-    grid-template-columns: 1fr 1.2fr;
+    grid-template-columns: 1fr;
     background: var(--paper);
-    border-radius: 18px;
+    border-radius: 16px;
     box-shadow: 0 24px 64px -12px rgba(16, 46, 41, 0.36), 0 8px 24px -8px rgba(16, 46, 41, 0.2);
     animation: popup-in 0.36s cubic-bezier(0.22, 0.61, 0.36, 1);
     scrollbar-width: thin;
@@ -271,6 +273,7 @@ const L = {
     position: relative;
     overflow: hidden;
     background: var(--cream-2);
+    max-height: 180px;
   }
   .popup__media img {
     width: 100%;
@@ -291,7 +294,7 @@ const L = {
     letter-spacing: 0.06em;
   }
   .popup__content {
-    padding: 22px 22px 18px;
+    padding: 18px 16px 16px;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -308,7 +311,7 @@ const L = {
   .popup__title {
     margin: 0;
     font-family: var(--f-display);
-    font-size: 22px;
+    font-size: 19px;
     line-height: 1.15;
     letter-spacing: -0.02em;
     color: var(--ink);
@@ -381,7 +384,7 @@ const L = {
     background: #fff;
   }
   .popup__form--row {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr;
   }
   .popup__form-messengers {
     display: flex;
@@ -493,29 +496,33 @@ const L = {
     to { opacity: 1; }
   }
 
-  @media (max-width: 640px) {
+  @media (min-width: 640px) {
     .popup__box {
-      grid-template-columns: 1fr;
-      width: calc(100vw - 16px);
-      max-height: calc(100dvh - 16px);
-      border-radius: 16px;
+      grid-template-columns: 1fr 1.2fr;
+      width: min(560px, calc(100vw - 24px));
+      max-height: min(88dvh, 720px);
+      border-radius: 18px;
     }
     .popup__media {
-      max-height: 180px;
+      max-height: none;
     }
     .popup__content {
-      padding: 18px 16px 16px;
+      padding: 22px 22px 18px;
     }
     .popup__title {
-      font-size: 19px;
+      font-size: 22px;
     }
     .popup__form--row {
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr auto;
     }
   }
 </style>
 
 <script>
+  /* NOTE: must stay a plain <script> (no is:inline / no translate="no"): Astro then
+     transpiles this TypeScript and bundles it as a deferred module. Extra attributes
+     make Astro emit it raw, which breaks in every browser. The i18n build pass
+     rewrites only the known UI strings inside it (scripts/localization.mjs). */
   (() => {
     const root = document.getElementById('sof-popups');
     if (!root) return;

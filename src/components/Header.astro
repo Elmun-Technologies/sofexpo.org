@@ -150,7 +150,7 @@ const items = nav.filter((i) => i.key !== 'nav.news');
       document.body.classList.toggle('nav-open', open);
       burger.setAttribute('aria-expanded', String(open));
       document.documentElement.style.overflow = open ? 'hidden' : '';
-      document.querySelectorAll('main, .ftr').forEach(el => el.inert = open);
+      document.querySelectorAll('main, .ftr').forEach(el => open ? el.setAttribute('inert','') : el.removeAttribute('inert'));
       if (open) mnav.style.maxHeight = `${window.innerHeight - document.querySelector('.hdr').getBoundingClientRect().bottom}px`;
     };
     set(false);

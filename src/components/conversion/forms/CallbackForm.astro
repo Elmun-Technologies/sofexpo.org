@@ -81,11 +81,16 @@ const L = {
     color: var(--ink-60);
     line-height: 1.3;
   }
+  /* mobile-first: a single column on the smallest phones, two from ≥401px,
+     the full row only at ≥700px (docs/04 §5) */
   .form-cb__row {
     display: grid;
-    grid-template-columns: 1fr 1fr 110px auto;
+    grid-template-columns: 1fr;
     gap: 8px;
     align-items: center;
+  }
+  .form-cb__row button {
+    grid-column: 1 / -1;
   }
   .form-cb__row input,
   .form-cb__row select {
@@ -103,17 +108,17 @@ const L = {
     background: #fff;
     box-shadow: 0 0 0 3px rgba(29,122,72,0.12);
   }
-  @media (max-width: 700px) {
+  @media (min-width: 401px) {
     .form-cb__row {
       grid-template-columns: 1fr 1fr;
     }
-    .form-cb__row button {
-      grid-column: 1 / -1;
-    }
   }
-  @media (max-width: 400px) {
+  @media (min-width: 700px) {
     .form-cb__row {
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr 1fr 110px auto;
+    }
+    .form-cb__row button {
+      grid-column: auto;
     }
   }
 </style>

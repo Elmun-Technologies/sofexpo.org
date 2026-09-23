@@ -1,7 +1,17 @@
 /* ============================================================
    SOF EXPO SAMARKAND — design system
-   Warm "resort-grade" editorial UI: cream paper, deep evergreen,
+   Warm "resort-grade" editorial UI: white paper, deep evergreen,
    large photo tiles, generous radii, zero decorative noise.
+
+   MOBILE-FIRST (2026-09-23): every rule below is authored for a
+   320px phone first; desktop, tablet landscape and TV are explicit
+   min-width enhancements on top of it. There is no max-width query
+   left in this file except reduced-motion/print. The fixed ladder is
+   560 · 620 · 680 · 780 · 940 · 980 · 1080 · 1180 · 1440, plus the
+   large-display tier at 1920px (1080p TVs) and 2560px (4K): the root
+   font, the content column and the display type all scale fluidly so
+   the same markup reads at arm's length and from across the room.
+   docs/04 §5.
    ============================================================ */
 
 :root {
@@ -43,7 +53,8 @@
   --f-body: "Golos Text Variable", system-ui, -apple-system, sans-serif;
   --f-mono:
     "JetBrains Mono Variable", ui-monospace, "SFMono-Regular", monospace;
-  /* the biggest element on a trade-show page is the date/number, not the slogan (docs/08 §2.3) */
+  /* the biggest element on a trade-show page is the date/number, not the slogan (docs/08 §2.3).
+     All sizes are rem: the fluid root scale (html below) carries them from phone to TV. */
   --t-hero: clamp(2.2rem, 1.5rem + 3.2vw, 3.6rem);
   --t-h2: clamp(1.6rem, 1.25rem + 1.6vw, 2.5rem);
   --t-h3: clamp(1.1rem, 1.02rem + 0.35vw, 1.3rem);
@@ -56,7 +67,9 @@
   --t-kicker: 0.74rem;
 
   /* metrics */
-  --maxw: 1320px;
+  /* the column is fluid: phones get the floor, a 4K TV gets a wider reading column
+     instead of a 1320px strip floating in the middle of the panel (docs/04 §5) */
+  --maxw: clamp(1320px, 78vw, 1760px);
   --gutter: clamp(1.1rem, 0.62rem + 1.5vw, 2.6rem);
   /* geometry: the international-grade venue look is soft, generous radii on photography and
      cards, and a near-square radius on controls. Photos carry the largest radius on the page. */
@@ -66,7 +79,9 @@
   --r-img: 20px;
   --r-pill: 999px;
   --pad: clamp(1.15rem, 0.85rem + 1vw, 1.75rem);
-  --sec: clamp(3rem, 2rem + 3.2vw, 5.5rem);
+  /* mobile-first: the compact phone rhythm; the fluid rhythm is re-applied at ≥560px
+     (the section below the hero must not swallow half the phone's first screen) */
+  --sec: 2.6rem;
   /* elevation is light and cool, never a grey smear: two layers, hairline + lift */
   --shadow: 0 1px 2px rgba(14, 20, 17, 0.04), 0 12px 32px -12px rgba(14, 20, 17, 0.14);
   --shadow-soft: 0 1px 2px rgba(14, 20, 17, 0.03), 0 6px 18px -10px rgba(14, 20, 17, 0.1);
@@ -89,6 +104,10 @@ html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
   scroll-padding-top: calc(var(--header-h) + 24px);
+  /* every size on the page is rem-based, so one fluid root scale carries the whole UI
+     from a 320px phone to a TV: 16px on the phone, up to 21px at 1920px and above
+     (docs/04 §5 — the "any gadget, any TV" contract) */
+  font-size: clamp(16px, 15.6px + 0.25vw, 21px);
 }
 
 body {
@@ -213,6 +232,8 @@ li::marker {
 .sec--forest {
   background: var(--evergreen);
   color: #ffffff;
+  /* on a phone the dark bands keep their air so they still read as chapter breaks */
+  padding-block: 3rem;
 }
 
 /* anchor targets must clear the sticky header */
@@ -230,20 +251,17 @@ li::marker {
   gap: clamp(0.9rem, 0.4rem + 1.4vw, 1.6rem);
 }
 
-.g2 {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.g3 {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
+/* mobile-first: a phone gets one column; the grid earns extra columns as the viewport
+   does (docs/04 §5). The ladder is min-width only — nothing here is authored for a
+   desktop then shrunk. */
+.g2,
+.g3,
 .g4 {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .g-sidebar {
-  grid-template-columns: minmax(0, 1fr) 340px;
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
 }
 
@@ -259,23 +277,23 @@ li::marker {
   max-width: 60ch;
 }
 
-@media (max-width: 1080px) {
-  .g4 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .g3 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .g-sidebar {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-@media (max-width: 680px) {
+@media (min-width: 680px) {
   .g2,
   .g3,
   .g4 {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1080px) {
+  .g3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .g4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .g-sidebar {
+    grid-template-columns: minmax(0, 1fr) 340px;
   }
 }
 
@@ -465,6 +483,13 @@ li::marker {
   gap: 0.7rem;
 }
 
+/* on a phone a button is a thumb target, not a word: action rows go full width
+   (the thumb does not hunt for a 120px pill), restored at ≥560px */
+.btn-row .btn,
+.btn-row .home-hero__more {
+  flex: 1 1 100%;
+}
+
 /* ---------- cards / tiles ---------- */
 .card {
   background: var(--paper);
@@ -573,12 +598,13 @@ a.chip:hover {
 /* ---------- stats ---------- */
 .stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 1px;
   background: var(--line);
   border: 1px solid var(--line);
   border-radius: var(--r-lg);
   overflow: hidden;
+  /* a stat band never collapses into one long column on a phone: two-by-two is the floor */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .stat b {
@@ -627,10 +653,9 @@ a.chip:hover {
   color: rgba(255, 255, 255, 0.78);
 }
 
-/* a stat band never collapses into one long column on a phone: two-by-two is the floor */
-@media (max-width: 680px) {
+@media (min-width: 680px) {
   .stats {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   }
 }
 
@@ -639,9 +664,11 @@ a.chip:hover {
   border-top: 1px solid var(--line);
 }
 
+/* mobile-first: the number and the title share the row, the description drops below the
+   title; at ≥780px the description earns its own track */
 .row {
   display: grid;
-  grid-template-columns: 74px minmax(0, 1fr) minmax(0, 1.5fr);
+  grid-template-columns: 42px minmax(0, 1fr);
   gap: 1.4rem;
   align-items: start;
   padding: clamp(1rem, 0.6rem + 1.2vw, 1.6rem) 0;
@@ -662,30 +689,53 @@ a.chip:hover {
 .row p {
   margin: 0;
   color: var(--ink-60);
+  grid-column: 2;
 }
 
-@media (max-width: 780px) {
+@media (min-width: 780px) {
   .row {
-    grid-template-columns: 42px minmax(0, 1fr);
+    grid-template-columns: 74px minmax(0, 1fr) minmax(0, 1.5fr);
   }
   .row p {
-    grid-column: 2;
+    grid-column: 3;
   }
 }
 
-/* ---------- table ---------- */
+/* ---------- table ----------
+   mobile-first: a phone scrolls the table instead of squeezing columns to three
+   characters wide; at ≥560px there is room to lay the table out as a table again.
+   (Editorial Markdown tables already live in a .table-scroll region — premium.css.) */
 .table {
+  display: block;
   width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
   border-collapse: collapse;
   font-size: 0.98rem;
+  white-space: nowrap;
 }
 
 .table th,
 .table td {
   text-align: left;
-  padding: 0.9rem 1rem;
+  padding: 0.7rem 0.8rem;
   border-bottom: 1px solid var(--line);
   vertical-align: top;
+  white-space: nowrap;
+}
+
+@media (min-width: 560px) {
+  .table {
+    display: table;
+    overflow: visible;
+    white-space: normal;
+  }
+  .table th,
+  .table td {
+    padding: 0.9rem 1rem;
+    white-space: normal;
+  }
 }
 
 .table th {
@@ -760,15 +810,18 @@ a.chip:hover {
   padding-block: 0.55rem;
 }
 
+/* the section tabs are a horizontal scroller on every screen; on a phone the tabs are
+   tighter so the next two sections stay reachable without scrolling (docs/04 §5) */
 .evnav__tabs {
   display: flex;
   align-items: center;
-  gap: 0.15rem 0.35rem;
+  gap: 0 0.15rem;
   margin: 0;
   padding: 0;
   list-style: none;
   overflow-x: auto;
   scrollbar-width: none;
+  min-width: 0;
 }
 
 .evnav__tabs::-webkit-scrollbar {
@@ -780,9 +833,9 @@ a.chip:hover {
   align-items: center;
   gap: 0.3rem;
   white-space: nowrap;
-  padding: 0.4rem 0.7rem;
+  padding: 0.35rem 0.55rem;
   border-radius: var(--r-pill);
-  font-size: 0.86rem;
+  font-size: 0.82rem;
   font-weight: 500;
   text-decoration: none;
   color: var(--ink-60);
@@ -806,34 +859,37 @@ a.chip:hover {
   margin-inline: 0.35rem;
 }
 
+/* the CTA pair never fits a phone rail: hidden by default, it reappears at ≥1180px and the
+   secondary button only at ≥1440px (it used to push «Каталог участников» out of view) */
 .evnav__cta {
-  display: flex;
+  display: none;
   align-items: center;
   gap: 0.5rem;
   flex: none;
 }
 
-/* eight section links plus two buttons do not fit in 1240px: the secondary button goes first
-   (it was pushing «Каталог участников» out of view at 1440), then the whole button group */
-@media (max-width: 1440px) {
+@media (min-width: 680px) {
+  .evnav__tabs {
+    gap: 0.15rem 0.35rem;
+  }
+  .evnav__tabs a {
+    padding: 0.4rem 0.7rem;
+    font-size: 0.86rem;
+  }
+}
+
+@media (min-width: 1180px) {
+  .evnav__cta {
+    display: flex;
+  }
   .evnav__cta a:not(:first-child) {
     display: none;
   }
 }
 
-@media (max-width: 1180px) {
-  .evnav__cta {
-    display: none;
-  }
-}
-
-@media (max-width: 680px) {
-  .evnav__tabs {
-    gap: 0 0.15rem;
-  }
-  .evnav__tabs a {
-    padding: 0.35rem 0.55rem;
-    font-size: 0.82rem;
+@media (min-width: 1440px) {
+  .evnav__cta a:not(:first-child) {
+    display: inline-flex;
   }
 }
 
@@ -879,11 +935,15 @@ a.chip:hover {
   letter-spacing: -0.01em;
 }
 
+/* on a phone the date drops out, name + countdown stay; the countdown re-enters at 520px,
+   the date at 860px — the strip is one line on every device */
 .promo__date {
+  display: none;
   color: rgba(241, 239, 228, 0.72);
 }
 
 .promo__count {
+  display: none;
   color: var(--gold-soft);
   font-family: var(--f-mono);
   font-size: 0.76rem;
@@ -903,15 +963,15 @@ a.chip:hover {
   flex: none;
 }
 
-/* on a phone the date drops out, name + countdown stay */
-@media (max-width: 860px) {
-  .promo__date {
-    display: none;
+@media (min-width: 520px) {
+  .promo__count {
+    display: inline;
   }
 }
-@media (max-width: 520px) {
-  .promo__count {
-    display: none;
+
+@media (min-width: 860px) {
+  .promo__date {
+    display: inline;
   }
 }
 
@@ -990,8 +1050,10 @@ a.chip:hover {
   letter-spacing: 0.02em;
 }
 
+/* mobile-first: below 1180px the horizontal nav does not fit, so the header is
+   logo + language + burger; the full nav is an enhancement, not the default (docs/04 §5) */
 .nav {
-  display: flex;
+  display: none;
   align-items: center;
   gap: 0.15rem;
   margin-left: auto;
@@ -1127,7 +1189,7 @@ a.chip:hover {
 }
 
 .burger {
-  display: none;
+  display: inline-flex;
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -1175,16 +1237,28 @@ body.nav-open .burger span::after {
   opacity: 0;
 }
 
-@media (max-width: 1180px) {
-  .nav,
-  .hdr .btn--desk {
-    display: none;
+/* the desktop CTA in the header row is part of the wide layout — hidden on phones,
+   where the form sections and the sticky CTA bar carry the conversion */
+.hdr .btn--desk {
+  display: none;
+}
+
+.topbar {
+  display: none;
+}
+
+@media (min-width: 1180px) {
+  .nav {
+    display: flex;
   }
-  .burger {
+  .hdr .btn--desk {
     display: inline-flex;
   }
-  .topbar {
+  .burger {
     display: none;
+  }
+  .topbar {
+    display: block;
   }
 }
 
@@ -1287,14 +1361,16 @@ body.nav-open .mnav {
     linear-gradient(to top, rgba(8, 22, 14, 0.8), rgba(8, 22, 14, 0) 55%);
 }
 
+/* mobile-first: one column on a phone; the side panel sits beside the headline
+   only from ≥980px, where it stops being the whole screen */
 .hero__in {
   position: relative;
   z-index: 1;
   padding-block: clamp(2.8rem, 1.4rem + 6vw, 6.4rem);
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: clamp(1.5rem, 0.8rem + 3vw, 3.5rem);
-  align-items: end;
+  align-items: start;
 }
 
 .hero h1 {
@@ -1320,9 +1396,10 @@ body.nav-open .mnav {
   backdrop-filter: blur(6px);
 }
 
-@media (max-width: 980px) {
+@media (min-width: 980px) {
   .hero__in {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+    align-items: end;
   }
 }
 
@@ -1477,9 +1554,11 @@ body.nav-open .mnav {
   text-decoration: underline;
 }
 
+/* mobile-first: two columns on a phone (brand + link columns still fit 320px),
+   five only at ≥1080px */
 .ftr__grid {
   display: grid;
-  grid-template-columns: 1.3fr repeat(4, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: clamp(1.2rem, 0.6rem + 2vw, 2.4rem);
 }
 
@@ -1512,9 +1591,9 @@ body.nav-open .mnav {
   color: rgba(255, 255, 255, 0.55);
 }
 
-@media (max-width: 1080px) {
+@media (min-width: 1080px) {
   .ftr__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1.3fr repeat(4, 1fr);
   }
 }
 
@@ -1821,12 +1900,20 @@ body.nav-open .mnav {
   overflow: hidden;
 }
 
+/* mobile-first: a show is one card on a phone — name on top, the date figure under it,
+   industry and the action links below. At ≥640px the date plate comes back left of the
+   name; at ≥1080px the row is the full five-column table (docs/08 §4). */
 .cal__row {
   display: grid;
-  grid-template-columns: 128px minmax(0, 1.25fr) 200px 128px minmax(170px, auto);
-  gap: 1.1rem;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "name"
+    "date"
+    "meta"
+    "act";
+  gap: 0.5rem;
   align-items: center;
-  padding: 1.05rem 1.3rem;
+  padding: 1.1rem;
   border-top: 1px solid var(--line);
   background: var(--paper);
   text-decoration: none;
@@ -1847,6 +1934,7 @@ body.nav-open .mnav {
   flex-direction: column;
   gap: 0.1rem;
   line-height: 1;
+  grid-area: date;
 }
 
 .cal__date b {
@@ -1871,6 +1959,7 @@ body.nav-open .mnav {
   border-left: 4px solid var(--ic, var(--ink-40));
   padding-left: 0.95rem;
   min-width: 0;
+  grid-area: name;
 }
 
 .cal__name b {
@@ -1890,6 +1979,12 @@ body.nav-open .mnav {
 .cal__ind {
   font-size: 0.9rem;
   color: var(--ink-60);
+  grid-area: meta;
+}
+
+/* the status chip does not earn a row on a phone: hidden until the full table at ≥1080px */
+.cal__status {
+  display: none;
 }
 
 .cal__act {
@@ -1898,6 +1993,7 @@ body.nav-open .mnav {
   justify-content: flex-end;
   gap: 0.9rem;
   white-space: nowrap;
+  grid-area: act;
 }
 
 .cal__act .txt {
@@ -1923,49 +2019,39 @@ body.nav-open .mnav {
   display: none;
 }
 
-@media (max-width: 1080px) {
+@media (min-width: 640px) {
   .cal__row {
     grid-template-columns: 104px minmax(0, 1fr) auto;
     grid-template-areas:
       "date name act"
       "meta name act";
     row-gap: 0.4rem;
-  }
-  .cal__date {
-    grid-area: date;
-  }
-  .cal__name {
-    grid-area: name;
+    padding: 1.05rem 1.3rem;
   }
   .cal__act {
-    grid-area: act;
     flex-direction: column;
     align-items: flex-end;
     gap: 0.35rem;
   }
-  .cal__ind {
-    grid-area: meta;
-  }
-  .cal__status {
-    display: none;
-  }
 }
 
-@media (max-width: 640px) {
+@media (min-width: 1080px) {
   .cal__row {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas:
-      "name"
-      "date"
-      "meta"
-      "act";
-    gap: 0.5rem;
-    padding: 1.1rem;
+    grid-template-columns: 128px minmax(0, 1.25fr) 200px 128px minmax(170px, auto);
+    gap: 1.1rem;
+    grid-template-areas: none;
+    padding: 1.05rem 1.3rem;
+  }
+  .cal__row > * {
+    grid-area: auto;
   }
   .cal__act {
     flex-direction: row;
     align-items: center;
     gap: 0.9rem;
+  }
+  .cal__status {
+    display: inline;
   }
 }
 
@@ -2008,13 +2094,15 @@ body.nav-open .mnav {
     linear-gradient(to top, rgba(8, 22, 14, 0.92) 0%, rgba(8, 22, 14, 0) 45%);
 }
 
+/* mobile-first: one column on a phone — the fact panel is reference material, not the
+   pitch, so it stacks under the headline (docs/04 §5) */
 .home-hero__in {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.6fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: clamp(1.8rem, 1rem + 3vw, 4.5rem);
-  align-items: end;
-  padding-block: clamp(4rem, 2.6rem + 6vw, 8rem) 0;
+  align-items: start;
+  padding-block: clamp(2.4rem, 1.6rem + 4vw, 3.4rem) 0;
 }
 
 .home-hero__kicker {
@@ -2060,6 +2148,7 @@ body.nav-open .mnav {
   line-height: 1.02;
   letter-spacing: -0.035em;
   color: #fff;
+  /* on a phone the headline takes the full line — it is the loudest element */
   max-width: none;
   text-shadow: 0 2px 30px rgba(0, 0, 0, 0.3);
 }
@@ -2105,13 +2194,14 @@ body.nav-open .mnav {
   margin-top: 1.9rem;
 }
 
-/* the fact card: venue line + countdown, one glass panel over the photograph */
+/* the fact card: venue line + countdown, one glass panel over the photograph.
+   Phone: full width and compact — it must not eat a whole screen. */
 .home-hero__side {
   display: grid;
-  gap: 1.3rem;
-  justify-self: end;
-  width: min(380px, 100%);
-  padding: 1.6rem 1.7rem;
+  gap: 1rem;
+  justify-self: start;
+  width: 100%;
+  padding: 1.15rem 1.2rem;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: var(--r-lg);
   background: rgba(12, 30, 20, 0.45);
@@ -2133,7 +2223,7 @@ body.nav-open .mnav {
   gap: 0.2rem 0.8rem;
   margin: 0.45rem 0 0;
   font-family: var(--f-display);
-  font-size: 1.02rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: #fff;
 }
@@ -2152,10 +2242,12 @@ body.nav-open .mnav {
   box-shadow: var(--shadow-lift);
 }
 
+/* a rail that scrolls must look like it scrolls: on a phone the last card is
+   deliberately clipped, so the edge gives the hint the mouse cursor used to */
 .rail {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: minmax(230px, 1fr);
+  grid-auto-columns: minmax(78vw, 1fr);
   gap: 1px;
   background: rgba(255, 255, 255, 0.14);
   border: 1px solid rgba(255, 255, 255, 0.16);
@@ -2163,6 +2255,7 @@ body.nav-open .mnav {
   overflow: hidden;
   overflow-x: auto;
   scrollbar-width: none;
+  scroll-snap-type: x mandatory;
 }
 
 .rail::-webkit-scrollbar { display: none; }
@@ -2178,6 +2271,7 @@ body.nav-open .mnav {
   color: inherit;
   border-left: 3px solid var(--ic, var(--accent));
   transition: background-color var(--tr);
+  scroll-snap-align: start;
 }
 
 .rail a:hover {
@@ -2209,23 +2303,58 @@ body.nav-open .mnav {
   text-overflow: ellipsis;
 }
 
-@media (max-width: 940px) {
+@media (min-width: 560px) {
   .home-hero__in {
-    grid-template-columns: minmax(0, 1fr);
-    align-items: start;
+    padding-block: clamp(4rem, 2.6rem + 6vw, 8rem) 0;
+  }
+  .home-hero h1 {
+    max-width: 15ch;
   }
   .home-hero__side {
-    justify-self: start;
     width: min(460px, 100%);
+    gap: 1.3rem;
+    padding: 1.6rem 1.7rem;
+  }
+  .home-hero__venue {
+    font-size: 1.02rem;
+  }
+  .rail {
+    grid-auto-columns: minmax(230px, 1fr);
+    scroll-snap-type: none;
+  }
+  .rail a {
+    scroll-snap-align: none;
+  }
+  .btn-row .btn,
+  .btn-row .home-hero__more {
+    flex: 0 1 auto;
+  }
+  :root {
+    --sec: clamp(3rem, 2rem + 3.2vw, 5.5rem);
+  }
+  .sec--forest {
+    padding-block: var(--sec);
+  }
+}
+
+@media (min-width: 940px) {
+  .home-hero__in {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.6fr);
+    align-items: end;
+  }
+  .home-hero__side {
+    justify-self: end;
+    width: min(380px, 100%);
   }
 }
 
 /* ------- photo strip / gallery of the real halls -------
    A bento grid: one large frame carries the scene, five smaller ones carry the detail.
-   Every tile is a real photograph from a past edition, so the grid doubles as proof. */
+   Every tile is a real photograph from a past edition, so the grid doubles as proof.
+   Mobile-first: two columns on a phone, the bento earns its fourth at ≥780px. */
 .gallery {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-auto-rows: clamp(120px, 12vw, 190px);
   gap: clamp(0.5rem, 0.3rem + 0.7vw, 0.9rem);
 }
@@ -2255,17 +2384,18 @@ body.nav-open .mnav {
   aspect-ratio: auto !important;
 }
 
-@media (max-width: 780px) {
+@media (min-width: 780px) {
   .gallery {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
-  .gallery > :nth-child(6) { grid-column: span 2; }
 }
 
-/* ------- home: the venue in one line (no table) ------- */
+/* ------- home: the venue in one line (no table) -------
+   mobile-first: the photograph sits on top (order: -1), the numbers and the text
+   stack; the three-column strip is a ≥1080px enhancement */
 .venue-strip {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
   gap: clamp(1.2rem, 0.8rem + 2.4vw, 3rem);
   align-items: center;
   padding-block: clamp(1.6rem, 1rem + 1.6vw, 2.6rem);
@@ -2337,18 +2467,19 @@ body.nav-open .mnav {
 }
 
 .venue-strip__img {
-  width: clamp(220px, 24vw, 340px);
+  width: min(480px, 100%);
+  order: -1;
   flex: none;
   box-shadow: var(--shadow);
 }
 
-@media (max-width: 1080px) {
+@media (min-width: 1080px) {
   .venue-strip {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1fr) auto;
   }
   .venue-strip__img {
-    width: min(480px, 100%);
-    order: -1;
+    width: clamp(220px, 24vw, 340px);
+    order: 0;
   }
 }
 
@@ -2629,69 +2760,6 @@ body.nav-open .mnav {
   transition: background-color var(--tr), border-color var(--tr);
 }
 
-/* ---------- phone pass (≤560px) ----------
-   Everything above is authored desktop-first with fluid clamps, which holds down to about
-   600px. Below that a trade-show page has three specific failures: the hero date competes
-   with the headline, the glass fact panel eats a whole screen, and the horizontal rails
-   give no hint that they scroll. These rules fix exactly those. */
-@media (max-width: 560px) {
-  .home-hero__in {
-    padding-block: clamp(2.4rem, 1.6rem + 4vw, 3.4rem) 0;
-  }
-
-  .home-hero h1 {
-    max-width: none;
-  }
-
-  /* the fact panel is reference material on a phone, not the pitch: it goes quiet and short */
-  .home-hero__side {
-    width: 100%;
-    padding: 1.15rem 1.2rem;
-    gap: 1rem;
-  }
-
-  .home-hero__venue {
-    font-size: 0.95rem;
-  }
-
-  /* a rail that scrolls must look like it scrolls: the last card is deliberately clipped */
-  .rail {
-    grid-auto-columns: minmax(78vw, 1fr);
-    scroll-snap-type: x mandatory;
-  }
-
-  .rail a {
-    scroll-snap-align: start;
-  }
-
-  .btn-row .btn,
-  .btn-row .home-hero__more {
-    flex: 1 1 100%;
-    justify-content: center;
-  }
-
-  /* section rhythm tightens, but the dark bands keep their air so they still read as breaks */
-  :root {
-    --sec: 2.6rem;
-  }
-
-  .sec--forest {
-    padding-block: 3rem;
-  }
-
-  /* tables on a phone scroll rather than squeeze to 3 characters a column */
-  .table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-
-  .table th,
-  .table td {
-    padding: 0.7rem 0.8rem;
-  }
-}
-
 /* A horizontally scrolling region must be reachable from the keyboard, otherwise the cards
    past the fold are unreachable without a mouse. */
 .rail:focus-visible,
@@ -2702,3 +2770,58 @@ body.nav-open .mnav {
 
 /* card titles promoted to h2 for a clean outline keep the h3 look */
 h2.h3 { font-size: var(--t-h3); line-height: 1.18; letter-spacing: -0.014em; }
+/* ===================================================================
+   Large displays — TVs and big monitors (docs/04 §5).
+   The fluid root font (16→21px) and the fluid --maxw (1320→1760px)
+   already scale the whole page; this tier does the one thing clamps
+   cannot: raise the CEILING of display type so the headline and the
+   date read from across the room, and gives the sticky header its
+   room-scale height.
+   =================================================================== */
+@media (min-width: 1920px) {
+  :root {
+    --header-h: 84px;
+  }
+  .home-hero h1 {
+    font-size: clamp(3rem, 2rem + 3.8vw, 6.5rem);
+  }
+  .home-hero__date b {
+    font-size: clamp(2.6rem, 1.8rem + 3.2vw, 4.8rem);
+  }
+  .home-hero__date span {
+    font-size: clamp(1.05rem, 0.9rem + 0.8vw, 1.6rem);
+  }
+  .home-hero__lead {
+    max-width: 58ch;
+  }
+  .phero h1 {
+    font-size: clamp(2.8rem, 2rem + 3.2vw, 5rem);
+  }
+  .hero h1 {
+    font-size: clamp(2.8rem, 2rem + 3.2vw, 5rem);
+  }
+  .cal__row {
+    padding: 1.25rem 1.5rem;
+  }
+  .cal__date b {
+    font-size: calc(var(--t-date) * 1.15);
+  }
+  .cal__name b {
+    font-size: 1.3rem;
+  }
+  .ev__body h3 {
+    font-size: 1.35rem;
+  }
+}
+
+@media (min-width: 2560px) {
+  :root {
+    --maxw: clamp(1600px, 72vw, 2048px);
+  }
+  .home-hero h1 {
+    font-size: clamp(3.6rem, 2.4rem + 4.4vw, 7.5rem);
+  }
+  .home-hero__date b {
+    font-size: clamp(3rem, 2rem + 4vw, 5.8rem);
+  }
+}

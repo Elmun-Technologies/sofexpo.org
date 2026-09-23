@@ -209,7 +209,7 @@ const events = [
   }
   .form-ex__grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 12px;
   }
   .form-ex__full {
@@ -237,7 +237,8 @@ const events = [
     align-items: center;
   }
   .form-ex__submit {
-    min-width: 260px;
+    width: 100%;
+    min-width: 0;
     justify-content: space-between;
     padding: 14px 20px;
     font-size: 14px;
@@ -259,13 +260,13 @@ const events = [
   .form-ex__alt a:hover {
     border-color: var(--evergreen);
   }
-  @media (max-width: 640px) {
+  @media (min-width: 640px) {
     .form-ex__grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr 1fr;
     }
     .form-ex__submit {
-      width: 100%;
-      min-width: 0;
+      width: auto;
+      min-width: 260px;
     }
   }
 </style>

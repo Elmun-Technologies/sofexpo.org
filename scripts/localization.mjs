@@ -177,6 +177,10 @@ function rewriteScript(source, text, locale) {
 }
 export function localizeHTML(html, locale, options = {}) {
   const text = translator(locale, options);
+  /* Script strings are code: unknown ones (validation defaults, brand marks, ...) pass
+     through untouched. Curated copy in scripts (scripts/localization.mjs#scriptWords) is
+     still translated; markup copy above stays strict, so missing visible copy fails the build. */
+  const scriptText = translator(locale, { ...options, strict: false });
   const doc = parse(html);
   function visit(node, skip = false) {
     const tag = node.tagName;
@@ -215,7 +219,7 @@ export function localizeHTML(html, locale, options = {}) {
           child.value = JSON.stringify(rewriteJSON(JSON.parse(child.value),text,locale)).replace(/</g,'\\u003c');
         } else if (!attr(node,'src')) {
           if (attr(node,'translate') === 'no') continue;
-          child.value = rewriteScript(child.value,text,locale);
+          child.value = rewriteScript(child.value,scriptText,locale);
         }
       }
       return;

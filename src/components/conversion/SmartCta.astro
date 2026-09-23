@@ -187,9 +187,12 @@ const finalSecondaryHref = secondaryHref || d.href2;
 )}
 
 <style>
+  /* mobile-first: the inline CTA stacks on a phone (message on top, the
+     actions full width under it); the row layout is a ≥700px tier */
   .smart-cta--inline {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 20px;
     padding: 20px 24px;
@@ -217,6 +220,10 @@ const finalSecondaryHref = secondaryHref || d.href2;
     align-items: center;
     flex: none;
     flex-wrap: wrap;
+    width: 100%;
+  }
+  .smart-cta--inline .smart-cta__actions .btn {
+    flex: 1;
   }
 
   .smart-cta--sidebar {
@@ -308,22 +315,25 @@ const finalSecondaryHref = secondaryHref || d.href2;
     flex-wrap: wrap;
   }
 
-  @media (max-width: 700px) {
+  @media (min-width: 700px) {
     .smart-cta--inline {
-      flex-direction: column;
-      align-items: flex-start;
+      flex-direction: row;
+      align-items: center;
     }
     .smart-cta--inline .smart-cta__actions {
-      width: 100%;
+      width: auto;
     }
     .smart-cta--inline .smart-cta__actions .btn {
-      flex: 1;
-      justify-content: center;
+      flex: 0 1 auto;
     }
   }
 </style>
 
 <script>
+  /* NOTE: must stay a plain <script> (no is:inline / no translate="no"): Astro then
+     transpiles this TypeScript and bundles it as a deferred module. Extra attributes
+     make Astro emit it raw, which breaks in every browser. The i18n build pass
+     rewrites only the known UI strings inside it (scripts/localization.mjs). */
   (() => {
     document.querySelectorAll('[data-cta]').forEach(el => {
       el.addEventListener('click', () => {

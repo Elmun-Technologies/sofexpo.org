@@ -159,6 +159,8 @@ const Hf = level === 2 ? 'h2' : 'h3';
 
 <script is:inline>
   document.querySelectorAll('[data-lead-form]').forEach((form) => {
+    if (form.dataset.handlerBound === '1') return;
+    form.dataset.handlerBound = '1';
     const msg = form.querySelector('.form__msg');
     const endpoint = form.dataset.endpoint;
     form.addEventListener('submit', async (e) => {

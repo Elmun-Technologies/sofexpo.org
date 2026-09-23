@@ -40,9 +40,10 @@ const { locale, kicker, title, text, primary, secondary, dark = true } = Astro.p
 </section>
 
 <style>
+  /* mobile-first: headline and action stack on a phone; side by side from ≥900px */
   .cta-band__in {
     display: grid;
-    grid-template-columns: minmax(0, 1.4fr) minmax(0, auto);
+    grid-template-columns: minmax(0, 1fr);
     gap: 1.6rem 2.5rem;
     align-items: center;
   }
@@ -77,9 +78,9 @@ const { locale, kicker, title, text, primary, secondary, dark = true } = Astro.p
   .cta-band:not(.sec--forest) .btn--ghost {
     border-color: var(--line);
   }
-  @media (max-width: 900px) {
+  @media (min-width: 900px) {
     .cta-band__in {
-      grid-template-columns: minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, auto);
     }
   }
 </style>

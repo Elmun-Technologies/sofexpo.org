@@ -79,10 +79,44 @@ Header nav items carry a descriptive sub-line (`note: {ru, en}` on every `nav` c
 as `.mega a small` in a two-column grid) — keyword context in the navigation instead of a
 repeated section name.
 
-Breakpoints are a fixed ladder, mobile-first via `clamp()` so most components need no query:
-`1180 · 1080 · 980 · 780 · 680 · 620 (min-width)` — plus `prefers-reduced-motion: reduce` (kills every animation and transition, restores
-`scroll-behavior: auto`) and `@media print`, which drops the header, footer, topbar and buttons
-so a spec page prints as a clean sheet.
+### Mobile-first, any gadget to any TV (2026-09-23)
+
+The site is authored **mobile-first**: the base (no-media) rules describe the 320px phone,
+and every other screen is an explicit `min-width` enhancement on top of it. There are no
+`max-width` layout queries left in `src/` — the only `@media` exceptions are
+`prefers-reduced-motion: reduce` (kills every animation and transition, restores
+`scroll-behavior: auto`) and `@media print` (drops the header, footer, topbar and buttons so
+a spec page prints as a clean sheet).
+
+The fixed ladder, all `min-width`:
+
+| Tier            | From  | What earns its layout                                                                 |
+| --------------- | ----- | ------------------------------------------------------------------------------------- |
+| phone           | 320px | base: 1-column grids, burger header, stacked hero/calendar rows, full-width action rows |
+| small tablet    | 361px | mid-size brand lockup (`premium.css`)                                                  |
+| phone XL        | 480/520/560px | 2-col grids, table reverts to `display: table`, hero side panel back to 460px   |
+| tablet          | 640/680/700px | calendar row gets the date plate; premium header back to 88px, hero 300px column  |
+| tablet landscape| 780/860/900/940/960/980/1000px | `.row` 3-col, wide event cards, hero 2-col, TOC rail re-sticks |
+| laptop          | 1080px | 3/4-col grids, 5-col footer, full 5-column calendar table, venue strip 3-col           |
+| desktop         | 1180px / 1280px / 1440px | horizontal nav + burger off (1180), premium nav (1280), second CTA in the section rail (1440) |
+| TV 1080p/4K     | 1920px / 2560px | **large-display tier**: header 96px, display-type ceilings raised (home h1 to 7–8rem, date figures 1.15×), the content column keeps widening to 2048px |
+
+Two fluid tokens do the heavy lifting so most components need no query at all:
+
+- `html { font-size: clamp(16px, 15.6px + 0.25vw, 21px) }` — every size on the page is
+  rem-based, so the whole UI scales from a phone to a room;
+- `--maxw: clamp(1320px, 78vw, 1760px)` (premium: `clamp(1380px, 76vw, 1840px)`) — a 4K TV
+  gets a wider reading column instead of a 1320px strip floating in the middle of the panel.
+
+The desktop header is the one full-bleed row of *fixed* content (logo + 6 nav items + tools),
+so its chrome is pinned in px from 1280px (compact scale) and raised again at 2560px — a
+rem-scaled header would outgrow the wrap somewhere between 1281px and 2320px. Everything
+else keeps flowing with the root font.
+
+The contract is enforced by `tests/browser/responsive.spec.ts`, which walks the full device
+matrix — `320 · 360 · 390 · 414 · 480 · 560 · 640 · 768 · 834 · 1024 · 1180 · 1280 · 1440 ·
+1600 · 1920 · 2560 · 3840` — over the core pages and fails on any horizontal overflow, then
+asserts the TV tier actually widens the column and raises the display type.
 
 ## 3. Components (`src/components/`)
 

@@ -1702,7 +1702,7 @@ export const exhibitorPages: PageDef[] = [
               "Заявка на участие",
               "за 90–60 дней",
               "экспонент",
-              "можно письмом на info@sofexpo.org",
+              "можно письмом на info@sofexpo.uz",
             ],
             [
               "Договор и счёт",
@@ -1802,7 +1802,7 @@ export const exhibitorPages: PageDef[] = [
               "Participation application",
               "90–60 days ahead",
               "exhibitor",
-              "an email to info@sofexpo.org is enough",
+              "an email to info@sofexpo.uz is enough",
             ],
             [
               "Contract and invoice",

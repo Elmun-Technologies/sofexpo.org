@@ -20,7 +20,6 @@ export const site = {
     phoneMain: "+998 55 705 0 705",
     phoneManager: "+998 88 399 07 05",
     email: "info@sofexpo.uz",
-    emailAlt: "info@sofexpo.org",
     telegramManager: "https://t.me/sofexpomgr",
     telegramChannel: "https://t.me/sofexpo",
     instagram: "https://www.instagram.com/sofexpo.uz/",

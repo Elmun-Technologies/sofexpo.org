@@ -1450,7 +1450,7 @@ export const venuePages: PageDef[] = [
           ],
           list: [
             "Разрешение для прессы — бесплатно с указанием источника.",
-            "Для партнёров — по письму на info@sofexpo.org.",
+            "Для партнёров — по письму на info@sofexpo.uz.",
             "Съёмка на площадке стороннего организатора — по согласованию с ним.",
           ],
         },
@@ -1559,7 +1559,7 @@ export const venuePages: PageDef[] = [
           ],
           list: [
             "Press use is free with credit.",
-            "For partners — by email to info@sofexpo.org.",
+            "For partners — by email to info@sofexpo.uz.",
             "Filming a third-party organizer show requires their approval.",
           ],
         },

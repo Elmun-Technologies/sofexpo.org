@@ -42,6 +42,17 @@ const telHref = `tel:${site.contacts.phoneMain.replace(/\s/g, '')}`;
       if (trigger) {
         e.preventDefault();
         opener = trigger;
+        /* a trigger may carry the page context (event page header CTA): the dialog
+           quiz re-focuses to that show instead of asking the general question */
+        var quiz = dialog.querySelector('[data-quiz]');
+        var ctx = trigger.getAttribute('data-quiz-event');
+        if (quiz && ctx && typeof quiz.dispatchEvent === 'function') {
+          quiz.dispatchEvent(new CustomEvent('quiz:focus', { detail: { event: ctx } }));
+        }
+        try {
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({ event: 'quiz_open', context: ctx || 'general' });
+        } catch (err) {}
         if (typeof dialog.showModal === 'function') dialog.showModal();
         else dialog.setAttribute('open', '');
         return;

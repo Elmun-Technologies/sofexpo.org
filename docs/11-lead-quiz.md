@@ -28,6 +28,27 @@ Mechanics worth keeping if this is ever redesigned:
 Any CTA with `data-quiz-open` (header “Book a stand”, CtaBand/callout/hero actions
 whose href is `/request-stand/`) opens it; the href stays as the no-JS fallback.
 
+### Context focus
+
+Rush's key trick: the funnel already knows what page you are on. On event pages the
+header CTA carries `data-quiz-event="<brand>"` (looked up from `events.ts` by the
+current path in `Header.astro`). Opening the dialog dispatches `quiz:focus` — the
+modal quiz collapses its show question into a hidden field and continues as the
+three-step funnel, with the “Step N of 3” label set. Both label sets ship
+server-rendered, so no translation is computed in the client.
+
+## Funnel telemetry
+
+The quiz pushes `window.dataLayer` events — invisible until a GA4/Yandex Metrika
+container is added, then the funnel appears without touching the components:
+
+| event         | when                      | fields                             |
+| ------------- | ------------------------- | ---------------------------------- |
+| `quiz_open`   | a `[data-quiz-open]` CTA  | `context`: show brand or `general` |
+| `quiz_start`  | first advance from step 1 | `step`, `total`                    |
+| `quiz_step`   | every forward/back move   | `step`, `total`, `back?`           |
+| `quiz_submit` | successful submit         | `show`, `goal`, `area`, `channel`  |
+
 ## Authoring
 
 Pages compose it like any other block:

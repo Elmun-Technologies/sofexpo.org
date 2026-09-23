@@ -55,6 +55,12 @@ test('quiz and form blocks share one payload contract', () => {
   assert.ok(quiz.includes('data-endpoint'), 'quiz must honour PUBLIC_LEAD_ENDPOINT');
   assert.ok(quiz.includes("'sofexpo.leads'"), 'quiz must reuse the preview lead store');
   assert.ok(quiz.includes("payload.quiz = 'stand'"), 'quiz payload must identify itself');
+  assert.ok(quiz.includes('quiz:focus'), 'quiz must support runtime re-focusing');
+  assert.ok(quiz.includes('dataLayer'), 'quiz must push funnel events to window.dataLayer');
+  const modal = readFileSync(new URL('../src/components/StandQuizModal.astro', import.meta.url), 'utf8');
+  assert.ok(modal.includes('data-quiz-event'), 'modal must forward the trigger context');
+  const header = readFileSync(new URL('../src/components/Header.astro', import.meta.url), 'utf8');
+  assert.ok(header.includes('data-quiz-event'), 'header must pass the event page context');
 });
 
 test('pages ship the quiz block and the global modal trigger', () => {

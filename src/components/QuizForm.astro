@@ -72,13 +72,21 @@ const goalStep = focused ? 1 : 2;
 const areaStep = focused ? 2 : 3;
 const contactStep = focused ? 3 : 4;
 const barWidth = focused ? '33%' : '25%';
+/* both label sets ship server-rendered: a modal quiz can be re-focused to three
+   steps at runtime, and translations must not be computed in the client */
+const labelSets = focused
+  ? [{ mode: '3', labels: steps }]
+  : [
+      { mode: '4', labels: steps },
+      { mode: '3', labels: [t('quiz.step1of3'), t('quiz.step2of3'), t('quiz.step3of3')] },
+    ];
 const phoneCodes = ['+998', '+7', '+90', '+86', '+996', '+992', '+966', '+971', '+48', '+49', '+44', '+1'];
 const tgHref = site.contacts.telegramManager;
 const telHref = `tel:${site.contacts.phoneMain.replace(/\s/g, '')}`;
 const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru ? 'Заявка на участие' : 'Participation request')}`;
 ---
 
-<div class:list={['quiz', 'card', { 'quiz--compact': compact }]} data-quiz data-endpoint={endpoint || undefined} data-ok={t('form.sent')} data-err={t('form.error')} data-fallback={ru ? 'Мы получили ваш контакт только в этом браузере — отправьте заявку также на почту.' : 'Your request was kept in this browser only — please also send it by email.'}>
+<div class:list={['quiz', 'card', { 'quiz--compact': compact }]} data-quiz data-quiz-mode={focused ? '3' : '4'} data-endpoint={endpoint || undefined} data-ok={t('form.sent')} data-err={t('form.error')} data-fallback={ru ? 'Мы получили ваш контакт только в этом браузере — отправьте заявку также на почту.' : 'Your request was kept in this browser only — please also send it by email.'}>
   {(title || subtitle) && (
     <div class="quiz__head">
       {title && <h3>{title}</h3>}
@@ -88,11 +96,13 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
 
   <div class="quiz__progress" aria-hidden="true">
     <div class="quiz__labels">
-      {steps.map((label) => (
-        <span data-step-label hidden>
-          {label}
-        </span>
-      ))}
+      {labelSets.map((set) =>
+        set.labels.map((label) => (
+          <span data-step-label data-mode={set.mode} hidden>
+            {label}
+          </span>
+        )),
+      )}
     </div>
     <span class="quiz__bar">
       <span class="quiz__fill" data-quiz-bar style={barWidth}></span>
@@ -278,6 +288,17 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
       if (!form || !steps.length) return;
       var current = 1;
       var total = steps.length;
+      var mode = root.dataset.quizMode || '4';
+      var started = false;
+
+      /* funnel telemetry: safe without any tag manager — GA4/Yandex Metrika pick
+         these up from window.dataLayer as soon as a container is added */
+      var track = function (name, data) {
+        try {
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push(Object.assign({ event: name, quiz: 'stand' }, data || {}));
+        } catch (err) {}
+      };
 
       var render = function () {
         root.classList.add('quiz--on');
@@ -287,7 +308,12 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
           steps[i].classList.toggle('quiz__step--active', n === current);
         }
         if (bar) bar.style.width = Math.round((current / total) * 100) + '%';
-        for (var j = 0; j < labels.length; j++) labels[j].hidden = j !== current - 1;
+        var shown = 0;
+        for (var j = 0; j < labels.length; j++) {
+          var inSet = labels[j].dataset.mode === mode;
+          labels[j].hidden = !inSet || shown !== current - 1;
+          if (inSet) shown += 1;
+        }
         for (var k = 0; k < backs.length; k++) backs[k].hidden = current === 1;
       };
 
@@ -301,8 +327,13 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
       };
       var move = function () {
         if (current < total) {
+          if (!started) {
+            started = true;
+            track('quiz_start', { step: current, total: total });
+          }
           current += 1;
           render();
+          track('quiz_step', { step: current, total: total });
           var legend = steps[current - 1].querySelector('legend');
           if (legend) legend.focus({ preventScroll: true });
           steps[current - 1].scrollIntoView({ block: 'nearest' });
@@ -325,11 +356,44 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
           if (current > 1) {
             current -= 1;
             render();
+            track('quiz_step', { step: current, total: total, back: 1 });
             var legend = steps[current - 1].querySelector('legend');
             if (legend) legend.focus({ preventScroll: true });
           }
         });
       }
+
+      /* Runtime re-focus (rush-agency.ru behaviour): a trigger carrying
+         data-quiz-event turns the general quiz into the focused three-step funnel
+         for that show. Only meaningful while the visitor is still on step 1. */
+      root.addEventListener('quiz:focus', function (e) {
+        if (root.dataset.quizFocused === '1' || current !== 1) return;
+        var name = e.detail && e.detail.event;
+        if (!name) return;
+        var show = form.querySelector('fieldset[data-step="1"]');
+        if (!show || !show.querySelector('input[name=event]')) return; /* already focused */
+        show.hidden = true;
+        show.removeAttribute('data-step'); /* leave the step numbering to the live set */
+        show.querySelectorAll('input').forEach(function (el) {
+          el.disabled = true;
+        });
+        var carry = document.createElement('input');
+        carry.type = 'hidden';
+        carry.name = 'event';
+        carry.value = name;
+        form.insertBefore(carry, form.firstChild);
+        var ordered = Array.prototype.filter.call(steps, function (fs) {
+          return fs !== show;
+        });
+        ordered.forEach(function (fs, i) {
+          fs.dataset.step = String(i + 1);
+        });
+        steps = ordered;
+        total = ordered.length;
+        mode = '3';
+        root.dataset.quizFocused = '1';
+        render();
+      });
 
       form.addEventListener('submit', async function (e) {
         e.preventDefault();
@@ -358,6 +422,7 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
         payload.quiz = 'stand';
         payload.page = location.pathname;
         payload.ts = new Date().toISOString();
+        track('quiz_submit', { show: payload.event, goal: payload.goal, area: payload.area, channel: payload.channel });
         var endpoint = root.dataset.endpoint;
         if (msg) {
           msg.hidden = false;

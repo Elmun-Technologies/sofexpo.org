@@ -64,6 +64,12 @@ test('quiz: three tap-only steps auto-advance into the contact step (en build)',
   assert.equal(done.hidden, false, 'success panel replaces the form');
   assert.match(done.querySelector('[data-quiz-summary=goal]').textContent, /New buyers and sales/);
   assert.match(done.querySelector('[data-quiz-summary=area]').textContent, /18/);
+  // funnel telemetry reached the dataLayer
+  const tracked = dom.window.dataLayer.map((e) => e.event);
+  assert.ok(tracked.includes('quiz_start'), 'quiz_start tracked');
+  assert.ok(tracked.includes('quiz_step'), 'quiz_step tracked');
+  const submitEvent = dom.window.dataLayer.find((e) => e.event === 'quiz_submit');
+  assert.equal(submitEvent && submitEvent.goal, 'New buyers and sales');
   const lead = JSON.parse(dom.window.localStorage.getItem('sofexpo.leads')).at(-1);
   assert.equal(lead.quiz, 'stand');
   assert.equal(lead.name, 'Test Exhibitor');
@@ -120,6 +126,29 @@ test('quiz: re-clicking a chosen option still advances after going Back', { skip
   Object.defineProperty(click, 'target', { value: goal });
   quiz.querySelector('[data-quiz-form]').dispatchEvent(click);
   assert.ok(quiz.querySelector('[data-step="2"]').hidden === false, 're-click advances from the revisited step');
+  dom.window.close();
+});
+
+test('quiz: modal quiz re-focuses to the event page context', { skip: !existsSync(dist('en/events/foodera-expo/visitors/index.html')) && 'dist missing — run npm run build' }, async () => {
+  const dom = load('en/events/foodera-expo/visitors/index.html');
+  await new Promise((r) => setTimeout(r, 50));
+  const { document } = dom.window;
+  const trigger = document.querySelector('a[data-quiz-open]');
+  assert.equal(trigger && trigger.getAttribute('data-quiz-event'), 'FOODERA EXPO 2026', 'header CTA carries the show context');
+  const dialog = document.querySelector('[data-quiz-modal]');
+  trigger.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true, cancelable: true }));
+  assert.equal(dialog.open, true);
+  const modalQuiz = dialog.querySelector('[data-quiz]');
+  const hidden = modalQuiz.querySelector('input[type=hidden][name=event]');
+  assert.equal(hidden && hidden.value, 'FOODERA EXPO 2026', 'show question collapsed into a hidden field');
+  assert.equal(modalQuiz.querySelectorAll('fieldset[data-step]').length, 3, 'dialog quiz now has three steps');
+  assert.equal(modalQuiz.querySelector('[data-step="1"]').hidden, false, 'goal question is now step 1');
+  assert.match(modalQuiz.querySelector('[data-step-label]:not([hidden])').textContent, /Step 1 of 3/);
+  // telemetry: the open event is tracked
+  const events = dom.window.dataLayer.map((e) => e.event);
+  assert.ok(events.includes('quiz_open'), 'quiz_open pushed to dataLayer');
+  dialog.querySelector('[data-quiz-close]').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  assert.equal(dialog.open, false);
   dom.window.close();
 });
 

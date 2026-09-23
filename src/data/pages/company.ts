@@ -735,6 +735,12 @@ export const companyPages: PageDef[] = [
           imageAlt: "Экспозиция строительной выставки",
         },
         {
+          type: "quiz",
+          title: "Подберём стенд за 4 шага",
+          text: "Четыре вопроса — и менеджер пришлёт план зала, свободные метры и расчёт пакета.",
+          note: "Если нужны демонстрационная зона, улица или отдельный павильон — отметьте «Пока не знаю» и опишите задачу в комментарии.",
+        },
+        {
           type: "form",
           eventName: "любая выставка",
           title: "Заявка на стенд",
@@ -789,6 +795,12 @@ export const companyPages: PageDef[] = [
           lead: "Describe your participation once — you get the hall plan with free space, the package quote and a draft contract. Unsure which show fits? Write it in the comment and we will route you.",
           image: "/images/event-buildpro.jpg",
           imageAlt: "Construction exhibition",
+        },
+        {
+          type: "quiz",
+          title: "Find your stand in four steps",
+          text: "Four questions — and the manager sends the hall plan, free metres and the package quote.",
+          note: "Need a demo area, outdoor space or a separate pavilion? Pick “Not sure yet” and describe the task in the comment.",
         },
         {
           type: "form",

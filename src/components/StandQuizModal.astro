@@ -1,0 +1,123 @@
+---
+/**
+ * Global lead-quiz dialog — the rush-agency.ru pattern where every "book" CTA opens
+ * a short quiz instead of navigating away. Progressive enhancement: the header CTA
+ * keeps its `/request-stand/` href, so without JavaScript it is still an ordinary link.
+ * Native <dialog> gives focus trapping, the Escape key and ::backdrop for free.
+ */
+import { useUI } from '@/i18n/ui';
+import type { Locale } from '@/i18n/config';
+import { site } from '@/data/site';
+import Icon from '@/components/Icon.astro';
+import QuizForm from '@/components/QuizForm.astro';
+
+const { locale } = Astro.props as { locale: Locale };
+const t = useUI(locale);
+const telHref = `tel:${site.contacts.phoneMain.replace(/\s/g, '')}`;
+---
+
+<dialog class="quiz-modal" data-quiz-modal aria-labelledby="quiz-modal-title">
+  <div class="quiz-modal__bar">
+    <h3 id="quiz-modal-title">{t('cta.stand')}</h3>
+    <button class="quiz-modal__close" type="button" data-quiz-close aria-label={t('nav.close')}>
+      <svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="m4 4 10 10M14 4 4 14" /></svg>
+    </button>
+  </div>
+  <QuizForm locale={locale} id="quiz-modal" compact />
+  <p class="quiz-modal__alt">
+    <a href={telHref}>{site.contacts.phoneMain}</a>
+    <span aria-hidden="true">·</span>
+    <a href={site.contacts.telegramManager} target="_blank" rel="noopener">{t('cta.contact')}</a>
+  </p>
+</dialog>
+
+<script is:inline>
+  (function () {
+    var dialog = document.querySelector('[data-quiz-modal]');
+    if (!dialog || dialog.dataset.modalReady) return;
+    dialog.dataset.modalReady = '1';
+    var opener = null;
+    document.addEventListener('click', function (e) {
+      var trigger = e.target && e.target.closest ? e.target.closest('[data-quiz-open]') : null;
+      if (trigger) {
+        e.preventDefault();
+        opener = trigger;
+        if (typeof dialog.showModal === 'function') dialog.showModal();
+        else dialog.setAttribute('open', '');
+        return;
+      }
+      if (e.target === dialog || (e.target.closest && e.target.closest('[data-quiz-close]'))) {
+        if (typeof dialog.close === 'function') dialog.close();
+        else dialog.removeAttribute('open');
+      }
+    });
+    dialog.addEventListener('close', function () {
+      if (opener && document.contains(opener)) opener.focus();
+      opener = null;
+    });
+  })();
+</script>
+
+<style>
+  dialog.quiz-modal {
+    border: 0;
+    padding: 0;
+    max-width: min(560px, calc(100vw - 2rem));
+    width: 100%;
+    border-radius: var(--r-img);
+    box-shadow: var(--shadow-lift);
+  }
+  dialog.quiz-modal::backdrop {
+    background: rgba(13, 42, 27, 0.55);
+  }
+  .quiz-modal__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.1rem 1.4rem 0;
+  }
+  .quiz-modal__bar h3 {
+    margin: 0;
+    font-size: var(--t-h3);
+  }
+  .quiz-modal__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    flex: none;
+    border: 1px solid var(--line);
+    border-radius: var(--r-pill);
+    background: #fff;
+    color: var(--ink-60);
+    cursor: pointer;
+    transition: border-color var(--tr), color var(--tr);
+  }
+  .quiz-modal__close:hover {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+  dialog.quiz-modal :global(.quiz) {
+    box-shadow: none;
+    padding: 1.1rem 1.4rem 1.3rem;
+  }
+  .quiz-modal__alt {
+    display: flex;
+    justify-content: center;
+    gap: 0.6rem;
+    margin: 0;
+    padding: 0 1.4rem 1.2rem;
+    font-size: 0.85rem;
+    color: var(--ink-40);
+  }
+  .quiz-modal__alt a {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  /* the page behind a native modal dialog must not scroll */
+  :global(body:has(dialog[open])) {
+    overflow: hidden;
+  }
+</style>

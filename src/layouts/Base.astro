@@ -14,6 +14,7 @@ import TableEnhancements from '@/components/TableEnhancements.astro';
 import Header from '@/components/Header.astro';
 import PromoBar from '@/components/PromoBar.astro';
 import Footer from '@/components/Footer.astro';
+import StandQuizModal from '@/components/StandQuizModal.astro';
 
 interface Props {
   locale: Locale;
@@ -221,6 +222,9 @@ const preload = props.preload
       <slot />
     </main>
     <Footer locale={locale} />
+    {/* The Rush-style quiz dialog: any [data-quiz-open] CTA opens it in place,
+        the header CTA falls back to /request-stand/ without JavaScript. */}
+    <StandQuizModal locale={locale} />
     <script>
       /* Subtle scroll reveal (user-approved 2026-09-22): fade + 8px over 200ms for
          sections below the first view only. JS-gated — without JavaScript the

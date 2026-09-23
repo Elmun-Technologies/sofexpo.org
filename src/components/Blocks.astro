@@ -13,6 +13,7 @@ import { isSampleDownload } from '@/lib/downloads.mjs';
 import Photo from '@/components/Photo.astro';
 import StatBand from '@/components/StatBand.astro';
 import LeadForm from '@/components/LeadForm.astro';
+import QuizForm from '@/components/QuizForm.astro';
 import Faq from '@/components/Faq.astro';
 import CalendarRail from '@/components/CalendarRail.astro';
 import VenuePlan from '@/components/VenuePlan.astro';
@@ -293,6 +294,20 @@ const H = (p?: string) => {
             />
           )}
 
+          {b.type === 'quiz' && (
+            <div class="quiz-block">
+              <QuizForm
+                locale={locale}
+                title={b.title}
+                subtitle={b.text}
+                shows={b.shows}
+                areas={b.areas}
+                note={b.note}
+                id={b.id ?? 'quiz'}
+              />
+            </div>
+          )}
+
           {b.type === 'faq' && <Faq locale={locale} items={(b.items as unknown as { q: string; a: string }[]) ?? []} title={b.title} />}
 
           {b.type === 'cta' && (
@@ -320,6 +335,10 @@ const H = (p?: string) => {
 <style>
   .sec--sand {
     background: var(--cream-2);
+  }
+  /* the quiz reads best as a focused column, never stretched over a wide grid */
+  .quiz-block {
+    max-width: 760px;
   }
   .block--hero {
     background: var(--cream);

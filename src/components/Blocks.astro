@@ -100,7 +100,7 @@ const H = (p?: string) => {
                 {b.actions?.length ? (
                   <div class="btn-row" style="margin-top:1.4rem">
                     {b.actions.map((a, i) => (
-                      <a class:list={['btn', { 'btn--gold': i === 0, 'btn--ghost': i > 0 }]} href={H(a.href)} data-quiz-open={a.href === '/request-stand/' ? '' : undefined}>
+                      <a class:list={['btn', { 'btn--gold': i === 0, 'btn--ghost': i > 0 }]} href={H(a.href)} data-quiz-open={a.href === '/request-stand/' ? '' : undefined} data-quiz-source="hero">
                         {a.label}
                       </a>
                     ))}
@@ -241,7 +241,7 @@ const H = (p?: string) => {
                 <H3 class="h3">{b.title}</H3>
                 {b.text && <p class="muted" style="margin-bottom:1rem">{b.text}</p>}
                 {b.action && (
-                  <a class="btn btn--sm" href={H(b.action.href)} data-quiz-open={b.action.href === '/request-stand/' ? '' : undefined}>{b.action.label}</a>
+                  <a class="btn btn--sm" href={H(b.action.href)} data-quiz-open={b.action.href === '/request-stand/' ? '' : undefined} data-quiz-source="callout">{b.action.label}</a>
                 )}
               </div>
               {b.image && (
@@ -378,7 +378,7 @@ const H = (p?: string) => {
               </div>
               <div class="btn-row">
                 {(b.actions ?? []).map((a, i) => (
-                  <a class:list={['btn', { 'btn--gold': i === 0, 'btn--ghost': i > 0 }]} href={H(a.href)} data-quiz-open={a.href === '/request-stand/' ? '' : undefined}>
+                  <a class:list={['btn', { 'btn--gold': i === 0, 'btn--ghost': i > 0 }]} href={H(a.href)} data-quiz-open={a.href === '/request-stand/' ? '' : undefined} data-quiz-source="cta-inline">
                     {a.label}
                   </a>
                 ))}

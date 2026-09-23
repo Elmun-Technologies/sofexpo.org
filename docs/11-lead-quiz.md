@@ -44,10 +44,10 @@ container is added, then the funnel appears without touching the components:
 
 | event         | when                      | fields                             |
 | ------------- | ------------------------- | ---------------------------------- |
-| `quiz_open`   | a `[data-quiz-open]` CTA  | `context`: show brand or `general` |
+| `quiz_open`   | a `[data-quiz-open]` CTA  | `context`: show brand or `general`, `src`     |
 | `quiz_start`  | first advance from step 1 | `step`, `total`                    |
 | `quiz_step`   | every forward/back move   | `step`, `total`, `back?`           |
-| `quiz_submit` | successful submit         | `show`, `goal`, `area`, `channel`  |
+| `quiz_submit` | successful submit         | `show`, `goal`, `area`, `channel`, `src`      |
 
 ## Authoring
 
@@ -67,7 +67,21 @@ Pages compose it like any other block:
 
 Identical storage to `LeadForm`: `PUBLIC_LEAD_ENDPOINT` (build-time env) receives
 `POST {name, company, phone, email, event, goal, area, channel, comment, quiz:"stand",
-page, ts}`; without an endpoint the lead lands in `localStorage["sofexpo.leads"]`.
+page, ts, src?, landing?, referrer?, utm_*?}`; without an endpoint the lead lands in
+`localStorage["sofexpo.leads"]`.
+
+### Where the attribution comes from
+
+- **`src`** — which CTA opened the funnel: every `[data-quiz-open]` trigger carries a
+  `data-quiz-source` label (`header`, `menu`, `cta-band`, `hero`, `callout`,
+  `cta-inline`); unlabeled triggers fall back to `dialog`. Stored on the quiz root at
+  open time and reported both in the payload and in `quiz_open`.
+- **`landing`, `referrer`, `utm_*`** — captured once per session at first page view
+  (`sessionStorage["sofexpo.leadctx"]`, written by the modal script), so a visitor who
+  lands on a blog post with a UTM tag and submits the quiz three pages later still
+  carries the campaign. Current-URL UTM wins over the stored set.
+- The webhook (`formatLead`) renders `📍 Источник`, `🏷 UTM` and `🚪 Лендинг` lines
+  when present; a legacy `LeadForm` payload simply omits them.
 
 ## CRM fan-out: `scripts/lead-webhook.mjs`
 

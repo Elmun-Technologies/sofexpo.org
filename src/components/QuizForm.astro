@@ -422,7 +422,19 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
         payload.quiz = 'stand';
         payload.page = location.pathname;
         payload.ts = new Date().toISOString();
-        track('quiz_submit', { show: payload.event, goal: payload.goal, area: payload.area, channel: payload.channel });
+        /* attribution captured at open time (StandQuizModal) and at first landing */
+        try {
+          var actx = JSON.parse(sessionStorage.getItem('sofexpo.leadctx') || '{}');
+          payload.src = root.dataset.source || actx.src || '';
+          payload.landing = actx.landing || '';
+          payload.referrer = actx.ref || '';
+          var aqs = new URLSearchParams(location.search);
+          ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].forEach(function (k) {
+            var v = aqs.get(k) || (actx.utm && actx.utm[k]);
+            if (v) payload[k] = v;
+          });
+        } catch (err) {}
+        track('quiz_submit', { show: payload.event, goal: payload.goal, area: payload.area, channel: payload.channel, src: payload.src || 'inline' });
         var endpoint = root.dataset.endpoint;
         if (msg) {
           msg.hidden = false;

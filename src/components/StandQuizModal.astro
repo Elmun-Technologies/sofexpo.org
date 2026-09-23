@@ -36,22 +36,54 @@ const telHref = `tel:${site.contacts.phoneMain.replace(/\s/g, '')}`;
     var dialog = document.querySelector('[data-quiz-modal]');
     if (!dialog || dialog.dataset.modalReady) return;
     dialog.dataset.modalReady = '1';
+    /* Lead attribution: remember the landing page, referrer and UTM set once per
+       session, so a lead submitted from any page still says where it came from. */
+    var CTX_KEY = 'sofexpo.leadctx';
+    var utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+    var readCtx = function () {
+      try {
+        return JSON.parse(sessionStorage.getItem(CTX_KEY) || '{}');
+      } catch (err) {
+        return {};
+      }
+    };
+    var writeCtx = function (ctx) {
+      try {
+        sessionStorage.setItem(CTX_KEY, JSON.stringify(ctx));
+      } catch (err) {}
+    };
+    try {
+      if (!sessionStorage.getItem(CTX_KEY)) {
+        var qs = new URLSearchParams(location.search);
+        var utm = {};
+        utmKeys.forEach(function (k) {
+          var v = qs.get(k);
+          if (v) utm[k] = v;
+        });
+        writeCtx({ landing: location.pathname + location.search, ref: document.referrer || '', utm: utm });
+      }
+    } catch (err) {}
     var opener = null;
     document.addEventListener('click', function (e) {
       var trigger = e.target && e.target.closest ? e.target.closest('[data-quiz-open]') : null;
       if (trigger) {
         e.preventDefault();
         opener = trigger;
-        /* a trigger may carry the page context (event page header CTA): the dialog
-           quiz re-focuses to that show instead of asking the general question */
         var quiz = dialog.querySelector('[data-quiz]');
         var ctx = trigger.getAttribute('data-quiz-event');
+        var src = trigger.getAttribute('data-quiz-source') || 'dialog';
+        var store = readCtx();
+        store.src = src;
+        writeCtx(store);
+        if (quiz) quiz.dataset.source = src;
+        /* a trigger may carry the page context (event page header CTA): the dialog
+           quiz re-focuses to that show instead of asking the general question */
         if (quiz && ctx && typeof quiz.dispatchEvent === 'function') {
           quiz.dispatchEvent(new CustomEvent('quiz:focus', { detail: { event: ctx } }));
         }
         try {
           window.dataLayer = window.dataLayer || [];
-          window.dataLayer.push({ event: 'quiz_open', context: ctx || 'general' });
+          window.dataLayer.push({ event: 'quiz_open', context: ctx || 'general', src: src });
         } catch (err) {}
         if (typeof dialog.showModal === 'function') dialog.showModal();
         else dialog.setAttribute('open', '');

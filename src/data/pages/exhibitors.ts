@@ -263,6 +263,7 @@ export const exhibitorPages: PageDef[] = [
         },
         {
           type: "form",
+          formType: "exhibitor",
           title: "Заявка на стенд",
           text: "Подберём место под задачу и пришлём расчёт. Без оплаты на этом шаге.",
           directions: [
@@ -519,6 +520,7 @@ export const exhibitorPages: PageDef[] = [
         },
         {
           type: "form",
+          formType: "exhibitor",
           title: "Stand request",
           text: "We pick a location around your objective and send the calculation. No payment at this stage.",
           directions: [
@@ -646,6 +648,7 @@ export const exhibitorPages: PageDef[] = [
         },
         {
           type: "form",
+          formType: "exhibitor",
           title: "Запросить прайс сезона",
           text: "Пришлём ставки по вашей выставке, план зала и расчёт полного пакета с услугами.",
           directions: [
@@ -781,6 +784,7 @@ export const exhibitorPages: PageDef[] = [
         },
         {
           type: "form",
+          formType: "exhibitor",
           title: "Request the season price list",
           text: "We send rates for your show, the floor plan and a full package calculation including services.",
           directions: [
@@ -1347,6 +1351,7 @@ export const exhibitorPages: PageDef[] = [
         },
         {
           type: "form",
+          formType: "callback",
           title: "Заказать услуги",
           text: "Опишите выставку и задачи — пришлём перечень с ценами и сроками.",
         },
@@ -1448,6 +1453,7 @@ export const exhibitorPages: PageDef[] = [
         },
         {
           type: "form",
+          formType: "callback",
           title: "Order services",
           text: "Describe the show and the tasks — we send the list with prices and deadlines.",
         },
@@ -1577,6 +1583,7 @@ export const exhibitorPages: PageDef[] = [
         },
         {
           type: "form",
+          formType: "sponsor",
           title: "Запросить спонсорское предложение",
           text: "Пришлём PDF с пакетами по конкретной выставке и свободными датами активаций.",
         },
@@ -1674,6 +1681,7 @@ export const exhibitorPages: PageDef[] = [
         },
         {
           type: "form",
+          formType: "sponsor",
           title: "Request the sponsorship proposal",
           text: "We send a PDF with packages for the specific show and free dates for activations.",
         },

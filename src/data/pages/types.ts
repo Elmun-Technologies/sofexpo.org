@@ -125,6 +125,7 @@ export interface Block {
   event?: string;
   /** quiz block: stand-show option labels override (defaults to the current line-up) */
   shows?: string[];
+  formType?: 'exhibitor' | 'visitor' | 'organizer' | 'sponsor' | 'callback' | 'catalog' | 'group' | 'ticket' | 'stand';
   /** quote block */
   author?: string;
   role?: string;

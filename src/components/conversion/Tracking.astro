@@ -1,0 +1,173 @@
+---
+/**
+ * Tracking — lightweight analytics for conversion events
+ * No external dependency, stores in localStorage, optional endpoint
+ */
+import type { SourceLocale as Locale } from '@/i18n/config';
+
+interface Props {
+  locale: Locale;
+  path: string;
+}
+
+const { locale, path } = Astro.props as Props;
+const endpoint = (import.meta.env.PUBLIC_ANALYTICS_ENDPOINT ?? '').trim();
+---
+
+<script is:inline define:vars={{ locale, path, endpoint }}>
+  (() => {
+    const STORAGE_KEY = 'sofexpo.analytics';
+    const SESSION_KEY = 'sofexpo.session';
+    const QUEUE_KEY = 'sofexpo.queue';
+
+    // Session ID
+    let sessionId = '';
+    try {
+      sessionId = sessionStorage.getItem(SESSION_KEY) || '';
+      if (!sessionId) {
+        sessionId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+        sessionStorage.setItem(SESSION_KEY, sessionId);
+      }
+    } catch {
+      sessionId = `${Date.now()}-nosession`;
+    }
+
+    // UTM & referrer
+    const params = new URLSearchParams(location.search);
+    const utm = {
+      source: params.get('utm_source') || '',
+      medium: params.get('utm_medium') || '',
+      campaign: params.get('utm_campaign') || '',
+      content: params.get('utm_content') || '',
+      term: params.get('utm_term') || '',
+    };
+    const referrer = document.referrer || '';
+
+    const getQueue = () => {
+      try { return JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]'); } catch { return []; }
+    };
+
+    const track = (event, data = {}) => {
+      const payload = {
+        event,
+        locale,
+        path,
+        sessionId,
+        ts: new Date().toISOString(),
+        url: location.href,
+        referrer,
+        utm,
+        ...data,
+      };
+      // store locally
+      try {
+        const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        all.push(payload);
+        if (all.length > 200) all.shift();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+      } catch {}
+
+      // queue for endpoint
+      if (endpoint) {
+        try {
+          const q = getQueue();
+          q.push(payload);
+          localStorage.setItem(QUEUE_KEY, JSON.stringify(q));
+          // try flush
+          if (navigator.onLine) flush();
+        } catch {}
+      }
+
+      // console in dev
+      if (location.hostname === 'localhost' || location.hostname.includes('e2b')) {
+        console.debug('[SOF Track]', event, data);
+      }
+    };
+
+    const flush = async () => {
+      if (!endpoint) return;
+      const q = getQueue();
+      if (!q.length) return;
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ events: q }),
+          keepalive: true,
+        });
+        if (res.ok) {
+          localStorage.setItem(QUEUE_KEY, '[]');
+        }
+      } catch {}
+    };
+
+    // Auto events
+    const initAuto = () => {
+      // page view
+      track('page_view', { title: document.title });
+
+      // time on page milestones
+      [10, 30, 60, 120].forEach(sec => {
+        setTimeout(() => track(`time_${sec}s`, { seconds: sec }), sec * 1000);
+      });
+
+      // scroll depth (already tracked in popup, but here too)
+      let maxScroll = 0;
+      window.addEventListener('scroll', () => {
+        const scrolled = Math.round((window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100);
+        if (scrolled > maxScroll) {
+          maxScroll = scrolled;
+          if ([25, 50, 75, 90].includes(scrolled)) {
+            track(`scroll_${scrolled}`, { depth: scrolled });
+          }
+        }
+      }, { passive: true });
+
+      // click tracking for tel: and mailto:
+      document.addEventListener('click', (e) => {
+        const a = (e.target).closest('a');
+        if (!a) return;
+        const href = a.getAttribute('href') || '';
+        if (href.startsWith('tel:')) track('phone_click', { href, source: a.dataset.source || 'unknown' });
+        if (href.startsWith('mailto:')) track('email_click', { href });
+        if (a.dataset.channel) track('channel_click', { channel: a.dataset.channel, source: a.dataset.source || 'unknown', href });
+        if (a.dataset.cta) track('cta_click', { cta: a.dataset.cta, source: a.dataset.source || 'unknown' });
+      });
+
+      // form tracking
+      document.addEventListener('focusin', (e) => {
+        const form = (e.target).closest('form[data-lead-form]');
+        if (form && !form.dataset.trackedStart) {
+          form.dataset.trackedStart = '1';
+          track('form_start', { form: form.dataset.formType || 'unknown', id: form.id });
+        }
+      });
+
+      // visibility
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') {
+          track('page_hide', { timeOnPage: Math.round(performance.now() / 1000) });
+          flush();
+        }
+      });
+      window.addEventListener('beforeunload', () => {
+        track('page_unload');
+        flush();
+      });
+
+      // online flush
+      window.addEventListener('online', flush);
+    };
+
+    // expose globally
+    window.sofTrack = track;
+    window.sofFlush = flush;
+
+    // init after load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initAuto);
+    } else {
+      initAuto();
+    }
+  })();
+</script>

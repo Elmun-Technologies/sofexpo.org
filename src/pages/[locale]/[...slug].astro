@@ -53,5 +53,5 @@ if (page.path === '/organizers/') ld.push(serviceJsonLd(locale, abs(localize(loc
   jsonLd={[...ld, bcJsonLd]}
   preload={hero?.image}
 >
-  <Blocks {blocks} {locale} />
+  <Blocks {blocks} {locale} path={page.path} />
 </Base>

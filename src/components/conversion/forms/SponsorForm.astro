@@ -1,0 +1,142 @@
+---
+/**
+ * SponsorForm — sponsorship packages
+ */
+import type { SourceLocale as Locale } from '@/i18n/config';
+
+interface Props {
+  locale: Locale;
+  id?: string;
+}
+
+const { locale, id = 'sponsor-form' } = Astro.props as Props;
+const ru = locale === 'ru';
+const endpoint = (import.meta.env.PUBLIC_LEAD_ENDPOINT ?? '').trim();
+
+const L = {
+  title: ru ? 'Стать спонсором выставки' : 'Become exhibition sponsor',
+  sub: ru ? 'От баннера до генерального спонсора. Презентация и медиа-кит за 10 минут.' : 'From banner to general sponsor. Deck & media kit in 10 min.',
+  packages: ru
+    ? ['Генеральный спонсор', 'Официальный спонсор', 'Партнёр деловой программы', 'Спонсор регистрации / бейджей', 'Баннер / брендирование', 'Обсудим']
+    : ['General sponsor', 'Official sponsor', 'Business program partner', 'Registration / badge sponsor', 'Banner / branding', "Let's discuss"],
+  name: ru ? 'Имя' : 'Name',
+  company: ru ? 'Компания' : 'Company',
+  phone: ru ? 'Телефон' : 'Phone',
+  email: 'Email',
+  package: ru ? 'Интересует пакет' : 'Package interest',
+  comment: ru ? 'Цели спонсорства' : 'Sponsorship goals',
+  submit: ru ? 'Получить презентацию спонсора' : 'Get sponsor deck',
+  ok: ru ? 'Презентация отправлена! Менеджер свяжется за 15 минут.' : 'Deck sent! Manager will contact in 15 min.',
+  err: ru ? 'Заполните имя, компанию и телефон' : 'Fill name, company and phone',
+};
+---
+
+<form translate="no" class="form-sp" id={id} data-lead-form data-form-type="sponsor" data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} novalidate>
+  <div class="form-sp__head">
+    <div>
+      <p class="form-sp__kicker">{ru ? 'Спонсорство · охват 70 000+ посетителей' : 'Sponsorship · 70 000+ reach'}</p>
+      <h3>{L.title}</h3>
+      <p>{L.sub}</p>
+    </div>
+    <div class="form-sp__icon">⭐</div>
+  </div>
+
+  <div class="form-sp__grid">
+    <div class="field"><label>{L.name} *</label><input name="name" required /></div>
+    <div class="field"><label>{L.company} *</label><input name="company" required /></div>
+    <div class="field"><label>{L.phone} *</label><input name="phone" type="tel" required placeholder="+998" /></div>
+    <div class="field"><label>{L.email}</label><input name="email" type="email" /></div>
+    <div class="field form-sp__full">
+      <label>{L.package}</label>
+      <div class="form-sp__pkgs">
+        {L.packages.map(p => <label class="form-sp__pkg"><input type="radio" name="package" value={p} /> <span>{p}</span></label>)}
+      </div>
+    </div>
+    <div class="field form-sp__full"><label>{L.comment}</label><textarea name="comment" rows="2" placeholder={ru ? 'Бренд, цели, бюджет...' : 'Brand, goals, budget...'}></textarea></div>
+  </div>
+
+  <button class="btn btn--gold" type="submit">{L.submit}</button>
+  <p class="form__msg" role="status" aria-live="polite" hidden></p>
+</form>
+
+<style>
+  .form-sp {
+    background: linear-gradient(135deg, #fff 0%, #fef9ec 100%);
+    border: 1px solid #f0d9a8;
+    border-radius: 16px;
+    padding: 20px;
+    display: grid;
+    gap: 16px;
+    box-shadow: var(--shadow);
+  }
+  .form-sp__kicker {
+    margin: 0 0 6px;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+  }
+  .form-sp__head {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .form-sp__head h3 {
+    margin: 0 0 6px;
+    font-size: 18px;
+  }
+  .form-sp__head p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--ink-60);
+    line-height: 1.45;
+    max-width: 40ch;
+  }
+  .form-sp__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--gold-soft);
+    display: grid;
+    place-items: center;
+    font-size: 20px;
+    flex: none;
+  }
+  .form-sp__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .form-sp__full { grid-column: 1 / -1; }
+  .form-sp__pkgs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .form-sp__pkg {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: #fff;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all var(--tr);
+  }
+  .form-sp__pkg:has(input:checked) {
+    border-color: var(--gold);
+    background: #fff8e6;
+  }
+  .form-sp__pkg input {
+    accent-color: var(--gold);
+  }
+  @media (max-width: 600px) {
+    .form-sp__grid, .form-sp__pkgs { grid-template-columns: 1fr; }
+  }
+</style>

@@ -184,11 +184,16 @@ export function localizeHTML(html, locale, options = {}) {
       }
     }
     if (tag === 'script') {
+      if (noTranslate) return;
       for (const child of node.childNodes ?? []) {
         if (child.nodeName !== '#text') continue;
         if (attr(node,'type') === 'application/ld+json') {
+          if (noTranslate) continue;
           child.value = JSON.stringify(rewriteJSON(JSON.parse(child.value),text,locale)).replace(/</g,'\\u003c');
-        } else if (!attr(node,'src')) child.value = rewriteScript(child.value,text,locale);
+        } else if (!attr(node,'src')) {
+          if (attr(node,'translate') === 'no') continue;
+          child.value = rewriteScript(child.value,text,locale);
+        }
       }
       return;
     }

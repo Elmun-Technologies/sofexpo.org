@@ -1,0 +1,197 @@
+---
+/**
+ * FormHandler — central handler for all conversion forms
+ * Handles validation, endpoint, localStorage fallback, tracking, success states
+ */
+---
+
+<script is:inline translate="no">
+  (() => {
+    const ENDPOINT = (import.meta.env.PUBLIC_LEAD_ENDPOINT || '').trim();
+    const LEADS_KEY = 'sofexpo.leads';
+    const FORMS_SELECTOR = 'form[data-lead-form]';
+
+    const getForms = () => Array.from(document.querySelectorAll(FORMS_SELECTOR));
+
+    const initForm = (form) => {
+      if (form.dataset.handlerBound === '1') return;
+      form.dataset.handlerBound = '1';
+
+      const msg = form.querySelector('.form__msg, .form-ex__msg, [role="status"]');
+      const endpoint = form.dataset.endpoint || ENDPOINT;
+      const formType = form.dataset.formType || 'generic';
+      const source = form.dataset.source || form.id || 'unknown';
+
+      // Track start
+      let started = false;
+      form.addEventListener('input', () => {
+        if (!started) {
+          started = true;
+          try { window.sofTrack?.('form_start', { form: formType, source, id: form.id }); } catch {}
+        }
+      }, { once: true });
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fd = new FormData(form);
+        // validation
+        if (!form.checkValidity()) {
+          form.querySelectorAll(':invalid').forEach(el => {
+            el.style.borderColor = 'var(--danger, #a33518)';
+            el.addEventListener('input', () => { el.style.borderColor = ''; }, { once: true });
+          });
+          if (msg) {
+            msg.hidden = false;
+            msg.textContent = form.dataset.err || 'Please fill required fields';
+            msg.className = 'form__msg form__ok';
+            msg.style.background = '#fbe9e7';
+            msg.style.borderColor = 'rgba(178,58,47,.3)';
+            msg.style.color = 'var(--danger, #a33518)';
+            msg.style.display = 'block';
+          }
+          try { window.sofTrack?.('form_error', { form: formType, source, reason: 'validation' }); } catch {}
+          return;
+        }
+
+        const payload = Object.fromEntries(fd.entries());
+        payload.page = location.pathname;
+        payload.formType = formType;
+        payload.source = source;
+        payload.ts = new Date().toISOString();
+        payload.locale = document.documentElement.lang || 'ru';
+        payload.url = location.href;
+        payload.referrer = document.referrer || '';
+        // UTM
+        try {
+          const params = new URLSearchParams(location.search);
+          payload.utm_source = params.get('utm_source') || '';
+          payload.utm_medium = params.get('utm_medium') || '';
+          payload.utm_campaign = params.get('utm_campaign') || '';
+        } catch {}
+
+        if (msg) {
+          msg.hidden = false;
+          msg.textContent = form.dataset.loading || (form.dataset.locale === 'en' ? 'Sending...' : 'Отправка...');
+          msg.className = 'form__msg form__ok';
+          msg.style.background = '#e7efe8';
+          msg.style.borderColor = 'var(--sage, #dfe8e0)';
+          msg.style.color = 'var(--evergreen-2, #14402a)';
+          msg.style.display = 'block';
+        }
+
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const origBtnText = submitBtn ? submitBtn.textContent : '';
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.dataset.origText = origBtnText;
+          submitBtn.textContent = form.dataset.locale === 'en' ? 'Sending...' : 'Отправка...';
+        }
+
+        let success = false;
+        if (endpoint) {
+          try {
+            const res = await fetch(endpoint, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload),
+            });
+            if (!res.ok) throw new Error('bad status ' + res.status);
+            success = true;
+          } catch (err) {
+            console.warn('[Form] endpoint failed', err);
+            // store locally as fallback
+            try {
+              const all = JSON.parse(localStorage.getItem(LEADS_KEY) || '[]');
+              all.push({ ...payload, _fallback: true, _error: String(err) });
+              localStorage.setItem(LEADS_KEY, JSON.stringify(all));
+            } catch {}
+            if (msg) {
+              msg.textContent = form.dataset.fallback || (form.dataset.locale === 'en' ? 'Saved locally — please also email us.' : 'Сохранено локально — продублируйте на почту.');
+              msg.style.background = '#fef3c7';
+              msg.style.borderColor = '#fcd34d';
+              msg.style.color = '#92400e';
+            }
+            // still consider success for UX if fallback saved
+            success = true;
+          }
+        } else {
+          // Preview mode: store locally
+          try {
+            const all = JSON.parse(localStorage.getItem(LEADS_KEY) || '[]');
+            all.push(payload);
+            localStorage.setItem(LEADS_KEY, JSON.stringify(all));
+            success = true;
+          } catch (e) {
+            console.warn('[Form] localStorage failed', e);
+          }
+        }
+
+        if (success) {
+          if (msg) {
+            msg.textContent = form.dataset.ok || 'Request received!';
+            msg.style.background = '#e7efe8';
+            msg.style.borderColor = 'var(--sage, #dfe8e0)';
+            msg.style.color = 'var(--evergreen-2, #14402a)';
+            msg.style.display = 'block';
+          }
+          // clear fields
+          form.querySelectorAll('input:not([type=checkbox]):not([type=radio]):not([readonly]), textarea').forEach(el => {
+            if (el.type !== 'hidden') el.value = '';
+          });
+          form.querySelectorAll('input[type=checkbox], input[type=radio]').forEach(el => {
+            if (el.name === 'consent') el.checked = false;
+          });
+          form.querySelectorAll('select').forEach(el => { el.selectedIndex = 0; });
+
+          try { window.sofTrack?.('form_submit', { form: formType, source, id: form.id, success: true }); } catch {}
+
+          // Optional: show thank you popup or redirect
+          // If catalog form, trigger download
+          if (formType === 'catalog') {
+            setTimeout(() => {
+              const link = document.createElement('a');
+              link.href = '/files/catalog-' + (payload.event || 'general') + '.pdf';
+              link.download = '';
+              // fallback to general catalog
+              link.href = '/files/foodera-2026-presentation.pdf';
+              // don't auto download without user gesture in some browsers, but try
+              try { link.click(); } catch {}
+            }, 800);
+          }
+
+          // Close popup if inside popup
+          const popup = form.closest('.popup');
+          if (popup) {
+            setTimeout(() => {
+              try { window.sofPopups?.closeAll(); } catch {}
+              popup.hidden = true;
+            }, 2200);
+          }
+        }
+
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = origBtnText;
+        }
+      });
+    };
+
+    const initAll = () => {
+      getForms().forEach(initForm);
+    };
+
+    // Init on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initAll);
+    } else {
+      initAll();
+    }
+
+    // Watch for dynamically added forms (popups)
+    const observer = new MutationObserver(() => initAll());
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    // Expose
+    window.sofFormHandler = { initAll, initForm };
+  })();
+</script>

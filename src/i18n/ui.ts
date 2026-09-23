@@ -131,6 +131,8 @@ const sourceUI = {
     'misc.notfound': 'Страница не найдена',
     'misc.notfoundText': 'Возможно, выставка уже завершилась и переехала в архив. Начните с календаря событий или свяжитесь с нами.',
     'misc.backHome': 'На главную',
+    'nav.sectionHome': 'Раздел: главная',
+    'nav.lineup': 'Афиша и программа',
     'misc.scrollToTop': 'Наверх',
   },
   en: {
@@ -258,6 +260,8 @@ const sourceUI = {
     'misc.notfound': 'Page not found',
     'misc.notfoundText': 'The exhibition may have moved to the archive. Start from the event calendar or contact us.',
     'misc.backHome': 'Back to home',
+    'nav.sectionHome': 'Section home',
+    'nav.lineup': 'Line-up and programme',
     'misc.scrollToTop': 'Top',
   },
 } as const;

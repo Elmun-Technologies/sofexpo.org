@@ -112,7 +112,7 @@ const items = nav.filter((i) => i.key !== 'nav.news');
           <details>
             <summary>{t(item.key as never)}</summary>
             <div class="mnav__list">
-              <a href={P(item.base)}>{locale === 'ru' ? 'Раздел: главная' : 'Section home'}</a>
+              <a href={P(item.base)}>{t('nav.sectionHome')}</a>
               {item.children
                 .filter((c) => c.path !== item.base)
                 .map((child) => (
@@ -126,12 +126,12 @@ const items = nav.filter((i) => i.key !== 'nav.news');
         <a class="btn btn--ghost" href={P('/search/')}>{t('cta.search')}</a>
         <a class="btn" href={P('/request-stand/')}>{t('cta.stand')}</a>
         <a class="btn btn--ghost" href={P('/visitors/tickets/')}>{t('cta.ticket')}</a>
-        <a class="btn btn--ghost" href={P('/events/')}>{locale === 'ru' ? 'Афиша и программа' : 'Line-up and programme'}</a>
+        <a class="btn btn--ghost" href={P('/events/')}>{t('nav.lineup')}</a>
         <a class="btn btn--ghost" href={`tel:${site.contacts.phoneMain.replace(/\s/g, '')}`}>
           {t('topbar.phone')}
         </a>
         <div class="pill-row">{supportedLocales.map((l) => <a class="chip" href={localize(l, path)} hreflang={localeMeta[l].html}>{localeMeta[l].label}</a>)}</div>
-        <a class="chip" href={t0}>{locale === 'ru' ? 'На главную' : 'Back to home'}</a>
+        <a class="chip" href={t0}>{t('misc.backHome')}</a>
       </div>
     </nav>
   </div>

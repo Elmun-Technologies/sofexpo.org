@@ -1,5 +1,5 @@
 ---
-title: "Documents and certification: exhibiting in Uzbekistan as a foreign supplier"
+title: "Documents and certification for exhibiting in Uzbekistan"
 description: "What a manufacturer or importer should prepare to display a sample legally, run a tasting and sign a contract on site."
 date: 2026-07-28
 category: "guide"

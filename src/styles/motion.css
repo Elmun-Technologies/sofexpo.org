@@ -303,3 +303,8 @@ a.feature:hover .feature__media img {
 .home-hero h1 .home-hero__slogan {
   max-width: 15ch;
 }
+
+/* the hint is UI chrome, not content: rendered from an attribute so it never repeats in the indexed text */
+.table-hint[data-hint]::before {
+  content: attr(data-hint);
+}

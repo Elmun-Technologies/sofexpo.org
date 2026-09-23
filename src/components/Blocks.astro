@@ -294,7 +294,7 @@ const H = (p?: string) => {
             />
           )}
 
-          {b.type === 'faq' && <Faq locale={locale} items={(b.items as unknown as { q: string; a: string }[]) ?? []} title={b.title} />}
+          {b.type === 'faq' && <Faq locale={locale} items={(b.items as unknown as { q: string; a: string }[]) ?? []} title={b.title} topic={b.topic} />}
 
           {b.type === 'cta' && (
             <div class="cta-inline">

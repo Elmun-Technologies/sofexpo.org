@@ -198,8 +198,8 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
         </div>
         <p class="small muted" style="margin-top:1rem">
           {ru
-            ? 'Полный прайс на метраж и услуги — в разделе «Пакеты участия и цены».'
-            : 'The full rate card for space and services is in the packages section.'}
+            ? `Ставки ${event.shortName} за метр и услуги — в разделе «Пакеты участия и цены».`
+            : `Per-m² rates and services for ${event.shortName} are in the packages section.`}
         </p>
       </div>
     </section>
@@ -268,7 +268,7 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
 }
 
 {
-  section === 'faq' && <Faq locale={locale} items={event.faq.map((f) => ({ q: f.q[locale], a: f.a[locale] }))} />
+  section === 'faq' && <Faq locale={locale} topic={event.brand[locale]} title={ru ? `${event.shortName}: частые вопросы` : `${event.shortName}: frequently asked questions`} items={event.faq.map((f) => ({ q: f.q[locale], a: f.a[locale] }))} />
 }
 
 {
@@ -307,7 +307,7 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
             </div>
           ))}
         </div>
-        <p class="small muted" style="margin-top:1.1rem">{site.location.airport[locale]} · {site.location.station[locale]}</p>
+        <p class="small muted" style="margin-top:1.1rem">{ru ? `Как добраться на ${event.shortName}: ${site.location.airport.ru} · ${site.location.station.ru}` : `Getting to ${event.shortName}: ${site.location.airport.en} · ${site.location.station.en}`}</p>
       </div>
     </section>
   )

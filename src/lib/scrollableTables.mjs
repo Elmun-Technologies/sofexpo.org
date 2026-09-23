@@ -9,9 +9,9 @@ export function scrollableTables(html, {label, hint}) {
       if (node.tagName === 'table') {
         // Idempotent for content that already supplies its own accessible wrapper.
         if (parent.attrs?.some(a => a.name === 'class' && a.value.split(/\s+/).includes('table-scroll'))) continue;
-        const frame = parseFragment('<div class="table-frame"><p class="table-hint"></p><div class="table-scroll" role="region" tabindex="0"></div></div>').childNodes[0];
+        const frame = parseFragment('<div class="table-frame"><p class="table-hint" data-nosnippet aria-hidden="true"></p><div class="table-scroll" role="region" tabindex="0"></div></div>').childNodes[0];
         const [help, region] = frame.childNodes;
-        help.childNodes.push(text(hint, help));
+        help.attrs.push({name:'data-hint', value:hint});
         region.attrs.push({name:'aria-label', value:label});
         region.childNodes.push(node);
         frame.parentNode = parent;

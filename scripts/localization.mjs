@@ -78,6 +78,22 @@ function dynamicText(text, locale, translate) {
     const after = leadTime[2] === 'after';
     return locale === 'zh' ? `${leadTime[1]}天${after ? '后' : '前'}` : `${leadTime[1]} gün ${after ? 'sonra' : 'önce'}`;
   }
+  /* parameterised CTA lines (EventPage, PostDetail, Faq): the variable part is a title or
+     show name that is itself translated through the catalog */
+  const tpl = [
+    [/^Put “(.+)” to the test: at the show these people and offers are in one hall\.$/, (m) => locale === 'zh' ? `在展会上检验“${translate(m[1])}”:这些人和报价都汇聚在同一个展馆。` : `“${translate(m[1])}” konusunu fuarda test edin: bu kişiler ve teklifler tek salonda.`],
+    [/^Next step after “(.+)”: a stand request, answered within the business day\.$/, (m) => locale === 'zh' ? `读完“${translate(m[1])}”之后的下一步:提交展位申请,一个工作日内回复。` : `“${translate(m[1])}” haberinden sonra sıradaki adım: stant talebi, aynı iş günü içinde yanıt.`],
+    [/^Still have a question about (.+)\? Message the manager — we reply within 15 minutes during office hours\.$/, (m) => locale === 'zh' ? `关于 ${m[1]} 还有疑问?请联系经理——工作时间内 15 分钟回复。` : `${m[1]} hakkında sorunuz mu var? Yöneticiye yazın — mesai saatlerinde 15 dakikada yanıt veriyoruz.`],
+    [/^(.+): frequently asked questions$/, (m) => locale === 'zh' ? `${m[1]}:常见问题` : `${m[1]}: sıkça sorulan sorular`],
+    [/^Per-m² rates and services for (.+) are in the packages section\.$/, (m) => locale === 'zh' ? `${m[1]} 的每平方米价格和服务见“参展套餐”栏目。` : `${m[1]} için m² fiyatları ve hizmetler paketler bölümünde.`],
+    [/^(.+), (\d{1,2}(?:–\d{1,2})? [A-Za-z]+ \d{4}), Samarkand\. Name your product and area — we send the floor plan and a quote\.$/, (m) => `${m[1]}, ${translate(m[2])}, ${locale === 'zh' ? '撒马尔罕。告诉我们产品和面积——我们发送展馆平面图和报价。' : 'Semerkant. Ürününüzü ve alanı belirtin — salon planını ve teklifi gönderelim.'}`],
+    [/^Space at (.+) goes in order of request: we hold the location you pick for 3–5 days, no payment\.$/, (m) => locale === 'zh' ? `${m[1]} 的展位按申请顺序分配:您选定的位置可免费保留 3–5 天。` : `${m[1]} alanları başvuru sırasına göre verilir: seçtiğiniz yeri ödeme olmadan 3–5 gün tutarız.`],
+    [/^Want to show your own product at (.+), not just walk the aisles\? Stands can be booked until opening\.$/, (m) => locale === 'zh' ? `想在 ${m[1]} 展示自己的产品,而不只是参观?开幕前均可预订展位。` : `${m[1]} fuarında sadece gezmek değil, kendi ürününüzü göstermek mi istiyorsunuz? Stantlar açılışa kadar rezerve edilebilir.`],
+    [/^Business-programme slots at (.+) go to exhibitors and partners first — a stand request opens the door to a talk\.$/, (m) => locale === 'zh' ? `${m[1]} 的商务活动发言名额优先给参展商和合作伙伴——提交展位申请即可争取演讲机会。` : `${m[1]} iş programındaki konuşma slotları önce katılımcılara ve ortaklara verilir — stant talebi konuşma fırsatı açar.`],
+    [/^(.+) has closed\. Leave a request and we will send the next edition's dates and early-booking terms\.$/, (m) => locale === 'zh' ? `${m[1]} 已结束。留下申请,我们将发送下一届日期和早鸟预订条件。` : `${m[1]} sona erdi. Talep bırakın, bir sonraki fuarın tarihlerini ve erken rezervasyon koşullarını gönderelim.`],
+  ];
+  tpl.push([/^Getting to (.+): 16 km from Samarkand International Airport · 23 km from the railway station$/, (m) => locale === 'zh' ? `前往 ${m[1]}:距撒马尔罕国际机场 16 公里 · 距火车站 23 公里` : `${m[1]} fuarına ulaşım: Semerkant Uluslararası Havalimanı'na 16 km · tren istasyonuna 23 km`]);
+  for (const [re, fn] of tpl) { const m = re.exec(text); if (m) return fn(m); }
   const duration = /^(\d+) days\.$/.exec(text);
   if (duration) return locale === 'zh' ? `${duration[1]}天。` : `${duration[1]} gün.`;
   const reading = /^(\d+) min$/.exec(text);

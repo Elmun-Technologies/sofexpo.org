@@ -69,6 +69,7 @@ if (meta.noindex) {
   meta.xDefault = '';
 }
 const t = useUI(locale);
+const BUILD_DATE = new Date().toISOString().slice(0, 10);
 const nodes: Record<string, unknown>[] = [
   {
     '@type': 'WebPage',
@@ -81,6 +82,13 @@ const nodes: Record<string, unknown>[] = [
     breadcrumb: breadcrumbs.length
       ? { '@id': `${SITE}${localize(locale, path)}#breadcrumbs` }
       : undefined,
+    /* GEO: answer engines quote pages they can date, attribute and summarise */
+    ...(props.publishedTime ? { datePublished: props.publishedTime } : {}),
+    dateModified: props.modifiedTime ?? props.publishedTime ?? BUILD_DATE,
+    publisher: { '@id': `${SITE}/#organization` },
+    about: { '@id': `${SITE}/#venue` },
+    primaryImageOfPage: { '@type': 'ImageObject', url: meta.og.image },
+    speakable: { '@type': 'SpeakableSpecification', cssSelector: ['h1', 'main h1 + p', '.lead'] },
   },
   ...jsonLd,
 ];

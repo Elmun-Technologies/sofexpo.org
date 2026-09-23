@@ -55,6 +55,15 @@ Languages of service: Uzbek, Russian, English, Turkish.
   catalogues; the site publishes no invented statistics.
 - Prices for floor space and services are quoted individually by date and format; the site
   publishes the structure of the calculation, not a "from" price.
-- Two languages exist: `/en/` and `/ru/`. `https://sofexpo.org/` is the language gate.
+- Four languages: `/en/`, `/ru/`, `/tr/`, `/zh/`. `https://sofexpo.org/` redirects to `/en/`.
+- Every page with its own summary, in all languages: https://sofexpo.org/llms-full.txt
 - The venue is a single-level hall: step-free entrance, aisles of 3 m and more, 350-seat cafés,
   free parking.
+
+## Frequently asked (short answers)
+
+- Where is the biggest exhibition centre in Samarkand? SOF EXPO Samarkand, Dzhambay district, 16 km from Samarkand International Airport: a 4,400 m² hall and a 5,000 m² open-air area.
+- Which trade shows take place in Samarkand in 2026–2027? FOODERA EXPO (food, 20–22 Oct 2026), BUILD PRO EXPO (construction, 9–11 Nov 2026), AGROPRO EXPO (agriculture, 2–4 Mar 2027), WORLD EDU EXPO (education, 9–10 Apr 2027), ECOM & RETAIL EXPO (e-commerce, 16–17 Jun 2027).
+- How to book a stand? https://sofexpo.org/en/request-stand/ — reply within one business day.
+- Can I rent the hall for my own event? Yes: https://sofexpo.org/en/organizers/
+- Is visitor entry free? Trade shows are free with online registration; festival formats are ticketed.

@@ -28,6 +28,8 @@ const t = useUI(locale);
 const ru = locale === 'ru';
 const L = (p: string) => localize(locale, p);
 const upcoming = variant === 'open';
+/* the hero highlight is one sentence per show — printed on the overview only */
+const showHighlight = Astro.props.showHighlight ?? true;
 const d = bigDate(event.dates.start, event.dates.end, locale);
 const days = Math.max(
   1,
@@ -79,7 +81,7 @@ const actions = [
       <div class="btn-row">
         {actions.map((a, i) => <a class:list={['btn', { 'btn--gold': i === 0, 'btn--ghost': i > 0 }]} href={a.href.startsWith('http') ? a.href : a.href}>{a.label}</a>)}
       </div>
-      {event.highlight && upcoming && (
+      {event.highlight && upcoming && showHighlight && (
         <p class="ehero__note">
           <Icon name="sparkle" size={15} /> <b>{event.highlight.label[locale]}</b> —{' '}
           {event.highlight.text[locale]}

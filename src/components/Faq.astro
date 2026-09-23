@@ -2,8 +2,10 @@
 import type { SourceLocale as Locale } from '@/i18n/config';
 import Icon from '@/components/Icon.astro';
 
-const { locale, items, title } = Astro.props as {
+const { locale, items, title, topic } = Astro.props as {
   locale: Locale;
+  /** what the FAQ is about (show or page name) — keeps the footer line unique per page */
+  topic?: string;
   title?: string;
   items: { q: string; a: string }[];
 };
@@ -24,10 +26,10 @@ const { locale, items, title } = Astro.props as {
         ))
       }
     </div>
-    <p class="small muted" style="margin-top:1.2rem">
+    <p class="small muted" style="margin-top:1.2rem" data-nosnippet>
       <Icon name="telegram" size={15} /> {locale === 'ru'
-        ? 'Нет ответа на ваш вопрос? Напишите менеджеру — отвечаем в рабочее время за 15 минут.'
-        : 'Missing an answer? Message the manager — we reply within 15 minutes during office hours.'}
+        ? topic ? `Остался вопрос о ${topic}? Напишите менеджеру — ответим в рабочее время за 15 минут.` : 'Нет ответа на ваш вопрос? Напишите менеджеру — отвечаем в рабочее время за 15 минут.'
+        : topic ? `Still have a question about ${topic}? Message the manager — we reply within 15 minutes during office hours.` : 'Missing an answer? Message the manager — we reply within 15 minutes during office hours.'}
     </p>
   </div>
 </section>

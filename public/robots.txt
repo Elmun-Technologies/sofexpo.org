@@ -1,8 +1,31 @@
+# SOF EXPO Samarkand — every public page is meant to be found, by search engines and by
+# AI answer engines alike. Only tracking-parameter duplicates are excluded.
+
 User-agent: *
 Allow: /
 Disallow: /*?utm_
 Disallow: /*?gclid=
 Disallow: /*?fbclid=
+Disallow: /*?yclid=
+
+# AI search & answer engines (GEO): explicitly welcome, same rules as everyone else.
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: Bingbot
+User-agent: YandexBot
+User-agent: YandexGPT
+User-agent: DuckAssistBot
+User-agent: meta-externalagent
+Allow: /
+Disallow: /*?utm_
 
 Sitemap: https://sofexpo.org/sitemap-index.xml
-Host: sofexpo.org
+# LLM-readable summary of the site: https://sofexpo.org/llms.txt

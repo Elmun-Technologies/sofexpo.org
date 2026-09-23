@@ -166,7 +166,7 @@ export function serviceJsonLd(locale: Locale, url: string) {
 export function breadcrumbJsonLd(items: { name: string; url: string }[]) {
   return {
     '@type': 'BreadcrumbList',
-    '@id': `${SITE}${items.at(-1)?.url ?? '/'}#breadcrumbs`,
+    '@id': `${abs(items.at(-1)?.url ?? '/')}#breadcrumbs`,
     itemListElement: items.map((item, i) => ({
       '@type': 'ListItem',
       position: i + 1,

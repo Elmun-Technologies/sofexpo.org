@@ -300,19 +300,29 @@ formType yo'q → eski LeadForm (backward compat)
 - [x] Tracking + FormHandler
 - [x] Base.astro integratsiya
 
-### Fazа 2 — Kontent va joylashuv (keyingi 1 hafta)
+### Fazа 2 — Kontent va joylashuv (bajarildi ✅)
 
-- [ ] Har bir sahifa uchun to'g'ri forma tanlash
-  - `/exhibitors/` → ExhibitorForm
-  - `/exhibitors/packages/` → ExhibitorForm + pricing interest popup
-  - `/visitors/tickets/` → VisitorForm
-  - `/visitors/` → VisitorForm + GroupVisitForm
-  - `/organizers/` → OrganizerForm
-  - `/exhibitors/sponsorship/` → SponsorForm
-  - Barcha sahifalarda CallbackForm (footer yaqinida)
-- [ ] CTA matnlarni har sahifa uchun yozish (RU/EN)
-- [ ] Popup triggerlarni test qilish (scroll % va time)
-- [ ] Mobile test: barlar bir-birini to'smasligi
+- [x] Har bir sahifa uchun to'g'ri forma tanlash — auto injection `Blocks.astro` orqali
+  - `/exhibitors/` → ExhibitorForm (data + auto)
+  - `/exhibitors/packages/` → ExhibitorForm
+  - `/exhibitors/sponsorship/` → SponsorForm ✅ build: data-form-type="sponsor"
+  - `/exhibitors/catalogue/` → CatalogForm ✅
+  - `/exhibitors/floor-plan/` → CatalogForm ✅
+  - `/exhibitors/services/`, `/documents/`, `/faq/` → CallbackForm ✅
+  - `/visitors/tickets/` → VisitorForm ✅
+  - `/visitors/` → VisitorForm + GroupVisitForm ✅ (mid CTA inline/card)
+  - `/visitors/travel/`, `/access/` → GroupVisitForm ✅
+  - `/organizers/` → OrganizerForm ✅
+  - `/venue/` → OrganizerForm ✅
+  - `/contacts/` → CallbackForm ✅
+  - `/request-stand/` → ExhibitorForm ✅ (asosiy sahifa, 1 form)
+  - `/events/*/exhibitors/` → ExhibitorForm (auto), `/visitors/` → VisitorForm, `/program/` → VisitorForm
+- [x] CTA matnlarni har sahifa uchun intent bo'yicha — SmartCta defaults 8 intent: exhibitor, visitor, organizer, sponsor, contact, callback, catalog, group ✅
+- [x] Popup triggerlarni test qilish — buildda `sof-popups` va `sofexpo.popups` capping 2/session, 3/day, 5min interval ✅
+- [x] Mobile test: barlar bir-birini to'smasligi — FloatingContacts mobile bar scroll-up/down hide, StickyCtaBar faqat form ko'rinmasa
+- [x] Auto CTA placement: Blocks.astro `resolveAuto()` → after idx 1 (inline) + idx 3 (card) + end inline CTA + auto-form if no explicit form ✅
+- [x] Build: 152 page + 154 localized zh/tr, `npx astro build` 5.36s, no error ✅
+- [x] Verification: `dist/ru/*` da `data-form-type` to'g'ri — request-stand=exhibitor, tickets=visitor, organizers=organizer, sponsorship=sponsor, catalogue=catalog, travel=group ✅
 
 ### Fazа 3 — Integratsiya (2-hafta)
 

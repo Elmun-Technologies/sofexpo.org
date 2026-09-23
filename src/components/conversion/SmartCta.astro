@@ -10,7 +10,7 @@ import { conversionConfig } from '@/data/conversion';
 interface Props {
   locale: Locale;
   variant?: 'inline' | 'sidebar' | 'hero' | 'footer' | 'card';
-  intent?: 'exhibitor' | 'visitor' | 'organizer' | 'sponsor' | 'contact';
+  intent?: 'exhibitor' | 'visitor' | 'organizer' | 'sponsor' | 'contact' | 'callback' | 'catalog' | 'group';
   eventName?: string;
   title?: string;
   text?: string;
@@ -35,7 +35,7 @@ const {
 
 const ru = locale === 'ru';
 
-const defaults = {
+const defaults: Record<string, { title: string; text: string; primary: string; secondary: string; href: string; href2: string }> = {
   exhibitor: {
     title: ru ? 'Забронируйте стенд сегодня' : 'Book your stand today',
     text: ru ? 'Осталось мало мест у входа. План зала и расчёт за 15 минут.' : 'Few spots left near entrance. Floor plan & quote in 15 min.',
@@ -76,9 +76,33 @@ const defaults = {
     href: conversionConfig.contacts.telegramManager,
     href2: `/${locale}/contacts/`,
   },
+  callback: {
+    title: ru ? 'Остались вопросы?' : 'Have questions?',
+    text: ru ? 'Менеджер отвечает за 2 минуты в Telegram/WhatsApp.' : 'Manager replies in 2 min on Telegram/WhatsApp.',
+    primary: ru ? 'Написать менеджеру' : 'Contact manager',
+    secondary: ru ? 'Контакты' : 'Contacts',
+    href: conversionConfig.contacts.telegramManager,
+    href2: `/${locale}/contacts/`,
+  },
+  catalog: {
+    title: ru ? 'Скачайте каталог и план зала' : 'Download catalog & floor plan',
+    text: ru ? 'PDF с ценами, схемой и кейсами — за 30 секунд.' : 'PDF with pricing, map & cases — in 30 sec.',
+    primary: ru ? 'Скачать каталог' : 'Download catalog',
+    secondary: ru ? 'План зала' : 'Floor plan',
+    href: `/${locale}/exhibitors/catalogue/`,
+    href2: `/${locale}/exhibitors/floor-plan/`,
+  },
+  group: {
+    title: ru ? 'Групповой визит от 10 человек' : 'Group visit for 10+ people',
+    text: ru ? 'Отдельный вход, координатор, экскурсия. Заявка за 5 дней.' : 'Separate entrance, coordinator, tour. Apply 5 days ahead.',
+    primary: ru ? 'Оставить заявку' : 'Request group visit',
+    secondary: ru ? 'Как добраться' : 'How to get there',
+    href: `/${locale}/visitors/tickets/`,
+    href2: `/${locale}/venue/how-to-get-there/`,
+  },
 };
 
-const d = defaults[intent];
+const d = defaults[intent] || defaults['contact'];
 const finalTitle = title || (eventName ? (ru ? `Стенд на ${eventName}` : `Stand at ${eventName}`) : d.title);
 const finalText = text || d.text;
 const finalPrimary = primaryLabel || d.primary;
@@ -121,7 +145,9 @@ const finalSecondaryHref = secondaryHref || d.href2;
       {intent === 'visitor' && '🎟️'}
       {intent === 'organizer' && '🏢'}
       {intent === 'sponsor' && '⭐'}
-      {intent === 'contact' && '💬'}
+      {(intent === 'contact' || intent === 'callback') && '💬'}
+      {intent === 'catalog' && '📄'}
+      {intent === 'group' && '👥'}
     </div>
     <h4>{finalTitle}</h4>
     <p>{finalText}</p>

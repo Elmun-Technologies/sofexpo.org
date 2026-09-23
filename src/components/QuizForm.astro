@@ -90,7 +90,7 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
   {(title || subtitle) && (
     <div class="quiz__head">
       {title && <h3>{title}</h3>}
-      {subtitle && <p class="muted small">{subtitle}</p>}
+      {subtitle && <p class="muted small" data-nosnippet>{subtitle}</p>}
     </div>
   )}
 
@@ -243,7 +243,7 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
 
   {/* Success: confirm the selection (endowment) and hand over the next action. */}
   <div class="quiz__done" data-quiz-done hidden>
-    <p class="quiz__done-title">
+    <p class="quiz__done-title" data-nosnippet>
       <Icon name="check" size={18} /> {t('form.sent')}
     </p>
     <dl class="quiz__summary">

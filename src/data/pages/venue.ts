@@ -196,6 +196,14 @@ export const venuePages: PageDef[] = [
             { label: "Написать в Telegram", href: "https://t.me/sofexpomgr" },
           ],
         },
+        {
+          type: "faq",
+          items: [
+            { q: "Какая площадь у выставочного центра?", a: "Крытый зал — 4 400 м², открытая асфальтированная площадка — 5 000 м², конференц-зал на 350 мест." },
+            { q: "Какая мощность электричества на площадке?", a: "Подведено 700 кВт, напряжение 220 и 380 В; к стенду подключаем 16 А в базе, 32 и 63 А по заявке." },
+            { q: "Есть ли на территории питание?", a: "Да, два кафе быстрого питания общей вместимостью 350 человек." },
+          ],
+        },
       ],
       en: [
         {
@@ -368,6 +376,14 @@ export const venuePages: PageDef[] = [
           actions: [
             { label: "Fill the brief", href: "/organizers/" },
             { label: "Message on Telegram", href: "https://t.me/sofexpomgr" },
+          ],
+        },
+        {
+          type: "faq",
+          items: [
+            { q: "How large is the exhibition centre?", a: "The indoor hall is 4,400 m², the paved open-air area 5,000 m², plus a 350-seat conference hall." },
+            { q: "How much power is available on site?", a: "700 kW is installed at 220 and 380 V; a stand gets 16 A in the base package, 32 A and 63 A on request." },
+            { q: "Is there food on site?", a: "Yes, two quick-service cafés with 350 seats in total." },
           ],
         },
       ],
@@ -1247,6 +1263,14 @@ export const venuePages: PageDef[] = [
             { label: "Доступная среда", href: "/visitors/access/" },
           ],
         },
+        {
+          type: "faq",
+          items: [
+            { q: "Сколько ехать от аэропорта?", a: "16 км, около 20 минут на машине без въезда в центр города. Делегациям организуем трансфер." },
+            { q: "Парковка платная?", a: "Нет, парковка бесплатная и находится прямо у въезда; есть места для автобусов и грузовиков." },
+            { q: "Есть ли скидка в гостинице?", a: "Партнёрский отель Reikartz даёт участникам SOF EXPO скидку 15% — назовите код выставки при бронировании." },
+          ],
+        },
       ],
       en: [
         {
@@ -1343,6 +1367,14 @@ export const venuePages: PageDef[] = [
             },
             { label: "Travel, hotels, visas", href: "/visitors/travel/" },
             { label: "Accessibility", href: "/visitors/access/" },
+          ],
+        },
+        {
+          type: "faq",
+          items: [
+            { q: "How far is the airport?", a: "16 km, about 20 minutes by car without crossing the city centre. We arrange transfers for delegations." },
+            { q: "Is parking paid?", a: "No, parking is free and right at the entrance, with spaces for coaches and trucks." },
+            { q: "Is there a hotel discount?", a: "Partner hotel Reikartz gives SOF EXPO participants 15% off — mention the exhibition code when booking." },
           ],
         },
       ],

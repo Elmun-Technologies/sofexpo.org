@@ -3,6 +3,7 @@ import { fig, figHtml } from '@/lib/figures';
 /**
  * Block renderer. Every page is authored as an ordered, individual list of blocks,
  * so no two pages share the same composition while the markup stays one system.
+ * Phase 2: auto CTA + form injection based on path — ideal placement.
  */
 import type { Block, BlockCard, BlockFile, BlockLink, BlockRow, BlockShot, BlockStat } from '@/data/pages/types';
 import { localize, type SourceLocale as Locale } from '@/i18n/config';
@@ -19,16 +20,46 @@ import CalendarRail from '@/components/CalendarRail.astro';
 import VenuePlan from '@/components/VenuePlan.astro';
 import MapSchema from '@/components/MapSchema.astro';
 import TeamWall from '@/components/TeamWall.astro';
+import ExhibitorForm from '@/components/conversion/forms/ExhibitorForm.astro';
+import VisitorForm from '@/components/conversion/forms/VisitorForm.astro';
+import OrganizerForm from '@/components/conversion/forms/OrganizerForm.astro';
+import SponsorForm from '@/components/conversion/forms/SponsorForm.astro';
+import CallbackForm from '@/components/conversion/forms/CallbackForm.astro';
+import CatalogForm from '@/components/conversion/forms/CatalogForm.astro';
+import GroupVisitForm from '@/components/conversion/forms/GroupVisitForm.astro';
+import SmartCta from '@/components/conversion/SmartCta.astro';
 
-const { blocks, locale } = Astro.props as { blocks: Block[]; locale: Locale };
+const { blocks, locale, path = '' } = Astro.props as { blocks: Block[]; locale: Locale; path?: string };
+
+function resolveAuto(p: string): { cta: 'exhibitor'|'visitor'|'organizer'|'sponsor'|'callback'|'catalog'|'group'; form: 'exhibitor'|'visitor'|'organizer'|'sponsor'|'callback'|'catalog'|'group' } | null {
+  if (!p) return null;
+  if (p.includes('/exhibitors/sponsorship')) return { cta: 'sponsor', form: 'sponsor' };
+  if (p.includes('/exhibitors/catalogue') || p.includes('/exhibitors/floor-plan')) return { cta: 'catalog', form: 'catalog' };
+  if (p.includes('/exhibitors/packages') || p.includes('/exhibitors/stand-construction')) return { cta: 'exhibitor', form: 'exhibitor' };
+  if (p.includes('/exhibitors/') || p.includes('/exhibitors')) return { cta: 'exhibitor', form: 'exhibitor' };
+  if (p.includes('/visitors/tickets')) return { cta: 'visitor', form: 'visitor' };
+  if (p.includes('/visitors/access') || p.includes('/visitors/travel')) return { cta: 'group', form: 'group' };
+  if (p.includes('/visitors/') || p.includes('/visitors')) return { cta: 'visitor', form: 'visitor' };
+  if (p.includes('/organizers/')) return { cta: 'organizer', form: 'organizer' };
+  if (p.includes('/venue/halls') || p.includes('/venue/services') || p.includes('/venue/tech-specs')) return { cta: 'organizer', form: 'organizer' };
+  if (p.includes('/venue/')) return { cta: 'organizer', form: 'organizer' };
+  if (p.includes('/request-stand')) return { cta: 'exhibitor', form: 'exhibitor' };
+  if (p.includes('/contacts')) return { cta: 'callback', form: 'callback' };
+  if (p.includes('/about/partners')) return { cta: 'sponsor', form: 'sponsor' };
+  if (p.includes('/about/')) return { cta: 'callback', form: 'callback' };
+  if (p.includes('/program')) return { cta: 'visitor', form: 'visitor' };
+  if (p.includes('/events/')) return { cta: 'visitor', form: 'visitor' };
+  return null;
+}
+const auto = resolveAuto(path);
+const hasForm = blocks.some(b => b.type === 'form');
+
 const t = useUI(locale);
 const ru = locale === 'ru';
 const L = (p: string) => localize(locale, p);
-/** keep external URLs intact, localize site paths */
 const H = (p?: string) => {
   if (!p) return '';
   if (/^(https?:|mailto:|tel:|#)/.test(p)) return p;
-  // static assets are locale-free
   if (/^\/(files|images|og)\//.test(p) || /\.[a-z0-9]+$/i.test(p)) return p;
   return L(p);
 };
@@ -39,17 +70,15 @@ const H = (p?: string) => {
     /* outline: card titles are h3 only once a section h2 exists above them; otherwise h2 */
     const H3 = blocks.slice(0, idx).some((x) => x.type === 'h2' || x.type === 'cta') ? 'h3' : 'h2';
     const wide = b.width !== 'narrow';
-    /* Rhythm: a section heading (`h2`) belongs to the block that follows it, and two blocks
-       on the same ground are one story, not two pages. Before this every block carried the full
-       `--sec` padding on both sides, so a heading floated ~170px above its own cards. */
     const ground = (x?: Block) => (x?.tone === 'paper' || x?.tone === 'forest' || x?.tone === 'sand' ? x.tone : 'default');
     const prev = idx > 0 ? blocks[idx - 1] : undefined;
     const afterHead = prev?.type === 'h2' && ground(prev) === ground(b);
-    /* `faq` paints its own paper sheet and `hero` is the page opening — both are real boundaries */
     const boundary = (x?: Block) => !x || x.type === 'hero' || x.type === 'faq';
     const sameGround = !boundary(prev) && b.type !== 'faq' && ground(prev) === ground(b);
     const leadsIn = b.type === 'h2';
+    const showMidCta = auto && !hasForm && blocks.length > 3 && (idx === 1 || idx === 3);
     return (
+      <>
       <section class:list={['sec', 'block', 'reveal', `block--${b.type}`, b.tone === 'paper' && 'sec--paper', b.tone === 'forest' && 'sec--forest', b.tone === 'sand' && 'sec--sand', b.anchor && 'has-anchor', leadsIn && 'block--head', afterHead && 'block--after-head', sameGround && !afterHead && 'block--cont']} id={b.id}>
         <div class:list={['wrap', !wide && 'wrap--narrow']}>
           {b.type === 'hero' && (
@@ -284,17 +313,42 @@ const H = (p?: string) => {
           )}
 
           {b.type === 'form' && (
-            <LeadForm
-              level={H3 === 'h2' ? 2 : 3}
-              locale={locale}
-              title={b.title}
-              subtitle={b.text}
-              directions={b.directions}
-              areas={b.areas?.map((a) => fig(a, locale))}
-              eventName={b.event}
-              note={b.note}
-              id={b.id ?? 'lead-form'}
-            />
+            <>
+              {(b as any).formType === 'exhibitor' && (
+                <ExhibitorForm locale={locale} eventName={b.event} id={b.id ?? 'exhibitor-form'} />
+              )}
+              {(b as any).formType === 'visitor' && (
+                <VisitorForm locale={locale} eventName={b.event} id={b.id ?? 'visitor-form'} />
+              )}
+              {(b as any).formType === 'organizer' && (
+                <OrganizerForm locale={locale} id={b.id ?? 'organizer-form'} />
+              )}
+              {(b as any).formType === 'sponsor' && (
+                <SponsorForm locale={locale} id={b.id ?? 'sponsor-form'} />
+              )}
+              {(b as any).formType === 'callback' && (
+                <CallbackForm locale={locale} id={b.id ?? 'callback-form'} title={b.title} />
+              )}
+              {(b as any).formType === 'catalog' && (
+                <CatalogForm locale={locale} eventName={b.event} id={b.id ?? 'catalog-form'} />
+              )}
+              {(b as any).formType === 'group' && (
+                <GroupVisitForm locale={locale} id={b.id ?? 'group-form'} />
+              )}
+              {!(b as any).formType && (
+                <LeadForm
+                  level={H3 === 'h2' ? 2 : 3}
+                  locale={locale}
+                  title={b.title}
+                  subtitle={b.text}
+                  directions={b.directions}
+                  areas={b.areas?.map((a) => fig(a, locale))}
+                  eventName={b.event}
+                  note={b.note}
+                  id={b.id ?? 'lead-form'}
+                />
+              )}
+            </>
           )}
 
           {b.type === 'faq' && <Faq locale={locale} items={(b.items as unknown as { q: string; a: string }[]) ?? []} title={b.title} topic={b.topic} />}
@@ -317,9 +371,40 @@ const H = (p?: string) => {
           )}
         </div>
       </section>
+      {showMidCta && (
+        <section class="sec block block--mid-cta reveal">
+          <div class="wrap">
+            <SmartCta locale={locale} variant={idx===1 ? 'inline' : 'card'} intent={auto!.cta} />
+          </div>
+        </section>
+      )}
+      </>
     );
   })
 }
+{/* Auto CTA + Form injection */}
+{auto && (
+  <>
+    <section class="sec block block--auto-cta reveal">
+      <div class="wrap">
+        <SmartCta locale={locale} variant="inline" intent={auto.cta} />
+      </div>
+    </section>
+    {!hasForm && (
+      <section class="sec block block--auto-form reveal">
+        <div class="wrap">
+          {auto.form === 'exhibitor' && <ExhibitorForm locale={locale} id="auto-exhibitor-form" />}
+          {auto.form === 'visitor' && <VisitorForm locale={locale} id="auto-visitor-form" />}
+          {auto.form === 'organizer' && <OrganizerForm locale={locale} id="auto-organizer-form" />}
+          {auto.form === 'sponsor' && <SponsorForm locale={locale} id="auto-sponsor-form" />}
+          {auto.form === 'callback' && <CallbackForm locale={locale} id="auto-callback-form" />}
+          {auto.form === 'catalog' && <CatalogForm locale={locale} id="auto-catalog-form" />}
+          {auto.form === 'group' && <GroupVisitForm locale={locale} id="auto-group-form" />}
+        </div>
+      </section>
+    )}
+  </>
+)}
 
 <style>
   .sec--sand {

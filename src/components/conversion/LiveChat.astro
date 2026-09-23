@@ -1,0 +1,735 @@
+---
+/**
+ * LiveChat — floating widget with multi-channel contact hold
+ * RU/EN, online/offline states, quick replies, local storage history
+ * No external dependency, hooks for Crisp/Tawk via PUBLIC_LIVECHAT_PROVIDER
+ */
+import { conversionConfig } from '@/data/conversion';
+import type { SourceLocale as Locale } from '@/i18n/config';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props as Props;
+const ru = locale === 'ru';
+const channels = conversionConfig.channels[ru ? 'ru' : 'en'];
+const quickReplies = conversionConfig.liveChat.quickReplies[ru ? 'ru' : 'en'];
+const contacts = conversionConfig.contacts;
+
+const L = {
+  title: ru ? 'Чат с менеджером' : 'Chat with manager',
+  online: ru ? 'В сети · отвечаем за 2 мин' : 'Online · reply in 2 min',
+  offline: ru ? 'Оффлайн · ответим утром' : 'Offline · reply in morning',
+  placeholder: ru ? 'Напишите сообщение...' : 'Type a message...',
+  send: ru ? 'Отправить' : 'Send',
+  manager: ru ? 'Менеджер SOF EXPO' : 'SOF EXPO Manager',
+  greeting: ru
+    ? 'Привет! 👋 Я менеджер SOF EXPO. Подскажу по стендам, билетам и площадке. Как могу помочь?'
+    : 'Hi! 👋 I’m SOF EXPO manager. I can help with stands, tickets and venue. How can I help?',
+  chooseChannel: ru ? 'Или выберите удобный канал:' : 'Or choose a channel:',
+  call: ru ? 'Позвонить' : 'Call',
+  working: ru ? 'Работаем Пн–Пт 09:00–18:00 (UTC+5)' : 'Working Mon–Fri 09:00–18:00 (UTC+5)',
+  quick: ru ? 'Быстрые вопросы:' : 'Quick questions:',
+};
+---
+
+<div id="sof-livechat" class="lc" translate="no" data-locale={locale} data-ru={ru ? '1' : '0'}>
+  <!-- FAB button -->
+  <button class="lc__fab" type="button" aria-label={L.title} aria-expanded="false" aria-controls="lc-panel">
+    <span class="lc__fab-icon">
+      <!-- chat bubble -->
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 21l2-5.5A8.5 8.5 0 0 1 21 11.5Z"></path>
+        <path d="M8 11h8M8 15h5"></path>
+      </svg>
+      <!-- close icon -->
+      <svg class="lc__fab-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+    </span>
+    <span class="lc__fab-pulse" aria-hidden="true"></span>
+    <span class="lc__fab-badge" aria-hidden="true">1</span>
+  </button>
+
+  <!-- Panel -->
+  <div id="lc-panel" class="lc__panel" role="dialog" aria-label={L.title} aria-modal="false" hidden>
+    <!-- Header -->
+    <div class="lc__head">
+      <div class="lc__head-person">
+        <div class="lc__avatar">
+          <span class="lc__avatar-fallback">SE</span>
+          <span class="lc__online-dot" aria-hidden="true"></span>
+        </div>
+        <div>
+          <b class="lc__name">{L.manager}</b>
+          <span class="lc__status" data-online-text={L.online} data-offline-text={L.offline}>{L.online}</span>
+        </div>
+      </div>
+      <div class="lc__head-actions">
+        <button class="lc__icon-btn" type="button" data-action="minimize" aria-label={ru ? 'Свернуть' : 'Minimize'}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14"></path></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="lc__messages" id="lc-messages" role="log" aria-live="polite">
+      <div class="lc__msg lc__msg--bot">
+        <div class="lc__bubble">{L.greeting}</div>
+        <time class="lc__time">{new Date().toLocaleTimeString(locale === 'ru' ? 'ru-RU' : 'en-US', { hour: '2-digit', minute: '2-digit' })}</time>
+      </div>
+
+      <div class="lc__quick">
+        <p class="lc__quick-label">{L.quick}</p>
+        <div class="lc__quick-list">
+          {quickReplies.map((q) => (
+            <button class="lc__quick-btn" type="button" data-quick={q}>{q}</button>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Channels -->
+    <div class="lc__channels">
+      <p class="lc__channels-label">{L.chooseChannel}</p>
+      <div class="lc__channels-grid">
+        {channels.map((ch) => (
+          <a
+            class="lc__ch"
+            href={ch.href}
+            target="_blank"
+            rel="noopener"
+            data-channel={ch.id}
+            style={`--ch-color:${ch.color}`}
+            data-prefill={ch.prefill}
+          >
+            <span class="lc__ch-icon">
+              {ch.id === 'telegram' && (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75l-.88-.58c-.5-.33-.17-.51.11-.82.24-.25 4.4-4.03 4.48-4.38.01-.04.02-.14-.1-.2s-.2-.04-.29-.02c-.12.02-1.95 1.24-5.5 3.65-.52.36-.99.53-1.41.52-.46-.01-1.35-.26-2.01-.48-.81-.26-1.45-.4-1.4-.84.02-.23.35-.47.96-.71 3.76-1.64 6.27-2.72 7.53-3.25 3.58-1.5 4.33-1.76 4.82-1.77.1 0 .33.02.48.14a.34.34 0 0 1 .14.27c-.01.06-.02.14-.03.22Z"/></svg>
+              )}
+              {ch.id === 'whatsapp' && (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.05 4.91A9.82 9.82 0 0 0 12.04 2C6.56 2 2.11 6.45 2.11 10.93c0 1.58.41 3.11 1.19 4.47L2 22l6.77-1.78a9.78 9.78 0 0 0 4.68 1.19h.01c5.48 0 9.93-4.45 9.93-9.93a9.78 9.78 0 0 0-2.88-6.97l-.46.5.46-.5ZM12.05 19.6a7.8 7.8 0 0 1-3.98-1.09l-.29-.17-4.02 1.05 1.07-3.92-.19-.4a7.82 7.82 0 0 1-1.2-4.14c0-4.32 3.51-7.83 7.84-7.83a7.8 7.8 0 0 1 5.53 2.29 7.8 7.8 0 0 1 2.29 5.54c0 4.32-3.52 7.83-7.84 7.83h-.21Zm4.29-5.86c-.23-.12-1.37-.68-1.58-.75-.21-.08-.37-.12-.52.12s-.6.75-.74.91c-.13.15-.27.17-.5.06-.23-.12-.97-.36-1.85-1.14-.68-.61-1.14-1.36-1.28-1.59-.13-.23-.01-.36.1-.47.1-.1.23-.27.35-.4.11-.13.15-.23.23-.38.08-.15.04-.28-.02-.4-.06-.11-.52-1.26-.71-1.72-.19-.45-.38-.39-.52-.4h-.44c-.15 0-.4.06-.61.28-.21.23-.8.78-.8 1.9s.82 2.21.93 2.36c.11.15 1.61 2.46 3.9 3.45.54.23.97.37 1.3.48.55.17 1.05.15 1.44.09.44-.07 1.37-.56 1.56-1.1.19-.54.19-1 .13-1.1-.06-.1-.21-.15-.44-.27Z"/></svg>
+              )}
+              {ch.id === 'phone' && (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07A19.5 19.5 0 0 1 5 12.07 19.8 19.8 0 0 1 1.93 3.44 2 2 0 0 1 3.92 1h3a2 2 0 0 1 2 1.72c.12 1 .39 2 .8 2.94a2 2 0 0 1-.45 2.11L9 8a16 16 0 0 0 6 6l.77-1.27a2 2 0 0 1 2.11-.45c.94.41 1.94.68 2.94.8A2 2 0 0 1 22 14.92Z"></path></svg>
+              )}
+              {ch.id === 'email' && (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2Z"></path><path d="m22 6-10 7L2 6"></path></svg>
+              )}
+            </span>
+            <span class="lc__ch-name">{ch.name}</span>
+          </a>
+        ))}
+      </div>
+      <p class="lc__working">{L.working}</p>
+    </div>
+
+    <!-- Input -->
+    <form class="lc__form" id="lc-form" novalidate>
+      <input class="lc__input" type="text" name="message" placeholder={L.placeholder} autocomplete="off" maxlength="500" />
+      <button class="lc__send" type="submit" aria-label={L.send}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2L11 13"></path><path d="M22 2L15 22l-4-9-9-4 20-7Z"></path></svg>
+      </button>
+    </form>
+
+    <!-- Consent -->
+    <p class="lc__consent">
+      {ru ? 'Нажимая, вы соглашаетесь с ' : 'By sending you agree to '}
+      <a href={ru ? '/ru/legal/privacy/' : '/en/legal/privacy/'} target="_blank">{ru ? 'политикой конфиденциальности' : 'privacy policy'}</a>
+    </p>
+  </div>
+</div>
+
+<style>
+  .lc {
+    position: fixed;
+    right: clamp(12px, 2vw, 20px);
+    bottom: clamp(12px, 2vw, 20px);
+    z-index: 9999;
+    font-family: var(--f-body);
+  }
+  .lc__fab {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 0;
+    background: var(--evergreen);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(16, 46, 41, 0.28), 0 2px 8px rgba(16, 46, 41, 0.18);
+    transition: transform var(--tr), box-shadow var(--tr), background var(--tr);
+  }
+  .lc__fab:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 12px 32px rgba(16, 46, 41, 0.32), 0 4px 12px rgba(16, 46, 41, 0.2);
+    background: var(--evergreen-2);
+  }
+  .lc__fab-icon {
+    position: relative;
+    display: grid;
+    place-items: center;
+  }
+  .lc__fab-icon svg {
+    transition: opacity var(--tr), transform var(--tr);
+  }
+  .lc__fab-close {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.5);
+  }
+  .lc[data-open="1"] .lc__fab-icon svg:first-child {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.5);
+  }
+  .lc[data-open="1"] .lc__fab-close {
+    opacity: 1;
+    transform: rotate(0) scale(1);
+  }
+  .lc__fab-pulse {
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px solid var(--evergreen);
+    opacity: 0.4;
+    animation: lc-pulse 2.2s infinite;
+    pointer-events: none;
+  }
+  .lc__fab-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    border-radius: 10px;
+    background: var(--accent);
+    color: #1a1206;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+  .lc[data-open="1"] .lc__fab-badge,
+  .lc[data-read="1"] .lc__fab-badge {
+    opacity: 0;
+    transform: scale(0);
+  }
+  @keyframes lc-pulse {
+    0% { transform: scale(1); opacity: 0.5; }
+    70% { transform: scale(1.22); opacity: 0; }
+    100% { transform: scale(1.22); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lc__fab-pulse { animation: none; opacity: 0; }
+  }
+
+  .lc__panel {
+    position: absolute;
+    right: 0;
+    bottom: 76px;
+    width: min(380px, calc(100vw - 24px));
+    max-height: min(560px, calc(100dvh - 100px));
+    display: flex;
+    flex-direction: column;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: 0 20px 60px -12px rgba(16, 46, 41, 0.28), 0 8px 24px -8px rgba(16, 46, 41, 0.18);
+    overflow: hidden;
+    transform-origin: bottom right;
+    animation: lc-in 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .lc__panel[hidden] {
+    display: none !important;
+  }
+  @keyframes lc-in {
+    from { opacity: 0; transform: translateY(12px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .lc__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--evergreen);
+    color: #fff;
+  }
+  .lc__head-person {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+  .lc__avatar {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--evergreen-2);
+    display: grid;
+    place-items: center;
+    flex: none;
+    overflow: hidden;
+  }
+  .lc__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .lc__avatar-fallback {
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--gold-soft);
+  }
+  .lc__online-dot {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #22c55e;
+    border: 2px solid var(--evergreen);
+  }
+  .lc__online-dot.is-offline {
+    background: #94a3b8;
+  }
+  .lc__name {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #fff;
+  }
+  .lc__status {
+    display: block;
+    font-size: 11px;
+    color: rgba(255,255,255,0.72);
+    line-height: 1.3;
+  }
+  .lc__icon-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 0;
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+  .lc__icon-btn:hover {
+    background: rgba(255,255,255,0.2);
+  }
+
+  .lc__messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #f8faf8;
+    min-height: 180px;
+    max-height: 280px;
+    scrollbar-width: thin;
+  }
+  .lc__msg {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-width: 85%;
+  }
+  .lc__msg--bot {
+    align-self: flex-start;
+  }
+  .lc__msg--user {
+    align-self: flex-end;
+  }
+  .lc__bubble {
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 14px;
+    line-height: 1.5;
+    word-break: break-word;
+  }
+  .lc__msg--bot .lc__bubble {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-bottom-left-radius: 4px;
+    color: var(--ink);
+    box-shadow: var(--shadow-soft);
+  }
+  .lc__msg--user .lc__bubble {
+    background: var(--evergreen);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+  }
+  .lc__time {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    color: var(--ink-40);
+    padding: 0 4px;
+  }
+  .lc__msg--user .lc__time {
+    text-align: right;
+  }
+
+  .lc__quick {
+    margin-top: 4px;
+  }
+  .lc__quick-label {
+    font-size: 11px;
+    color: var(--ink-40);
+    margin: 0 0 8px;
+    font-family: var(--f-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .lc__quick-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .lc__quick-btn {
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    background: #fff;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all var(--tr);
+  }
+  .lc__quick-btn:hover {
+    border-color: var(--evergreen);
+    background: var(--evergreen);
+    color: #fff;
+  }
+
+  .lc__channels {
+    padding: 12px 16px;
+    border-top: 1px solid var(--line);
+    background: #fff;
+  }
+  .lc__channels-label {
+    font-size: 11px;
+    color: var(--ink-40);
+    margin: 0 0 10px;
+    font-family: var(--f-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .lc__channels-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .lc__ch {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: #fff;
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 500;
+    transition: all var(--tr);
+  }
+  .lc__ch:hover {
+    border-color: var(--ch-color);
+    background: color-mix(in srgb, var(--ch-color) 8%, white);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-soft);
+  }
+  .lc__ch-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    background: color-mix(in srgb, var(--ch-color) 14%, white);
+    color: var(--ch-color);
+    flex: none;
+  }
+  .lc__working {
+    margin: 10px 0 0;
+    font-size: 10px;
+    color: var(--ink-40);
+    text-align: center;
+    font-family: var(--f-mono);
+  }
+
+  .lc__form {
+    display: flex;
+    gap: 8px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--line);
+    background: #fff;
+  }
+  .lc__input {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 14px;
+    border-radius: 24px;
+    border: 1px solid var(--line);
+    background: var(--cream);
+    font: inherit;
+    font-size: 14px;
+    outline: none;
+    transition: border-color var(--tr), box-shadow var(--tr);
+  }
+  .lc__input:focus {
+    border-color: var(--moss);
+    box-shadow: 0 0 0 3px rgba(29, 122, 72, 0.12);
+    background: #fff;
+  }
+  .lc__send {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 0;
+    background: var(--evergreen);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    flex: none;
+    transition: background var(--tr), transform var(--tr);
+  }
+  .lc__send:hover {
+    background: var(--evergreen-2);
+    transform: scale(1.05);
+  }
+  .lc__send:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .lc__consent {
+    margin: 0;
+    padding: 8px 16px 12px;
+    font-size: 10px;
+    color: var(--ink-40);
+    text-align: center;
+    line-height: 1.4;
+    background: #fff;
+  }
+  .lc__consent a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .lc__consent a:hover {
+    color: var(--evergreen);
+  }
+
+  @media (max-width: 480px) {
+    .lc__panel {
+      width: calc(100vw - 16px);
+      right: -8px;
+      bottom: 70px;
+      max-height: calc(100dvh - 90px);
+      border-radius: 16px;
+    }
+    .lc__messages {
+      max-height: 42dvh;
+    }
+  }
+</style>
+
+<script>
+  (() => {
+    const root = document.getElementById('sof-livechat');
+    if (!root) return;
+    const fab = root.querySelector('.lc__fab') as HTMLButtonElement;
+    const panel = document.getElementById('lc-panel') as HTMLElement;
+    const messages = document.getElementById('lc-messages') as HTMLElement;
+    const form = document.getElementById('lc-form') as HTMLFormElement;
+    const input = form?.querySelector('.lc__input') as HTMLInputElement;
+    const status = root.querySelector('.lc__status') as HTMLElement;
+    const dot = root.querySelector('.lc__online-dot') as HTMLElement;
+    const quickBtns = root.querySelectorAll('.lc__quick-btn');
+    const channelLinks = root.querySelectorAll('.lc__ch');
+    const STORAGE_KEY = 'sofexpo.livechat';
+    const ENDPOINT = (import.meta as any).env?.PUBLIC_LEAD_ENDPOINT || '';
+
+    // Online check
+    const now = new Date();
+    const hourUz = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Samarkand' })).getHours();
+    const day = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Samarkand' })).getDay();
+    const isWorkingHour = hourUz >= 9 && hourUz < 18 && day >= 1 && day <= 5;
+    if (status && dot) {
+      if (!isWorkingHour) {
+        status.textContent = status.dataset.offlineText || 'Offline';
+        dot.classList.add('is-offline');
+      } else {
+        status.textContent = status.dataset.onlineText || 'Online';
+      }
+    }
+
+    // Load history
+    try {
+      const hist = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      hist.forEach((m: any) => addMsg(m.text, m.from, m.time, false));
+    } catch {}
+
+    function addMsg(text: string, from: 'user' | 'bot' = 'user', time?: string, save = true) {
+      const wrap = document.createElement('div');
+      wrap.className = `lc__msg lc__msg--${from}`;
+      const t = time || new Date().toLocaleTimeString(root.dataset.locale === 'ru' ? 'ru-RU' : 'en-US', { hour: '2-digit', minute: '2-digit' });
+      wrap.innerHTML = `<div class="lc__bubble"></div><time class="lc__time">${t}</time>`;
+      (wrap.querySelector('.lc__bubble') as HTMLElement).textContent = text;
+      messages.appendChild(wrap);
+      messages.scrollTop = messages.scrollHeight;
+      if (save && from === 'user') {
+        try {
+          const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+          all.push({ text, from, time: t, ts: Date.now() });
+          if (all.length > 50) all.shift();
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+        } catch {}
+      }
+      // track
+      try {
+        (window as any).sofTrack?.('chat_message', { text: text.slice(0, 80), from });
+      } catch {}
+    }
+
+    function botReply(userText: string) {
+      const ru = root.dataset.ru === '1';
+      const lower = userText.toLowerCase();
+      let reply = '';
+      if (lower.includes('стенд') || lower.includes('stand') || lower.includes('cost') || lower.includes('стоим') || lower.includes('цен')) {
+        reply = ru
+          ? 'Отлично! Стенд от 9 м². Пришлите в Telegram ваш товар/услугу — сделаю подборку мест и расчёт за 15 минут. Или оставьте телефон — перезвоню.'
+          : 'Great! Stands from 9 m². Send your product in Telegram — I’ll pick spots and quote in 15 min. Or leave phone — I’ll call back.';
+      } else if (lower.includes('билет') || lower.includes('ticket')) {
+        reply = ru
+          ? 'Билет бесплатный для специалистов. Оставьте email на странице /visitors/tickets/ — придёт QR за 2 минуты. Нужна помощь?'
+          : 'Ticket is free for trade visitors. Leave email at /visitors/tickets/ — QR in 2 min. Need help?';
+      } else if (lower.includes('каталог') || lower.includes('catalog')) {
+        reply = ru
+          ? 'Каталог + план зала + цены отправлю в WhatsApp/Telegram. Напишите туда или оставьте номер — пришлю PDF сразу.'
+          : 'Catalog + floor plan + rates — I’ll send in WhatsApp/Telegram. Message there or leave number — I’ll send PDF now.';
+      } else if (lower.includes('добраться') || lower.includes('how to get')) {
+        reply = ru
+          ? 'Мы в 16 км от аэропорта Самарканда, 23 км от вокзала. Трансфер для групп от 10 чел. Показать на карте?'
+          : '16 km from Samarkand airport, 23 km from station. Transfer for 10+ group. Show on map?';
+      } else {
+        reply = ru
+          ? 'Принял! Менеджер ответит здесь за 2–5 мин. Если срочно — напишите в Telegram/WhatsApp (кнопки ниже) — там отвечаем быстрее.'
+          : 'Got it! Manager replies here in 2–5 min. If urgent — message on Telegram/WhatsApp below — faster there.';
+      }
+      setTimeout(() => {
+        addMsg(reply, 'bot');
+        // typing indicator off
+      }, 800 + Math.random() * 600);
+    }
+
+    // FAB toggle
+    function setOpen(open: boolean) {
+      root.dataset.open = open ? '1' : '0';
+      fab.setAttribute('aria-expanded', String(open));
+      panel.hidden = !open;
+      if (open) {
+        root.dataset.read = '1';
+        input?.focus();
+        try { (window as any).sofTrack?.('chat_open', { locale: root.dataset.locale }); } catch {}
+        // mark read
+        try { localStorage.setItem('sofexpo.chat.read', '1'); } catch {}
+      }
+    }
+    fab.addEventListener('click', () => setOpen(root.dataset.open !== '1'));
+    root.querySelector('[data-action="minimize"]')?.addEventListener('click', () => setOpen(false));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && root.dataset.open === '1') setOpen(false);
+    });
+    // click outside
+    document.addEventListener('click', (e) => {
+      if (root.dataset.open !== '1') return;
+      if (!root.contains(e.target as Node)) setOpen(false);
+    });
+
+    // Quick replies
+    quickBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const t = (btn as HTMLElement).dataset.quick || btn.textContent || '';
+        addMsg(t, 'user');
+        botReply(t);
+        input.value = '';
+      });
+    });
+
+    // Form submit
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const text = input.value.trim();
+      if (!text) return;
+      addMsg(text, 'user');
+      input.value = '';
+      botReply(text);
+
+      // send to endpoint if exists
+      if (ENDPOINT) {
+        try {
+          await fetch(ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: 'livechat',
+              message: text,
+              page: location.pathname,
+              locale: root.dataset.locale,
+              ts: new Date().toISOString(),
+            }),
+          });
+        } catch {}
+      }
+    });
+
+    // Channel clicks — track + prefill
+    channelLinks.forEach((a) => {
+      a.addEventListener('click', () => {
+        const ch = (a as HTMLElement).dataset.channel;
+        try { (window as any).sofTrack?.('channel_click', { channel: ch, source: 'livechat', locale: root.dataset.locale }); } catch {}
+        // if has prefill, append to href for whatsapp/telegram
+        const prefill = (a as HTMLElement).dataset.prefill;
+        if (prefill && ch === 'whatsapp') {
+          const url = new URL((a as HTMLAnchorElement).href);
+          url.searchParams.set('text', prefill);
+          (a as HTMLAnchorElement).href = url.toString();
+        } else if (prefill && ch === 'telegram') {
+          // telegram doesn't support prefill via link, but we can store for later
+        }
+      });
+    });
+
+    // Auto open for returning visitors with history? No — respect UX
+    // But show badge if not read and has history
+    try {
+      if (!localStorage.getItem('sofexpo.chat.read') && localStorage.getItem(STORAGE_KEY)) {
+        root.dataset.read = '0';
+      } else {
+        root.dataset.read = '1';
+      }
+    } catch {
+      root.dataset.read = '1';
+    }
+
+    // Expose for popup system
+    (window as any).sofLiveChat = { open: () => setOpen(true), close: () => setOpen(false) };
+  })();
+</script>

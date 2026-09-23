@@ -15,6 +15,12 @@ import TableEnhancements from '@/components/TableEnhancements.astro';
 import Header from '@/components/Header.astro';
 import PromoBar from '@/components/PromoBar.astro';
 import Footer from '@/components/Footer.astro';
+import LiveChat from '@/components/conversion/LiveChat.astro';
+import PopupSystem from '@/components/conversion/PopupSystem.astro';
+import FloatingContacts from '@/components/conversion/FloatingContacts.astro';
+import StickyCtaBar from '@/components/conversion/StickyCtaBar.astro';
+import Tracking from '@/components/conversion/Tracking.astro';
+import FormHandler from '@/components/conversion/FormHandler.astro';
 
 interface Props {
   locale: Locale;
@@ -234,6 +240,13 @@ const preload = props.preload
       <slot />
     </main>
     <Footer locale={locale} path={path} />
+    <!-- Conversion system: CTA, popups, livechat, contact hold -->
+    <Tracking locale={locale} path={path} />
+    <FormHandler />
+    <FloatingContacts locale={locale} variant="both" />
+    <StickyCtaBar locale={locale} pageType={path.includes('/exhibitors/') ? 'exhibitors' : path.includes('/visitors/') ? 'visitors' : path.includes('/organizers/') ? 'organizers' : path.includes('/events/') ? 'event' : path === '/' ? 'home' : 'other'} />
+    <LiveChat locale={locale} />
+    <PopupSystem locale={locale} pagePath={path} />
     <script>
       /* Subtle scroll reveal (user-approved 2026-09-22): fade + 8px over 200ms for
          sections below the first view only. JS-gated — without JavaScript the

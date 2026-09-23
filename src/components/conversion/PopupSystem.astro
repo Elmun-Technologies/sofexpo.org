@@ -1,0 +1,812 @@
+---
+/**
+ * PopupSystem — strategic popups with capping, triggers, locale
+ * Strategies: welcome, exit-intent, scroll, time-on-page, form-abandon, messengers
+ */
+import { conversionConfig } from '@/data/conversion';
+import type { SourceLocale as Locale } from '@/i18n/config';
+
+interface Props {
+  locale: Locale;
+  pagePath?: string;
+}
+
+const { locale, pagePath = '' } = Astro.props as Props;
+const ru = locale === 'ru';
+const strategies = conversionConfig.popups.strategies;
+
+const L = {
+  close: ru ? 'Закрыть' : 'Close',
+  catalogTitle: ru ? 'Скачайте каталог выставки' : 'Download exhibition catalog',
+  catalogText: ru ? 'Каталог + план зала + цены в PDF. Пришлём в мессенджер за 2 минуты.' : 'Catalog + floor plan + rates PDF. We’ll send in messenger in 2 min.',
+  exitTitle: ru ? 'Подождите! Не теряйте контакт' : "Wait! Don't lose contact",
+  exitText: ru ? 'Оставьте контакт в удобном мессенджере — пришлём каталог и расчёт за 15 минут' : 'Leave contact in messenger — we’ll send catalog and quote in 15 min',
+  welcomeTitle: ru ? 'Подберём формат участия за 2 минуты' : 'We’ll pick participation format in 2 min',
+  welcomeText: ru ? 'Ответьте на 3 вопроса — покажем подходящие выставки и стоимость' : 'Answer 3 questions — we’ll show suitable shows and pricing',
+  callbackTitle: ru ? 'Рассчитаем стоимость за 15 минут' : 'We’ll calculate cost in 15 min',
+  callbackText: ru ? 'Менеджер на связи Пн–Пт 09:00–18:00. Оставьте номер — перезвоним.' : 'Manager online Mon–Fri 09:00–18:00. Leave number — we’ll call back.',
+  messengerTitle: ru ? 'Оставайтесь на связи' : 'Stay in touch',
+  messengerText: ru ? 'Выбирайте удобный канал — отвечаем быстрее всего в Telegram и WhatsApp' : 'Choose channel — fastest reply in Telegram and WhatsApp',
+  name: ru ? 'Имя' : 'Name',
+  phone: ru ? 'Телефон' : 'Phone',
+  email: 'Email',
+  send: ru ? 'Получить' : 'Get it',
+  sendCatalog: ru ? 'Получить каталог' : 'Get catalog',
+  callMe: ru ? 'Перезвоните мне' : 'Call me',
+  tg: 'Telegram',
+  wa: 'WhatsApp',
+  privacy: ru ? 'Отправляя, вы соглашаетесь с политикой конфиденциальности' : 'By sending you agree to privacy policy',
+  noThanks: ru ? 'Нет, спасибо' : 'No thanks',
+};
+---
+
+<div id="sof-popups" class="popups" data-locale={locale} data-path={pagePath} aria-live="polite" translate="no">
+  <!-- Welcome popup -->
+  <div id="popup-welcome-new" class="popup" data-id="welcome-new" data-trigger="time" hidden role="dialog" aria-modal="true" aria-label={L.welcomeTitle}>
+    <div class="popup__overlay" data-close></div>
+    <div class="popup__box">
+      <button class="popup__close" type="button" data-close aria-label={L.close}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+      </button>
+      <div class="popup__media">
+        <img src="/images/hall-crowd-640.webp" alt={ru ? "Посетители в зале SOF EXPO Samarkand" : "Visitors in the SOF EXPO Samarkand hall"} width="400" height="260" loading="lazy" />
+      </div>
+      <div class="popup__content">
+        <p class="popup__kicker">{ru ? 'SOF EXPO SAMARKAND' : 'SOF EXPO SAMARKAND'}</p>
+        <h3 class="popup__title">{L.welcomeTitle}</h3>
+        <p class="popup__text">{L.welcomeText}</p>
+        <div class="popup__quiz" data-quiz>
+          <div class="popup__quiz-q is-active" data-step="1">
+            <p class="popup__quiz-label">{ru ? '1. Кто вы?' : '1. Who are you?'}</p>
+            <div class="popup__quiz-opts">
+              <button type="button" data-value="exhibitor">{ru ? 'Экспонент' : 'Exhibitor'}</button>
+              <button type="button" data-value="visitor">{ru ? 'Посетитель' : 'Visitor'}</button>
+              <button type="button" data-value="organizer">{ru ? 'Организатор' : 'Organizer'}</button>
+            </div>
+          </div>
+          <div class="popup__quiz-q" data-step="2">
+            <p class="popup__quiz-label">{ru ? '2. Отрасль?' : '2. Industry?'}</p>
+            <div class="popup__quiz-opts">
+              <button type="button" data-value="food">Food</button>
+              <button type="button" data-value="build">Build</button>
+              <button type="button" data-value="agro">Agro</button>
+              <button type="button" data-value="other">{ru ? 'Другое' : 'Other'}</button>
+            </div>
+          </div>
+          <div class="popup__quiz-q" data-step="3">
+            <p class="popup__quiz-label">{ru ? '3. Оставьте контакт — подберём выставки' : '3. Leave contact — we’ll pick shows'}</p>
+            <form class="popup__form" data-popup-form="welcome">
+              <input type="text" name="name" placeholder={L.name} required />
+              <input type="tel" name="phone" placeholder={L.phone} required />
+              <button class="btn btn--gold" type="submit">{L.send}</button>
+              <p class="popup__privacy">{L.privacy}</p>
+            </form>
+          </div>
+        </div>
+        <div class="popup__actions">
+          <a class="btn btn--ghost btn--sm" href={`/${locale}/request-stand/`} data-popup-cta="welcome-cta">{ru ? 'Сразу к заявке' : 'Go to request'}</a>
+          <button class="popup__link" type="button" data-close>{L.noThanks}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Exit intent -->
+  <div id="popup-exit-intent" class="popup popup--exit" data-id="exit-intent" data-trigger="exit-intent" hidden role="dialog" aria-modal="true" aria-label={L.exitTitle}>
+    <div class="popup__overlay" data-close></div>
+    <div class="popup__box popup__box--compact">
+      <button class="popup__close" type="button" data-close aria-label={L.close}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+      </button>
+      <div class="popup__content">
+        <div class="popup__icon">👋</div>
+        <h3 class="popup__title">{L.exitTitle}</h3>
+        <p class="popup__text">{L.exitText}</p>
+        <div class="popup__channels">
+          <a class="popup__ch popup__ch--tg" href={conversionConfig.contacts.telegramManager} target="_blank" rel="noopener" data-channel="telegram" data-source="popup-exit">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75l-.88-.58c-.5-.33-.17-.51.11-.82.24-.25 4.4-4.03 4.48-4.38.01-.04.02-.14-.1-.2s-.2-.04-.29-.02c-.12.02-1.95 1.24-5.5 3.65-.52.36-.99.53-1.41.52-.46-.01-1.35-.26-2.01-.48-.81-.26-1.45-.4-1.4-.84.02-.23.35-.47.96-.71 3.76-1.64 6.27-2.72 7.53-3.25 3.58-1.5 4.33-1.76 4.82-1.77.1 0 .33.02.48.14a.34.34 0 0 1 .14.27c-.01.06-.02.14-.03.22Z"/></svg>
+            {L.tg}
+          </a>
+          <a class="popup__ch popup__ch--wa" href={conversionConfig.contacts.whatsapp} target="_blank" rel="noopener" data-channel="whatsapp" data-source="popup-exit">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.05 4.91A9.82 9.82 0 0 0 12.04 2C6.56 2 2.11 6.45 2.11 10.93c0 1.58.41 3.11 1.19 4.47L2 22l6.77-1.78a9.78 9.78 0 0 0 4.68 1.19h.01c5.48 0 9.93-4.45 9.93-9.93a9.78 9.78 0 0 0-2.88-6.97l-.46.5.46-.5ZM12.05 19.6a7.8 7.8 0 0 1-3.98-1.09l-.29-.17-4.02 1.05 1.07-3.92-.19-.4a7.82 7.82 0 0 1-1.2-4.14c0-4.32 3.51-7.83 7.84-7.83a7.8 7.8 0 0 1 5.53 2.29 7.8 7.8 0 0 1 2.29 5.54c0 4.32-3.52 7.83-7.84 7.83h-.21Zm4.29-5.86c-.23-.12-1.37-.68-1.58-.75-.21-.08-.37-.12-.52.12s-.6.75-.74.91c-.13.15-.27.17-.5.06-.23-.12-.97-.36-1.85-1.14-.68-.61-1.14-1.36-1.28-1.59-.13-.23-.01-.36.1-.47.1-.1.23-.27.35-.4.11-.13.15-.23.23-.38.08-.15.04-.28-.02-.4-.06-.11-.52-1.26-.71-1.72-.19-.45-.38-.39-.52-.4h-.44c-.15 0-.4.06-.61.28-.21.23-.8.78-.8 1.9s.82 2.21.93 2.36c.11.15 1.61 2.46 3.9 3.45.54.23.97.37 1.3.48.55.17 1.05.15 1.44.09.44-.07 1.37-.56 1.56-1.1.19-.54.19-1 .13-1.1-.06-.1-.21-.15-.44-.27Z"/></svg>
+            {L.wa}
+          </a>
+        </div>
+        <form class="popup__form popup__form--row" data-popup-form="exit">
+          <input type="tel" name="phone" placeholder={L.phone} required />
+          <button class="btn btn--gold btn--sm" type="submit">{L.callMe}</button>
+        </form>
+        <p class="popup__privacy">{L.privacy}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Catalog lead magnet (scroll 50%) -->
+  <div id="popup-scroll-50-catalog" class="popup" data-id="scroll-50-catalog" data-trigger="scroll" data-scroll="50" hidden role="dialog" aria-modal="true" aria-label={L.catalogTitle}>
+    <div class="popup__overlay" data-close></div>
+    <div class="popup__box">
+      <button class="popup__close" type="button" data-close aria-label={L.close}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+      </button>
+      <div class="popup__media">
+        <img src="/images/expo-banner-640.webp" alt={ru ? "Каталог участников SOF EXPO" : "SOF EXPO exhibitor catalogue"} width="400" height="280" loading="lazy" />
+        <span class="popup__badge">PDF · 12 {ru ? 'Мб' : 'Mb'}</span>
+      </div>
+      <div class="popup__content">
+        <p class="popup__kicker">{ru ? 'Личный подбор' : 'Personal pick'}</p>
+        <h3 class="popup__title">{L.catalogTitle}</h3>
+        <p class="popup__text">{L.catalogText}</p>
+        <form class="popup__form" data-popup-form="catalog">
+          <input type="text" name="name" placeholder={L.name} required />
+          <input type="tel" name="phone" placeholder={L.phone} required />
+          <div class="popup__form-messengers">
+            <label><input type="radio" name="messenger" value="telegram" checked /> Telegram</label>
+            <label><input type="radio" name="messenger" value="whatsapp" /> WhatsApp</label>
+            <label><input type="radio" name="messenger" value="email" /> Email</label>
+          </div>
+          <button class="btn btn--gold" type="submit">{L.sendCatalog}</button>
+          <p class="popup__privacy">{L.privacy}</p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Callback / pricing interest -->
+  <div id="popup-pricing-interest" class="popup popup--callback" data-id="pricing-interest" data-trigger="time" data-delay="45000" hidden role="dialog" aria-modal="true" aria-label={L.callbackTitle}>
+    <div class="popup__overlay" data-close></div>
+    <div class="popup__box popup__box--compact">
+      <button class="popup__close" type="button" data-close aria-label={L.close}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+      </button>
+      <div class="popup__content">
+        <h3 class="popup__title">{L.callbackTitle}</h3>
+        <p class="popup__text">{L.callbackText}</p>
+        <form class="popup__form" data-popup-form="callback">
+          <input type="text" name="name" placeholder={L.name} required />
+          <input type="tel" name="phone" placeholder={L.phone} required />
+          <button class="btn btn--gold" type="submit">{L.callMe}</button>
+          <p class="popup__privacy">{L.privacy}</p>
+        </form>
+        <div class="popup__alt">
+          <span>{ru ? 'Или напишите:' : 'Or write:'}</span>
+          <a href={conversionConfig.contacts.telegramManager} target="_blank" rel="noopener" data-channel="telegram">Telegram</a>
+          <a href={conversionConfig.contacts.whatsapp} target="_blank" rel="noopener" data-channel="whatsapp">WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Messengers hold (75% scroll) -->
+  <div id="popup-tg-whatsapp-hold" class="popup popup--messengers" data-id="tg-whatsapp-hold" data-trigger="scroll" data-scroll="75" hidden role="dialog" aria-modal="true" aria-label={L.messengerTitle}>
+    <div class="popup__overlay" data-close></div>
+    <div class="popup__box popup__box--compact">
+      <button class="popup__close" type="button" data-close aria-label={L.close}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+      </button>
+      <div class="popup__content">
+        <h3 class="popup__title">{L.messengerTitle}</h3>
+        <p class="popup__text">{L.messengerText}</p>
+        <div class="popup__channels">
+          <a class="popup__ch popup__ch--tg" href={conversionConfig.contacts.telegramManager} target="_blank" rel="noopener" data-channel="telegram" data-source="popup-messengers">
+            Telegram — {ru ? 'быстрее всего' : 'fastest'}
+          </a>
+          <a class="popup__ch popup__ch--wa" href={conversionConfig.contacts.whatsapp} target="_blank" rel="noopener" data-channel="whatsapp" data-source="popup-messengers">
+            WhatsApp — {ru ? 'удобно' : 'convenient'}
+          </a>
+          <a class="popup__ch popup__ch--phone" href={`tel:${conversionConfig.contacts.phone}`} data-channel="phone" data-source="popup-messengers">
+            {conversionConfig.contacts.phoneDisplay}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .popups {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    pointer-events: none;
+  }
+  .popup {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    pointer-events: auto;
+  }
+  .popup[hidden] {
+    display: none !important;
+  }
+  .popup__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(16, 24, 20, 0.52);
+    backdrop-filter: blur(8px);
+    animation: popup-fade 0.28s ease;
+  }
+  .popup__box {
+    position: relative;
+    width: min(560px, calc(100vw - 24px));
+    max-height: min(88dvh, 720px);
+    overflow: auto;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    background: var(--paper);
+    border-radius: 18px;
+    box-shadow: 0 24px 64px -12px rgba(16, 46, 41, 0.36), 0 8px 24px -8px rgba(16, 46, 41, 0.2);
+    animation: popup-in 0.36s cubic-bezier(0.22, 0.61, 0.36, 1);
+    scrollbar-width: thin;
+  }
+  .popup__box--compact {
+    grid-template-columns: 1fr;
+    width: min(420px, calc(100vw - 24px));
+  }
+  .popup__close {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    z-index: 2;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(8px);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    color: var(--ink-60);
+    transition: all var(--tr);
+  }
+  .popup__close:hover {
+    background: #fff;
+    color: var(--ink);
+    border-color: var(--ink-40);
+  }
+  .popup__media {
+    position: relative;
+    overflow: hidden;
+    background: var(--cream-2);
+  }
+  .popup__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    min-height: 100%;
+  }
+  .popup__badge {
+    position: absolute;
+    left: 12px;
+    bottom: 12px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: rgba(16, 46, 41, 0.88);
+    color: #fff;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+  }
+  .popup__content {
+    padding: 22px 22px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .popup__kicker {
+    margin: 0;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--moss);
+    font-weight: 600;
+  }
+  .popup__title {
+    margin: 0;
+    font-family: var(--f-display);
+    font-size: 22px;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .popup__text {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-60);
+  }
+  .popup__icon {
+    font-size: 32px;
+    line-height: 1;
+  }
+  .popup__quiz {
+    margin-top: 4px;
+  }
+  .popup__quiz-q {
+    display: none;
+  }
+  .popup__quiz-q.is-active {
+    display: block;
+    animation: popup-fade 0.28s ease;
+  }
+  .popup__quiz-label {
+    margin: 0 0 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .popup__quiz-opts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .popup__quiz-opts button {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    transition: all var(--tr);
+  }
+  .popup__quiz-opts button:hover {
+    border-color: var(--evergreen);
+    background: var(--evergreen);
+    color: #fff;
+  }
+  .popup__form {
+    display: grid;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .popup__form input {
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--cream);
+    font: inherit;
+    font-size: 14px;
+    outline: none;
+    transition: border-color var(--tr), box-shadow var(--tr);
+  }
+  .popup__form input:focus {
+    border-color: var(--moss);
+    box-shadow: 0 0 0 3px rgba(29, 122, 72, 0.12);
+    background: #fff;
+  }
+  .popup__form--row {
+    grid-template-columns: 1fr auto;
+  }
+  .popup__form-messengers {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 12px;
+  }
+  .popup__form-messengers label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    color: var(--ink-60);
+  }
+  .popup__form-messengers input {
+    width: auto;
+    accent-color: var(--evergreen);
+  }
+  .popup__privacy {
+    margin: 0;
+    font-size: 10px;
+    line-height: 1.4;
+    color: var(--ink-40);
+  }
+  .popup__channels {
+    display: grid;
+    gap: 8px;
+  }
+  .popup__ch {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid var(--line);
+    transition: all var(--tr);
+  }
+  .popup__ch--tg {
+    background: #e8f2ff;
+    color: #229ED9;
+    border-color: #c8ddff;
+  }
+  .popup__ch--wa {
+    background: #e8f8ee;
+    color: #128c3e;
+    border-color: #c6f0d2;
+  }
+  .popup__ch--phone {
+    background: var(--evergreen);
+    color: #fff;
+    border-color: var(--evergreen);
+    justify-content: center;
+    font-family: var(--f-mono);
+  }
+  .popup__ch:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-soft);
+  }
+  .popup__actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+  }
+  .popup__link {
+    background: none;
+    border: 0;
+    padding: 0;
+    font-size: 12px;
+    color: var(--ink-40);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+  .popup__link:hover {
+    color: var(--ink);
+  }
+  .popup__alt {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--ink-40);
+    border-top: 1px solid var(--line);
+    padding-top: 12px;
+    margin-top: 4px;
+  }
+  .popup__alt a {
+    font-weight: 600;
+    color: var(--evergreen);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line);
+  }
+  .popup__alt a:hover {
+    border-color: var(--evergreen);
+  }
+
+  @keyframes popup-in {
+    from { opacity: 0; transform: translateY(16px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes popup-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @media (max-width: 640px) {
+    .popup__box {
+      grid-template-columns: 1fr;
+      width: calc(100vw - 16px);
+      max-height: calc(100dvh - 16px);
+      border-radius: 16px;
+    }
+    .popup__media {
+      max-height: 180px;
+    }
+    .popup__content {
+      padding: 18px 16px 16px;
+    }
+    .popup__title {
+      font-size: 19px;
+    }
+    .popup__form--row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  (() => {
+    const root = document.getElementById('sof-popups');
+    if (!root) return;
+    const locale = root.dataset.locale || 'ru';
+    const path = root.dataset.path || location.pathname;
+    const STORAGE_KEY = 'sofexpo.popups';
+    const SESSION_KEY = 'sofexpo.popups.session';
+    const ENDPOINT = (import.meta as any).env?.PUBLIC_LEAD_ENDPOINT || '';
+
+    type Record = { id: string; ts: number; type: 'show' | 'close' | 'submit' };
+    const getRecords = (): Record[] => {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
+    };
+    const saveRecord = (id: string, type: Record['type']) => {
+      try {
+        const all = getRecords();
+        all.push({ id, ts: Date.now(), type });
+        // keep last 50
+        if (all.length > 50) all.shift();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+        // session count
+        const sess = JSON.parse(sessionStorage.getItem(SESSION_KEY) || '[]') as Record[];
+        sess.push({ id, ts: Date.now(), type });
+        sessionStorage.setItem(SESSION_KEY, JSON.stringify(sess));
+      } catch {}
+    };
+    const canShow = (id: string, freq: string): boolean => {
+      const all = getRecords();
+      const sess = (() => { try { return JSON.parse(sessionStorage.getItem(SESSION_KEY) || '[]') as Record[]; } catch { return [] as Record[]; } })();
+      const now = Date.now();
+      const dayAgo = all.filter(r => now - r.ts < 24 * 60 * 60 * 1000 && r.type === 'show');
+      const sessionShows = sess.filter(r => r.type === 'show');
+      if (freq === 'once-per-session' && sess.some(r => r.id === id && r.type === 'show')) return false;
+      if (freq === 'once-per-day' && all.some(r => r.id === id && r.type === 'show' && now - r.ts < 24 * 60 * 60 * 1000)) return false;
+      if (sessionShows.length >= 2) return false;
+      if (dayAgo.length >= 3) return false;
+      // min interval 5 min
+      const lastShow = [...all].reverse().find(r => r.type === 'show');
+      if (lastShow && now - lastShow.ts < 5 * 60 * 1000) return false;
+      return true;
+    };
+
+    const popups = Array.from(root.querySelectorAll('.popup')) as HTMLElement[];
+    let activePopup: HTMLElement | null = null;
+    let scrollTriggered = new Set<string>();
+    let timeTimers: number[] = [];
+
+    const openPopup = (el: HTMLElement) => {
+      if (activePopup) return;
+      const id = el.dataset.id || '';
+      const freq = el.id.includes('exit') ? 'once-per-day' : el.dataset.id?.includes('tg-whatsapp') ? 'once-per-day' : 'once-per-session';
+      if (!canShow(id, freq)) return;
+      // don't show if form already submitted recently
+      if (document.querySelector('.form__ok:not([hidden])')) return;
+      // don't show if livechat open
+      const lc = document.getElementById('sof-livechat');
+      if (lc && lc.dataset.open === '1') return;
+
+      el.hidden = false;
+      activePopup = el;
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+      saveRecord(id, 'show');
+      try { (window as any).sofTrack?.('popup_show', { id, locale, path }); } catch {}
+
+      // focus trap
+      const focusable = el.querySelectorAll('button, a, input, [tabindex]:not([tabindex="-1"])');
+      (focusable[0] as HTMLElement)?.focus();
+    };
+    const closePopup = (el: HTMLElement, type: 'close' | 'submit' = 'close') => {
+      el.hidden = true;
+      if (activePopup === el) activePopup = null;
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+      const id = el.dataset.id || '';
+      saveRecord(id, type);
+      try { (window as any).sofTrack?.(type === 'submit' ? 'popup_submit' : 'popup_close', { id, locale }); } catch {}
+    };
+
+    // Bind close
+    popups.forEach(p => {
+      p.querySelectorAll('[data-close]').forEach(btn => {
+        btn.addEventListener('click', () => closePopup(p, 'close'));
+      });
+      // ESC
+      p.addEventListener('keydown', (e) => {
+        if ((e as KeyboardEvent).key === 'Escape') closePopup(p, 'close');
+      });
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && activePopup) closePopup(activePopup, 'close');
+    });
+
+    // Quiz logic for welcome
+    const quiz = root.querySelector('[data-quiz]');
+    if (quiz) {
+      const steps = Array.from(quiz.querySelectorAll('.popup__quiz-q')) as HTMLElement[];
+      let answers: Record<string, string> = {};
+      quiz.querySelectorAll('[data-value]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const q = (btn.closest('.popup__quiz-q') as HTMLElement);
+          const step = q?.dataset.step;
+          const val = (btn as HTMLElement).dataset.value || '';
+          if (step) answers[`step${step}`] = val;
+          const idx = steps.indexOf(q);
+          if (idx >= 0 && idx < steps.length - 1) {
+            q.classList.remove('is-active');
+            steps[idx + 1].classList.add('is-active');
+          }
+        });
+      });
+      // store answers on form submit
+      const welcomeForm = quiz.querySelector('form[data-popup-form="welcome"]');
+      welcomeForm?.addEventListener('submit', () => {
+        try { (window as any).sofTrack?.('quiz_complete', { answers, locale }); } catch {}
+      });
+    }
+
+    // Forms
+    root.querySelectorAll('form[data-popup-form]').forEach(formEl => {
+      const form = formEl as HTMLFormElement;
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return;
+        }
+        const fd = new FormData(form);
+        const payload: any = Object.fromEntries(fd.entries());
+        payload.popup = form.dataset.popupForm;
+        payload.page = location.pathname;
+        payload.locale = locale;
+        payload.ts = new Date().toISOString();
+
+        const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+        const orig = btn?.textContent;
+        if (btn) { btn.disabled = true; btn.textContent = locale === 'ru' ? 'Отправка...' : 'Sending...'; }
+
+        if (ENDPOINT) {
+          try {
+            const res = await fetch(ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            if (!res.ok) throw new Error('bad');
+          } catch {
+            // fallback store
+            try {
+              const key = 'sofexpo.leads';
+              const all = JSON.parse(localStorage.getItem(key) || '[]');
+              all.push(payload);
+              localStorage.setItem(key, JSON.stringify(all));
+            } catch {}
+          }
+        } else {
+          try {
+            const key = 'sofexpo.leads';
+            const all = JSON.parse(localStorage.getItem(key) || '[]');
+            all.push(payload);
+            localStorage.setItem(key, JSON.stringify(all));
+          } catch {}
+        }
+
+        // success UI
+        const box = form.closest('.popup') as HTMLElement;
+        form.innerHTML = `<div class="form__ok" style="display:block">${locale === 'ru' ? 'Спасибо! Менеджер свяжется за 15 минут. А пока напишите в Telegram — ответим быстрее.' : 'Thanks! Manager will contact in 15 min. Meanwhile message on Telegram — faster reply.'}</div>`;
+        setTimeout(() => { if (box) closePopup(box, 'submit'); }, 2500);
+        if (btn && orig) { btn.textContent = orig; btn.disabled = false; }
+        try { (window as any).sofTrack?.('form_submit', { form: form.dataset.popupForm, source: 'popup' }); } catch {}
+      });
+    });
+
+    // Triggers
+    // 1. Time triggers
+    const timePopups = popups.filter(p => p.dataset.trigger === 'time');
+    timePopups.forEach(p => {
+      const id = p.dataset.id || '';
+      const delayAttr = p.dataset.delay ? parseInt(p.dataset.delay, 10) : (id === 'welcome-new' ? 15000 : id === 'pricing-interest' ? 45000 : 30000);
+      // welcome only first visit
+      if (id === 'welcome-new') {
+        try {
+          if (localStorage.getItem('sofexpo.visited')) return;
+          localStorage.setItem('sofexpo.visited', '1');
+        } catch {}
+        // only home and events
+        const isHome = path === '/' || path.includes('/ru/') && (path === '/ru/' || path === '/en/' || path.endsWith('/ru/') || path.endsWith('/en/'));
+        const isEvents = path.includes('/events/');
+        if (!isHome && !isEvents) return;
+      }
+      if (id === 'pricing-interest') {
+        const isPricing = path.includes('/packages/') || path.includes('/rates/') || path.includes('/exhibitors/');
+        if (!isPricing) return;
+      }
+      const t = window.setTimeout(() => openPopup(p), delayAttr);
+      timeTimers.push(t);
+    });
+
+    // 2. Scroll triggers
+    const scrollPopups = popups.filter(p => p.dataset.trigger === 'scroll');
+    const onScroll = () => {
+      if (activePopup) return;
+      const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+      scrollPopups.forEach(p => {
+        const need = parseInt(p.dataset.scroll || '50', 10);
+        if (scrolled >= need && !scrollTriggered.has(p.dataset.id || '')) {
+          scrollTriggered.add(p.dataset.id || '');
+          openPopup(p);
+        }
+      });
+      // track scroll milestones
+      if (scrolled >= 50 && !(window as any)._sofScroll50) {
+        (window as any)._sofScroll50 = true;
+        try { (window as any).sofTrack?.('scroll_50', { path }); } catch {}
+      }
+      if (scrolled >= 75 && !(window as any)._sofScroll75) {
+        (window as any)._sofScroll75 = true;
+        try { (window as any).sofTrack?.('scroll_75', { path }); } catch {}
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    // 3. Exit intent (desktop: mouse leaves top, mobile: fast scroll up + back)
+    let exitShown = false;
+    const handleExit = () => {
+      if (exitShown || activePopup) return;
+      const exitPopup = document.getElementById('popup-exit-intent') as HTMLElement;
+      if (!exitPopup) return;
+      exitShown = true;
+      openPopup(exitPopup);
+      try { (window as any).sofTrack?.('exit_intent', { path }); } catch {}
+    };
+    document.addEventListener('mouseleave', (e) => {
+      if ((e as MouseEvent).clientY <= 0 && window.innerWidth > 900) handleExit();
+    });
+    // mobile: scroll up quickly after 50% scroll
+    let lastY = window.scrollY;
+    let lastTime = Date.now();
+    window.addEventListener('scroll', () => {
+      const now = Date.now();
+      const y = window.scrollY;
+      const dy = lastY - y; // positive if scrolling up
+      const dt = now - lastTime;
+      if (dy > 120 && dt < 400 && window.scrollY > 400 && window.innerWidth <= 900) {
+        handleExit();
+      }
+      lastY = y;
+      lastTime = now;
+    }, { passive: true });
+
+    // 4. Form abandon (if user started typing but didn't submit, then leaves)
+    let formStarted = false;
+    let abandonTimer: number | null = null;
+    document.addEventListener('input', (e) => {
+      const target = e.target as HTMLElement;
+      if (target.closest('form[data-lead-form]')) {
+        if (!formStarted) {
+          formStarted = true;
+          try { (window as any).sofTrack?.('form_start', { path }); } catch {}
+        }
+        if (abandonTimer) clearTimeout(abandonTimer);
+        abandonTimer = window.setTimeout(() => {
+          // if form still not submitted and user scrolled away
+          if (formStarted && !activePopup) {
+            // we don't have dedicated abandon popup UI, reuse messengers
+            const mPopup = document.getElementById('popup-tg-whatsapp-hold') as HTMLElement;
+            if (mPopup && canShow(mPopup.dataset.id || '', 'once-per-session')) {
+              openPopup(mPopup);
+            }
+          }
+        }, 15000) as unknown as number;
+      }
+    });
+    document.addEventListener('submit', (e) => {
+      const target = e.target as HTMLElement;
+      if (target.closest('form[data-lead-form]')) {
+        formStarted = false;
+        if (abandonTimer) clearTimeout(abandonTimer);
+      }
+    });
+
+    // Expose
+    (window as any).sofPopups = {
+      open: (id: string) => {
+        const el = document.getElementById(`popup-${id}`) as HTMLElement;
+        if (el) openPopup(el);
+      },
+      closeAll: () => {
+        if (activePopup) closePopup(activePopup, 'close');
+      }
+    };
+
+    // Track time on page 30s
+    setTimeout(() => {
+      try { (window as any).sofTrack?.('time_30s', { path }); } catch {}
+    }, 30000);
+  })();
+</script>

@@ -262,6 +262,7 @@ export const eventPages: Record<string, EventPages> = {
             },
             {
               type: "form",
+          formType: "exhibitor",
               title: "Заявка на участие в FOODERA EXPO 2026",
               text: "Укажите продукцию и объём — пришлём карту раздела и расчёт стенда.",
               event: "FOODERA EXPO 2026",
@@ -327,6 +328,7 @@ export const eventPages: Record<string, EventPages> = {
             },
             {
               type: "form",
+          formType: "exhibitor",
               title: "FOODERA EXPO 2026 participation request",
               text: "List your products and volume — we send the section map and a stand quote.",
               event: "FOODERA EXPO 2026",
@@ -861,6 +863,7 @@ eventPages["buildpro-expo"] = {
         },
         {
           type: "form",
+          formType: "exhibitor",
           title: "Заявка на участие в BUILD PRO EXPO 2026",
           text: "Укажите продукт, желаемую площадь и потребность в демо-зоне.",
           event: "BUILD PRO EXPO 2026",
@@ -915,6 +918,7 @@ eventPages["buildpro-expo"] = {
         },
         {
           type: "form",
+          formType: "exhibitor",
           title: "BUILD PRO EXPO 2026 participation request",
           text: "Name the product, the area you want and whether you need a demo position.",
           event: "BUILD PRO EXPO 2026",
@@ -1415,6 +1419,7 @@ eventPages["agropro-expo"] = {
         },
         {
           type: "form",
+          formType: "exhibitor",
           title: "Заявка на участие в AGROPRO EXPO 2027",
           text: "Укажите технику, габариты и потребность в электричестве.",
           event: "AGROPRO EXPO 2027",
@@ -1468,6 +1473,7 @@ eventPages["agropro-expo"] = {
         },
         {
           type: "form",
+          formType: "exhibitor",
           title: "AGROPRO EXPO 2027 participation request",
           text: "Name the machinery, dimensions and power needs.",
           event: "AGROPRO EXPO 2027",
@@ -2335,6 +2341,7 @@ eventPages["world-edu-expo"] = {
         },
         {
           type: "form",
+          formType: "exhibitor",
           title: "Заявка на участие в WORLD EDU",
           text: "Выберите формат и приложите список программ.",
           event: "WORLD EDU EXPO",
@@ -2379,6 +2386,7 @@ eventPages["world-edu-expo"] = {
         },
         {
           type: "form",
+          formType: "exhibitor",
           title: "WORLD EDU participation request",
           text: "Choose the format and attach your program list.",
           event: "WORLD EDU EXPO",
@@ -2859,6 +2867,7 @@ eventPages["ecom-retail-expo"] = {
         },
         {
           type: "form",
+          formType: "exhibitor",
           title: "Заявка на участие в ECOM & RETAIL EXPO",
           text: "Опишите продукт или сервис и цель участия.",
           event: "ECOM & RETAIL EXPO",
@@ -2903,6 +2912,7 @@ eventPages["ecom-retail-expo"] = {
         },
         {
           type: "form",
+          formType: "exhibitor",
           title: "ECOM & RETAIL EXPO participation request",
           text: "Describe the product or service and the goal of participation.",
           event: "ECOM & RETAIL EXPO",

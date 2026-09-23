@@ -180,6 +180,7 @@ export const organizerPages: PageDef[] = [
         {
           id: "brief",
           type: "form",
+          formType: "organizer",
           title: "Бриф на расчёт даты",
           text: "Опишите событие — пришлём план зала, ставки и график монтажа.",
           directions: [
@@ -348,6 +349,7 @@ export const organizerPages: PageDef[] = [
         {
           id: "brief",
           type: "form",
+          formType: "organizer",
           title: "Brief for a date quote",
           text: "Describe the event and we send the floor plan, rates and build schedule.",
           directions: [
@@ -487,6 +489,7 @@ export const organizerPages: PageDef[] = [
         },
         {
           type: "form",
+          formType: "organizer",
           title: "Запросить смету",
           text: "Приложите техзадание или опишите событие словами — вернём расчёт в течение рабочего дня.",
         },
@@ -574,6 +577,7 @@ export const organizerPages: PageDef[] = [
         },
         {
           type: "form",
+          formType: "organizer",
           title: "Request a budget",
           text: "Attach a technical brief or describe the event — we return the quote within the business day.",
         },

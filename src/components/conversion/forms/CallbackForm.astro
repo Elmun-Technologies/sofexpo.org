@@ -1,0 +1,119 @@
+---
+/**
+ * CallbackForm — ultra-compact, for popups and sticky bars
+ */
+import type { SourceLocale as Locale } from '@/i18n/config';
+
+interface Props {
+  locale: Locale;
+  id?: string;
+  title?: string;
+  compact?: boolean;
+}
+
+const { locale, id = 'callback-form', title, compact = true } = Astro.props as Props;
+const ru = locale === 'ru';
+const endpoint = (import.meta.env.PUBLIC_LEAD_ENDPOINT ?? '').trim();
+
+const L = {
+  title: title || (ru ? 'Заказать звонок' : 'Request callback'),
+  sub: ru ? 'Перезвоним за 15 минут · Пн–Пт 09:00–18:00' : 'Callback in 15 min · Mon–Fri 09:00–18:00',
+  name: ru ? 'Имя' : 'Name',
+  phone: ru ? 'Телефон' : 'Phone',
+  time: ru ? 'Удобное время' : 'Best time',
+  times: ru ? ['Сейчас', 'Через 15 мин', 'Сегодня', 'Завтра 10:00', 'Завтра 15:00'] : ['Now', 'In 15 min', 'Today', 'Tomorrow 10:00', 'Tomorrow 15:00'],
+  submit: ru ? 'Жду звонка' : 'Call me',
+  ok: ru ? 'Принято! Перезвоним за 15 минут.' : 'Got it! We’ll call back in 15 min.',
+  err: ru ? 'Укажите имя и телефон' : 'Enter name and phone',
+};
+---
+
+<form translate="no" class:list={['form-cb', { 'form-cb--compact': compact }]} id={id} data-lead-form data-form-type="callback" data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} novalidate>
+  <div class="form-cb__head">
+    <div class="form-cb__dot"></div>
+    <div>
+      <b>{L.title}</b>
+      <span>{L.sub}</span>
+    </div>
+  </div>
+  <div class="form-cb__row">
+    <input name="name" required placeholder={L.name} autocomplete="name" />
+    <input name="phone" type="tel" required placeholder={L.phone} autocomplete="tel" />
+    <select name="time">
+      {L.times.map(t => <option>{t}</option>)}
+    </select>
+    <button class="btn btn--gold btn--sm" type="submit">{L.submit}</button>
+  </div>
+  <p class="form__msg" role="status" aria-live="polite" hidden></p>
+</form>
+
+<style>
+  .form-cb {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px;
+    display: grid;
+    gap: 10px;
+    box-shadow: var(--shadow-soft);
+  }
+  .form-cb__head {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .form-cb__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 0 4px rgba(34,197,94,0.18);
+    flex: none;
+  }
+  .form-cb__head b {
+    display: block;
+    font-size: 13px;
+    line-height: 1.2;
+  }
+  .form-cb__head span {
+    display: block;
+    font-size: 11px;
+    color: var(--ink-60);
+    line-height: 1.3;
+  }
+  .form-cb__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 110px auto;
+    gap: 8px;
+    align-items: center;
+  }
+  .form-cb__row input,
+  .form-cb__row select {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--cream);
+    font: inherit;
+    font-size: 13px;
+    outline: none;
+  }
+  .form-cb__row input:focus,
+  .form-cb__row select:focus {
+    border-color: var(--moss);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(29,122,72,0.12);
+  }
+  @media (max-width: 700px) {
+    .form-cb__row {
+      grid-template-columns: 1fr 1fr;
+    }
+    .form-cb__row button {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (max-width: 400px) {
+    .form-cb__row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

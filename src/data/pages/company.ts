@@ -606,6 +606,7 @@ export const companyPages: PageDef[] = [
         },
         {
           type: "form",
+          formType: "callback",
           title: "Форма заявки",
           text: "Заполните — ответим в течение рабочего дня, а по вопросам участия пришлём план зала и цены.",
         },
@@ -697,6 +698,7 @@ export const companyPages: PageDef[] = [
         },
         {
           type: "form",
+          formType: "callback",
           title: "Request form",
           text: "Fill it in and we reply within the business day, with the floor plan and prices for participation questions.",
         },
@@ -736,6 +738,7 @@ export const companyPages: PageDef[] = [
         },
         {
           type: "form",
+          formType: "exhibitor",
           eventName: "любая выставка",
           title: "Заявка на стенд",
           text: "Ответ в течение рабочего дня.",
@@ -792,6 +795,7 @@ export const companyPages: PageDef[] = [
         },
         {
           type: "form",
+          formType: "exhibitor",
           eventName: "any show",
           title: "Stand booking request",
           text: "We answer within one business day.",

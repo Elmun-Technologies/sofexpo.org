@@ -1,0 +1,185 @@
+---
+/**
+ * CatalogForm — lead magnet: download catalog in exchange for contact
+ */
+import type { SourceLocale as Locale } from '@/i18n/config';
+
+interface Props {
+  locale: Locale;
+  id?: string;
+  eventName?: string;
+}
+
+const { locale, id = 'catalog-form', eventName = '' } = Astro.props as Props;
+const ru = locale === 'ru';
+const endpoint = (import.meta.env.PUBLIC_LEAD_ENDPOINT ?? '').trim();
+
+const L = {
+  title: ru ? 'Скачать каталог выставки' : 'Download exhibition catalog',
+  sub: ru ? 'Каталог + план зала + цены в PDF. Отправим куда удобно.' : 'Catalog + floor plan + rates PDF. Send where convenient.',
+  includes: ru ? ['Каталог участников', 'План зала', 'Цены и пакеты', 'Деловая программа'] : ['Exhibitor list', 'Floor plan', 'Rates & packages', 'Business program'],
+  name: ru ? 'Имя' : 'Name',
+  company: ru ? 'Компания' : 'Company',
+  phone: ru ? 'Телефон / WhatsApp' : 'Phone / WhatsApp',
+  email: 'Email',
+  messenger: ru ? 'Куда отправить?' : 'Where to send?',
+  submit: ru ? 'Получить каталог' : 'Get catalog',
+  ok: ru ? 'Каталог отправлен! Проверьте Telegram/WhatsApp/почту.' : 'Catalog sent! Check Telegram/WhatsApp/email.',
+  err: ru ? 'Заполните имя и контакт' : 'Fill name and contact',
+};
+---
+
+<form translate="no" class="form-cat" id={id} data-lead-form data-form-type="catalog" data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} novalidate>
+  <div class="form-cat__media">
+    <img src="/images/expo-banner-640.webp" alt={ru ? "Каталог участников SOF EXPO" : "SOF EXPO exhibitor catalogue"} width="320" height="220" loading="lazy" />
+    <div class="form-cat__badge">PDF</div>
+  </div>
+  <div class="form-cat__body">
+    <h3>{L.title}</h3>
+    <p class="form-cat__sub">{L.sub}</p>
+    <ul class="form-cat__includes">
+      {L.includes.map(i => <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5 5L20 7"/></svg> {i}</li>)}
+    </ul>
+
+    <div class="form-cat__grid">
+      <div class="field"><label>{L.name} *</label><input name="name" required autocomplete="name" placeholder={ru ? 'Алишер' : 'John'} /></div>
+      <div class="field"><label>{L.company}</label><input name="company" autocomplete="organization" /></div>
+      <div class="field"><label>{L.phone} *</label><input name="phone" type="tel" required autocomplete="tel" placeholder="+998" /></div>
+      <div class="field"><label>{L.email}</label><input name="email" type="email" autocomplete="email" /></div>
+      {eventName && <div class="field form-cat__full"><label>Exhibition</label><input name="event" value={eventName} readonly /></div>}
+      <div class="field form-cat__full">
+        <label>{L.messenger}</label>
+        <div class="form-cat__radios">
+          <label><input type="radio" name="messenger" value="telegram" checked /> Telegram</label>
+          <label><input type="radio" name="messenger" value="whatsapp" /> WhatsApp</label>
+          <label><input type="radio" name="messenger" value="email" /> Email</label>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn--gold form-cat__submit" type="submit">{L.submit} →</button>
+    <p class="form-cat__note">{ru ? 'Бесплатно · без спама · отписка в 1 клик' : 'Free · no spam · unsubscribe in 1 click'}</p>
+    <p class="form__msg" role="status" aria-live="polite" hidden></p>
+  </div>
+</form>
+
+<style>
+  .form-cat {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 0;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .form-cat__media {
+    position: relative;
+    background: var(--cream-2);
+    min-height: 100%;
+  }
+  .form-cat__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .form-cat__badge {
+    position: absolute;
+    left: 12px;
+    top: 12px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: var(--evergreen);
+    color: #fff;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .form-cat__body {
+    padding: 20px;
+    display: grid;
+    gap: 14px;
+  }
+  .form-cat__body h3 {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.2;
+  }
+  .form-cat__sub {
+    margin: 0;
+    font-size: 13px;
+    color: var(--ink-60);
+    line-height: 1.45;
+  }
+  .form-cat__includes {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .form-cat__includes li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--ink-60);
+  }
+  .form-cat__includes svg {
+    color: var(--moss);
+    flex: none;
+  }
+  .form-cat__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .form-cat__full { grid-column: 1 / -1; }
+  .form-cat__radios {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  .form-cat__radios label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .form-cat__radios input {
+    accent-color: var(--evergreen);
+  }
+  .form-cat__submit {
+    width: 100%;
+    padding: 12px;
+    font-weight: 700;
+  }
+  .form-cat__note {
+    margin: 0;
+    text-align: center;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    color: var(--ink-40);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  @media (max-width: 700px) {
+    .form-cat {
+      grid-template-columns: 1fr;
+    }
+    .form-cat__media {
+      max-height: 200px;
+    }
+    .form-cat__grid {
+      grid-template-columns: 1fr;
+    }
+    .form-cat__includes {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

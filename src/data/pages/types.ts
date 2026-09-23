@@ -122,6 +122,7 @@ export interface Block {
   directions?: string[];
   areas?: string[];
   event?: string;
+  formType?: 'exhibitor' | 'visitor' | 'organizer' | 'sponsor' | 'callback' | 'catalog' | 'group' | 'ticket' | 'stand';
   /** quote block */
   author?: string;
   role?: string;

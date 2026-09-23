@@ -15,6 +15,7 @@ import { isSampleDownload } from '@/lib/downloads.mjs';
 import Photo from '@/components/Photo.astro';
 import StatBand from '@/components/StatBand.astro';
 import LeadForm from '@/components/LeadForm.astro';
+import QuizForm from '@/components/QuizForm.astro';
 import Faq from '@/components/Faq.astro';
 import CalendarRail from '@/components/CalendarRail.astro';
 import VenuePlan from '@/components/VenuePlan.astro';
@@ -99,7 +100,7 @@ const H = (p?: string) => {
                 {b.actions?.length ? (
                   <div class="btn-row" style="margin-top:1.4rem">
                     {b.actions.map((a, i) => (
-                      <a class:list={['btn', { 'btn--gold': i === 0, 'btn--ghost': i > 0 }]} href={H(a.href)}>
+                      <a class:list={['btn', { 'btn--gold': i === 0, 'btn--ghost': i > 0 }]} href={H(a.href)} data-quiz-open={a.href === '/request-stand/' ? '' : undefined}>
                         {a.label}
                       </a>
                     ))}
@@ -240,7 +241,7 @@ const H = (p?: string) => {
                 <H3 class="h3">{b.title}</H3>
                 {b.text && <p class="muted" style="margin-bottom:1rem">{b.text}</p>}
                 {b.action && (
-                  <a class="btn btn--sm" href={H(b.action.href)}>{b.action.label}</a>
+                  <a class="btn btn--sm" href={H(b.action.href)} data-quiz-open={b.action.href === '/request-stand/' ? '' : undefined}>{b.action.label}</a>
                 )}
               </div>
               {b.image && (
@@ -351,6 +352,21 @@ const H = (p?: string) => {
             </>
           )}
 
+          {b.type === 'quiz' && (
+            <div class="quiz-block">
+              <QuizForm
+                locale={locale}
+                title={b.title}
+                subtitle={b.text}
+                shows={b.shows}
+                areas={b.areas}
+                event={b.event}
+                note={b.note}
+                id={b.id ?? 'quiz'}
+              />
+            </div>
+          )}
+
           {b.type === 'faq' && <Faq locale={locale} items={(b.items as unknown as { q: string; a: string }[]) ?? []} title={b.title} topic={b.topic} />}
 
           {b.type === 'cta' && (
@@ -362,7 +378,7 @@ const H = (p?: string) => {
               </div>
               <div class="btn-row">
                 {(b.actions ?? []).map((a, i) => (
-                  <a class:list={['btn', { 'btn--gold': i === 0, 'btn--ghost': i > 0 }]} href={H(a.href)}>
+                  <a class:list={['btn', { 'btn--gold': i === 0, 'btn--ghost': i > 0 }]} href={H(a.href)} data-quiz-open={a.href === '/request-stand/' ? '' : undefined}>
                     {a.label}
                   </a>
                 ))}
@@ -409,6 +425,10 @@ const H = (p?: string) => {
 <style>
   .sec--sand {
     background: var(--cream-2);
+  }
+  /* the quiz reads best as a focused column, never stretched over a wide grid */
+  .quiz-block {
+    max-width: 760px;
   }
   .block--hero {
     background: var(--cream);

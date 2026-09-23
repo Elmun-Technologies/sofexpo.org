@@ -21,6 +21,7 @@ export type BlockType =
   | "quote"
   | "links"
   | "form"
+  | "quiz"
   | "faq"
   | "cta"
   /* Phase 1 (docs/08 §6): the structural blocks — the line-up rail, the venue schematic and
@@ -122,6 +123,8 @@ export interface Block {
   directions?: string[];
   areas?: string[];
   event?: string;
+  /** quiz block: stand-show option labels override (defaults to the current line-up) */
+  shows?: string[];
   formType?: 'exhibitor' | 'visitor' | 'organizer' | 'sponsor' | 'callback' | 'catalog' | 'group' | 'ticket' | 'stand';
   /** quote block */
   author?: string;

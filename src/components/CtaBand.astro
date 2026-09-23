@@ -21,11 +21,16 @@ const { locale, kicker, title, text, primary, secondary, dark = true } = Astro.p
         {text && <p class="lead" style={dark ? 'color:rgba(255, 255, 255, .82)' : undefined}>{text}</p>}
       </div>
       <div class="cta-band__actions">
-        <a class:list={['btn', { 'btn--light': dark }]} href={primary.href}>
+        <a class:list={['btn', { 'btn--light': dark }]} href={primary.href} data-quiz-open={primary.href === '/request-stand/' ? '' : undefined}>
           <Icon name="arrow" size={17} /> {primary.label}
         </a>
         {secondary && (
-          <a class="btn btn--ghost" style={dark ? 'border-color:rgba(255, 255, 255, .4);color:rgba(255,255,255,.86)' : undefined} href={secondary.href}>
+          <a
+            class="btn btn--ghost"
+            style={dark ? 'border-color:rgba(255, 255, 255, .4);color:rgba(255,255,255,.86)' : undefined}
+            href={secondary.href}
+            data-quiz-open={secondary.href === '/request-stand/' ? '' : undefined}
+          >
             {secondary.label}
           </a>
         )}

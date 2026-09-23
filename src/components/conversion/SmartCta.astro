@@ -1,0 +1,310 @@
+---
+/**
+ * SmartCta — ideal CTA placement component
+ * Use in Blocks.astro or directly in pages
+ * Variants: inline, sidebar, hero, footer
+ */
+import type { SourceLocale as Locale } from '@/i18n/config';
+import { conversionConfig } from '@/data/conversion';
+
+interface Props {
+  locale: Locale;
+  variant?: 'inline' | 'sidebar' | 'hero' | 'footer' | 'card';
+  intent?: 'exhibitor' | 'visitor' | 'organizer' | 'sponsor' | 'contact';
+  eventName?: string;
+  title?: string;
+  text?: string;
+  primaryLabel?: string;
+  primaryHref?: string;
+  secondaryLabel?: string;
+  secondaryHref?: string;
+}
+
+const {
+  locale,
+  variant = 'inline',
+  intent = 'exhibitor',
+  eventName = '',
+  title,
+  text,
+  primaryLabel,
+  primaryHref,
+  secondaryLabel,
+  secondaryHref,
+} = Astro.props as Props;
+
+const ru = locale === 'ru';
+
+const defaults = {
+  exhibitor: {
+    title: ru ? 'Забронируйте стенд сегодня' : 'Book your stand today',
+    text: ru ? 'Осталось мало мест у входа. План зала и расчёт за 15 минут.' : 'Few spots left near entrance. Floor plan & quote in 15 min.',
+    primary: ru ? 'Забронировать стенд' : 'Book a stand',
+    secondary: ru ? 'Скачать каталог' : 'Download catalog',
+    href: `/${locale}/request-stand/`,
+    href2: `/${locale}/exhibitors/packages/`,
+  },
+  visitor: {
+    title: ru ? 'Получите бесплатный билет' : 'Get your free ticket',
+    text: ru ? 'QR-билет на почту за 2 минуты. Вход без очереди.' : 'QR ticket to email in 2 min. Skip the line.',
+    primary: ru ? 'Получить билет' : 'Get ticket',
+    secondary: ru ? 'Как добраться' : 'How to get there',
+    href: `/${locale}/visitors/tickets/`,
+    href2: `/${locale}/venue/how-to-get-there/`,
+  },
+  organizer: {
+    title: ru ? 'Проведите своё событие в SOF EXPO' : 'Host your event at SOF EXPO',
+    text: ru ? '4400 м² зал + 5000 м² улица, 700 кВт, кафе 350 мест.' : '4400 m² hall + 5000 m² outdoor, 700 kW, 350-seat café.',
+    primary: ru ? 'Забронировать площадку' : 'Book venue',
+    secondary: ru ? 'Тех. спецификация' : 'Tech specs',
+    href: `/${locale}/organizers/`,
+    href2: `/${locale}/venue/tech-specs/`,
+  },
+  sponsor: {
+    title: ru ? 'Станьте спонсором' : 'Become a sponsor',
+    text: ru ? 'Охват 70 000+ посетителей. Презентация за 10 минут.' : '70 000+ reach. Deck in 10 min.',
+    primary: ru ? 'Стать спонсором' : 'Become sponsor',
+    secondary: ru ? 'Медиа-кит' : 'Media kit',
+    href: `/${locale}/exhibitors/sponsorship/`,
+    href2: `/${locale}/news/media-kit/`,
+  },
+  contact: {
+    title: ru ? 'Остались вопросы?' : 'Have questions?',
+    text: ru ? 'Менеджер отвечает за 2 минуты в Telegram/WhatsApp.' : 'Manager replies in 2 min on Telegram/WhatsApp.',
+    primary: ru ? 'Написать менеджеру' : 'Contact manager',
+    secondary: ru ? 'Контакты' : 'Contacts',
+    href: conversionConfig.contacts.telegramManager,
+    href2: `/${locale}/contacts/`,
+  },
+};
+
+const d = defaults[intent];
+const finalTitle = title || (eventName ? (ru ? `Стенд на ${eventName}` : `Stand at ${eventName}`) : d.title);
+const finalText = text || d.text;
+const finalPrimary = primaryLabel || d.primary;
+const finalPrimaryHref = primaryHref || d.href;
+const finalSecondary = secondaryLabel || d.secondary;
+const finalSecondaryHref = secondaryHref || d.href2;
+---
+
+{variant === 'inline' && (
+  <div class="smart-cta smart-cta--inline" translate="no" data-intent={intent} data-variant="inline">
+    <div class="smart-cta__content">
+      <h3 class="smart-cta__title">{finalTitle}</h3>
+      <p class="smart-cta__text">{finalText}</p>
+    </div>
+    <div class="smart-cta__actions">
+      <a class="btn btn--gold" href={finalPrimaryHref} data-cta={`${intent}-primary`} data-source="inline-cta">{finalPrimary}</a>
+      {finalSecondary && <a class="btn btn--ghost btn--sm" href={finalSecondaryHref} data-cta={`${intent}-secondary`} data-source="inline-cta">{finalSecondary}</a>}
+    </div>
+  </div>
+)}
+
+{variant === 'sidebar' && (
+  <aside class="smart-cta smart-cta--sidebar" translate="no" data-intent={intent} data-variant="sidebar">
+    <p class="smart-cta__kicker">{ru ? 'Не откладывайте' : "Don't postpone"}</p>
+    <h4 class="smart-cta__title">{finalTitle}</h4>
+    <p class="smart-cta__text">{finalText}</p>
+    <a class="btn btn--gold" href={finalPrimaryHref} data-cta={`${intent}-primary`} data-source="sidebar">{finalPrimary}</a>
+    <div class="smart-cta__channels">
+      <a href={conversionConfig.contacts.telegramManager} target="_blank" rel="noopener" data-channel="telegram">Telegram</a>
+      <a href={conversionConfig.contacts.whatsapp} target="_blank" rel="noopener" data-channel="whatsapp">WhatsApp</a>
+      <a href={`tel:${conversionConfig.contacts.phone}`}>{conversionConfig.contacts.phoneDisplay}</a>
+    </div>
+  </aside>
+)}
+
+{variant === 'card' && (
+  <div class="smart-cta smart-cta--card" translate="no" data-intent={intent}>
+    <div class="smart-cta__icon">
+      {intent === 'exhibitor' && '📐'}
+      {intent === 'visitor' && '🎟️'}
+      {intent === 'organizer' && '🏢'}
+      {intent === 'sponsor' && '⭐'}
+      {intent === 'contact' && '💬'}
+    </div>
+    <h4>{finalTitle}</h4>
+    <p>{finalText}</p>
+    <a class="btn btn--sm" href={finalPrimaryHref} data-cta={`${intent}-card`}>{finalPrimary}</a>
+  </div>
+)}
+
+{variant === 'hero' && (
+  <div class="smart-cta smart-cta--hero" translate="no" data-intent={intent}>
+    <div class="smart-cta__hero-content">
+      <h2>{finalTitle}</h2>
+      <p>{finalText}</p>
+      <div class="btn-row">
+        <a class="btn btn--gold" href={finalPrimaryHref} data-cta={`${intent}-hero-primary`}>{finalPrimary}</a>
+        <a class="btn btn--ghost" href={finalSecondaryHref} data-cta={`${intent}-hero-secondary`}>{finalSecondary}</a>
+      </div>
+    </div>
+  </div>
+)}
+
+{variant === 'footer' && (
+  <section class="sec sec--forest smart-cta--footer" translate="no" data-intent={intent}>
+    <div class="wrap">
+      <div class="smart-cta__footer-in">
+        <div>
+          <p class="kicker" style="color: var(--gold-soft)">{ru ? 'Готовы к участию?' : 'Ready to exhibit?'}</p>
+          <h2 style="color:#fff">{finalTitle}</h2>
+          <p class="lead" style="color: rgba(255,255,255,0.78)">{finalText}</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn--light" href={finalPrimaryHref} data-cta={`${intent}-footer-primary`}>{finalPrimary}</a>
+          <a class="btn btn--ghost" href={finalSecondaryHref} data-cta={`${intent}-footer-secondary`}>{finalSecondary}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .smart-cta--inline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px 24px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--gold);
+    border-radius: 12px;
+    box-shadow: var(--shadow-soft);
+  }
+  .smart-cta--inline .smart-cta__title {
+    margin: 0 0 4px;
+    font-size: 17px;
+    line-height: 1.25;
+  }
+  .smart-cta--inline .smart-cta__text {
+    margin: 0;
+    font-size: 13px;
+    color: var(--ink-60);
+    line-height: 1.45;
+    max-width: 48ch;
+  }
+  .smart-cta--inline .smart-cta__actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex: none;
+    flex-wrap: wrap;
+  }
+
+  .smart-cta--sidebar {
+    position: sticky;
+    top: calc(var(--header-h) + 16px);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 18px;
+    display: grid;
+    gap: 12px;
+    box-shadow: var(--shadow-soft);
+  }
+  .smart-cta--sidebar .smart-cta__kicker {
+    margin: 0;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--moss);
+    font-weight: 700;
+  }
+  .smart-cta--sidebar .smart-cta__title {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.25;
+  }
+  .smart-cta--sidebar .smart-cta__text {
+    margin: 0;
+    font-size: 12px;
+    color: var(--ink-60);
+    line-height: 1.5;
+  }
+  .smart-cta__channels {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+  }
+  .smart-cta__channels a {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--evergreen);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .smart-cta__channels a:hover {
+    text-decoration: underline;
+  }
+
+  .smart-cta--card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px;
+    display: grid;
+    gap: 8px;
+    text-align: center;
+  }
+  .smart-cta--card .smart-cta__icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto;
+    border-radius: 12px;
+    background: var(--cream-2);
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+  }
+  .smart-cta--card h4 {
+    margin: 0;
+    font-size: 15px;
+  }
+  .smart-cta--card p {
+    margin: 0;
+    font-size: 12px;
+    color: var(--ink-60);
+    line-height: 1.45;
+  }
+
+  .smart-cta--footer .smart-cta__footer-in {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 700px) {
+    .smart-cta--inline {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .smart-cta--inline .smart-cta__actions {
+      width: 100%;
+    }
+    .smart-cta--inline .smart-cta__actions .btn {
+      flex: 1;
+      justify-content: center;
+    }
+  }
+</style>
+
+<script translate="no">
+  (() => {
+    document.querySelectorAll('[data-cta]').forEach(el => {
+      el.addEventListener('click', () => {
+        const cta = (el as HTMLElement).dataset.cta;
+        const source = (el as HTMLElement).dataset.source || 'smart-cta';
+        try { (window as any).sofTrack?.('cta_click', { cta, source, path: location.pathname }); } catch {}
+      });
+    });
+  })();
+</script>

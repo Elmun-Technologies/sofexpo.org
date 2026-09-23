@@ -1,0 +1,191 @@
+---
+/**
+ * VisitorForm — ticket / visitor registration, distinct from exhibitor
+ * Light, fast, QR-focused
+ */
+import type { SourceLocale as Locale } from '@/i18n/config';
+
+interface Props {
+  locale: Locale;
+  eventName?: string;
+  id?: string;
+}
+
+const { locale, eventName = '', id = 'visitor-form' } = Astro.props as Props;
+const ru = locale === 'ru';
+const endpoint = (import.meta.env.PUBLIC_LEAD_ENDPOINT ?? '').trim();
+
+const L = {
+  title: ru ? 'Получить бесплатный билет' : 'Get free ticket',
+  sub: ru ? 'Для профильных специалистов. QR-билет на почту за 2 минуты.' : 'For trade visitors. QR ticket to email in 2 min.',
+  name: ru ? 'Имя и фамилия' : 'Full name',
+  company: ru ? 'Компания' : 'Company',
+  position: ru ? 'Должность' : 'Position',
+  positions: ru ? ['Руководитель', 'Закупщик', 'Технолог', 'Маркетолог', 'Дистрибьютор', 'Другое'] : ['Owner/CEO', 'Buyer', 'Technologist', 'Marketing', 'Distributor', 'Other'],
+  phone: ru ? 'Телефон' : 'Phone',
+  email: 'Email',
+  industry: ru ? 'Отрасль' : 'Industry',
+  industries: ru ? ['Продукты', 'Стройка', 'Агро', 'Авто', 'E-commerce', 'Образование', 'Другое'] : ['Food', 'Build', 'Agro', 'Auto', 'E-commerce', 'Education', 'Other'],
+  purpose: ru ? 'Цель визита' : 'Visit purpose',
+  purposes: ru ? ['Закупки', 'Поиск поставщиков', 'Партнёрства', 'Изучение рынка', 'Деловая программа'] : ['Purchasing', 'Find suppliers', 'Partnerships', 'Market research', 'Business program'],
+  event: ru ? 'Выставка' : 'Exhibition',
+  submit: ru ? 'Получить билет' : 'Get ticket',
+  consent: ru ? 'Согласен на обработку данных. Билет придёт на email.' : 'I agree to data processing. Ticket to email.',
+  ok: ru ? 'Билет отправлен на почту! Проверьте спам. До встречи в SOF EXPO!' : 'Ticket sent to email! Check spam. See you at SOF EXPO!',
+  err: ru ? 'Заполните имя, телефон и email' : 'Please fill name, phone, email',
+};
+---
+
+<form translate="no" class="form-vi" id={id} data-lead-form data-form-type="visitor" data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} novalidate>
+  <div class="form-vi__head">
+    <div class="form-vi__icon">🎟️</div>
+    <div>
+      <h3>{L.title}</h3>
+      <p>{L.sub}</p>
+    </div>
+  </div>
+
+  <div class="form-vi__grid">
+    <div class="field">
+      <label>{L.name} *</label>
+      <input name="name" required autocomplete="name" placeholder={ru ? 'Алишер Алиев' : 'John Smith'} />
+    </div>
+    <div class="field">
+      <label>{L.company}</label>
+      <input name="company" autocomplete="organization" placeholder={ru ? 'ООО Компания' : 'Company LLC'} />
+    </div>
+    <div class="field">
+      <label>{L.position}</label>
+      <select name="position">
+        <option value="">—</option>
+        {L.positions.map(p => <option>{p}</option>)}
+      </select>
+    </div>
+    <div class="field">
+      <label>{L.phone} *</label>
+      <input name="phone" type="tel" required autocomplete="tel" placeholder="+998" />
+    </div>
+    <div class="field form-vi__full">
+      <label>{L.email} *</label>
+      <input name="email" type="email" required autocomplete="email" placeholder="you@company.com" />
+    </div>
+    <div class="field">
+      <label>{L.industry} *</label>
+      <select name="industry" required>
+        <option value="">—</option>
+        {L.industries.map(i => <option>{i}</option>)}
+      </select>
+    </div>
+    <div class="field">
+      <label>{L.purpose}</label>
+      <select name="purpose">
+        <option value="">—</option>
+        {L.purposes.map(p => <option>{p}</option>)}
+      </select>
+    </div>
+    {eventName && (
+      <div class="field form-vi__full">
+        <label>{L.event}</label>
+        <input name="event" value={eventName} readonly />
+      </div>
+    )}
+  </div>
+
+  <label class="form-vi__consent">
+    <input type="checkbox" name="consent" required />
+    <span>{L.consent}</span>
+  </label>
+
+  <button class="btn btn--gold form-vi__submit" type="submit">{L.submit}</button>
+  <p class="form-vi__note">{ru ? 'Бесплатно · QR на почту · вход без очереди' : 'Free · QR to email · skip the line'}</p>
+  <p class="form__msg" role="status" aria-live="polite" hidden></p>
+</form>
+
+<style>
+  .form-vi {
+    background: linear-gradient(180deg, #ffffff 0%, #f8faf8 100%);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 20px;
+    display: grid;
+    gap: 16px;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+  .form-vi::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--moss), var(--gold));
+  }
+  .form-vi__head {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .form-vi__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--cream-2);
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    flex: none;
+  }
+  .form-vi__head h3 {
+    margin: 0 0 4px;
+    font-size: 18px;
+  }
+  .form-vi__head p {
+    margin: 0;
+    font-size: 12px;
+    color: var(--ink-60);
+    line-height: 1.4;
+  }
+  .form-vi__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .form-vi__full {
+    grid-column: 1 / -1;
+  }
+  .form-vi__consent {
+    display: flex;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--ink-40);
+    line-height: 1.4;
+  }
+  .form-vi__consent input {
+    width: 16px;
+    height: 16px;
+    flex: none;
+    margin-top: 1px;
+    accent-color: var(--evergreen);
+  }
+  .form-vi__submit {
+    width: 100%;
+    padding: 12px;
+    font-weight: 700;
+  }
+  .form-vi__note {
+    margin: 0;
+    text-align: center;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-40);
+  }
+  @media (max-width: 560px) {
+    .form-vi__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

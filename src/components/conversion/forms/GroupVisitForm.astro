@@ -1,0 +1,102 @@
+---
+/**
+ * GroupVisitForm — group visits 10+ people, transfer, guide
+ */
+import type { SourceLocale as Locale } from '@/i18n/config';
+
+interface Props {
+  locale: Locale;
+  id?: string;
+}
+
+const { locale, id = 'group-form' } = Astro.props as Props;
+const ru = locale === 'ru';
+const endpoint = (import.meta.env.PUBLIC_LEAD_ENDPOINT ?? '').trim();
+
+const L = {
+  title: ru ? 'Групповой визит' : 'Group visit',
+  sub: ru ? 'От 10 человек — трансфер, гид, кофе-брейк. Бесплатно для бизнеса.' : '10+ people — transfer, guide, coffee break. Free for business.',
+  name: ru ? 'Контактное лицо' : 'Contact person',
+  company: ru ? 'Компания / вуз' : 'Company / university',
+  phone: ru ? 'Телефон' : 'Phone',
+  email: 'Email',
+  count: ru ? 'Кол-во человек' : 'Group size',
+  counts: ['10–15', '16–25', '26–50', '50+'],
+  date: ru ? 'Дата визита' : 'Visit date',
+  purpose: ru ? 'Цель' : 'Purpose',
+  purposes: ru ? ['Закупки', 'Обучение', 'Партнёрства', 'Экскурсия'] : ['Purchasing', 'Learning', 'Partnerships', 'Tour'],
+  comment: ru ? 'Пожелания' : 'Wishes',
+  submit: ru ? 'Забронировать групповой визит' : 'Book group visit',
+  ok: ru ? 'Заявка принята! Организуем трансфер и гида. Ответ за 2 часа.' : 'Request received! We’ll arrange transfer and guide. Reply in 2 hours.',
+  err: ru ? 'Заполните имя, телефон и кол-во' : 'Fill name, phone and size',
+};
+---
+
+<form translate="no" class="form-gr" id={id} data-lead-form data-form-type="group" data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} novalidate>
+  <div class="form-gr__head">
+    <h3>👥 {L.title}</h3>
+    <p>{L.sub}</p>
+    <div class="form-gr__benefits">
+      <span>🚌 {ru ? 'Трансфер' : 'Transfer'}</span>
+      <span>🎧 {ru ? 'Гид' : 'Guide'}</span>
+      <span>☕ {ru ? 'Кофе-брейк' : 'Coffee break'}</span>
+    </div>
+  </div>
+
+  <div class="form-gr__grid">
+    <div class="field"><label>{L.name} *</label><input name="name" required /></div>
+    <div class="field"><label>{L.company}</label><input name="company" /></div>
+    <div class="field"><label>{L.phone} *</label><input name="phone" type="tel" required placeholder="+998" /></div>
+    <div class="field"><label>{L.email}</label><input name="email" type="email" /></div>
+    <div class="field"><label>{L.count} *</label><select name="count" required><option value="">—</option>{L.counts.map(c => <option>{c}</option>)}</select></div>
+    <div class="field"><label>{L.date}</label><input name="date" type="text" placeholder={ru ? 'Напр. 21 окт' : 'E.g. Oct 21'} /></div>
+    <div class="field"><label>{L.purpose}</label><select name="purpose"><option value="">—</option>{L.purposes.map(p => <option>{p}</option>)}</select></div>
+    <div class="field"><label>{L.comment}</label><input name="comment" placeholder={ru ? 'Трансфер, язык гида...' : 'Transfer, guide language...'} /></div>
+  </div>
+
+  <button class="btn btn--gold" type="submit">{L.submit}</button>
+  <p class="form__msg" role="status" aria-live="polite" hidden></p>
+</form>
+
+<style>
+  .form-gr {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 20px;
+    display: grid;
+    gap: 14px;
+    box-shadow: var(--shadow);
+  }
+  .form-gr__head h3 {
+    margin: 0 0 6px;
+    font-size: 18px;
+  }
+  .form-gr__head p {
+    margin: 0 0 10px;
+    font-size: 13px;
+    color: var(--ink-60);
+    line-height: 1.45;
+  }
+  .form-gr__benefits {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .form-gr__benefits span {
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: var(--cream-2);
+    font-size: 11px;
+    font-weight: 600;
+    border: 1px solid var(--line);
+  }
+  .form-gr__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  @media (max-width: 560px) {
+    .form-gr__grid { grid-template-columns: 1fr; }
+  }
+</style>

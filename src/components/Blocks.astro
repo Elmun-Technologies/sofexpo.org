@@ -18,6 +18,14 @@ import CalendarRail from '@/components/CalendarRail.astro';
 import VenuePlan from '@/components/VenuePlan.astro';
 import MapSchema from '@/components/MapSchema.astro';
 import TeamWall from '@/components/TeamWall.astro';
+import ExhibitorForm from '@/components/conversion/forms/ExhibitorForm.astro';
+import VisitorForm from '@/components/conversion/forms/VisitorForm.astro';
+import OrganizerForm from '@/components/conversion/forms/OrganizerForm.astro';
+import SponsorForm from '@/components/conversion/forms/SponsorForm.astro';
+import CallbackForm from '@/components/conversion/forms/CallbackForm.astro';
+import CatalogForm from '@/components/conversion/forms/CatalogForm.astro';
+import GroupVisitForm from '@/components/conversion/forms/GroupVisitForm.astro';
+import SmartCta from '@/components/conversion/SmartCta.astro';
 
 const { blocks, locale } = Astro.props as { blocks: Block[]; locale: Locale };
 const t = useUI(locale);
@@ -281,16 +289,41 @@ const H = (p?: string) => {
           )}
 
           {b.type === 'form' && (
-            <LeadForm
-              locale={locale}
-              title={b.title}
-              subtitle={b.text}
-              directions={b.directions}
-              areas={b.areas}
-              eventName={b.event}
-              note={b.note}
-              id={b.id ?? 'lead-form'}
-            />
+            <>
+              {(b as any).formType === 'exhibitor' && (
+                <ExhibitorForm locale={locale} eventName={b.event} id={b.id ?? 'exhibitor-form'} />
+              )}
+              {(b as any).formType === 'visitor' && (
+                <VisitorForm locale={locale} eventName={b.event} id={b.id ?? 'visitor-form'} />
+              )}
+              {(b as any).formType === 'organizer' && (
+                <OrganizerForm locale={locale} id={b.id ?? 'organizer-form'} />
+              )}
+              {(b as any).formType === 'sponsor' && (
+                <SponsorForm locale={locale} id={b.id ?? 'sponsor-form'} />
+              )}
+              {(b as any).formType === 'callback' && (
+                <CallbackForm locale={locale} id={b.id ?? 'callback-form'} title={b.title} />
+              )}
+              {(b as any).formType === 'catalog' && (
+                <CatalogForm locale={locale} eventName={b.event} id={b.id ?? 'catalog-form'} />
+              )}
+              {(b as any).formType === 'group' && (
+                <GroupVisitForm locale={locale} id={b.id ?? 'group-form'} />
+              )}
+              {!(b as any).formType && (
+                <LeadForm
+                  locale={locale}
+                  title={b.title}
+                  subtitle={b.text}
+                  directions={b.directions}
+                  areas={b.areas}
+                  eventName={b.event}
+                  note={b.note}
+                  id={b.id ?? 'lead-form'}
+                />
+              )}
+            </>
           )}
 
           {b.type === 'faq' && <Faq locale={locale} items={(b.items as unknown as { q: string; a: string }[]) ?? []} title={b.title} />}

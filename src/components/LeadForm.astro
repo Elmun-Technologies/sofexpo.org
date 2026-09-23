@@ -58,7 +58,7 @@ const L = {
 const areaList = areas.length ? areas : L.areaOptions.filter(Boolean);
 ---
 
-<form class:list={['card', 'form-wrap', { 'form--compact': compact }]} id={id} data-lead-form data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} data-fallback={L.fallback} novalidate>
+<form translate="no" class:list={['card', 'form-wrap', { 'form--compact': compact }]} id={id} data-lead-form data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} data-fallback={L.fallback} novalidate>
   <div>
     <h3 style="margin-bottom:.25em">{title}</h3>
     {subtitle && <p class="muted small" style="margin:0">{subtitle}</p>}

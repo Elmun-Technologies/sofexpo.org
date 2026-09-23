@@ -86,6 +86,43 @@ test('quiz: without JavaScript all four steps render as one long form', { skip: 
   dom.window.close();
 });
 
+test('quiz: focused event-page mode runs three steps with a hidden show field', { skip: !existsSync(dist('en/events/foodera-expo/exhibitors/index.html')) && 'dist missing — run npm run build' }, async () => {
+  const dom = load('en/events/foodera-expo/exhibitors/index.html');
+  await new Promise((r) => setTimeout(r, 50));
+  const { document } = dom.window;
+  const quizzes = document.querySelectorAll('[data-quiz]');
+  const quiz = quizzes[0]; /* the focused inline quiz, modal copy comes second */
+  assert.ok(!quiz.closest('[data-quiz-modal]'), 'first quiz is the inline one');
+  const hidden = quiz.querySelector('input[type=hidden][name=event]');
+  assert.equal(hidden && hidden.value, 'FOODERA EXPO 2026', 'the show is carried as a hidden field');
+  assert.equal(quiz.querySelectorAll('fieldset[data-step]').length, 3, 'focused quiz has three steps');
+  assert.match(quiz.querySelector('[data-step-label]:not([hidden])').textContent, /Step 1 of 3/);
+  change(quiz.querySelector('input[name=goal]'));
+  assert.match(quiz.querySelector('[data-step-label]:not([hidden])').textContent, /Step 2 of 3/);
+  change(quiz.querySelector('input[name=area][value="18 m²"]'));
+  assert.ok(quiz.querySelector('[data-step="3"]').hidden === false, 'contact step is step 3');
+  dom.window.close();
+});
+
+test('quiz: re-clicking a chosen option still advances after going Back', { skip: !existsSync(dist('en/request-stand/index.html')) && 'dist missing — run npm run build' }, async () => {
+  const dom = load('en/request-stand/index.html');
+  await new Promise((r) => setTimeout(r, 50));
+  const { document } = dom.window;
+  const quiz = document.querySelector('[data-quiz]');
+  const goal = quiz.querySelector('input[name=goal]');
+  change(goal);
+  assert.ok(quiz.querySelector('[data-step="2"]').hidden === false);
+  const back = quiz.querySelector('[data-step="2"] [data-quiz-back]');
+  back.click();
+  assert.ok(quiz.querySelector('[data-step="1"]').hidden === false, 'back returns to step 1');
+  // re-click the already-checked option: `change` never fires, the click must advance
+  const click = new dom.window.MouseEvent('click', { bubbles: true });
+  Object.defineProperty(click, 'target', { value: goal });
+  quiz.querySelector('[data-quiz-form]').dispatchEvent(click);
+  assert.ok(quiz.querySelector('[data-step="2"]').hidden === false, 're-click advances from the revisited step');
+  dom.window.close();
+});
+
 test('quiz: zh edition translates questions, buttons and messages (strict build output)', { skip: !existsSync(dist('zh/request-stand/index.html')) && 'dist missing — run npm run build' }, async () => {
   const dom = load('zh/request-stand/index.html');
   await new Promise((r) => setTimeout(r, 50));

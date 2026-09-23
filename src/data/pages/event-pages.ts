@@ -261,6 +261,13 @@ export const eventPages: Record<string, EventPages> = {
               imageAlt: "Стенды FOODERA EXPO в монтаже",
             },
             {
+              type: "quiz",
+              title: "Подберём участие за 3 шага",
+              text: "Три вопроса — и менеджер пришлёт карту раздела, свободные метры и расчёт.",
+              event: "FOODERA EXPO 2026",
+              areas: ["9 м²", "12 м²", "18 м²", "36 м²+"],
+            },
+            {
               type: "form",
               title: "Заявка на участие в FOODERA EXPO 2026",
               text: "Укажите продукцию и объём — пришлём карту раздела и расчёт стенда.",
@@ -324,6 +331,13 @@ export const eventPages: Record<string, EventPages> = {
               ],
               image: "/images/hall-stand.jpg",
               imageAlt: "FOODERA EXPO stands under construction",
+            },
+            {
+              type: "quiz",
+              title: "Plan your participation in three steps",
+              text: "Three questions — and the manager sends the section map, free metres and the quote.",
+              event: "FOODERA EXPO 2026",
+              areas: ["9 m²", "12 m²", "18 m²", "36 m²+"],
             },
             {
               type: "form",
@@ -860,6 +874,13 @@ eventPages["buildpro-expo"] = {
           ],
         },
         {
+          type: "quiz",
+          title: "Подберём участие за 3 шага",
+          text: "Три вопроса — и менеджер пришлёт карту раздела, свободные метры и расчёт.",
+          event: "BUILD PRO EXPO 2026",
+          areas: ["9 м²", "18 м²", "36 м²", "улица 50 м²+"],
+        },
+        {
           type: "form",
           title: "Заявка на участие в BUILD PRO EXPO 2026",
           text: "Укажите продукт, желаемую площадь и потребность в демо-зоне.",
@@ -912,6 +933,13 @@ eventPages["buildpro-expo"] = {
             "Bring samples you can touch: at this show tactility decides.",
             "Leave a Russian and Uzbek price list on the stand — half the enquiries arrive after the show.",
           ],
+        },
+        {
+          type: "quiz",
+          title: "Plan your participation in three steps",
+          text: "Three questions — and the manager sends the section map, free metres and the quote.",
+          event: "BUILD PRO EXPO 2026",
+          areas: ["9 m²", "18 m²", "36 m²", "50 m²+ outdoors"],
         },
         {
           type: "form",
@@ -1414,6 +1442,13 @@ eventPages["agropro-expo"] = {
           ],
         },
         {
+          type: "quiz",
+          title: "Подберём участие за 3 шага",
+          text: "Три вопроса — и менеджер пришлёт карту раздела, свободные метры и расчёт.",
+          event: "AGROPRO EXPO 2027",
+          areas: ["9 м²", "18 м²", "36 м²", "улица 100 м²+"],
+        },
+        {
           type: "form",
           title: "Заявка на участие в AGROPRO EXPO 2027",
           text: "Укажите технику, габариты и потребность в электричестве.",
@@ -1465,6 +1500,13 @@ eventPages["agropro-expo"] = {
               text: "The sales window is short: applying after December means a less relevant section neighbourhood.",
             },
           ],
+        },
+        {
+          type: "quiz",
+          title: "Plan your participation in three steps",
+          text: "Three questions — and the manager sends the section map, free metres and the quote.",
+          event: "AGROPRO EXPO 2027",
+          areas: ["9 m²", "18 m²", "36 m²", "100 m²+ outdoors"],
         },
         {
           type: "form",
@@ -2334,6 +2376,13 @@ eventPages["world-edu-expo"] = {
           imageAlt: "Стенды вузов на WORLD EDU EXPO",
         },
         {
+          type: "quiz",
+          title: "Подберём участие за 3 шага",
+          text: "Три вопроса — и менеджер пришлёт карту раздела, свободные метры и расчёт.",
+          event: "WORLD EDU EXPO",
+          areas: ["Инфостойка", "Стенд с экраном", "Сессия в зале"],
+        },
+        {
           type: "form",
           title: "Заявка на участие в WORLD EDU",
           text: "Выберите формат и приложите список программ.",
@@ -2376,6 +2425,13 @@ eventPages["world-edu-expo"] = {
           ],
           image: "/images/hall-stand.jpg",
           imageAlt: "University stands at WORLD EDU EXPO",
+        },
+        {
+          type: "quiz",
+          title: "Plan your participation in three steps",
+          text: "Three questions — and the manager sends the section map, free metres and the quote.",
+          event: "WORLD EDU EXPO",
+          areas: ["Information desk", "Stand with a screen", "Hall session"],
         },
         {
           type: "form",
@@ -2858,6 +2914,13 @@ eventPages["ecom-retail-expo"] = {
           ],
         },
         {
+          type: "quiz",
+          title: "Подберём участие за 3 шага",
+          text: "Три вопроса — и менеджер пришлёт карту раздела, свободные метры и расчёт.",
+          event: "ECOM & RETAIL EXPO",
+          areas: ["9 м²", "12 м²", "Спонсорский пакет"],
+        },
+        {
           type: "form",
           title: "Заявка на участие в ECOM & RETAIL EXPO",
           text: "Опишите продукт или сервис и цель участия.",
@@ -2900,6 +2963,13 @@ eventPages["ecom-retail-expo"] = {
             "Book the photo zone early: slots close a week before opening.",
             "Want to speak at the forum? Send a topic and a case with numbers; the editor replies in two days.",
           ],
+        },
+        {
+          type: "quiz",
+          title: "Plan your participation in three steps",
+          text: "Three questions — and the manager sends the section map, free metres and the quote.",
+          event: "ECOM & RETAIL EXPO",
+          areas: ["9 m²", "12 m²", "Sponsorship package"],
         },
         {
           type: "form",

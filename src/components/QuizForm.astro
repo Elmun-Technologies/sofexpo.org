@@ -31,6 +31,9 @@ const {
   shows = [],
   areas = [],
   compact = false,
+  /** focused mode: the show is already known (event page) — step 1 collapses to a
+      hidden field and the funnel becomes three steps (goal → area → contact) */
+  event = '',
 } = Astro.props as {
   locale: Locale;
   title?: string;
@@ -42,11 +45,13 @@ const {
   /** stand-area option labels; defaults to the standard ladder */
   areas?: string[];
   compact?: boolean;
+  event?: string;
 };
 
 const t = useUI(locale);
 const ru = locale === 'ru';
 const endpoint = (import.meta.env.PUBLIC_LEAD_ENDPOINT ?? '').trim();
+const focused = !!event;
 
 const defaultShows = [...events.map((e) => e.brand[locale] ?? e.brand.en), t('quiz.q1any')];
 const showList = shows.length ? [...shows, t('quiz.q1any')] : defaultShows;
@@ -59,7 +64,14 @@ const goalList: { value: string; label: string }[] = [
 ];
 const areaList = areas.length ? [...areas, t('quiz.q3any')] : ['9 m²', '12 m²', '18 m²', '36 m²', '50+ m²', t('quiz.q3any')];
 
-const steps = [t('quiz.step1'), t('quiz.step2'), t('quiz.step3'), t('quiz.step4')];
+const steps = focused
+  ? [t('quiz.step1of3'), t('quiz.step2of3'), t('quiz.step3of3')]
+  : [t('quiz.step1'), t('quiz.step2'), t('quiz.step3'), t('quiz.step4')];
+/* data-step numbering shifts by one in focused mode: the show question is a hidden field */
+const goalStep = focused ? 1 : 2;
+const areaStep = focused ? 2 : 3;
+const contactStep = focused ? 3 : 4;
+const barWidth = focused ? '33%' : '25%';
 const phoneCodes = ['+998', '+7', '+90', '+86', '+996', '+992', '+966', '+971', '+48', '+49', '+44', '+1'];
 const tgHref = site.contacts.telegramManager;
 const telHref = `tel:${site.contacts.phoneMain.replace(/\s/g, '')}`;
@@ -83,32 +95,36 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
       ))}
     </div>
     <span class="quiz__bar">
-      <span class="quiz__fill" data-quiz-bar style="width:25%"></span>
+      <span class="quiz__fill" data-quiz-bar style={barWidth}></span>
     </span>
   </div>
 
   <form data-quiz-form novalidate>
-    {/* Step 1 — the show. Brand names are protected terms, never translated. */}
-    <fieldset class="quiz__step" data-step="1">
-      <legend tabindex="-1">{t('quiz.q1')}</legend>
-      <div class="quiz__opts">
-        {showList.map((label, i) => (
-          <label class="quiz__opt">
-            <input type="radio" name="event" value={label} data-unsure={i === showList.length - 1 ? '1' : undefined} />
-            <span class="quiz__opt-label">{label}</span>
-            <span class="quiz__opt-check">
-              <Icon name="check" size={15} />
-            </span>
-          </label>
-        ))}
-      </div>
-      <button class="quiz__back" type="button" data-quiz-back hidden>
-        <Icon name="arrow" size={14} /> {t('quiz.back')}
-      </button>
-    </fieldset>
+    {/* Focused mode carries the show as a hidden field instead of question 1 */}
+    {focused && <input type="hidden" name="event" value={event} />}
 
-    {/* Step 2 — the goal. One tap. */}
-    <fieldset class="quiz__step" data-step="2">
+    {!focused && (
+      <fieldset class="quiz__step" data-step="1">
+        <legend tabindex="-1">{t('quiz.q1')}</legend>
+        <div class="quiz__opts">
+          {showList.map((label, i) => (
+            <label class="quiz__opt">
+              <input type="radio" name="event" value={label} data-unsure={i === showList.length - 1 ? '1' : undefined} />
+              <span class="quiz__opt-label">{label}</span>
+              <span class="quiz__opt-check">
+                <Icon name="check" size={15} />
+              </span>
+            </label>
+          ))}
+        </div>
+        <button class="quiz__back" type="button" data-quiz-back hidden>
+          <Icon name="arrow" size={14} /> {t('quiz.back')}
+        </button>
+      </fieldset>
+    )}
+
+    {/* The goal. One tap. */}
+    <fieldset class="quiz__step" data-step={goalStep}>
       <legend tabindex="-1">{t('quiz.q2')}</legend>
       <div class="quiz__opts">
         {goalList.map((g) => (
@@ -127,7 +143,7 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
     </fieldset>
 
     {/* Step 3 — the area. Measurement strings stay locale-neutral. */}
-    <fieldset class="quiz__step" data-step="3">
+    <fieldset class="quiz__step" data-step={areaStep}>
       <legend tabindex="-1">{t('quiz.q3')}</legend>
       <div class="quiz__opts quiz__opts--row">
         {areaList.map((label, i) => (
@@ -146,7 +162,7 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
     </fieldset>
 
     {/* Step 4 — contact. The only typing step; everything above it is already answered. */}
-    <fieldset class="quiz__step" data-step="4" data-quiz-contact>
+    <fieldset class="quiz__step" data-step={contactStep} data-quiz-contact>
       <legend tabindex="-1">{t('quiz.contact')}</legend>
 
       <div class="form quiz-form-grid">
@@ -275,7 +291,15 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
         for (var k = 0; k < backs.length; k++) backs[k].hidden = current === 1;
       };
 
-      var advance = function () {
+      /* Any tap on a choice (fresh or repeat) moves forward. The click handler covers
+         re-clicking an already-selected option — the case `change` never fires for,
+         which used to dead-end a step after returning to it via Back. `change` covers
+         keyboard selection; the timestamp guard prevents the double advance. */
+      var lastClick = 0;
+      var choice = function (el) {
+        return el && el.type === 'radio' && el.name !== 'channel' && el.closest('[data-step]:not([data-quiz-contact])');
+      };
+      var move = function () {
         if (current < total) {
           current += 1;
           render();
@@ -284,10 +308,17 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
           steps[current - 1].scrollIntoView({ block: 'nearest' });
         }
       };
-
+      form.addEventListener('click', function (e) {
+        var el = e.target && e.target.closest ? e.target.closest('input[type=radio]') : null;
+        if (!choice(el)) return;
+        lastClick = Date.now();
+        if (el.checked) move();
+      });
       form.addEventListener('change', function (e) {
         var el = e.target;
-        if (el && el.type === 'radio' && el.name !== 'channel' && el.closest('[data-step]:not([data-step="4"])')) advance();
+        if (!choice(el)) return;
+        if (Date.now() - lastClick < 250) return; /* the click handler already moved */
+        move();
       });
       for (var b = 0; b < backs.length; b++) {
         backs[b].addEventListener('click', function () {

@@ -1,15 +1,21 @@
 ---
 /** Typography for rendered markdown of a news note or an analytical article. */
-const { layout = 'prose' } = Astro.props as { layout?: 'prose' | 'sidebar' };
+import type { SourceLocale } from '@/i18n/config';
+import { useUI } from '@/i18n/ui';
+import { scrollableTables } from '@/lib/scrollableTables.mjs';
+const { layout = 'prose', locale } = Astro.props as { layout?: 'prose' | 'sidebar'; locale: SourceLocale };
+const t = useUI(locale);
+const html = scrollableTables(await Astro.slots.render('default'), {label:t('table.label'), hint:t('table.hint')});
 ---
 
 <div class:list={['post-body', `post-body--${layout}`]}>
-  <slot />
+  <Fragment set:html={html} />
 </div>
 
 <style>
   .post-body {
     max-width: 74ch;
+    min-width: 0;
     font-size: 1.045rem;
     line-height: 1.68;
   }
@@ -18,7 +24,7 @@ const { layout = 'prose' } = Astro.props as { layout?: 'prose' | 'sidebar' };
   .post-body :global(h4) {
     font-family: var(--f-display);
     letter-spacing: -0.015em;
-    scroll-margin-top: 96px;
+    scroll-margin-top: 1rem;
   }
   .post-body :global(h2) {
     font-size: var(--t-h2);
@@ -70,7 +76,7 @@ const { layout = 'prose' } = Astro.props as { layout?: 'prose' | 'sidebar' };
   .post-body :global(table) {
     width: 100%;
     border-collapse: collapse;
-    margin: 1.6rem 0;
+    margin: 0;
     font-size: 0.95rem;
   }
   .post-body :global(th),

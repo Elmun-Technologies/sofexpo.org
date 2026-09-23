@@ -1,7 +1,7 @@
 ---
 /** A single press release or announcement. */
 import type { GetStaticPaths } from 'astro';
-import { locales } from '@/i18n/config';
+import { sourceLocales as locales } from '@/i18n/config';
 import { getCollection, render } from 'astro:content';
 import { ownsPost, type PostKind } from '@/lib/contentOwnership';
 import PostDetail from '@/components/PostDetail.astro';

@@ -1,0 +1,19 @@
+<script>
+  // Mark overflow without moving or replacing table content. The server-rendered
+  // wrapper remains scrollable and keyboard-accessible with JavaScript disabled.
+  const observer = new ResizeObserver(entries => {
+    for (const entry of entries) {
+      const region = entry.target.closest<HTMLElement>('.table-scroll');
+      if (!region) continue;
+      const overflows = region.scrollWidth > region.clientWidth + 1;
+      region.parentElement!.dataset.overflow = String(overflows);
+      if (overflows) region.setAttribute('tabindex', '0');
+      else region.removeAttribute('tabindex');
+    }
+  });
+  document.querySelectorAll<HTMLElement>('.table-scroll').forEach(region => {
+    observer.observe(region);
+    const table = region.querySelector('table');
+    if (table) observer.observe(table);
+  });
+</script>

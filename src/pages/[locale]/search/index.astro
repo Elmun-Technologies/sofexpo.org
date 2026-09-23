@@ -4,7 +4,7 @@
  * ranked in 30 lines of vanilla JS. Progressive: without JS the page still lists
  * every section by group, which is what a crawler and a keyboard user need.
  */
-import type { Locale } from '@/i18n/config';
+import type { SourceLocale as Locale } from '@/i18n/config';
 import { localize } from '@/i18n/config';
 import { searchDocs } from '@/lib/search';
 import { rootOnlyPaths } from '@/lib/hostRoutes';
@@ -23,6 +23,7 @@ const locale = Astro.params.locale as Locale;
 const ru = locale === 'ru';
 const L = (p: string) => localize(locale, p);
 const docs = await searchDocs(locale);
+const kindLabels = ru ? { page: 'Страница', event: 'Выставка', news: 'Новости', articles: 'Аналитика' } : { page: 'Page', event: 'Exhibition', news: 'News', articles: 'Insights' };
 const index = docs.map(({ title, text, href, kind }) => ({ title, text, href, kind }));
 
 const groups: { title: string; items: { label: string; href: string; note?: string }[] }[] = [
@@ -81,7 +82,7 @@ const groups: { title: string; items: { label: string; href: string; note?: stri
   </section>
 </Base>
 
-<script define:vars={{ index, locale }}>
+<script define:vars={{ index, locale, kindLabels }}>
   const input = document.getElementById('q');
   const box = document.querySelector('.sresults');
   const count = document.querySelector('.scount');
@@ -118,7 +119,7 @@ const groups: { title: string; items: { label: string; href: string; note?: stri
     box.innerHTML = list
       .map(
         (d) =>
-          `<a class="shit" href="${d.href}"><b>${esc(d.title)}</b><span>${esc(d.text)}</span><em>${esc(d.kind)}</em></a>`,
+          `<a class="shit" href="${d.href}"><b>${esc(d.title)}</b><span>${esc(d.text)}</span><em>${esc(kindLabels[d.kind] || d.kind)}</em></a>`,
       )
       .join('') || `<p class="muted">${locale === 'ru' ? 'Ничего не найдено. Напишите нам — подскажем раздел.' : 'Nothing found. Write to us and we will point you to the right page.'}</p>`;
   }

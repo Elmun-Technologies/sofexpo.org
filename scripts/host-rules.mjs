@@ -59,7 +59,7 @@ export const editorialOwners = loadEditorial();
 export const ROOT_HOST = map.root;
 export const SECTIONS = map.sections;
 export const HOSTS = map.hosts;
-export const LOCALES = ["ru", "en"];
+export const LOCALES = ["ru", "en", "zh", "tr"];
 
 export function hostOfEvent(slug) {
   return HOSTS.find((h) => h.event === slug) ?? null;

@@ -4,7 +4,7 @@
  * `src/data/pages/event-pages.ts`; these blocks pull the per-event facts out of
  * `src/data/events.ts` so every show reports its own numbers, sections and materials.
  */
-import type { Locale } from '@/i18n/config';
+import type { SourceLocale as Locale } from '@/i18n/config';
 import { localize } from '@/i18n/config';
 import type { ExpoEvent } from '@/data/events';
 import { site } from '@/data/site';
@@ -16,6 +16,9 @@ import StatBand from '@/components/StatBand.astro';
 import Faq from '@/components/Faq.astro';
 import EventCard from '@/components/EventCard.astro';
 import Icon from '@/components/Icon.astro';
+import DownloadNotice from '@/components/DownloadNotice.astro';
+import { isSampleDownload } from '@/lib/downloads.mjs';
+import { useUI } from '@/i18n/ui';
 import SpeakerWall from '@/components/SpeakerWall.astro';
 import { speakers as posterSpeakers } from '@/data/speakers';
 
@@ -243,6 +246,7 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
     <section class:list={['sec', 'reveal', `sec--${tone}`]}>
       <div class="wrap">
         <SectionHead locale={locale} kicker={head.k} title={head.t} text={head.text} />
+        <DownloadNotice locale={locale} hrefs={event.materials.map(m => m.href)} />
         <div class="files">
           {event.materials.map((m) => (
             <a href={m.href.startsWith('http') ? m.href : m.href} rel="noopener" download={!m.href.startsWith('http')}>
@@ -251,7 +255,7 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
               </span>
               <span>
                 <b>{m.title[locale]}</b>
-                <small>{m.type === 'catalog' ? (ru ? 'Каталог · PDF' : 'Catalogue · PDF') : m.type === 'video' ? (ru ? 'Видео' : 'Video') : m.type === 'photo' ? (ru ? 'Фотоотчёт' : 'Photo report') : 'PDF'}</small>
+                <small>{isSampleDownload(m.href) ? useUI(locale)('downloads.sample') : m.type === 'catalog' ? (ru ? 'Каталог · PDF' : 'Catalogue · PDF') : m.type === 'video' ? (ru ? 'Видео' : 'Video') : m.type === 'photo' ? (ru ? 'Фотоотчёт' : 'Photo report') : 'PDF'}</small>
               </span>
               <span class="files__go">{ru ? 'Открыть' : 'Open'} →</span>
             </a>

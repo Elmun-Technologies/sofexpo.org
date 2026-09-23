@@ -13,7 +13,7 @@
  * `withWordmark` renders the name as real text (never outlined), which is what allows a screen reader
  * and a print stylesheet to read it.
  */
-import type { Locale } from '@/i18n/config';
+import type { SourceLocale as Locale } from '@/i18n/config';
 import type { HostBrand } from '@/data/brands';
 
 const { brand, size = 34, withWordmark = false, locale = 'ru' as Locale, tone = 'auto' } = Astro.props as {

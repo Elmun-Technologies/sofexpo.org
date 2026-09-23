@@ -1,4 +1,4 @@
-import { locales, type Locale } from '@/i18n/config';
+import { sourceLocales as locales, type SourceLocale as Locale } from '@/i18n/config';
 import { events, type ExpoEvent } from '@/data/events';
 
 /** Static paths for a plain page in both locales. */

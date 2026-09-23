@@ -5,7 +5,7 @@
  * page of AGROPRO are different documents, not the same grid with new dates.
  */
 import type { GetStaticPaths } from 'astro';
-import { locales, localize } from '@/i18n/config';
+import { sourceLocales as locales, localize } from '@/i18n/config';
 import { clusterMoved, isBuiltHere } from '@/data/hosts';
 import MovedNotice from '@/components/MovedNotice.astro';
 import { events } from '@/data/events';

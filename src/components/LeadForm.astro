@@ -185,7 +185,7 @@ const areaList = areas.length ? areas : L.areaOptions.filter(Boolean);
           localStorage.setItem(key, JSON.stringify(all));
         } catch (e) {}
       }
-      msg.textContent = form.dataset.ok || 'Received.';
+      msg.textContent = endpoint ? form.dataset.ok : form.dataset.fallback;
       form.querySelectorAll('input:not([type=checkbox]):not([readonly]), textarea, select').forEach((el) => (el.value = ''));
     });
   });

@@ -1,0 +1,29 @@
+---
+import type { Locale } from '@/i18n/config';
+import { useUI } from '@/i18n/ui';
+import { site } from '@/data/site';
+import { isSampleDownload } from '@/lib/downloads.mjs';
+import Icon from '@/components/Icon.astro';
+
+const { locale, hrefs } = Astro.props as { locale: Locale; hrefs: string[] };
+const t = useUI(locale);
+const hasSamples = hrefs.some(isSampleDownload);
+---
+{hasSamples && (
+  <aside class="download-notice" aria-label={t('downloads.sample')}>
+    <span class="download-notice__icon"><Icon name="doc" size={20} /></span>
+    <div>
+      <strong>{t('downloads.sample')}</strong>
+      <p>{t('downloads.notice')}</p>
+      <a href={`mailto:${site.contacts.email}`}>{t('downloads.request')} <span aria-hidden="true">↗</span></a>
+    </div>
+  </aside>
+)}
+<style>
+  .download-notice { display: flex; align-items: flex-start; gap: .85rem; padding: 1.15rem 1.25rem; margin-bottom: 1rem; border: 1px solid #b78b4655; border-radius: .5rem; background: #f6f0e4; color: #173e35; }
+  .download-notice__icon { flex: 0 0 auto; padding-top: .15rem; }
+  .download-notice strong { font-weight: 650; font-size: .95rem; }
+  .download-notice p { margin: .35rem 0 .5rem; max-width: 78ch; font-size: .9rem; line-height: 1.6; }
+  .download-notice a { font-weight: 600; font-size: .9rem; text-decoration: underline; text-underline-offset: .2em; }
+  .download-notice a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+</style>

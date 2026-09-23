@@ -11,3 +11,9 @@ dist-hosts/
 
 # stock-photo research scratch (temp; approved copies live in public/images/)
 image-search/
+
+# Local QA and translation tooling (never shipped)
+.cache/
+.venv/
+test-results/
+playwright-report/

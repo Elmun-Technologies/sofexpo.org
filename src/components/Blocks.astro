@@ -4,9 +4,12 @@
  * so no two pages share the same composition while the markup stays one system.
  */
 import type { Block, BlockCard, BlockFile, BlockLink, BlockRow, BlockShot, BlockStat } from '@/data/pages/types';
-import { localize, type Locale } from '@/i18n/config';
+import { localize, type SourceLocale as Locale } from '@/i18n/config';
 import { useUI } from '@/i18n/ui';
 import Icon from '@/components/Icon.astro';
+import TableScroll from '@/components/TableScroll.astro';
+import DownloadNotice from '@/components/DownloadNotice.astro';
+import { isSampleDownload } from '@/lib/downloads.mjs';
 import Photo from '@/components/Photo.astro';
 import StatBand from '@/components/StatBand.astro';
 import LeadForm from '@/components/LeadForm.astro';
@@ -152,7 +155,7 @@ const H = (p?: string) => {
           )}
 
           {b.type === 'table' && (
-            <div class="table-wrap">
+            <TableScroll locale={locale}>
               <table class:list={['table', { 'table--rates': b.plain }]}>
                 {b.head?.length ? (
                   <thead>
@@ -169,7 +172,7 @@ const H = (p?: string) => {
                   ))}
                 </tbody>
               </table>
-            </div>
+            </TableScroll>
           )}
 
           {b.type === 'steps' && (
@@ -214,6 +217,8 @@ const H = (p?: string) => {
           )}
 
           {b.type === 'files' && (
+            <>
+            <DownloadNotice locale={locale} hrefs={((b.items ?? []) as BlockFile[]).map(f => f.href)} />
             <div class="files">
               {((b.items ?? []) as BlockFile[]).map((f) => (
                 <a href={H(f.href)} target={/^https?:/.test(f.href) ? '_blank' : undefined} rel="noopener" download={!/^https?:/.test(f.href)}>
@@ -222,12 +227,13 @@ const H = (p?: string) => {
                   </span>
                   <span>
                     <b>{f.title}</b>
-                    <small>{f.note ?? (f.href.endsWith('.pdf') ? 'PDF' : ru ? 'Материалы' : 'Material')}</small>
+                    <small>{isSampleDownload(f.href) ? t('downloads.sample') : f.note ?? (f.href.endsWith('.pdf') ? 'PDF' : ru ? 'Материалы' : 'Material')}</small>
                   </span>
                   <span class="files__go">{ru ? 'Открыть' : 'Open'} →</span>
                 </a>
               ))}
             </div>
+            </>
           )}
 
           {b.type === 'gallery' && (
@@ -373,26 +379,6 @@ const H = (p?: string) => {
   }
   .prose :global(strong) {
     color: var(--evergreen);
-  }
-  .table-wrap {
-    overflow-x: auto;
-    border: 1px solid var(--line);
-    border-radius: var(--r-lg);
-    background: var(--paper);
-  }
-  .table-wrap .table {
-    min-width: 620px;
-  }
-  .table-wrap th,
-  .table-wrap td {
-    padding: 1rem 1.1rem;
-  }
-  .table-wrap thead th {
-    background: var(--cream-2);
-    color: var(--ink);
-    font-family: var(--f-display);
-    font-size: .95rem;
-    width: auto;
   }
   .steps {
     list-style: none;

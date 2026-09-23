@@ -10,7 +10,7 @@
  * is never consulted and every piece belongs to the centre.
  */
 import { CURRENT_HOST, ownerOf } from "@/data/hosts";
-import { localize, type Locale } from "@/i18n/config";
+import { localize, type SourceLocale as Locale } from "@/i18n/config";
 
 export type PostKind = "news" | "articles";
 

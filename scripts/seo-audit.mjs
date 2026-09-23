@@ -56,7 +56,8 @@ for (const file of files) {
   /* the bare root is a 301 redirect document (docs/08 §7, Q1), not a content
      page: no h1/og/hreflang contract — the existence check below still runs */
   if (url === "/") continue;
-  const isPost = /^\/(ru|en)\/(news|articles)\/[^/]+\/$/.test(url);
+  const cjk = url.startsWith("/zh/");
+  const isPost = /^\/(ru|en|zh|tr)\/(news|articles)\/[^/]+\/$/.test(url);
   const htmlRaw = readFileSync(file, "utf8");
   const html = htmlRaw.replace(/<script[\s\S]*?<\/script>/g, "");
 
@@ -86,14 +87,14 @@ for (const file of files) {
   if (title) {
     if (title.length > (isPost ? 96 : 78))
       warn(url, `title too long (${title.length} chars)`);
-    if (title.length < 22) warn(url, `title too short (${title.length} chars)`);
+    if (title.length < (cjk ? 8 : 22)) warn(url, `title too short (${title.length} chars)`);
     titleByUrl.set(url, title);
   }
 
   const desc =
     (html.match(/<meta name="description" content="([^"]*)"/) ?? [])[1] ?? "";
   if (!desc) warn(url, "missing meta description");
-  if (desc && (desc.length < 60 || desc.length > (isPost ? 210 : 185)))
+  if (desc && (desc.length < (cjk ? 24 : 60) || desc.length > (isPost ? 210 : 185)))
     warn(url, `description length ${desc.length}`);
   descriptions.set(url, desc);
 
@@ -126,12 +127,12 @@ for (const file of files) {
     ),
   ].map((m) => ({ lang: m[1], href: m[2] }));
   if (!noindex) {
-    const path = url.replace(/^\/ru\//, "/").replace(/^\/en\//, "/");
+    const path = url.replace(/^\/(ru|en|zh|tr)\//, "/");
     if (!alts.some((a) => a.lang === "x-default"))
       warn(url, "missing x-default alternate");
-    for (const lang of ["ru", "en"]) {
+    for (const lang of ["ru", "en", "zh", "tr"]) {
       const want = `/${lang}${path === "/" ? "/" : ""}`.replace(/\/{2,}/g, "/");
-      const found = alts.find((a) => a.lang === lang);
+      const found = alts.find((a) => a.lang === (lang === "zh" ? "zh-CN" : lang));
       if (!found) {
         if (alts.length) warn(url, `missing hreflang ${lang}`);
         continue;
@@ -169,7 +170,7 @@ for (const file of files) {
        a description. */
     const decorative = /role="presentation"|aria-hidden="true"/.test(tag);
     if (!/alt="[^"]*"/.test(tag)) warn(url, "img without alt attribute");
-    else if (!/alt="[^"]{8,}"/.test(tag) && !decorative)
+    else if (!new RegExp(`alt="[^"]{${cjk ? 2 : 8},}"`).test(tag) && !decorative)
       warn(url, `img with thin or empty alt: ${tag.slice(0, 90)}`);
     if (/alt="\/images\/|alt="[a-z0-9-]+\.jpe?g"/i.test(tag))
       warn(url, `alt is a filename: ${tag.slice(0, 60)}`);
@@ -244,13 +245,14 @@ for (const url of allUrls) {
 }
 
 // locale parity: every ru page should have an en sibling
-const locales = ["ru", "en"];
+const locales = ["ru", "en", "zh", "tr"];
 for (const url of allUrls) {
-  const m = url.match(/^\/(ru|en)\/(.*)$/);
+  const m = url.match(/^\/(ru|en|zh|tr)\/(.*)$/);
   if (!m) continue;
-  const other = `/${locales.find((l) => l !== m[1])}/${m[2]}`;
-  if (!allUrls.has(other))
-    warn(url, `no sibling in the other locale: ${other}`);
+  for (const locale of locales.filter(l => l !== m[1])) {
+    const other = `/${locale}/${m[2]}`;
+    if (!allUrls.has(other)) warn(url, `missing locale sibling: ${other}`);
+  }
 }
 
 const indexHtml = existsSync(join(ROOT, "index.html"));
@@ -302,13 +304,15 @@ if (existsSync(sitemapFile)) {
 const counts = {
   pages: files.length,
   ru: files.filter((f) => /(^|\/)ru\//.test(f)).length,
+  zh: files.filter(f => urlOf(f).startsWith("/zh/")).length,
+  tr: files.filter(f => urlOf(f).startsWith("/tr/")).length,
   en: files.filter((f) => /(^|\/)en\//.test(f)).length,
   links: internalHrefs.size,
 };
 
 console.log(`\nSOF EXPO SEO audit — ${ROOT}`);
 console.log(
-  `pages: ${counts.pages} (ru ${counts.ru} / en ${counts.en}) · distinct internal targets: ${counts.links}`,
+  `pages: ${counts.pages} (ru ${counts.ru} / en ${counts.en} / zh ${counts.zh} / tr ${counts.tr}) · distinct internal targets: ${counts.links}`,
 );
 if (problems.length === 0) {
   console.log("✓ no problems found\n");

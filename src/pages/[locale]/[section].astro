@@ -7,7 +7,7 @@
  * to the centre's exhibitor hub (absolute) instead.
  */
 import type { GetStaticPaths } from 'astro';
-import { locales, type Locale } from '@/i18n/config';
+import { sourceLocales as locales, type SourceLocale as Locale } from '@/i18n/config';
 import { hostEventSlug } from '@/lib/hostRoutes';
 import { events } from '@/data/events';
 import { eventPages, type EventPage } from '@/data/pages/event-pages';

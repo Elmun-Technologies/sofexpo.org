@@ -1,4 +1,4 @@
-import type { Locale } from '@/i18n/config';
+import type { SourceLocale as Locale } from '@/i18n/config';
 
 /** Past editions: proof-of-results pages. These are the strongest SEO/EEAT assets for an expo site. */
 export interface Edition {

@@ -1,15 +1,22 @@
 import { CURRENT_HOST, ROOT_HOST, hrefForPath, ownerOf } from "../data/hosts";
 
-export const locales = ["ru", "en"] as const;
+export const sourceLocales = ["ru", "en"] as const;
+export const locales = ["ru", "en", "zh", "tr"] as const;
 
+/** The existing editorial sources; translated editions are materialized by the i18n integration. */
+export type SourceLocale = (typeof sourceLocales)[number];
 export type Locale = (typeof locales)[number];
+export const supportedLocales = locales;
+export type SiteLocale = Locale;
 
 export const defaultLocale: Locale = "en";
 
 export const localeMeta: Record<
-  Locale,
+  SiteLocale,
   { html: string; og: string; label: string; flag: string; region: string }
 > = {
+  zh: { html: "zh-CN", og: "zh_CN", label: "简体中文", flag: "中文", region: "zh-CN" },
+  tr: { html: "tr", og: "tr_TR", label: "Türkçe", flag: "TR", region: "tr-TR" },
   ru: {
     html: "ru",
     og: "ru_RU",
@@ -27,9 +34,9 @@ export const localeMeta: Record<
 };
 
 /** `/events/foodera-expo/` -> `/ru/events/foodera-expo/` (always trailing slash). */
-export function joinLocale(locale: Locale, path = "/"): string {
+export function joinLocale(locale: SiteLocale, path = "/"): string {
   const parts = path.split("/").filter(Boolean);
-  if (parts[0] && locales.includes(parts[0] as Locale)) parts.shift();
+  if (parts[0] && supportedLocales.includes(parts[0] as SiteLocale)) parts.shift();
   return `/${locale}/${parts.join("/")}${parts.length ? "/" : ""}`;
 }
 
@@ -43,13 +50,13 @@ export function joinLocale(locale: Locale, path = "/"): string {
  * In `alias` mode — the default — every path resolves to this host, i.e. output is
  * byte-identical to the pre-subdomain behaviour.
  */
-export function localize(locale: Locale, path = "/"): string {
+export function localize(locale: SiteLocale, path = "/"): string {
   return hrefForPath(locale, path);
 }
 
 /** Like `localize`, but always stays on the host being built — for identity links
  *  (language switch, self-references) that must never jump to another hostname. */
-export function localizeSameHost(locale: Locale, path = "/"): string {
+export function localizeSameHost(locale: SiteLocale, path = "/"): string {
   const owner = ownerOf(path);
   // a relocated page is addressed by its host-local path; anything else stays where it is
   return joinLocale(locale, owner.host === CURRENT_HOST ? owner.path : path);
@@ -60,13 +67,15 @@ export function alternates(path: string) {
   return {
     ru: localizeSameHost("ru", path),
     en: localizeSameHost("en", path),
+    zh: localizeSameHost("zh", path),
+    tr: localizeSameHost("tr", path),
     /* Q1 (docs/08 §7): the root 301s to /en/, so x-default follows the redirect */
     "x-default": "/en/",
   };
 }
 
 /** Which other locale a visitor should be swapped to, keeping the same page. */
-export function switchHref(current: string, target: Locale): string {
+export function switchHref(current: string, target: SiteLocale): string {
   return localizeSameHost(target, current);
 }
 

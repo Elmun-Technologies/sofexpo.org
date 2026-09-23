@@ -308,3 +308,231 @@ a.feature:hover .feature__media img {
 .table-hint[data-hint]::before {
   content: attr(data-hint);
 }
+
+/* ============================================================
+   7 · Hover layer v2 (ideas adapted from rush-agency.ru):
+   cursor spotlight on cards, numbered FAQ, filling icon tiles,
+   drawn nav underlines, stat accent bars, magnetic CTAs.
+   Hover effects only on real pointers; all off under reduced motion.
+   ============================================================ */
+@media (hover: hover) and (pointer: fine) {
+  /* spotlight: --mx/--my are set by a delegated pointermove in Base.astro */
+  :is(.feature, .ev, .pc, .mini, .stat, a.card) {
+    position: relative;
+    isolation: isolate;
+  }
+  :is(.feature, .ev, .pc, .mini, a.card)::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(200, 136, 44, 0.12), transparent 45%);
+    transition: opacity 400ms var(--ease-out);
+  }
+  :is(.feature, .ev, .pc, .mini, a.card):hover::before {
+    opacity: 1;
+  }
+  .sec--forest :is(.feature, .mini)::before {
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(231, 213, 174, 0.14), transparent 45%);
+  }
+
+  /* icon tile fills with brand colour and tilts */
+  .ico-tile {
+    transition: background-color 360ms var(--ease-out), color 360ms var(--ease-out), transform 480ms var(--ease-spring);
+  }
+  :is(.feature, a.card, .mini):hover .ico-tile {
+    background: var(--evergreen);
+    color: var(--gold-soft);
+    transform: rotate(-6deg) scale(1.06);
+  }
+
+  /* post cards: image zoom + title colour */
+  .pc img {
+    transition: transform 900ms var(--ease-out);
+  }
+  .pc:hover img {
+    transform: scale(1.05);
+  }
+  .pc:hover h3 {
+    color: var(--moss);
+  }
+
+  /* stat tiles: accent bar grows on hover */
+  .stat::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 100%;
+    background: linear-gradient(90deg, var(--moss), var(--accent));
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: transform 520ms var(--ease-out);
+  }
+  .stat:hover::after {
+    transform: scaleX(1);
+  }
+  .stat b {
+    transition: color 300ms;
+  }
+  .stat:hover b {
+    color: var(--moss);
+  }
+  .sec--forest .stat:hover b {
+    color: var(--gold-soft);
+  }
+
+  /* header nav + footer: underline that draws from the left */
+  .nav__link:not([aria-current="page"]),
+  .ftr a:not(.btn):not(.askai a) {
+    background-image: linear-gradient(var(--accent), var(--accent));
+    background-repeat: no-repeat;
+    background-size: 0 2px;
+    background-position: 0.8rem calc(100% - 0.35rem);
+    transition: background-size 380ms var(--ease-out), background-color var(--tr), color var(--tr);
+  }
+  .ftr a:not(.btn):not(.askai a) {
+    background-position: 0 100%;
+  }
+  .nav__link:not([aria-current="page"]):hover {
+    background-size: calc(100% - 1.6rem) 2px;
+  }
+  .ftr a:not(.btn):not(.askai a):hover {
+    background-size: 100% 1px;
+  }
+  .mega a {
+    transition: transform 320ms var(--ease-out), background-color var(--tr);
+  }
+  .mega a:hover {
+    transform: translateX(4px);
+  }
+
+  /* gallery tiles */
+  .gallery > * {
+    overflow: hidden;
+  }
+  .gallery > *:hover img {
+    transform: scale(1.06);
+  }
+
+  /* magnetic primary CTAs: --tx/--ty from JS */
+  .btn--accent,
+  .btn--gold {
+    transform: translate(var(--tx, 0), var(--ty, 0));
+    transition: transform 380ms var(--ease-spring), background-color var(--tr), box-shadow var(--tr);
+  }
+  .btn--accent:hover,
+  .btn--gold:hover {
+    box-shadow: 0 14px 30px -14px rgba(200, 136, 44, 0.7);
+  }
+}
+
+/* numbered FAQ (01, 02 …) with an accent rail on the open item — like rush-agency */
+.acc {
+  counter-reset: faq;
+}
+.acc details {
+  counter-increment: faq;
+  position: relative;
+  transition: background-color 300ms var(--ease-out);
+}
+.acc summary {
+  gap: 1.1rem;
+  transition: color var(--tr);
+}
+.acc summary::before {
+  content: counter(faq, decimal-leading-zero);
+  flex: none;
+  min-width: 2ch;
+  font-family: var(--f-mono, monospace);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+.acc summary > span {
+  flex: 1;
+}
+.acc summary::after {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: transform 360ms var(--ease-spring), background-color var(--tr), color var(--tr), border-color var(--tr);
+}
+.acc details[open] summary::after {
+  background: var(--evergreen);
+  border-color: var(--evergreen);
+  color: #fff;
+}
+.acc details::before {
+  content: "";
+  position: absolute;
+  left: -1rem;
+  top: 0.9rem;
+  bottom: 0.9rem;
+  width: 3px;
+  border-radius: 3px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transition: transform 420ms var(--ease-out);
+}
+.acc details[open]::before {
+  transform: scaleY(1);
+}
+.acc__body {
+  padding-left: calc(2ch + 1.1rem + 0.2rem);
+}
+@media (hover: hover) {
+  .acc summary:hover {
+    color: var(--moss);
+  }
+  .acc summary:hover::after {
+    border-color: var(--moss);
+  }
+}
+/* smooth open where the browser supports animating <details> content */
+@supports selector(::details-content) {
+  .acc details {
+    interpolate-size: allow-keywords;
+  }
+  .acc details::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition: block-size 420ms var(--ease-out), content-visibility 420ms allow-discrete;
+  }
+  .acc details[open]::details-content {
+    block-size: auto;
+  }
+}
+
+/* keyboard users get the same clarity as mouse users */
+:is(a, button, summary, .btn):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--r-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(.feature, .ev, .pc, .mini, a.card)::before,
+  .stat::after,
+  .acc details::before {
+    transition: none !important;
+  }
+  .btn--accent,
+  .btn--gold {
+    transform: none !important;
+  }
+  .ico-tile,
+  .mega a {
+    transform: none !important;
+  }
+}

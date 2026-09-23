@@ -264,6 +264,30 @@ const preload = props.preload
         .querySelectorAll('main .reveal :is(.grid, .gallery, .stats, .venue-strip__nums, .home-news-rows, .steps, .checks)')
         .forEach((list) => Array.from(list.children).forEach((c, i) => (c as HTMLElement).style.setProperty('--i', String(Math.min(i, 8)))));
 
+      /* hover layer: card spotlight + magnetic CTAs (fine pointers, motion allowed) */
+      if (window.matchMedia('(hover: hover) and (pointer: fine)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const SPOT = '.feature, .ev, .pc, .mini, a.card';
+        document.addEventListener('pointermove', (e) => {
+          const t = e.target as Element | null;
+          const card = t?.closest?.(SPOT) as HTMLElement | null;
+          if (card) {
+            const r = card.getBoundingClientRect();
+            card.style.setProperty('--mx', `${e.clientX - r.left}px`);
+            card.style.setProperty('--my', `${e.clientY - r.top}px`);
+          }
+          const btn = t?.closest?.('.btn--accent, .btn--gold') as HTMLElement | null;
+          if (btn) {
+            const r = btn.getBoundingClientRect();
+            btn.style.setProperty('--tx', `${((e.clientX - r.left) / r.width - 0.5) * 8}px`);
+            btn.style.setProperty('--ty', `${((e.clientY - r.top) / r.height - 0.5) * 6}px`);
+          }
+        }, { passive: true });
+        document.addEventListener('pointerout', (e) => {
+          const btn = (e.target as Element | null)?.closest?.('.btn--accent, .btn--gold') as HTMLElement | null;
+          if (btn && !btn.contains(e.relatedTarget as Node)) { btn.style.removeProperty('--tx'); btn.style.removeProperty('--ty'); }
+        }, { passive: true });
+      }
+
       /* header state + reading progress: one passive, rAF-throttled listener */
       const root = document.documentElement;
       const bar = document.querySelector('.progress') as HTMLElement | null;

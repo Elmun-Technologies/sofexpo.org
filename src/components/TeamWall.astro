@@ -13,7 +13,7 @@
  * Each band is its own reveal section with a per-card 70ms stagger, so scrolling the
  * wall reads like turning pages instead of one long grid.
  */
-import type { Locale } from "@/i18n/config";
+import type { SourceLocale as Locale } from "@/i18n/config";
 import { team, teamKinds, type TeamMember } from "@/data/team";
 
 const { locale, kicker, title, text } = Astro.props as {

@@ -1,7 +1,17 @@
+import type { Locale } from './config';
+import zhCatalog from './catalogs/zh.json';
+import trCatalog from './catalogs/tr.json';
+import reviewed from './reviewed.json';
+
 // Interface dictionary — navigation, buttons, form labels, section kickers.
 // Page/long-form copy lives in src/data/* (per locale), so it can be edited by content people.
-export const ui = {
+const sourceUI = {
   ru: {
+    'table.label': 'Таблица данных с горизонтальной прокруткой',
+    'table.hint': 'Прокрутите таблицу вбок. С клавиатуры: выберите таблицу клавишей Tab и используйте стрелки.',
+    'downloads.sample': 'Образец документа',
+    'downloads.notice': 'Эти файлы — временные образцы, а не действующие документы. Перед использованием запросите актуальную версию у менеджера.',
+    'downloads.request': 'Запросить актуальные документы',
     'brand.name': 'SOF EXPO SAMARKAND',
     'brand.sub': 'Выставочный центр в Самарканде',
     'topbar.phone': '+998 55 705 0 705',
@@ -124,6 +134,11 @@ export const ui = {
     'misc.scrollToTop': 'Наверх',
   },
   en: {
+    'table.label': 'Horizontally scrollable data table',
+    'table.hint': 'Scroll sideways to see all columns. With a keyboard: focus the table using Tab, then use the arrow keys.',
+    'downloads.sample': 'Sample document',
+    'downloads.notice': 'These files are temporary samples, not current documents. Ask your manager for the latest version before use.',
+    'downloads.request': 'Request current documents',
     'brand.name': 'SOF EXPO SAMARKAND',
     'brand.sub': 'Exhibition centre in Samarkand',
     'topbar.phone': '+998 55 705 0 705',
@@ -247,9 +262,22 @@ export const ui = {
   },
 } as const;
 
-export type UIKey = keyof (typeof ui)['en'];
+export type UIKey = keyof (typeof sourceUI)['en'];
 
-export function useUI(locale: keyof typeof ui) {
-  const dict = ui[locale];
-  return (key: UIKey): string => (dict[key] ?? ui.en[key] ?? key) as string;
+function edition(locale: 'zh' | 'tr'): Record<UIKey, string> {
+  const catalog: Record<string, string> = locale === 'zh' ? zhCatalog : trCatalog;
+  const corrections = reviewed as Record<string, string[]>;
+  return Object.fromEntries(Object.entries(sourceUI.en).map(([key, source]) => {
+    // Addresses, phone numbers and brand identity are intentionally shared.
+    if (/^(?:SOF EXPO(?: SAMARKAND)?|\+[\d ()-]+|[^\s@]+@[^\s@]+)$/.test(source)) return [key, source];
+    const value = corrections[source]?.[locale === 'zh' ? 0 : 1] ?? catalog[source];
+    if (!value) throw new Error(`Missing UI translation: ${locale}:${key}`);
+    return [key, value ?? source];
+  })) as Record<UIKey, string>;
+}
+
+export const ui = { ...sourceUI, zh: edition('zh'), tr: edition('tr') };
+
+export function useUI(locale: Locale) {
+  return (key: UIKey): string => ui[locale][key];
 }

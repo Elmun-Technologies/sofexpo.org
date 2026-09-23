@@ -64,7 +64,7 @@ const copy = {
     more: 'Про выставку',
     venueTitle: 'Один корпус, две площади, ноль сюрпризов при монтаже',
     venueText: 'Электричество 700 кВт, климат-контроль, аудио, интернет и подъезд для фур уже в здании. Технические детали высылаем до подписания договора.',
-    doorsTitle: 'Выберите свою дверь',
+    doorsTitle: 'Ваш следующий шаг начинается здесь',
     doors: [
       { title: 'Экспонентам', text: 'Площадь, застройка, услуга «стенд под ключ», реклама на площадке и список закупщиков до старта выставки.', href: '/exhibitors/', meta: 'Пакеты и цены', image: '/images/hall-stand.jpg', imageAlt: 'Выставочный зал: стенды на монтаже' },
       { title: 'Посетителям', text: 'Билеты и бесплатная регистрация, расписание докладов, маршрут, отели и что взять с собой.', href: '/visitors/', meta: 'Как посетить', image: '/images/hall-crowd.jpg', imageAlt: 'Посетители в зале в день выставки' },
@@ -111,7 +111,7 @@ const copy = {
     more: 'About the show',
     venueTitle: 'One building, two areas, no surprises at build-up',
     venueText: '700 kW power, climate control, audio, internet and truck access are already in the shell. Technical details go out before the contract is signed.',
-    doorsTitle: 'Pick your door',
+    doorsTitle: 'Your next opportunity starts here',
     doors: [
       { title: 'For exhibitors', text: 'Space, shell scheme, turnkey stands, on-site advertising and a buyer list before the doors open.', href: '/exhibitors/', meta: 'Packages and rates', image: '/images/hall-stand.jpg', imageAlt: 'Exhibition hall: stands during build-up' },
       { title: 'For visitors', text: 'Tickets and free registration, talk schedule, route plan, hotels and what to bring.', href: '/visitors/', meta: 'How to attend', image: '/images/hall-crowd.jpg', imageAlt: 'Visitors in the hall on show day' },
@@ -202,36 +202,23 @@ const jsonLd = [
     <div class="wrap">
       <div class="home-hero__in">
         <div>
-          <p class="home-hero__kicker">
-            <span class="dot" aria-hidden="true"></span>
-            {copy.heroKicker(next.slug, industryLabel(next.industry, locale))}
-          </p>
-          <h1>{next.brand[locale]}</h1>
-          <p class="home-hero__date">
-            <b>{d.days}</b>
-            <span>{d.month} {d.year}</span>
-          </p>
-          <p class="home-hero__lead">{copy.lead}</p>
+          <p class="home-hero__kicker"><span class="dot" aria-hidden="true"></span>{ru ? 'Самарканд · Узбекистан · Международный экспоцентр' : 'Samarkand · Uzbekistan · International exhibition centre'}</p>
+          <h1>{ru ? 'Место встречи' : 'Where business'}<br /><em>{ru ? 'больших возможностей.' : 'meets opportunity.'}</em></h1>
+          <p class="home-hero__lead">{ru ? 'Объединяем людей, идеи и рынки. Выставки, деловые связи и новые возможности в самом сердце Центральной Азии.' : 'Connecting people, ideas and markets. Discover exceptional exhibitions and new business opportunities in the heart of Central Asia.'}</p>
           <div class="btn-row">
-            <a class="btn" href={P(`/request-stand/`) + `?event=${next.slug}`}>
-              <Icon name="sparkle" size={16} /> {copy.stand}
-            </a>
-            <a class="btn btn--ghost" style="border-color:rgba(255,255,255,.4);color:rgba(255,255,255,.88)" href={P('/visitors/tickets/')}>{copy.ticket}</a>
-            <a class="home-hero__more" href={P(`/events/${next.slug}/`)}>{copy.more} <Icon name="arrow" size={15} /></a>
+            <a class="btn btn--accent" href={P('/events/')}>{ru ? 'Открыть календарь' : 'Explore exhibitions'} <Icon name="arrow" size={17} /></a>
+            <a class="btn btn--ghost" href={P('/request-stand/')}>{copy.stand} <Icon name="arrow" size={17} /></a>
           </div>
+          <div class="hero-location"><Icon name="pin" size={15} /><span>{ru ? 'Ваш выход на рынки Центральной Азии' : 'Your gateway to Central Asia'}</span></div>
         </div>
         <aside class="home-hero__side">
-          <div>
-            <p class="mono-label">{ru ? 'До старта' : 'Opening in'}</p>
-            <Countdown locale={locale} target={next.dates.start} />
-          </div>
-          <div>
-            <p class="mono-label" style="margin:0">{ru ? 'Площадка' : 'The venue'}</p>
-            <p class="home-hero__venue">
-              4 400 м² <span>·</span> 5 000 м² <span>·</span> 700 кВт <span>·</span> 350 мест
-            </p>
-            <p class="mono-label" style="margin:.5rem 0 0">{ru ? 'Самарканд, Узбекистан' : 'Samarkand, Uzbekistan'}</p>
-          </div>
+          <div class="featured-top"><span class="mono-label">{ru ? 'Ближайшая выставка' : 'Next exhibition'}</span><span class="featured-live"><span class="dot"></span>{ru ? 'Регистрация открыта' : 'Registration open'}</span></div>
+          <Photo class="featured-image" src={next.heroImage} alt={next.tagline[locale]} ratio="16/9" sizes="(max-width: 780px) 90vw, 360px" />
+          <p class="featured-industry">{industryLabel(next.industry, locale)}</p>
+          <h2>{next.brand[locale]}</h2>
+          <p class="featured-date">{next.dates.display[locale]}</p>
+          <Countdown locale={locale} target={next.dates.start} />
+          <a class="featured-link" href={P(`/events/${next.slug}/`)}>{copy.more}<Icon name="arrow" size={20} /></a>
         </aside>
       </div>
       <CalendarRail locale={locale} />
@@ -243,9 +230,9 @@ const jsonLd = [
     <div class="wrap">
       <div class="venue-strip">
         <div class="venue-strip__nums">
-          <div><b>4 400<small> м²</small></b><span>{ru ? 'зал' : 'hall'}</span></div>
-          <div><b>5 000<small> м²</small></b><span>{ru ? 'улица' : 'outdoor'}</span></div>
-          <div><b>700<small> кВт</small></b><span>{ru ? '220/380 В' : '220/380 V'}</span></div>
+          <div><b>4 400<small> m²</small></b><span>{ru ? 'зал' : 'hall'}</span></div>
+          <div><b>5 000<small> m²</small></b><span>{ru ? 'улица' : 'outdoor'}</span></div>
+          <div><b>700<small> kW</small></b><span>{ru ? '220/380 В' : '220/380 V'}</span></div>
           <div><b>350</b><span>{ru ? 'мест, кафе' : 'seats, café'}</span></div>
         </div>
         <div class="venue-strip__txt">

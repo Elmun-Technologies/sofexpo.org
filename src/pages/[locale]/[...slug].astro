@@ -5,7 +5,7 @@
  * own block sequence and copy per locale, so no two pages share a composition.
  */
 import type { GetStaticPaths, InferGetStaticPropsType } from 'astro';
-import { locales, localize, type Locale } from '@/i18n/config';
+import { sourceLocales as locales, localize, type SourceLocale as Locale } from '@/i18n/config';
 import { pages, type PageDef } from '@/data/pages';
 import { isBuiltHere } from '@/data/hosts';
 import Base from '@/layouts/Base.astro';

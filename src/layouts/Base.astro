@@ -1,14 +1,16 @@
 ---
 import '@/styles/fonts.css';
 import '@/styles/global.css';
+import '@/styles/premium.css';
 /* display: Inter Tight (has the Cyrillic subset Archivo lacks) · body: Golos Text · data: JetBrains Mono */
 import { buildMeta, entityNodes, SITE } from '@/lib/seo';
-import { localize, localeMeta, type Locale } from '@/i18n/config';
+import { localize, localeMeta, type SourceLocale as Locale } from '@/i18n/config';
 import { CURRENT_BRAND, isRootHost } from '@/data/hosts';
 import { brandCss } from '@/data/brands';
 import { useUI } from '@/i18n/ui';
 import photos from '@/data/photos.json';
 import photoDims from '@/data/photo-dims.json';
+import TableEnhancements from '@/components/TableEnhancements.astro';
 import Header from '@/components/Header.astro';
 import PromoBar from '@/components/PromoBar.astro';
 import Footer from '@/components/Footer.astro';
@@ -132,7 +134,7 @@ const preload = props.preload
     <meta name="robots" content={meta.noindex ? 'noindex,follow,max-image-preview:large' : 'index,follow,max-image-preview:large,max-snippet:-1'} />
     {
       meta.hreflang.map((h) => (
-        <link rel="alternate" hreflang={h.locale === 'en' ? 'en' : h.locale} href={h.href} />
+        <link rel="alternate" hreflang={localeMeta[h.locale].html} href={h.href} />
       ))
     }
     {meta.xDefault && <link rel="alternate" hreflang="x-default" href={meta.xDefault} />}
@@ -175,7 +177,7 @@ const preload = props.preload
     <meta property="og:type" content={meta.og.type} />
     <meta property="og:site_name" content={CURRENT_BRAND ? `${CURRENT_BRAND.name.en} ${CURRENT_BRAND.sub.en}` : "SOF EXPO Samarkand"} />
     <meta property="og:locale" content={meta.og.locale} />
-    {meta.hreflang.filter((h) => h.locale !== locale).map((h) => <meta property="og:locale:alternate" content={`${h.locale === 'ru' ? 'ru_RU' : 'en_US'}`} />)}
+    {meta.hreflang.filter((h) => h.locale !== locale).map((h) => <meta property="og:locale:alternate" content={localeMeta[h.locale].og} />)}
     <meta property="og:title" content={meta.og.title} />
     <meta property="og:description" content={meta.og.description} />
     <meta property="og:url" content={meta.og.url} />
@@ -246,6 +248,7 @@ const preload = props.preload
         }
       }
     </script>
+    <TableEnhancements />
   </body>
 </html>
 

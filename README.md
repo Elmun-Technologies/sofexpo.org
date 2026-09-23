@@ -278,3 +278,12 @@ deploy.
 
 Proprietary project of ООО «RESOF EXPO» (Resof Expo LLC), Samarkand. No open-source licence is
 granted. Contacts: +998 55 705 0 705 · +998 88 399 07 05 · info@sofexpo.uz · `t.me/sofexpo`
+
+### Premium UI · 中文 · Türkçe
+
+The site now publishes Russian, English, Simplified Chinese (`/zh/`) and Turkish (`/tr/`).
+New editions are pre-rendered from checked-in translation catalogs, including articles,
+search, forms, feeds and SEO metadata. See [the localization and QA guide](docs/09-premium-ui-and-locales.md)
+for editing translations, language-review limitations, and the browser regression suite.
+
+Download readiness and the final-PDF release gate: [docs/10-download-readiness.md](docs/10-download-readiness.md).

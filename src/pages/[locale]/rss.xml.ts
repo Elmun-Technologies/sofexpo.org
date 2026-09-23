@@ -1,7 +1,7 @@
 import rss from "@astrojs/rss";
 import type { APIContext } from "astro";
 import { getCollection } from "astro:content";
-import { locales, type Locale } from "@/i18n/config";
+import { sourceLocales as locales, type SourceLocale as Locale } from "@/i18n/config";
 import { isRootHost } from "@/data/hosts";
 import { events } from "@/data/events";
 import { abs } from "@/lib/seo";

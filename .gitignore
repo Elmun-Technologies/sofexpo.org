@@ -12,6 +12,12 @@ dist-hosts/
 # stock-photo research scratch (temp; approved copies live in public/images/)
 image-search/
 
+# Local QA and translation tooling (never shipped)
+.cache/
+.venv/
+test-results/
+playwright-report/
+
 # the client's PNG artboards in their original delivery form (the same bytes live at the
 # repo root under their original filenames); the JPEG sources the build pipeline actually
 # reads are tracked in images/team/

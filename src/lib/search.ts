@@ -1,7 +1,7 @@
 import { pages } from "@/data/pages";
 import { events } from "@/data/events";
 import { getCollection } from "astro:content";
-import { localize, type Locale } from "@/i18n/config";
+import { localize, type SourceLocale as Locale } from "@/i18n/config";
 import { postHref } from "@/lib/contentOwnership";
 
 export interface SearchDoc {

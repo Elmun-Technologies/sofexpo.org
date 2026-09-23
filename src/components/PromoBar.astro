@@ -6,7 +6,7 @@
  * Driven entirely by `events.ts` — when the date passes, the strip moves to the next show,
  * and if nothing is upcoming it is not rendered at all.
  */
-import { localize, type Locale } from '@/i18n/config';
+import { localize, type SourceLocale as Locale } from '@/i18n/config';
 import { nextEvent } from '@/data/events';
 import { daysUntil } from '@/lib/labels';
 import Icon from '@/components/Icon.astro';

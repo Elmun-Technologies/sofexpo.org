@@ -5,7 +5,7 @@
  * own facts on it and one obvious way forward; `Base` points canonical/og/hreflang at the
  * real page. This is a safety net for hosts that cannot 301 — a CDN redirect is preferred.
  */
-import { localize, type Locale } from '@/i18n/config';
+import { localize, type SourceLocale as Locale } from '@/i18n/config';
 import type { ExpoEvent } from '@/data/events';
 import { abs } from '@/lib/seo';
 import Base from '@/layouts/Base.astro';

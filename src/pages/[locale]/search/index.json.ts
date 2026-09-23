@@ -1,5 +1,5 @@
 import type { APIContext } from "astro";
-import { locales, type Locale } from "@/i18n/config";
+import { sourceLocales as locales, type SourceLocale as Locale } from "@/i18n/config";
 import { isRootHost } from "@/data/hosts";
 import { searchDocs } from "@/lib/search";
 

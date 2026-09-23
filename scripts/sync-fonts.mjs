@@ -22,9 +22,9 @@ const OUT = join(ROOT, 'public', 'fonts');
 
 /** family (npm package name) → subsets to ship */
 const WANTED = {
-  'inter-tight': ['latin', 'cyrillic'],
-  'golos-text': ['latin', 'cyrillic'],
-  'jetbrains-mono': ['latin', 'cyrillic'],
+  'inter-tight': ['latin', 'latin-ext', 'cyrillic'],
+  'golos-text': ['latin', 'latin-ext', 'cyrillic'],
+  'jetbrains-mono': ['latin', 'latin-ext', 'cyrillic'],
 };
 
 await mkdir(OUT, { recursive: true });

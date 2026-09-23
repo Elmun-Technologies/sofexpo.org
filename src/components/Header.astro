@@ -2,7 +2,7 @@
 import { nav, site } from '@/data/site';
 import { CURRENT_BRAND } from '@/data/hosts';
 import BrandMark from '@/components/BrandMark.astro';
-import { localize, localeMeta, locales, type Locale } from '@/i18n/config';
+import { localize, localeMeta, supportedLocales, type SourceLocale as Locale } from '@/i18n/config';
 import { useUI } from '@/i18n/ui';
 import Icon from '@/components/Icon.astro';
 
@@ -17,7 +17,7 @@ const t = useUI(locale);
 const current = localize(locale, path);
 const t0 = localize(locale, '/');
 const P = (p: string) => localize(locale, p);
-const active = (base: string) => (base === '/' ? current === '/' : current.startsWith(base));
+const active = (base: string) => (base === '/' ? current === '/' : path.startsWith(base));
 /**
  * One bar, six items (docs/08 §3.1). The old utility bar (address · phone · hours · telegram)
  * moved to /contacts/ and the footer; «Новости» is in the footer — the first screen belongs
@@ -30,7 +30,7 @@ const items = nav.filter((i) => i.key !== 'nav.news');
   <div class="wrap hdr__in">
     <a class="logo" href={P('/')} aria-label={`${CURRENT_BRAND ? CURRENT_BRAND.name[locale] + ' ' + CURRENT_BRAND.sub[locale] : site.brand[locale]} — ${t('breadcrumbs.home')}`}>
       {CURRENT_BRAND?.mark === 'star' ? (
-        <BrandMark brand={CURRENT_BRAND} locale={locale} withWordmark size={32} tone="on-dark" />
+        <BrandMark brand={CURRENT_BRAND} locale={locale} withWordmark size={32} tone="on-light" />
       ) : CURRENT_BRAND ? (
         /* badge not delivered yet: the wordmark in the host's palette is the identity, no placeholder glyph */
         <span class="logo__txt">
@@ -85,20 +85,17 @@ const items = nav.filter((i) => i.key !== 'nav.news');
     </nav>
 
     <div class="hdr__tools">
-      <div class="lang" role="group" aria-label={t('topbar.lang')}>
-        {
-          locales.map((l) => (
-            <a
-              href={l === 'ru' ? current.replace(`/${locale}/`, `/${l}/`) : current.replace(`/${locale}/`, `/${l}/`)}
-              hreflang={l}
-              aria-current={l === locale ? 'true' : undefined}
-              title={localeMeta[l].label}
-            >
-              {localeMeta[l].flag}
+      <details class="language-picker">
+        <summary aria-label={t('topbar.lang')}><Icon name="globe" size={16} /><span>{localeMeta[locale].flag}</span><svg aria-hidden="true" width="10" height="7" viewBox="0 0 10 7"><path d="m1 1 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.4" /></svg></summary>
+        <div class="language-picker__menu">
+          {supportedLocales.map((l) => (
+            <a href={current.replace(`/${locale}/`, `/${l}/`)} hreflang={localeMeta[l].html} lang={localeMeta[l].html} aria-current={l === locale ? 'true' : undefined}>
+              <span>{localeMeta[l].label}</span><span class="language-code">{l.toUpperCase()}</span>
             </a>
-          ))
-        }
-      </div>
+          ))}
+        </div>
+      </details>
+      <a class="header-search" href={P('/search/')} aria-label={t('cta.search')}><Icon name="search" size={19} /></a>
       <a class="btn btn--sm btn--desk" href={P('/request-stand/')}>
         <Icon name="sparkle" size={16} /> {t('cta.stand')}
       </a>
@@ -126,13 +123,14 @@ const items = nav.filter((i) => i.key !== 'nav.news');
         ))
       }
       <div class="mnav__ctas">
+        <a class="btn btn--ghost" href={P('/search/')}>{t('cta.search')}</a>
         <a class="btn" href={P('/request-stand/')}>{t('cta.stand')}</a>
         <a class="btn btn--ghost" href={P('/visitors/tickets/')}>{t('cta.ticket')}</a>
         <a class="btn btn--ghost" href={P('/events/')}>{locale === 'ru' ? 'Афиша и программа' : 'Line-up and programme'}</a>
         <a class="btn btn--ghost" href={`tel:${site.contacts.phoneMain.replace(/\s/g, '')}`}>
           {t('topbar.phone')}
         </a>
-        <div class="pill-row">{locales.map((l) => <a class="chip" href={localize(l, path)}>{localeMeta[l].label}</a>)}</div>
+        <div class="pill-row">{supportedLocales.map((l) => <a class="chip" href={localize(l, path)} hreflang={localeMeta[l].html}>{localeMeta[l].label}</a>)}</div>
         <a class="chip" href={t0}>{locale === 'ru' ? 'На главную' : 'Back to home'}</a>
       </div>
     </nav>
@@ -148,11 +146,56 @@ const items = nav.filter((i) => i.key !== 'nav.news');
       document.body.classList.toggle('nav-open', open);
       burger.setAttribute('aria-expanded', String(open));
       document.documentElement.style.overflow = open ? 'hidden' : '';
+      document.querySelectorAll('main, .ftr').forEach(el => el.inert = open);
+      if (open) mnav.style.maxHeight = `${window.innerHeight - document.querySelector('.hdr').getBoundingClientRect().bottom}px`;
     };
     set(false);
     burger.addEventListener('click', () => set(!document.body.classList.contains('nav-open')));
-    document.addEventListener('keydown', (e) => e.key === 'Escape' && set(false));
-    mnav.addEventListener('click', (e) => e.target.tagName === 'A' && set(false));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && document.body.classList.contains('nav-open')) { set(false); burger.focus(); } });
+    mnav.addEventListener('click', (e) => e.target.closest('a') && set(false));
+    document.querySelectorAll('header a[hreflang]').forEach(link => {
+      const target = new URL(link.href, location.href);
+      target.search = location.search;
+      target.hash = location.hash;
+      link.href = target.href;
+    });
+    const picker = document.querySelector('.language-picker');
+    document.addEventListener('click', (e) => { if (picker && !picker.contains(e.target)) picker.open = false; });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && picker?.open) { picker.open = false; picker.querySelector('summary').focus(); } });
+    const desktop = matchMedia('(min-width: 1281px)');
+    desktop.addEventListener('change', (e) => { if (e.matches) set(false); });
+    window.addEventListener('resize', () => { if (document.body.classList.contains('nav-open')) set(true); });
+    document.querySelectorAll('.nav__item').forEach(item => {
+      item.addEventListener('pointerenter', () => item.removeAttribute('data-dismissed'));
+      item.addEventListener('focusin', () => item.removeAttribute('data-dismissed'));
+      item.addEventListener('focusout', (e) => {
+        if (!item.contains(e.relatedTarget)) item.removeAttribute('data-keyboard-open');
+      });
+      item.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowDown' && e.target.matches('.nav__link')) {
+          e.preventDefault();
+          item.removeAttribute('data-dismissed');
+          item.setAttribute('data-keyboard-open', '');
+          item.querySelector('.mega a')?.focus();
+        }
+      });
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      document.querySelectorAll('.nav__item').forEach(item => {
+        if (getComputedStyle(item.querySelector('.mega')).visibility !== 'visible') return;
+        if (item.contains(document.activeElement)) item.querySelector('.nav__link').focus();
+        item.removeAttribute('data-keyboard-open');
+        item.setAttribute('data-dismissed', '');
+      });
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Tab' || !document.body.classList.contains('nav-open')) return;
+      const focusable = [burger, ...Array.from(mnav.querySelectorAll('a, summary')).filter(el => el.getClientRects().length)];
+      const first = focusable[0], last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
   })();
 </script>
 

@@ -1,20 +1,7 @@
-/**
- * Self-hosted variable fonts, hand-subsetted.
- *
- * The @fontsource packages ship 17 subsets across the three families — greek, greek-ext,
- * vietnamese, latin-ext, cyrillic-ext. This site renders Russian and English only, and a
- * scan of all 151 built pages found zero codepoints in latin-ext (U+0100–024F, U+1E00–1EFF),
- * cyrillic-ext (U+0460–052F), greek or vietnamese. Those subsets were pure dead weight:
- * inter-tight-latin-ext alone is 88 KB, the single largest asset the fonts pulled in.
- *
- * Shipping latin + cyrillic per family takes the font payload from ~420 KB to 184 KB.
- * unicode-range is kept on every face so that if a stray accented character ever does
- * appear, the browser simply falls back to the system stack for that glyph rather than
- * downloading anything — a missing accent is a far smaller failure than a 240 KB tax on
- * every visitor.
- *
- * Files live in public/fonts/ and are copied verbatim from the @fontsource-variable
- * packages (still declared in package.json, so `npm run fonts:sync` can refresh them).
+/** Self-hosted Latin, Cyrillic and Latin Extended subsets.
+ * Latin Extended provides consistent Turkish İ/ı/Ş/ş/Ğ/ğ typography.
+ * Chinese uses the system CJK stack; no large remote font or tracking request.
+ * Regenerate the font assets with npm run fonts:sync.
  */
 
 /* ---------- Inter Tight Variable — display / headings ---------- */
@@ -78,4 +65,31 @@
   font-weight: 100 800;
   src: url(/fonts/jetbrains-mono-cyrillic.woff2) format("woff2-variations");
   unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: "Inter Tight Variable";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(/fonts/inter-tight-latin-ext.woff2) format("woff2-variations");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF;
+}
+
+@font-face {
+  font-family: "Golos Text Variable";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(/fonts/golos-text-latin-ext.woff2) format("woff2-variations");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF;
+}
+
+@font-face {
+  font-family: "JetBrains Mono Variable";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 800;
+  src: url(/fonts/jetbrains-mono-latin-ext.woff2) format("woff2-variations");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF;
 }

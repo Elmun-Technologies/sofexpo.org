@@ -1,4 +1,4 @@
-import { locales, type Locale } from "@/i18n/config";
+import { sourceLocales as locales, type SourceLocale as Locale } from "@/i18n/config";
 import { CURRENT_EVENT, isRootHost } from "@/data/hosts";
 import { localePaths } from "@/lib/pages";
 
@@ -16,7 +16,7 @@ export function rootOnlyPaths(): { params: { locale: Locale } }[] {
 
 /** Locales of the host being built (an event host serves both, like the centre). */
 export function hostLocales(): Locale[] {
-  return locales;
+  return [...locales];
 }
 
 /** The exhibition this hostname is dedicated to, if any. */

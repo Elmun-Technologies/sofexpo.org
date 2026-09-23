@@ -5,7 +5,7 @@
  * next, and the two actions — always one click away, on every page of the cluster.
  * Sticky, horizontally scrollable on phones, plain links for crawlers.
  */
-import { localize, type Locale } from '@/i18n/config';
+import { localize, type SourceLocale as Locale } from '@/i18n/config';
 import type { ExpoEvent } from '@/data/events';
 import Icon from '@/components/Icon.astro';
 
@@ -93,3 +93,23 @@ const ctas = (past
     </div>
   </div>
 </nav>
+
+<script>
+  // Reveal the selected section without scrolling the document past its hero.
+  document.querySelectorAll<HTMLElement>('.evnav__tabs').forEach(tabs => {
+    const active = tabs.querySelector<HTMLElement>('[aria-current="page"]');
+    if (!active) return;
+    const reveal = () => {
+      const region = tabs.getBoundingClientRect();
+      const selected = active.getBoundingClientRect();
+      if (selected.left < region.left || selected.right > region.right) {
+        tabs.scrollLeft += selected.left - region.left - Math.max(0, (region.width - selected.width) / 2);
+      }
+    };
+    reveal();
+    document.fonts.ready.then(reveal);
+    const observer = new ResizeObserver(reveal);
+    observer.observe(tabs);
+    observer.observe(active);
+  });
+</script>

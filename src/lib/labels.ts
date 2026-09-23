@@ -1,4 +1,4 @@
-import type { Locale } from '@/i18n/config';
+import type { SourceLocale as Locale } from '@/i18n/config';
 
 /**
  * Human labels for the internal keys that used to leak into the UI as raw slugs

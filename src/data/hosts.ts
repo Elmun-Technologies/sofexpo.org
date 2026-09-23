@@ -103,7 +103,7 @@ export function ownerOf(path: string): { host: string; path: string } {
 }
 
 /** Absolute-or-relative href for a link target — the implementation behind `localize()`. */
-export function hrefForPath(locale: "ru" | "en", path: string): string {
+export function hrefForPath(locale: "ru" | "en" | "zh" | "tr", path: string): string {
   return hrefFor(locale, path, { mode: HOSTS_MODE, currentHost: CURRENT_HOST });
 }
 

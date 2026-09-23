@@ -1,0 +1,12 @@
+---
+import type { Locale } from '@/i18n/config';
+import { useUI } from '@/i18n/ui';
+const { locale } = Astro.props as { locale: Locale };
+const t = useUI(locale);
+---
+<div class="table-frame">
+  <p class="table-hint">{t('table.hint')}</p>
+  <div class="table-scroll" role="region" tabindex="0" aria-label={t('table.label')}>
+    <slot />
+  </div>
+</div>

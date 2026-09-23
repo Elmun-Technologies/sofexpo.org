@@ -1,4 +1,4 @@
-import type { Locale } from "@/i18n/config";
+import type { SourceLocale as Locale } from "@/i18n/config";
 
 /**
  * Pages are authored as an ordered list of blocks. One renderer

@@ -1,4 +1,4 @@
-import { alternates, localize, locales, localeMeta, type Locale } from '@/i18n/config';
+import { alternates, localize, supportedLocales, localeMeta, type SourceLocale as Locale } from '@/i18n/config';
 import { site } from '@/data/site';
 import { CURRENT_BRAND } from '@/data/hosts';
 
@@ -35,7 +35,7 @@ export function buildMeta(input: MetaInput) {
     description: input.description,
     canonical: abs(self),
     self,
-    hreflang: locales.map((l) => ({
+    hreflang: supportedLocales.map((l) => ({
       locale: l,
       href: abs(localize(l, path)),
       label: localeMeta[l].label,
@@ -226,7 +226,7 @@ export function rootJsonLd() {
       url: `${SITE}/`,
       name: 'SOF EXPO Samarkand',
       alternateName: ['Выставочный центр SOF EXPO', 'SOF EXPO Exhibition Centre'],
-      inLanguage: ['ru', 'en'],
+      inLanguage: ['ru', 'en', 'zh-CN', 'tr'],
       publisher: { '@id': `${SITE}/#organization` },
       /* site search in Google sitelinks (docs/08 §5c): the search page reads ?q=
          on load, so the template is honest */
@@ -274,7 +274,7 @@ export function entityNodes() {
       '@id': `${SITE}/#website`,
       url: `${SITE}/`,
       name: ORG,
-      inLanguage: ['ru', 'en'],
+      inLanguage: ['ru', 'en', 'zh-CN', 'tr'],
       publisher: { '@id': `${SITE}/#organization` },
     },
     {

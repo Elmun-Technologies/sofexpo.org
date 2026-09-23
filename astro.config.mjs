@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import { localizedEditions } from './scripts/localized-editions.mjs';
 import { icsIntegration } from './scripts/ics.mjs';
 
 // SOF EXPO SAMARKAND — international exhibition centre website.
@@ -27,17 +28,18 @@ export default defineConfig({
       },
       i18n: {
         defaultLocale: 'en',
-        locales: { ru: 'ru-RU', en: 'en-US' },
+        locales: { ru: 'ru-RU', en: 'en-US', zh: 'zh-CN', tr: 'tr-TR' },
       },
-      serialize: (item) => ({ ...item, lastmod: new Date('2026-09-18') }),
+      serialize: (item) => ({ ...item, lastmod: '2026-09-23' }),
     }),
     /* /sofexpo-calendar.ics — the line-up as an iCal file, kept in sync with events.ts */
     icsIntegration(),
+    localizedEditions(),
   ],
   vite: {
     build: { cssMinify: true },
     // allow any host in the sandbox/dev preview (the reverse proxy rewrites Host)
-    server: { allowedHosts: true },
+    server: { allowedHosts: true, watch: { ignored: ['**/dist-hosts', '**/dist-hosts/**', '**/.cache', '**/.cache/**', '**/test-results', '**/test-results/**', '**/playwright-report', '**/playwright-report/**'] } },
     preview: { allowedHosts: true },
   },
 });

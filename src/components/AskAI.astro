@@ -20,6 +20,7 @@ const prompts: Record<string, string> = {
   en: 'Tell me about SOF EXPO Samarkand (sofexpo.org), the exhibition centre in Samarkand, Uzbekistan: upcoming trade shows and dates, the venue, how to book a stand or rent the hall. Use https://sofexpo.org/llms.txt and this page: {url}',
   ru: 'Расскажи о SOF EXPO Samarkand (sofexpo.org) — выставочном центре в Самарканде, Узбекистан: ближайшие выставки и даты, площадка, как забронировать стенд или арендовать зал. Используй https://sofexpo.org/llms.txt и эту страницу: {url}',
   tr: "SOF EXPO Samarkand (sofexpo.org) hakkında bilgi ver — Semerkant, Özbekistan'daki fuar merkezi: yaklaşan fuarlar ve tarihleri, mekân, stant rezervasyonu veya salon kiralama. https://sofexpo.org/llms.txt ve bu sayfayı kullan: {url}",
+  uz: "SOF EXPO Samarkand (sofexpo.org) haqida so‘zlab ber — Samarqand, O‘zbekistondagi ko‘rgazma markazi: yaqin ko‘rgazmalar va sanalari, maydon, stend bron qilish yoki zal ijarasi. https://sofexpo.org/llms.txt va shu sahifadan foydalan: {url}",
   'zh-CN': '请介绍 SOF EXPO Samarkand(sofexpo.org)——乌兹别克斯坦撒马尔罕的会展中心:近期展会及日期、场馆、如何预订展位或租用展馆。请参考 https://sofexpo.org/llms.txt 和本页面:{url}',
 };
 
@@ -50,7 +51,7 @@ const fallback = prompts[ru ? 'ru' : 'en'].replace('{url}', pageUrl);
     <p class="askai__t" id="askai-t">{ru ? 'Спросите ИИ о SOF EXPO' : 'Ask AI about SOF EXPO'}</p>
     <p class="askai__s">{ru ? 'Готовый вопрос о центре и этой странице — в один клик' : 'A ready question about the centre and this page, in one click'}</p>
   </div>
-  <ul class="askai__list" data-askai data-p-en={prompts.en} data-p-ru={prompts.ru} data-p-tr={prompts.tr} data-p-zh={prompts['zh-CN']}>
+  <ul class="askai__list" data-askai data-p-en={prompts.en} data-p-ru={prompts.ru} data-p-tr={prompts.tr} data-p-uz={prompts.uz} data-p-zh={prompts['zh-CN']}>
     {tools.map((t) => (
       <li>
         <a

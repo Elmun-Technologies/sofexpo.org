@@ -34,8 +34,9 @@ const SECTION = {
   en: { events: 'Exhibitions', venue: 'The venue', exhibitors: 'For exhibitors', visitors: 'For visitors', organizers: 'For organizers', about: 'About us', news: 'News', articles: 'Insights', contacts: 'Contacts', legal: 'Legal', 'request-stand': 'Book a stand', search: 'Search' },
   ru: { events: 'Выставки', venue: 'Экспоцентр', exhibitors: 'Экспонентам', visitors: 'Посетителям', organizers: 'Организаторам', about: 'О нас', news: 'Новости', articles: 'Аналитика', contacts: 'Контакты', legal: 'Правовая информация', 'request-stand': 'Заявка на стенд', search: 'Поиск' },
   tr: { events: 'Fuarlar', venue: 'Fuar merkezi', exhibitors: 'Katılımcılar için', visitors: 'Ziyaretçiler için', organizers: 'Organizatörler için', about: 'Hakkımızda', news: 'Haberler', articles: 'Analizler', contacts: 'İletişim', legal: 'Yasal', 'request-stand': 'Stant başvurusu', search: 'Arama' },
+  uz: { events: 'Ko‘rgazmalar', venue: 'Ko‘rgazma markazi', exhibitors: 'Ishtirokchilar uchun', visitors: 'Tashrif buyuruvchilar uchun', organizers: 'Tashkilotchilar uchun', about: 'Biz haqimizda', news: 'Yangiliklar', articles: 'Tahlillar', contacts: 'Aloqa', legal: 'Huquqiy', 'request-stand': 'Stend uchun ariza', search: 'Qidiruv' },
 };
-const HOME = { en: 'Exhibition centre · Samarkand, Uzbekistan', ru: 'Выставочный центр · Самарканд, Узбекистан', tr: 'Fuar merkezi · Semerkant, Özbekistan' };
+const HOME = { en: 'Exhibition centre · Samarkand, Uzbekistan', ru: 'Выставочный центр · Самарканд, Узбекистан', tr: 'Fuar merkezi · Semerkant, Özbekistan', uz: 'Ko‘rgazma markazi · Samarqand, O‘zbekiston' };
 
 const FALLBACK = {
   events: ['hall-crowd', 'opening-ceremony', 'expo-banner', 'hall-walk'],
@@ -70,7 +71,7 @@ async function text(markup, width, size) {
     .toBuffer();
 }
 
-const files = walk(DIST).filter((f) => /\/(en|ru|zh|tr)\//.test(f.slice(DIST.length)));
+const files = walk(DIST).filter((f) => /\/(en|ru|zh|tr|uz)\//.test(f.slice(DIST.length)));
 let made = 0;
 const pages = [];
 for (const file of files) {
@@ -140,8 +141,8 @@ for (const file of files) {
 }
 /* llms-full.txt: every indexable page with its own one-line summary, per language, so an
    answer engine can pick the exact page instead of guessing from the home page */
-const order = ['en', 'ru', 'tr', 'zh'];
-const names = { en: 'English', ru: 'Русский', tr: 'Türkçe', zh: '简体中文' };
+const order = ['en', 'ru', 'uz', 'tr', 'zh'];
+const names = { en: 'English', ru: 'Русский', uz: 'O‘zbekcha', tr: 'Türkçe', zh: '简体中文' };
 const full = ['# SOF EXPO Samarkand — full page index', '', '> Exhibition centre and trade-show operator in Samarkand, Uzbekistan. Every public page with its summary. Short version: /llms.txt', ''];
 for (const l of order) {
   const list = pages.filter((p) => p.locale === l).sort((a, b) => a.url.localeCompare(b.url));

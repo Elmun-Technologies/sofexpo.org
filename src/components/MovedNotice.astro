@@ -1,4 +1,5 @@
 ---
+import { fig, figHtml } from '@/lib/figures';
 /**
  * Redirect stub for an exhibition cluster that is published on its own hostname
  * (`PUBLIC_HOSTS_MODE=subdomain`). The root host keeps the old URL alive with the event's
@@ -82,7 +83,7 @@ const copy = {
         {event.facts.slice(0, 2).map((f) => (
           <div>
             <dt>{f.label[locale]}</dt>
-            <dd>{f.value}</dd>
+            <dd>{fig(f.value, locale)}</dd>
           </div>
         ))}
       </dl>

@@ -2060,7 +2060,7 @@ body.nav-open .mnav {
   line-height: 1.02;
   letter-spacing: -0.035em;
   color: #fff;
-  max-width: 15ch;
+  max-width: none;
   text-shadow: 0 2px 30px rgba(0, 0, 0, 0.3);
 }
 

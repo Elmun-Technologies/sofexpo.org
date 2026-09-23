@@ -2,6 +2,7 @@
 import '@/styles/fonts.css';
 import '@/styles/global.css';
 import '@/styles/premium.css';
+import '@/styles/motion.css';
 /* display: Inter Tight (has the Cyrillic subset Archivo lacks) · body: Golos Text · data: JetBrains Mono */
 import { buildMeta, entityNodes, SITE } from '@/lib/seo';
 import { localize, localeMeta, type SourceLocale as Locale } from '@/i18n/config';
@@ -125,6 +126,8 @@ const preload = props.preload
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {/* motion is JS-gated: the class is set before first paint so nothing flashes */}
+    <script is:inline>document.documentElement.classList.add('js')</script>
     <title>{meta.title}</title>
     <meta name="description" content={meta.description} />
     <link rel="canonical" href={meta.canonical} />
@@ -197,6 +200,7 @@ const preload = props.preload
     {CURRENT_BRAND && <style is:inline set:html={brandCss(CURRENT_BRAND)} />}
   </head>
   <body>
+    <div class="progress" aria-hidden="true"></div>
     <a class="skip" href="#main">{locale === 'ru' ? 'К основному содержимому' : 'Skip to content'}</a>
     <PromoBar locale={locale} hideFor={path} />
     <Header locale={locale} path={path} />
@@ -246,6 +250,63 @@ const preload = props.preload
           );
           els.forEach((el) => io.observe(el));
         }
+      }
+      /* stagger index for children of revealed grids (consumed by motion.css) */
+      document
+        .querySelectorAll('main .reveal :is(.grid, .gallery, .stats, .venue-strip__nums, .home-news-rows, .steps, .checks)')
+        .forEach((list) => Array.from(list.children).forEach((c, i) => (c as HTMLElement).style.setProperty('--i', String(Math.min(i, 8)))));
+
+      /* header state + reading progress: one passive, rAF-throttled listener */
+      const root = document.documentElement;
+      const bar = document.querySelector('.progress') as HTMLElement | null;
+      let ticking = false;
+      const onScroll = () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          const y = window.scrollY;
+          root.classList.toggle('is-scrolled', y > 8);
+          const max = root.scrollHeight - window.innerHeight;
+          bar?.style.setProperty('--p', max > 0 ? String(Math.min(1, y / max)) : '0');
+          ticking = false;
+        });
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+
+      /* count-up for figures when they scroll into view (text stays correct without JS) */
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const nums = document.querySelectorAll<HTMLElement>('main .stat b.num, main .venue-strip__nums b');
+        const cio = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              cio.unobserve(entry.target);
+              const el = entry.target as HTMLElement;
+              const node = Array.from(el.childNodes).find((n) => n.nodeType === 3 && /\d/.test(n.textContent || ''));
+              if (!node) continue;
+              const raw = node.textContent || '';
+              const m = /(\d[\d\s,\u00a0]*)/.exec(raw);
+              if (!m) continue;
+              const target = Number(m[1].replace(/[^\d]/g, ''));
+              if (!target || target < 10) continue;
+              const sep = /,/.test(m[1]) ? ',' : /\d\s\d/.test(m[1]) ? '\u00a0' : '';
+              const fmt = (n: number) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, sep);
+              const t0 = performance.now();
+              const dur = 1400;
+              const step = (t: number) => {
+                const k = Math.min(1, (t - t0) / dur);
+                const e = 1 - Math.pow(1 - k, 4);
+                node.textContent = raw.replace(m[1], fmt(Math.round(target * e)) + (/\s$/.test(m[1]) ? ' ' : ''));
+                if (k < 1) requestAnimationFrame(step);
+                else node.textContent = raw;
+              };
+              requestAnimationFrame(step);
+            }
+          },
+          { threshold: 0.6 },
+        );
+        nums.forEach((n) => cio.observe(n));
       }
     </script>
     <TableEnhancements />

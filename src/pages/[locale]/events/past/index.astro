@@ -1,4 +1,5 @@
 ---
+import { fig, figHtml } from '@/lib/figures';
 /** Archive of past editions: results, catalogues, photo reports — the proof layer of an expo site. */
 import type { SourceLocale as Locale } from '@/i18n/config';
 import { localize } from '@/i18n/config';
@@ -68,7 +69,7 @@ const list: Edition[] = [...archive].sort((a, b) => b.year - a.year);
                 <ul class="ed__stats">
                   {e.results.map((r) => (
                     <li>
-                      <b class="num">{r.value}</b>
+                      <b class="num">{fig(r.value, locale)}</b>
                       <span>{r.label[locale]}</span>
                     </li>
                   ))}

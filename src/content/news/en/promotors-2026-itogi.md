@@ -3,7 +3,7 @@ title: "PROMOTORS SHOW SAMARKAND 2026: festival results"
 description: "Drift, SPL tuning, retro cars and non-motorized racing took place in Samarkand on 12–13 September 2026 alongside the automotive trade expo."
 date: 2026-09-14
 category: "automotive"
-tags: ["PROMOTORS", "итоги"]
+tags: ["PROMOTORS", "results"]
 event: promotors-show-samarkand
 ---
 ### Two days, six disciplines, a UZS 20 million prize fund

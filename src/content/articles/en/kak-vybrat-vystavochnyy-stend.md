@@ -4,7 +4,7 @@ description: "A practical breakdown of participation formats: what the per-m² r
 date: 2026-08-12
 category: "guide"
 readingMinutes: 7
-tags: ["стенд", "бюджет"]
+tags: ["stand", "budget"]
 ---
 ### The participation price is not a price per metre
 

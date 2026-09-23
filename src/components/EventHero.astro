@@ -1,4 +1,5 @@
 ---
+import { fig, figHtml } from '@/lib/figures';
 /**
  * Per-event hero: brand plate, dates, venue, live countdown and the three actions
  * a visitor or exhibitor actually needs. Past editions get an archive treatment.
@@ -90,7 +91,7 @@ const actions = [
         <div class="ehero__archive">
           <p class="mono-label">{ru ? 'Прошедшая редакция' : 'Past edition'}</p>
           <ul>
-            {event.facts.slice(0, 4).map((f) => <li><b class="num">{f.value}</b> {f.label[locale]}</li>)}
+            {event.facts.slice(0, 4).map((f) => <li><b class="num">{fig(f.value, locale)}</b> {f.label[locale]}</li>)}
           </ul>
         </div>
       )}

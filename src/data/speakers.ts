@@ -158,7 +158,7 @@ export const speakers: Speaker[] = [
     card: 'speaker-15',
     name: { ru: 'Азамат Шаикалиев', en: 'Azamat Shaikaliev' },
     role: { ru: 'CBDO', en: 'CBDO' },
-    org: 'Zood Uzbekistan · экс-Caspi',
+    org: 'Zood Uzbekistan · ex-Caspi',
     edition: 'apr',
   },
   {

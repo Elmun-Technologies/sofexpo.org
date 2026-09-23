@@ -21,6 +21,7 @@ import StatBand from '@/components/StatBand.astro';
 import PostCard from '@/components/PostCard.astro';
 import Photo from '@/components/Photo.astro';
 import EventCard from '@/components/EventCard.astro';
+import Marquee from '@/components/Marquee.astro';
 
 export function getStaticPaths() {
   return localePaths();
@@ -41,7 +42,7 @@ const days = daysUntil(next.dates.start);
 const countdownLine =
   days > 1
     ? ru
-      ? `До старта — ${days} ${days < 5 ? 'дня' : days < 21 || days > 24 ? 'дней' : 'дня'}`
+      ? `До старта — ${days} ${days % 10 === 1 && days % 100 !== 11 ? 'день' : days % 10 >= 2 && days % 10 <= 4 && (days % 100 < 10 || days % 100 >= 20) ? 'дня' : 'дней'}`
       : `${days} days to opening`
     : days === 1
       ? ru
@@ -53,7 +54,7 @@ const countdownLine =
 
 const copy = {
   ru: {
-    title: 'SOF EXPO Samarkand — экспоцентр и выставки в Самарканде',
+    title: 'Выставочный центр в Самарканде — выставки и экспо Узбекистана | SOF EXPO',
     desc:
       'Экспоцентр SOF EXPO Samarkand: 4 400 м² зала и 5 000 м² улицы, 20+ событий, 70 000+ посетителей в год. Бронирование стендов, аренда под своё событие, деловая программа.',
     heroKicker: (e: string, ind: string) => `Ближайшая выставка · ${ind}`,
@@ -100,7 +101,7 @@ const copy = {
     galleryCta: 'Смотреть площадку',
   },
   en: {
-    title: 'SOF EXPO Samarkand — exhibition centre and trade shows in Uzbekistan',
+    title: 'Expo Centre Samarkand — Exhibitions & Trade Shows in Uzbekistan | SOF EXPO',
     desc:
       'SOF EXPO Samarkand: 4,400 m² hall and 5,000 m² outdoors, 20+ events and 70,000+ visitors a year. Book a stand or rent the hall for your own event.',
     heroKicker: (e: string, ind: string) => `Next show · ${ind}`,
@@ -202,8 +203,13 @@ const jsonLd = [
     <div class="wrap">
       <div class="home-hero__in">
         <div>
-          <p class="home-hero__kicker"><span class="dot" aria-hidden="true"></span>{ru ? 'Самарканд · Узбекистан · Международный экспоцентр' : 'Samarkand · Uzbekistan · International exhibition centre'}</p>
-          <h1>{ru ? 'Место встречи' : 'Where business'}<br /><em>{ru ? 'больших возможностей.' : 'meets opportunity.'}</em></h1>
+          {/* The keyword line (city · country · "exhibition centre") is part of the H1, so the
+              page's main heading carries the queries it should rank for; visually it is
+              still the small pill above the slogan. */}
+          <h1>
+            <span class="home-hero__kicker"><span class="dot" aria-hidden="true"></span>{ru ? 'Самарканд · Узбекистан · Международный экспоцентр' : 'Samarkand · Uzbekistan · International exhibition centre'}</span>
+            <span class="home-hero__slogan">{ru ? 'Место встречи' : 'Where business'}<br /><em>{ru ? 'больших возможностей.' : 'meets opportunity.'}</em></span>
+          </h1>
           <p class="home-hero__lead">{ru ? 'Объединяем людей, идеи и рынки. Выставки, деловые связи и новые возможности в самом сердце Центральной Азии.' : 'Connecting people, ideas and markets. Discover exceptional exhibitions and new business opportunities in the heart of Central Asia.'}</p>
           <div class="btn-row">
             <a class="btn btn--accent" href={P('/events/')}>{ru ? 'Открыть календарь' : 'Explore exhibitions'} <Icon name="arrow" size={17} /></a>
@@ -224,6 +230,8 @@ const jsonLd = [
       <CalendarRail locale={locale} />
     </div>
   </section>
+
+  <Marquee locale={locale} />
 
   <!-- 2 · the venue in one line (the table lives on /venue/) -->
   <section class="sec--tight reveal">

@@ -3,7 +3,7 @@ title: "SOF EXPO launches an international two-language website"
 description: "The centre publishes a new site in Russian and English with exhibitor, visitor and organizer sections, technical data and an event archive."
 date: 2026-08-25
 category: "company"
-tags: ["компания", "сайт"]
+tags: ["company", "website"]
 ---
 ### What changed
 

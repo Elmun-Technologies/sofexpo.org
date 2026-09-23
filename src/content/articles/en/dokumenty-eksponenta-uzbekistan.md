@@ -4,7 +4,7 @@ description: "What a manufacturer or importer should prepare to display a sample
 date: 2026-07-28
 category: "guide"
 readingMinutes: 7
-tags: ["документы", "импорт"]
+tags: ["documents", "import"]
 ---
 ### What you can show and what you can bring
 

@@ -1,4 +1,5 @@
 ---
+import { fig } from '@/lib/figures';
 /**
  * Data-driven sections for an exhibition page. Authored copy lives in
  * `src/data/pages/event-pages.ts`; these blocks pull the per-event facts out of
@@ -188,7 +189,7 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
         <div class="pkg">
           {event.stands.map((s) => (
             <article class="card">
-              <p class="mono-label">{s.area}</p>
+              <p class="mono-label">{fig(s.area, locale)}</p>
               <h3>{s.name[locale]}</h3>
               <p class="muted">{s.note[locale]}</p>
               <a class="btn btn--sm" href={L('/request-stand/')}>{ru ? 'Забронировать' : 'Reserve'}</a>

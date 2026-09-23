@@ -4,7 +4,7 @@ description: "A planning model for B2B shows: qualified contacts, the post-show 
 date: 2026-06-10
 category: "guide"
 readingMinutes: 6
-tags: ["эффективность", "аналитика"]
+tags: ["ROI", "analytics"]
 ---
 ### Why trade shows still work
 

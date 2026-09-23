@@ -2,6 +2,7 @@
 /**
  * Block renderer. Every page is authored as an ordered, individual list of blocks,
  * so no two pages share the same composition while the markup stays one system.
+ * Phase 2: auto CTA + form injection based on path — ideal placement.
  */
 import type { Block, BlockCard, BlockFile, BlockLink, BlockRow, BlockShot, BlockStat } from '@/data/pages/types';
 import { localize, type SourceLocale as Locale } from '@/i18n/config';
@@ -18,16 +19,46 @@ import CalendarRail from '@/components/CalendarRail.astro';
 import VenuePlan from '@/components/VenuePlan.astro';
 import MapSchema from '@/components/MapSchema.astro';
 import TeamWall from '@/components/TeamWall.astro';
+import ExhibitorForm from '@/components/conversion/forms/ExhibitorForm.astro';
+import VisitorForm from '@/components/conversion/forms/VisitorForm.astro';
+import OrganizerForm from '@/components/conversion/forms/OrganizerForm.astro';
+import SponsorForm from '@/components/conversion/forms/SponsorForm.astro';
+import CallbackForm from '@/components/conversion/forms/CallbackForm.astro';
+import CatalogForm from '@/components/conversion/forms/CatalogForm.astro';
+import GroupVisitForm from '@/components/conversion/forms/GroupVisitForm.astro';
+import SmartCta from '@/components/conversion/SmartCta.astro';
 
-const { blocks, locale } = Astro.props as { blocks: Block[]; locale: Locale };
+const { blocks, locale, path = '' } = Astro.props as { blocks: Block[]; locale: Locale; path?: string };
+
+function resolveAuto(p: string): { cta: 'exhibitor'|'visitor'|'organizer'|'sponsor'|'callback'|'catalog'|'group'; form: 'exhibitor'|'visitor'|'organizer'|'sponsor'|'callback'|'catalog'|'group' } | null {
+  if (!p) return null;
+  if (p.includes('/exhibitors/sponsorship')) return { cta: 'sponsor', form: 'sponsor' };
+  if (p.includes('/exhibitors/catalogue') || p.includes('/exhibitors/floor-plan')) return { cta: 'catalog', form: 'catalog' };
+  if (p.includes('/exhibitors/packages') || p.includes('/exhibitors/stand-construction')) return { cta: 'exhibitor', form: 'exhibitor' };
+  if (p.includes('/exhibitors/') || p.includes('/exhibitors')) return { cta: 'exhibitor', form: 'exhibitor' };
+  if (p.includes('/visitors/tickets')) return { cta: 'visitor', form: 'visitor' };
+  if (p.includes('/visitors/access') || p.includes('/visitors/travel')) return { cta: 'group', form: 'group' };
+  if (p.includes('/visitors/') || p.includes('/visitors')) return { cta: 'visitor', form: 'visitor' };
+  if (p.includes('/organizers/')) return { cta: 'organizer', form: 'organizer' };
+  if (p.includes('/venue/halls') || p.includes('/venue/services') || p.includes('/venue/tech-specs')) return { cta: 'organizer', form: 'organizer' };
+  if (p.includes('/venue/')) return { cta: 'organizer', form: 'organizer' };
+  if (p.includes('/request-stand')) return { cta: 'exhibitor', form: 'exhibitor' };
+  if (p.includes('/contacts')) return { cta: 'callback', form: 'callback' };
+  if (p.includes('/about/partners')) return { cta: 'sponsor', form: 'sponsor' };
+  if (p.includes('/about/')) return { cta: 'callback', form: 'callback' };
+  if (p.includes('/program')) return { cta: 'visitor', form: 'visitor' };
+  if (p.includes('/events/')) return { cta: 'visitor', form: 'visitor' };
+  return null;
+}
+const auto = resolveAuto(path);
+const hasForm = blocks.some(b => b.type === 'form');
+
 const t = useUI(locale);
 const ru = locale === 'ru';
 const L = (p: string) => localize(locale, p);
-/** keep external URLs intact, localize site paths */
 const H = (p?: string) => {
   if (!p) return '';
   if (/^(https?:|mailto:|tel:|#)/.test(p)) return p;
-  // static assets are locale-free
   if (/^\/(files|images|og)\//.test(p) || /\.[a-z0-9]+$/i.test(p)) return p;
   return L(p);
 };
@@ -36,17 +67,15 @@ const H = (p?: string) => {
 {
   blocks.map((b, idx) => {
     const wide = b.width !== 'narrow';
-    /* Rhythm: a section heading (`h2`) belongs to the block that follows it, and two blocks
-       on the same ground are one story, not two pages. Before this every block carried the full
-       `--sec` padding on both sides, so a heading floated ~170px above its own cards. */
     const ground = (x?: Block) => (x?.tone === 'paper' || x?.tone === 'forest' || x?.tone === 'sand' ? x.tone : 'default');
     const prev = idx > 0 ? blocks[idx - 1] : undefined;
     const afterHead = prev?.type === 'h2' && ground(prev) === ground(b);
-    /* `faq` paints its own paper sheet and `hero` is the page opening — both are real boundaries */
     const boundary = (x?: Block) => !x || x.type === 'hero' || x.type === 'faq';
     const sameGround = !boundary(prev) && b.type !== 'faq' && ground(prev) === ground(b);
     const leadsIn = b.type === 'h2';
+    const showMidCta = auto && !hasForm && blocks.length > 3 && (idx === 1 || idx === 3);
     return (
+      <>
       <section class:list={['sec', 'block', 'reveal', `block--${b.type}`, b.tone === 'paper' && 'sec--paper', b.tone === 'forest' && 'sec--forest', b.tone === 'sand' && 'sec--sand', b.anchor && 'has-anchor', leadsIn && 'block--head', afterHead && 'block--after-head', sameGround && !afterHead && 'block--cont']} id={b.id}>
         <div class:list={['wrap', !wide && 'wrap--narrow']}>
           {b.type === 'hero' && (
@@ -281,16 +310,41 @@ const H = (p?: string) => {
           )}
 
           {b.type === 'form' && (
-            <LeadForm
-              locale={locale}
-              title={b.title}
-              subtitle={b.text}
-              directions={b.directions}
-              areas={b.areas}
-              eventName={b.event}
-              note={b.note}
-              id={b.id ?? 'lead-form'}
-            />
+            <>
+              {(b as any).formType === 'exhibitor' && (
+                <ExhibitorForm locale={locale} eventName={b.event} id={b.id ?? 'exhibitor-form'} />
+              )}
+              {(b as any).formType === 'visitor' && (
+                <VisitorForm locale={locale} eventName={b.event} id={b.id ?? 'visitor-form'} />
+              )}
+              {(b as any).formType === 'organizer' && (
+                <OrganizerForm locale={locale} id={b.id ?? 'organizer-form'} />
+              )}
+              {(b as any).formType === 'sponsor' && (
+                <SponsorForm locale={locale} id={b.id ?? 'sponsor-form'} />
+              )}
+              {(b as any).formType === 'callback' && (
+                <CallbackForm locale={locale} id={b.id ?? 'callback-form'} title={b.title} />
+              )}
+              {(b as any).formType === 'catalog' && (
+                <CatalogForm locale={locale} eventName={b.event} id={b.id ?? 'catalog-form'} />
+              )}
+              {(b as any).formType === 'group' && (
+                <GroupVisitForm locale={locale} id={b.id ?? 'group-form'} />
+              )}
+              {!(b as any).formType && (
+                <LeadForm
+                  locale={locale}
+                  title={b.title}
+                  subtitle={b.text}
+                  directions={b.directions}
+                  areas={b.areas}
+                  eventName={b.event}
+                  note={b.note}
+                  id={b.id ?? 'lead-form'}
+                />
+              )}
+            </>
           )}
 
           {b.type === 'faq' && <Faq locale={locale} items={(b.items as unknown as { q: string; a: string }[]) ?? []} title={b.title} />}
@@ -313,402 +367,117 @@ const H = (p?: string) => {
           )}
         </div>
       </section>
+      {showMidCta && (
+        <section class="sec block block--mid-cta reveal">
+          <div class="wrap">
+            <SmartCta locale={locale} variant={idx===1 ? 'inline' : 'card'} intent={auto!.cta} />
+          </div>
+        </section>
+      )}
+      </>
     );
   })
 }
+{/* Auto CTA + Form injection */}
+{auto && (
+  <>
+    <section class="sec block block--auto-cta reveal">
+      <div class="wrap">
+        <SmartCta locale={locale} variant="inline" intent={auto.cta} />
+      </div>
+    </section>
+    {!hasForm && (
+      <section class="sec block block--auto-form reveal">
+        <div class="wrap">
+          {auto.form === 'exhibitor' && <ExhibitorForm locale={locale} id="auto-exhibitor-form" />}
+          {auto.form === 'visitor' && <VisitorForm locale={locale} id="auto-visitor-form" />}
+          {auto.form === 'organizer' && <OrganizerForm locale={locale} id="auto-organizer-form" />}
+          {auto.form === 'sponsor' && <SponsorForm locale={locale} id="auto-sponsor-form" />}
+          {auto.form === 'callback' && <CallbackForm locale={locale} id="auto-callback-form" />}
+          {auto.form === 'catalog' && <CatalogForm locale={locale} id="auto-catalog-form" />}
+          {auto.form === 'group' && <GroupVisitForm locale={locale} id="auto-group-form" />}
+        </div>
+      </section>
+    )}
+  </>
+)}
 
 <style>
-  .sec--sand {
-    background: var(--cream-2);
-  }
-  .block--hero {
-    background: var(--cream);
-    padding-block: clamp(2rem, 1rem + 3vw, 4rem);
-  }
-  .block--faq {
-    padding-block: 0;
-  }
-  .block--faq :global(.sec) {
-    padding-block: clamp(3rem, 2rem + 3vw, 5rem);
-    background: var(--paper);
-  }
-  .block__head {
-    display: grid;
-    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
-    gap: clamp(1.4rem, .8rem + 2.4vw, 3rem);
-    align-items: center;
-  }
-  .block__head h1 {
-    font-size: clamp(1.5rem, 1.25rem + 1vw, 2rem);
-    max-width: 22ch;
-  }
-  .block__media {
-    margin: 0;
-  }
-  .block__media img {
-    border-radius: var(--r-lg);
-  }
-  @media (max-width: 940px) {
-    .block__head {
-      grid-template-columns: minmax(0, 1fr);
-    }
-  }
-  .block + .block--hero {
-    border-top: 1px solid var(--line);
-  }
-  /* heading block: no bottom padding — its content follows immediately */
-  .block--head {
-    padding-bottom: 0;
-  }
-  .block--head :global(.sec-head) {
-    margin-bottom: clamp(1.1rem, 0.6rem + 1.4vw, 1.8rem);
-  }
-  .block--after-head {
-    padding-top: 0;
-  }
-  /* consecutive blocks on the same ground: half the gap, one section */
-  .block--cont {
-    padding-top: 0;
-  }
-  .block--cont > .wrap {
-    padding-top: calc(var(--sec) * 0.45);
-  }
-  .prose {
-    max-width: 74ch;
-    font-size: 1.02rem;
-  }
-  .prose p {
-    margin: 0 0 1.05em;
-  }
-  .prose :global(strong) {
-    color: var(--evergreen);
-  }
-  .steps {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    gap: 1px;
-    background: var(--line);
-    border: 1px solid var(--line);
-    border-radius: var(--r-lg);
-    overflow: hidden;
-  }
-  .steps li {
-    background: var(--paper);
-    display: grid;
-    grid-template-columns: 56px minmax(0, 1fr);
-    gap: 1.1rem;
-    padding: clamp(1.1rem, .7rem + 1.4vw, 1.7rem);
-    align-items: start;
-  }
-  .steps__n {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: var(--evergreen);
-    color: var(--gold-soft);
-    display: grid;
-    place-items: center;
-    font-size: .95rem;
-  }
-  .steps h3 {
-    margin: 0 0 .3em;
-    font-size: 1.12rem;
-  }
-  .steps p {
-    margin: 0;
-    color: var(--ink-60);
-  }
-  .checks {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: .6rem 1.4rem;
-  }
-  .checks li {
-    display: flex;
-    gap: .6rem;
-    align-items: flex-start;
-    padding: .5rem 0;
-    border-bottom: 1px dashed var(--line);
-  }
-  .checks :global(svg) {
-    color: var(--moss);
-    margin-top: .28rem;
-    flex: none;
-  }
-  .files {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: .8rem;
-  }
-  .files a {
-    display: grid;
-    grid-template-columns: 44px minmax(0, 1fr) auto;
-    gap: .9rem;
-    align-items: center;
-    padding: 1rem 1.1rem;
-    border: 1px solid var(--line);
-    border-radius: var(--r);
-    background: var(--paper);
-    text-decoration: none;
-    transition: border-color var(--tr), background-color var(--tr);
-  }
-  .files a:hover {
-    border-color: var(--moss);
-    border-color: var(--ink);
-  }
-  .files__ico {
-    width: 44px;
-    height: 44px;
-    border-radius: var(--r);
-    background: var(--cream-2);
-    color: var(--evergreen);
-    display: grid;
-    place-items: center;
-  }
-  .files b {
-    display: block;
-    font-size: .98rem;
-    font-weight: 600;
-  }
-  .files small {
-    color: var(--ink-40);
-    font-size: .8rem;
-  }
-  .files__go {
-    color: var(--moss);
-    font-weight: 700;
-    font-size: .85rem;
-  }
-  .gal {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: clamp(.7rem, .4rem + .8vw, 1.1rem);
-  }
-  .gal__item :global(.ph) {
-    box-shadow: var(--shadow-soft);
-  }
-  .gal__cap {
-    margin: .65rem 0 0;
-    font-size: .86rem;
-    line-height: 1.45;
-    color: var(--ink-60);
-  }
-  .quote {
-    margin: 0;
-    padding: clamp(1.4rem, 1rem + 2vw, 2.4rem);
-    border-left: 3px solid var(--gold);
-    background: var(--cream-2);
-    border-radius: 0 var(--r-lg) var(--r-lg) 0;
-  }
-  .quote blockquote {
-    margin: 0 0 .8rem;
-    font-family: var(--f-display);
-    font-size: clamp(1.15rem, 1rem + .8vw, 1.65rem);
-    line-height: 1.35;
-    letter-spacing: -.01em;
-  }
-  .quote figcaption {
-    color: var(--ink-60);
-    font-size: .9rem;
-  }
-  .links {
-    border: 1px solid var(--line);
-    border-radius: var(--r-lg);
-    padding: clamp(1.1rem, .8rem + 1vw, 1.6rem);
-    background: var(--paper);
-  }
-  .links__row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: .6rem;
-    margin-top: .8rem;
-  }
-  .links a {
-    display: flex;
-    flex-direction: column;
-    gap: .15rem;
-    padding: .8rem .95rem;
-    border-radius: var(--r);
-    background: var(--cream);
-    text-decoration: none;
-    border: 1px solid transparent;
-  }
-  .links a:hover {
-    border-color: var(--sage);
-  }
-  .links a b {
-    font-size: .95rem;
-  }
-  .links a span {
-    font-size: .82rem;
-    color: var(--ink-60);
-  }
-  .cta-inline {
-    display: grid;
-    grid-template-columns: minmax(0, 1.35fr) minmax(0, auto);
-    gap: 1.4rem 2.4rem;
-    align-items: center;
-    background: var(--evergreen);
-    color: rgba(255,255,255,.86);
-    border-radius: var(--r-lg);
-    padding: clamp(1.6rem, 1rem + 2.6vw, 3rem);
-  }
-  .cta-inline h2 {
-    color: #fff;
-    max-width: 24ch;
-  }
-  .cta-inline .lead,
-  .cta-inline p {
-    color: rgba(255, 255, 255, .82);
-  }
-  .cta-inline :global(.btn--ghost) {
-    border-color: rgba(255, 255, 255, .4);
-    color: rgba(255,255,255,.86);
-  }
-  @media (max-width: 880px) {
-    .cta-inline {
-      grid-template-columns: minmax(0, 1fr);
-    }
-  }
-  .feature {
-    position: relative;
-    display: block;
-    background: var(--paper);
-    border: 1px solid var(--line);
-    border-radius: var(--r-lg);
-    padding: clamp(1.1rem, .7rem + 1.4vw, 1.7rem);
-    text-decoration: none;
-    color: inherit;
-    transition: border-color var(--tr), background-color var(--tr);
-  }
-  .feature:hover {
-    border-color: var(--ink);
-    }
-  .feature h3 {
-    font-size: clamp(1.02rem, .96rem + .3vw, 1.2rem);
-    margin: 0 0 .35em;
-  }
-  .feature p {
-    margin: 0;
-    color: var(--ink-60);
-    font-size: .94rem;
-  }
-  .feature .mono-label {
-    display: block;
-    margin-top: .7rem;
-  }
-  .feature__go {
-    position: absolute;
-    top: 1.1rem;
-    right: 1.2rem;
-    color: var(--moss);
-    opacity: 0.55;
-    transition: opacity var(--tr), color var(--tr);
-  }
-  .feature:hover .feature__go {
-    opacity: 1;
-  }
-  .sec--forest .block__head h1,
-  .sec--forest .prose {
-    color: inherit;
-  }
-  .sec--forest .feature,
-  .sec--forest .callout,
-  .sec--forest .links,
-  .sec--forest .steps li {
-    background: rgba(255, 255, 255, .06);
-    border-color: rgba(255, 255, 255, .16);
-    color: inherit;
-  }
-  .sec--forest .feature p,
-  .sec--forest .steps p,
-  .sec--forest .callout :global(.muted) {
-    color: rgba(255, 255, 255, .78);
-  }
-  .sec--forest .table-wrap {
-    background: transparent;
-    border-color: rgba(255, 255, 255, .18);
-  }
-  .sec--forest :global(.table) th,
-  .sec--forest :global(.table) td {
-    border-color: rgba(255, 255, 255, .16);
-    color: rgba(255, 255, 255, .9);
-  }
-  .sec--forest :global(.table) th {
-    color: rgba(255, 255, 255, .6);
-  }
-  .sec--forest .steps {
-    border-color: rgba(255, 255, 255, .16);
-    background: rgba(255, 255, 255, .16);
-  }
-  .sec--forest .steps__n {
-    background: var(--gold-soft);
-    color: var(--evergreen);
-  }
-  .has-anchor {
-    scroll-margin-top: 100px;
-  }
-  /* card with a photo on top (stock placeholder until client photos arrive) */
-  .feature__media {
-    margin: 0 0 1rem;
-  }
-  .feature__media img {
-    display: block;
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-    border-radius: var(--r-sm);
-  }
-  /* prose + photo side by side */
-  .prose-media {
-    display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-    gap: clamp(1.4rem, 1rem + 2vw, 2.8rem);
-    align-items: start;
-  }
-  .prose-media--solo {
-    display: block;
-  }
-  .prose-media .prose {
-    max-width: 64ch;
-  }
-  .prose-media__fig {
-    margin: 0;
-  }
-  .prose-media__fig img {
-    display: block;
-    width: 100%;
-    height: auto;
-    border-radius: var(--r-lg);
-  }
-  /* callout with a photo */
-  .callout--media {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 280px);
-    gap: clamp(1.2rem, 1rem + 1.6vw, 2rem);
-    align-items: center;
-  }
-  .callout__fig {
-    margin: 0;
-  }
-  .callout__fig img {
-    display: block;
-    width: 100%;
-    height: auto;
-    border-radius: var(--r-sm);
-  }
-  @media (max-width: 940px) {
-    .prose-media,
-    .callout--media {
-      grid-template-columns: minmax(0, 1fr);
-    }
-    .prose-media__fig {
-      order: -1;
-    }
-  }
+  .sec--sand { background: var(--cream-2); }
+  .block--hero { background: var(--cream); padding-block: clamp(2rem, 1rem + 3vw, 4rem); }
+  .block--faq { padding-block: 0; }
+  .block--faq :global(.sec) { padding-block: clamp(3rem, 2rem + 3vw, 5rem); background: var(--paper); }
+  .block__head { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr); gap: clamp(1.4rem, .8rem + 2.4vw, 3rem); align-items: center; }
+  .block__head h1 { font-size: clamp(1.5rem, 1.25rem + 1vw, 2rem); max-width: 22ch; }
+  .block__media { margin: 0; }
+  .block__media img { border-radius: var(--r-lg); }
+  @media (max-width: 940px) { .block__head { grid-template-columns: minmax(0, 1fr); } }
+  .block + .block--hero { border-top: 1px solid var(--line); }
+  .block--head { padding-bottom: 0; }
+  .block--head :global(.sec-head) { margin-bottom: clamp(1.1rem, 0.6rem + 1.4vw, 1.8rem); }
+  .block--after-head { padding-top: 0; }
+  .block--cont { padding-top: 0; }
+  .block--cont > .wrap { padding-top: calc(var(--sec) * 0.45); }
+  .prose { max-width: 74ch; font-size: 1.02rem; }
+  .prose p { margin: 0 0 1.05em; }
+  .prose :global(strong) { color: var(--evergreen); }
+  .steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; }
+  .steps li { background: var(--paper); display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 1.1rem; padding: clamp(1.1rem, .7rem + 1.4vw, 1.7rem); align-items: start; }
+  .steps__n { width: 40px; height: 40px; border-radius: 50%; background: var(--evergreen); color: var(--gold-soft); display: grid; place-items: center; font-size: .95rem; }
+  .steps h3 { margin: 0 0 .3em; font-size: 1.12rem; }
+  .steps p { margin: 0; color: var(--ink-60); }
+  .checks { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: .6rem 1.4rem; }
+  .checks li { display: flex; gap: .6rem; align-items: flex-start; padding: .5rem 0; border-bottom: 1px dashed var(--line); }
+  .checks :global(svg) { color: var(--moss); margin-top: .28rem; flex: none; }
+  .files { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: .8rem; }
+  .files a { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: .9rem; align-items: center; padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: var(--r); background: var(--paper); text-decoration: none; transition: border-color var(--tr), background-color var(--tr); }
+  .files a:hover { border-color: var(--moss); border-color: var(--ink); }
+  .files__ico { width: 44px; height: 44px; border-radius: var(--r); background: var(--cream-2); color: var(--evergreen); display: grid; place-items: center; }
+  .files b { display: block; font-size: .98rem; font-weight: 600; }
+  .files small { color: var(--ink-40); font-size: .8rem; }
+  .files__go { color: var(--moss); font-weight: 700; font-size: .85rem; }
+  .gal { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: clamp(.7rem, .4rem + .8vw, 1.1rem); }
+  .gal__item :global(.ph) { box-shadow: var(--shadow-soft); }
+  .gal__cap { margin: .65rem 0 0; font-size: .86rem; line-height: 1.45; color: var(--ink-60); }
+  .quote { margin: 0; padding: clamp(1.4rem, 1rem + 2vw, 2.4rem); border-left: 3px solid var(--gold); background: var(--cream-2); border-radius: 0 var(--r-lg) var(--r-lg) 0; }
+  .quote blockquote { margin: 0 0 .8rem; font-family: var(--f-display); font-size: clamp(1.15rem, 1rem + .8vw, 1.65rem); line-height: 1.35; letter-spacing: -.01em; }
+  .quote figcaption { color: var(--ink-60); font-size: .9rem; }
+  .links { border: 1px solid var(--line); border-radius: var(--r-lg); padding: clamp(1.1rem, .8rem + 1vw, 1.6rem); background: var(--paper); }
+  .links__row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: .6rem; margin-top: .8rem; }
+  .links a { display: flex; flex-direction: column; gap: .15rem; padding: .8rem .95rem; border-radius: var(--r); background: var(--cream); text-decoration: none; border: 1px solid transparent; }
+  .links a:hover { border-color: var(--sage); }
+  .links a b { font-size: .95rem; }
+  .links a span { font-size: .82rem; color: var(--ink-60); }
+  .cta-inline { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, auto); gap: 1.4rem 2.4rem; align-items: center; background: var(--evergreen); color: rgba(255,255,255,.86); border-radius: var(--r-lg); padding: clamp(1.6rem, 1rem + 2.6vw, 3rem); }
+  .cta-inline h2 { color: #fff; max-width: 24ch; }
+  .cta-inline .lead, .cta-inline p { color: rgba(255, 255, 255, .82); }
+  .cta-inline :global(.btn--ghost) { border-color: rgba(255, 255, 255, .4); color: rgba(255,255,255,.86); }
+  @media (max-width: 880px) { .cta-inline { grid-template-columns: minmax(0, 1fr); } }
+  .feature { position: relative; display: block; background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-lg); padding: clamp(1.1rem, .7rem + 1.4vw, 1.7rem); text-decoration: none; color: inherit; transition: border-color var(--tr), background-color var(--tr); }
+  .feature:hover { border-color: var(--ink); }
+  .feature h3 { font-size: clamp(1.02rem, .96rem + .3vw, 1.2rem); margin: 0 0 .35em; }
+  .feature p { margin: 0; color: var(--ink-60); font-size: .94rem; }
+  .feature .mono-label { display: block; margin-top: .7rem; }
+  .feature__go { position: absolute; top: 1.1rem; right: 1.2rem; color: var(--moss); opacity: 0.55; transition: opacity var(--tr), color var(--tr); }
+  .feature:hover .feature__go { opacity: 1; }
+  .sec--forest .block__head h1, .sec--forest .prose { color: inherit; }
+  .sec--forest .feature, .sec--forest .callout, .sec--forest .links, .sec--forest .steps li { background: rgba(255, 255, 255, .06); border-color: rgba(255, 255, 255, .16); color: inherit; }
+  .sec--forest .feature p, .sec--forest .steps p, .sec--forest .callout :global(.muted) { color: rgba(255, 255, 255, .78); }
+  .sec--forest .table-wrap { background: transparent; border-color: rgba(255, 255, 255, .18); }
+  .sec--forest :global(.table) th, .sec--forest :global(.table) td { border-color: rgba(255, 255, 255, .16); color: rgba(255, 255, 255, .9); }
+  .sec--forest :global(.table) th { color: rgba(255, 255, 255, .6); }
+  .sec--forest .steps { border-color: rgba(255, 255, 255, .16); background: rgba(255, 255, 255, .16); }
+  .sec--forest .steps__n { background: var(--gold-soft); color: var(--evergreen); }
+  .has-anchor { scroll-margin-top: 100px; }
+  .feature__media { margin: 0 0 1rem; }
+  .feature__media img { display: block; width: 100%; height: 150px; object-fit: cover; border-radius: var(--r-sm); }
+  .prose-media { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: clamp(1.4rem, 1rem + 2vw, 2.8rem); align-items: start; }
+  .prose-media--solo { display: block; }
+  .prose-media .prose { max-width: 64ch; }
+  .prose-media__fig { margin: 0; }
+  .prose-media__fig img { display: block; width: 100%; height: auto; border-radius: var(--r-lg); }
+  .callout--media { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 280px); gap: clamp(1.2rem, 1rem + 1.6vw, 2rem); align-items: center; }
+  .callout__fig { margin: 0; }
+  .callout__fig img { display: block; width: 100%; height: auto; border-radius: var(--r-sm); }
+  @media (max-width: 940px) { .prose-media, .callout--media { grid-template-columns: minmax(0, 1fr); } .prose-media__fig { order: -1; } }
 </style>

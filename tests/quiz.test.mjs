@@ -61,6 +61,9 @@ test('quiz and form blocks share one payload contract', () => {
   assert.ok(modal.includes('data-quiz-event'), 'modal must forward the trigger context');
   const header = readFileSync(new URL('../src/components/Header.astro', import.meta.url), 'utf8');
   assert.ok(header.includes('data-quiz-event'), 'header must pass the event page context');
+  assert.ok(header.includes('data-quiz-source="header"') && header.includes('data-quiz-source="menu"'), 'header triggers must be attributable');
+  const band = readFileSync(new URL('../src/components/CtaBand.astro', import.meta.url), 'utf8');
+  assert.ok(band.includes('data-quiz-source="cta-band"'), 'CtaBand triggers must be attributable');
 });
 
 test('pages ship the quiz block and the global modal trigger', () => {
@@ -100,5 +103,10 @@ test('webhook formats a quiz lead into a readable Telegram message', async () =>
   // legacy LeadForm payload renders without quiz-specific lines
   const plain = formatLead({ name: 'X', phone: '+998 1', position: 'Руководитель' });
   assert.match(plain, /Новая заявка\n/);
-  assert.doesNotMatch(plain, /Задача|Площадь|Канал/);
+  assert.doesNotMatch(plain, /Задача|Площадь|Канал|Источник|UTM|Лендинг/);
+  // attribution lines appear when the lead carries them
+  const attributed = formatLead({ quiz: 'stand', name: 'Y', phone: '+998 2', src: 'cta-band', utm_source: 'instagram', utm_campaign: 'build', landing: '/en/request-stand/?utm_source=instagram' });
+  assert.match(attributed, /Источник: cta-band/);
+  assert.match(attributed, /utm_source=instagram, utm_campaign=build/);
+  assert.match(attributed, /Лендинг: \/en\/request-stand/);
 });

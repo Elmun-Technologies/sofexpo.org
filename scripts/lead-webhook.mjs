@@ -53,6 +53,13 @@ export function formatLead(lead = {}) {
   if (lead.position) lines.push(`💼 ${cut(lead.position)}`);
   if (lead.direction) lines.push(`🧭 Направление: ${cut(lead.direction)}`);
   if (lead.channel) lines.push(`📡 Канал: ${CHANNEL_LABELS[lead.channel] || cut(lead.channel)}`);
+  if (lead.src) lines.push(`📍 Источник: ${cut(lead.src)}`);
+  const utm = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term']
+    .filter((k) => lead[k])
+    .map((k) => `${k}=${cut(lead[k], 80)}`)
+    .join(', ');
+  if (utm) lines.push(`🏷 UTM: ${utm}`);
+  if (lead.landing) lines.push(`🚪 Лендинг: ${cut(lead.landing, 160)}`);
   if (lead.comment) lines.push(`💬 ${cut(lead.comment)}`);
   lines.push('', `🔗 ${cut(lead.page, 200)}`, `🕒 ${cut(lead.ts, 40)}`);
   return lines.join('\n');

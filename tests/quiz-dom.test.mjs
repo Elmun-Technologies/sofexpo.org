@@ -11,10 +11,10 @@ import { JSDOM } from 'jsdom';
  * (`npm run check` always builds first).
  */
 const dist = (path) => fileURLToPath(new URL(`../dist/${path}`, import.meta.url));
-const load = (path, { scripts = true } = {}) => {
+const load = (path, { scripts = true, query = '' } = {}) => {
   const html = readFileSync(dist(path), 'utf8');
   const dom = new JSDOM(html, {
-    url: `https://sofexpo.org/${path.replace(/index\.html$/, '')}`,
+    url: `https://sofexpo.org/${path.replace(/index\.html$/, '')}${query}`,
     runScripts: scripts ? 'dangerously' : undefined,
   });
   // jsdom does not implement scrolling
@@ -149,6 +149,38 @@ test('quiz: modal quiz re-focuses to the event page context', { skip: !existsSyn
   assert.ok(events.includes('quiz_open'), 'quiz_open pushed to dataLayer');
   dialog.querySelector('[data-quiz-close]').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
   assert.equal(dialog.open, false);
+  dom.window.close();
+});
+
+test('quiz: leads carry attribution — trigger source, landing page and UTM', { skip: !existsSync(dist('en/events/foodera-expo/visitors/index.html')) && 'dist missing — run npm run build' }, async () => {
+  const dom = load('en/events/foodera-expo/visitors/index.html', { query: '?utm_source=newsletter&utm_campaign=foodera' });
+  await new Promise((r) => setTimeout(r, 50));
+  const { document } = dom.window;
+  // landing captured once per session at first view
+  const ctx = JSON.parse(dom.window.sessionStorage.getItem('sofexpo.leadctx'));
+  assert.match(ctx.landing, /\/en\/events\/foodera-expo\/visitors\/\?utm_source=newsletter&utm_campaign=foodera/);
+  assert.equal(ctx.utm.utm_source, 'newsletter');
+  const trigger = document.querySelector('a[data-quiz-open]');
+  assert.equal(trigger.getAttribute('data-quiz-source'), 'header');
+  trigger.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true, cancelable: true }));
+  const quiz = document.querySelector('[data-quiz-modal] [data-quiz]');
+  assert.equal(quiz.dataset.source, 'header');
+  assert.equal(JSON.parse(dom.window.sessionStorage.getItem('sofexpo.leadctx')).src, 'header');
+  // finish the focused funnel and submit
+  change(quiz.querySelector('input[name=goal]'));
+  change(quiz.querySelector('input[name=area][value="18 m²"]'));
+  const form = quiz.querySelector('[data-quiz-form]');
+  form.querySelector('[name=name]').value = 'Attribution Test';
+  form.querySelector('[name=company]').value = 'QA Company';
+  form.querySelector('[name=phone]').value = '90 000 00 01';
+  form.querySelector('[name=consent]').checked = true;
+  submit(form);
+  const lead = JSON.parse(dom.window.localStorage.getItem('sofexpo.leads')).at(-1);
+  assert.equal(lead.src, 'header');
+  assert.equal(lead.utm_source, 'newsletter');
+  assert.equal(lead.utm_campaign, 'foodera');
+  assert.match(lead.landing, /utm_source=newsletter/);
+  assert.equal(lead.event, 'FOODERA EXPO 2026', 'focus context survived the funnel');
   dom.window.close();
 });
 

@@ -100,7 +100,7 @@ const items = nav.filter((i) => i.key !== 'nav.news');
         </div>
       </details>
       <a class="header-search" href={P('/search/')} aria-label={t('cta.search')}><Icon name="search" size={19} /></a>
-      <a class="btn btn--sm btn--desk" href={P('/request-stand/')} data-quiz-open data-quiz-event={quizEvent}>
+      <a class="btn btn--sm btn--desk" href={P('/request-stand/')} data-quiz-open data-quiz-event={quizEvent} data-quiz-source="header">
         <Icon name="sparkle" size={16} /> {t('cta.stand')}
       </a>
       <button class="burger" type="button" aria-controls="mnav" aria-expanded="false" aria-label={t('nav.menu')}>
@@ -128,7 +128,7 @@ const items = nav.filter((i) => i.key !== 'nav.news');
       }
       <div class="mnav__ctas">
         <a class="btn btn--ghost" href={P('/search/')}>{t('cta.search')}</a>
-        <a class="btn" href={P('/request-stand/')} data-quiz-open data-quiz-event={quizEvent}>{t('cta.stand')}</a>
+        <a class="btn" href={P('/request-stand/')} data-quiz-open data-quiz-event={quizEvent} data-quiz-source="menu">{t('cta.stand')}</a>
         <a class="btn btn--ghost" href={P('/visitors/tickets/')}>{t('cta.ticket')}</a>
         <a class="btn btn--ghost" href={P('/events/')}>{locale === 'ru' ? 'Афиша и программа' : 'Line-up and programme'}</a>
         <a class="btn btn--ghost" href={`tel:${site.contacts.phoneMain.replace(/\s/g, '')}`}>

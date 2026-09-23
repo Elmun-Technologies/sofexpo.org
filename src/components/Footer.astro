@@ -7,8 +7,9 @@ import { localize, type SourceLocale as Locale } from '@/i18n/config';
 import { useUI } from '@/i18n/ui';
 import { upcoming } from '@/data/events';
 import Icon from '@/components/Icon.astro';
+import AskAI from '@/components/AskAI.astro';
 
-const { locale } = Astro.props as { locale: Locale };
+const { locale, path = '/' } = Astro.props as { locale: Locale; path?: string };
 const t = useUI(locale);
 const P = (p: string) => localize(locale, p);
 const year = 2026;
@@ -92,6 +93,8 @@ const ru = locale === 'ru';
         </a>
       </div>
     </div>
+
+    <AskAI locale={locale} path={path} />
 
     <div class="ftr__bottom">
       <p style="margin:0">

@@ -229,12 +229,13 @@ export const companyPages: PageDef[] = [
           actions: [{ label: "Написать в отдел продаж", href: "/contacts/" }],
           image: "/images/team/team-ahmadkhon-tadzhibaev.jpg",
           imageAlt: "Руководитель SOF EXPO Ахмаджон Таджибаев",
+          mediaRatio: "1/1",
         },
         {
           type: "h2",
           kicker: "Кто есть кто",
           title: "Команда SOF EXPO",
-          text: "Руководство и продажи — сверху, работа с клиентами и техслужба — ниже. У трёх менеджеров на карточке указан прямой номер.",
+          text: "Руководство — первым, за ним медиа и продажи, дальше — клиентские менеджеры, техслужба и хозяйство. У трёх менеджеров на карточке указан прямой номер.",
           id: "team-wall",
         },
         {
@@ -301,12 +302,13 @@ export const companyPages: PageDef[] = [
           actions: [{ label: "Write to sales", href: "/contacts/" }],
           image: "/images/team/team-ahmadkhon-tadzhibaev.jpg",
           imageAlt: "Ahmadkhon Tadzhibaev, head of SOF EXPO",
+          mediaRatio: "1/1",
         },
         {
           type: "h2",
           kicker: "Who is who",
           title: "The SOF EXPO team",
-          text: "Leadership and show sales at the top, client managers and technical below. Three managers carry a direct line on their card.",
+          text: "Leadership first, then media and sales, followed by client managers, technical and operations. Three managers carry a direct line on their card.",
           id: "team-wall",
         },
         {

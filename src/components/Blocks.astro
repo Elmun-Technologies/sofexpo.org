@@ -72,7 +72,7 @@ const H = (p?: string) => {
                 ) : null}
               </div>
               {b.image && (
-                <Photo class="block__media" src={b.image} alt={b.imageAlt ?? ''} ratio="4/3" priority sizes="(max-width: 1080px) 100vw, 45vw" />
+                <Photo class="block__media" src={b.image} alt={b.imageAlt ?? ''} ratio={b.mediaRatio ?? '4/3'} priority sizes="(max-width: 1080px) 100vw, 45vw" />
               )}
             </div>
           )}

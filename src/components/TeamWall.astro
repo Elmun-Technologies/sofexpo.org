@@ -5,10 +5,13 @@
  * The client's posters are finished 1:1 artboards — name, role, the brand frame and,
  * on three of them, a direct phone number — so the card is shown whole (never cropped)
  * and the text beneath it exists for the people the picture cannot serve: screen
- * readers, search engines and anyone who needs to copy a name. Items are grouped by
- * `kind` so the wall reads in the order a visitor actually wants it: leadership and
- * commercial decision-makers first, then the customer-facing managers, then the
- * back-office staff.
+ * readers, search engines and anyone who needs to copy a name.
+ *
+ * The wall is grouped by `kind` into numbered bands, 01–07: leadership first, then
+ * media and marketing, then show sales, then the client managers a buyer gets routed
+ * to, then the technical, operations and support staff who keep the centre running.
+ * Each band is its own reveal section with a per-card 70ms stagger, so scrolling the
+ * wall reads like turning pages instead of one long grid.
  */
 import type { Locale } from "@/i18n/config";
 import { team, teamKinds, type TeamMember } from "@/data/team";
@@ -22,6 +25,18 @@ const { locale, kicker, title, text } = Astro.props as {
 
 const ru = locale === "ru";
 const total = team.length;
+
+/* RU plurals: 1 сотрудник / 2 сотрудника / 5 сотрудников; EN: 1 person / N people */
+const people = (n: number) =>
+  ru
+    ? `${n} ${
+        n % 10 === 1 && n % 100 !== 11
+          ? "сотрудник"
+          : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)
+            ? "сотрудника"
+            : "сотрудников"
+      }`
+    : `${n} ${n === 1 ? "person" : "people"}`;
 
 /* The wall is the only place these 17 people are named on the site, and a team page
    is exactly the kind of thing people search for by name. Without Person markup the
@@ -45,9 +60,12 @@ const personLd = {
   })),
 };
 
-/* group once so the markup can render each band with its own heading */
+/* group once so the markup can render each band with its own heading. `team` in
+   src/data/team.ts is authored in this same order, so the rendered wall and the
+   ItemList above always tell the same story. */
 const ORDER: TeamMember["kind"][] = [
   "leadership",
+  "media",
   "sales",
   "client",
   "technical",
@@ -71,31 +89,40 @@ const groups = ORDER.map((k) => ({
         {title && <h2>{title}</h2>}
         {text && <p style="margin-top:.6rem">{text}</p>}
       </div>
-      <p class="mono-label tw__count">
-        {total} {ru ? "сотрудников" : "people"}
-      </p>
+      <p class="mono-label tw__count">{people(total)}</p>
     </div>
   )}
 
-  {groups.map((g) => (
-    <section class="tw__band">
-      <h3 class="tw__band-h">{g.label}</h3>
-      <ul class="tw__grid">
+  {groups.map((g, n) => (
+    <section class="tw__band reveal" id={`team-${g.kind}`}>
+      <header class="tw__band-h">
+        <span class="num tw__num" aria-hidden="true">
+          {String(n + 1).padStart(2, "0")}
+        </span>
+        <h3>{g.label}</h3>
+        <span class="tw__hairline" aria-hidden="true" />
+        <span class="mono-label tw__chip">{people(g.list.length)}</span>
+      </header>
+      <ul class:list={["tw__grid", g.kind === "leadership" && "tw__grid--lead"]}>
         {g.list.map((m, i) => (
-          <li class="tw__item">
+          <li class="tw__item" style={`--i:${i}`}>
             <figure class="tw__card">
               <picture>
                 <source
                   type="image/webp"
                   srcset={`/images/team/${m.card}-400.webp 400w, /images/team/${m.card}-800.webp 800w, /images/team/${m.card}-1200.webp 1200w`}
-                  sizes="(max-width: 560px) 50vw, (max-width: 900px) 33vw, 25vw"
+                  sizes={
+                    g.kind === "leadership"
+                      ? "(max-width: 900px) 50vw, 45vw"
+                      : "(max-width: 560px) 50vw, (max-width: 900px) 33vw, 25vw"
+                  }
                 />
                 <img
                   src={`/images/team/${m.card}.jpg`}
                   alt={`${m.name[locale]} — ${m.role[locale]}${m.blurb ? `. ${m.blurb[locale]}` : ""}`}
                   width="1200"
                   height="1200"
-                  loading={i < 4 ? "eager" : "lazy"}
+                  loading={n === 0 ? "eager" : "lazy"}
                   decoding="async"
                 />
               </picture>
@@ -120,16 +147,38 @@ const groups = ORDER.map((k) => ({
   .tw__count {
     white-space: nowrap;
   }
+  .tw__band {
+    /* band anchors (#team-leadership … #team-support) land clear of the sticky header */
+    scroll-margin-top: 100px;
+  }
   .tw__band + .tw__band {
     margin-top: clamp(2.2rem, 1.4rem + 2vw, 3.4rem);
   }
   .tw__band-h {
-    margin: 0 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: .9rem;
+    margin: 0 0 1.1rem;
+  }
+  .tw__num {
+    font-size: 1rem;
+    color: var(--gold);
+  }
+  .tw__band-h h3 {
+    margin: 0;
     font-family: var(--f-mono);
-    font-size: .78rem;
+    font-size: .8rem;
     letter-spacing: .14em;
     text-transform: uppercase;
     color: var(--moss);
+  }
+  .tw__hairline {
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+  .tw__chip {
+    white-space: nowrap;
   }
   .tw__grid {
     list-style: none;
@@ -139,24 +188,40 @@ const groups = ORDER.map((k) => ({
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: clamp(1rem, .6rem + 1.4vw, 1.8rem);
   }
+  /* leadership gets the two big cards — the names a visitor scans for first */
+  .tw__grid--lead {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1.2rem, .8rem + 2vw, 2.4rem);
+  }
   .tw__item {
     display: flex;
     flex-direction: column;
     gap: .8rem;
+    /* the band reveals as one section; the cards walk in behind it, 70ms apart */
+    transition:
+      opacity 620ms cubic-bezier(0.22, 0.61, 0.36, 1),
+      transform 620ms cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition-delay: calc(var(--i, 0) * 70ms);
+  }
+  .reveal-pending .tw__item {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  .reveal-in .tw__item {
+    opacity: 1;
+    transform: none;
   }
   .tw__card {
     margin: 0;
+    border: 1px solid var(--line);
     border-radius: var(--r-lg);
     overflow: hidden;
     background: var(--cream-2);
-    box-shadow: var(--shadow-soft);
-    transition:
-      transform var(--tr),
-      box-shadow var(--tr);
+    transition: transform var(--tr), border-color var(--tr);
   }
   .tw__item:hover .tw__card {
     transform: translateY(-3px);
-    box-shadow: var(--shadow-lift);
+    border-color: var(--sage);
   }
   .tw__card img {
     display: block;
@@ -164,6 +229,10 @@ const groups = ORDER.map((k) => ({
     aspect-ratio: 1 / 1;
     object-fit: contain;
     background: #0a1f3d;
+    transition: transform 600ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .tw__item:hover .tw__card img {
+    transform: scale(1.035);
   }
   .tw__meta {
     display: grid;
@@ -174,6 +243,10 @@ const groups = ORDER.map((k) => ({
     font-family: var(--f-display);
     font-size: 1rem;
     letter-spacing: -.012em;
+    transition: color var(--tr);
+  }
+  .tw__item:hover .tw__meta b {
+    color: var(--evergreen);
   }
   .tw__meta span {
     font-size: .85rem;
@@ -188,9 +261,34 @@ const groups = ORDER.map((k) => ({
     color: var(--evergreen);
     text-decoration: none;
     width: max-content;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: .3rem .75rem;
+    transition:
+      background-color var(--tr),
+      border-color var(--tr),
+      color var(--tr);
   }
   .tw__phone:hover {
-    color: var(--moss);
+    background: var(--moss);
+    border-color: var(--moss);
+    color: #fff;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tw__item {
+      transition: none;
+    }
+    .tw__card img {
+      transition: none;
+      transform: none;
+    }
+  }
+  @media print {
+    /* a not-yet-revealed card must never print invisible */
+    .reveal-pending .tw__item {
+      opacity: 1 !important;
+      transform: none !important;
+    }
   }
   @media (max-width: 900px) {
     .tw__grid {

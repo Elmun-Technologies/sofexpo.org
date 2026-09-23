@@ -220,6 +220,39 @@ for (const f of await readdir(OUT)) {
 
 
 /**
+ * Team posters for the SOF EXPO team page (/about/team/).
+ *
+ * The client delivered 17 finished 1:1 artboards with the brand frame baked in — name,
+ * role and the SOF EXPO identity. They are not photographs to be cropped: each card is
+ * a designed layout with type on it, so the ladder keeps the full frame at 1:1 and only
+ * ever scales down. A 400w rung feeds the mobile card, an 800w rung feeds the desktop
+ * grid, a 1200w rung feeds the LCP image on the team page itself.
+ */
+mkdirSync(`${OUT}/team`, { recursive: true });
+{
+  const teamSrc = 'images/team';
+  const teamFiles = existsSync(teamSrc) ? (await readdir(teamSrc)).filter((f) => /^team-[\w-]+\.jpg$/i.test(f)).sort() : [];
+  let t = 0;
+  for (const f of teamFiles) {
+    const src = path.join(teamSrc, f);
+    const base = f.replace(/\.jpg$/i, '');
+    for (const w of [400, 800, 1200]) {
+      await sharp(src, { failOn: 'none' })
+        .resize({ width: w, height: w, fit: 'inside', withoutEnlargement: true, kernel: 'lanczos3' })
+        .webp({ quality: w >= 1200 ? 76 : w >= 800 ? 78 : 80, effort: 6 })
+        .toFile(path.join(OUT, 'team', `${base}-${w}.webp`));
+    }
+    await sharp(src, { failOn: 'none' })
+      .resize({ width: 1200, withoutEnlargement: true, kernel: 'lanczos3' })
+      .jpeg({ quality: 84, progressive: true, mozjpeg: true, chromaSubsampling: '4:4:4' })
+      .toFile(path.join(OUT, 'team', `${base}.jpg`));
+    process.stdout.write(`· team/${base}\n`);
+    t++;
+  }
+  if (t) console.log(`${t} team posters built`);
+}
+
+/**
  * Speaker cards for E-COM & RETAIL EXPO SAMARKAND.
  *
  * The client shot two poster series for the business programme — a dark "Biz Network" set

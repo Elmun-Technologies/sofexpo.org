@@ -24,6 +24,10 @@ test('changing countdown descriptors and preparation deadlines remain translated
   assert.equal(zh('90–60 days ahead'), '90–60天前');
   assert.equal(tr('25–14 days ahead'), '25–14 gün önce');
   assert.equal(zh('30 days.'), '30天。');
+  assert.equal(zh('17 people'), '17人');
+  assert.equal(tr('1 person'), '1 kişi');
+  assert.equal(zh('Ahmadkhon Tadzhibaev'), 'Ahmadkhon Tadzhibaev');
+  assert.equal(tr('Head of SOF EXPO'), 'SOF EXPO Başkanı');
   assert.throws(()=>zh('An unknown event description · in 45 d'), /Missing zh translation/);
 });
 

@@ -69,6 +69,8 @@ function dynamicText(text, locale, translate) {
     const prefix = descriptor ? `${translate(descriptor)} · ` : '';
     return prefix + (locale === 'zh' ? `${countdown[2]}天后` : `${countdown[2]} gün sonra`);
   }
+  const people = /^(\d+) (?:person|people)$/.exec(text);
+  if (people) return locale === 'zh' ? `${people[1]}人` : `${people[1]} kişi`;
   const eventDay = /^day (\d+)$/i.exec(text);
   if (eventDay) return locale === 'zh' ? `第${eventDay[1]}天` : `${eventDay[1]}. gün`;
   const leadTime = /^(\d+(?:[–-]\d+)?) days (ahead|out|after)$/.exec(text);

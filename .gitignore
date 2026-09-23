@@ -17,3 +17,8 @@ image-search/
 .venv/
 test-results/
 playwright-report/
+
+# the client's PNG artboards in their original delivery form (the same bytes live at the
+# repo root under their original filenames); the JPEG sources the build pipeline actually
+# reads are tracked in images/team/
+images/team-original/

@@ -17,6 +17,7 @@ import Faq from '@/components/Faq.astro';
 import CalendarRail from '@/components/CalendarRail.astro';
 import VenuePlan from '@/components/VenuePlan.astro';
 import MapSchema from '@/components/MapSchema.astro';
+import TeamWall from '@/components/TeamWall.astro';
 
 const { blocks, locale } = Astro.props as { blocks: Block[]; locale: Locale };
 const t = useUI(locale);
@@ -74,7 +75,7 @@ const H = (p?: string) => {
                 ) : null}
               </div>
               {b.image && (
-                <Photo class="block__media" src={b.image} alt={b.imageAlt ?? ''} ratio="4/3" priority sizes="(max-width: 1080px) 100vw, 45vw" />
+                <Photo class="block__media" src={b.image} alt={b.imageAlt ?? ''} ratio={b.mediaRatio ?? '4/3'} priority sizes="(max-width: 1080px) 100vw, 45vw" />
               )}
             </div>
           )}
@@ -252,6 +253,8 @@ const H = (p?: string) => {
           {b.type === 'plan' && <VenuePlan locale={locale} />}
 
           {b.type === 'map' && <MapSchema locale={locale} />}
+
+          {b.type === 'team' && <TeamWall locale={locale} />}
 
           {b.type === 'quote' && (
             <figure class="quote">

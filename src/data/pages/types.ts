@@ -27,7 +27,11 @@ export type BlockType =
      the location map. No other block type changes. */
   | "rail"
   | "plan"
-  | "map";
+  | "map"
+  /* The team wall: 17 finished 1:1 poster artboards grouped by role, rendered by
+     `src/components/TeamWall.astro`. The block carries no items of its own — the wall
+     reads `src/data/team.ts` so a hire or a departure is a one-line edit. */
+  | "team";
 
 export interface BlockAction {
   label: string;
@@ -99,6 +103,8 @@ export interface Block {
   /** media */
   image?: string;
   imageAlt?: string;
+  /** hero media: override the default 4/3 frame (1/1 for finished artboards that must never be cropped) */
+  mediaRatio?: string;
   /** layout */
   tone?: "default" | "paper" | "forest" | "sand" | "gold";
   width?: "narrow" | "wide";

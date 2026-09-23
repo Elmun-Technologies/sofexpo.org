@@ -134,7 +134,7 @@ export const visitorPages: PageDef[] = [
             },
             {
               q: "Что делать, если не пришло письмо с билетом?",
-              a: "Проверьте спам и напишите на info@sofexpo.org — восстановим билет по телефону, указанному при регистрации.",
+              a: "Проверьте спам и напишите на info@sofexpo.uz — восстановим билет по телефону, указанному при регистрации.",
             },
           ],
         },
@@ -264,7 +264,7 @@ export const visitorPages: PageDef[] = [
             },
             {
               q: "The ticket email never arrived — what now?",
-              a: "Check spam and write to info@sofexpo.org — we restore the ticket by the phone number given at registration.",
+              a: "Check spam and write to info@sofexpo.uz — we restore the ticket by the phone number given at registration.",
             },
           ],
         },
@@ -380,7 +380,7 @@ export const visitorPages: PageDef[] = [
             },
             {
               q: "Что делать, если не пришло письмо с билетом?",
-              a: "Проверьте спам и напишите на info@sofexpo.org — восстановим по телефону, указанному при регистрации.",
+              a: "Проверьте спам и напишите на info@sofexpo.uz — восстановим по телефону, указанному при регистрации.",
             },
             {
               q: "Есть ли льготы для студентов и педагогов?",
@@ -474,7 +474,7 @@ export const visitorPages: PageDef[] = [
             },
             {
               q: "I did not receive the e-ticket email",
-              a: "Check spam and write to info@sofexpo.org — we restore it from the phone number used at registration.",
+              a: "Check spam and write to info@sofexpo.uz — we restore it from the phone number used at registration.",
             },
             {
               q: "Are there discounts for students and teachers?",

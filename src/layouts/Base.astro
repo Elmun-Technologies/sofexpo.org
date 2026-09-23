@@ -2,6 +2,7 @@
 import '@/styles/fonts.css';
 import '@/styles/global.css';
 import '@/styles/premium.css';
+import '@/styles/motion.css';
 /* display: Inter Tight (has the Cyrillic subset Archivo lacks) · body: Golos Text · data: JetBrains Mono */
 import { buildMeta, entityNodes, SITE } from '@/lib/seo';
 import { localize, localeMeta, type SourceLocale as Locale } from '@/i18n/config';
@@ -75,6 +76,7 @@ if (meta.noindex) {
   meta.xDefault = '';
 }
 const t = useUI(locale);
+const BUILD_DATE = new Date().toISOString().slice(0, 10);
 const nodes: Record<string, unknown>[] = [
   {
     '@type': 'WebPage',
@@ -87,6 +89,13 @@ const nodes: Record<string, unknown>[] = [
     breadcrumb: breadcrumbs.length
       ? { '@id': `${SITE}${localize(locale, path)}#breadcrumbs` }
       : undefined,
+    /* GEO: answer engines quote pages they can date, attribute and summarise */
+    ...(props.publishedTime ? { datePublished: props.publishedTime } : {}),
+    dateModified: props.modifiedTime ?? props.publishedTime ?? BUILD_DATE,
+    publisher: { '@id': `${SITE}/#organization` },
+    about: { '@id': `${SITE}/#venue` },
+    primaryImageOfPage: { '@type': 'ImageObject', url: meta.og.image },
+    speakable: { '@type': 'SpeakableSpecification', cssSelector: ['h1', 'main h1 + p', '.lead'] },
   },
   ...jsonLd,
 ];
@@ -132,6 +141,8 @@ const preload = props.preload
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {/* motion is JS-gated: the class is set before first paint so nothing flashes */}
+    <script is:inline>document.documentElement.classList.add('js')</script>
     <title>{meta.title}</title>
     <meta name="description" content={meta.description} />
     <link rel="canonical" href={meta.canonical} />
@@ -168,6 +179,7 @@ const preload = props.preload
       href={locale === 'ru' ? '/fonts/golos-text-cyrillic.woff2' : '/fonts/golos-text-latin.woff2'}
     />
     <link rel="icon" href={`${ICON}/favicon.svg`} type="image/svg+xml" />
+    <link rel="icon" href={`${ICON}/favicon.png`} type="image/png" sizes="512x512" />
     <link rel="apple-touch-icon" href={`${ICON}/apple-touch-icon.png`} />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
@@ -204,6 +216,7 @@ const preload = props.preload
     {CURRENT_BRAND && <style is:inline set:html={brandCss(CURRENT_BRAND)} />}
   </head>
   <body>
+    <div class="progress" aria-hidden="true"></div>
     <a class="skip" href="#main">{locale === 'ru' ? 'К основному содержимому' : 'Skip to content'}</a>
     <PromoBar locale={locale} hideFor={path} />
     <Header locale={locale} path={path} />
@@ -227,7 +240,7 @@ const preload = props.preload
       }
       <slot />
     </main>
-    <Footer locale={locale} />
+    <Footer locale={locale} path={path} />
     {/* The Rush-style quiz dialog: any [data-quiz-open] CTA opens it in place,
         the header CTA falls back to /request-stand/ without JavaScript. */}
     <StandQuizModal locale={locale} />
@@ -263,6 +276,87 @@ const preload = props.preload
           );
           els.forEach((el) => io.observe(el));
         }
+      }
+      /* stagger index for children of revealed grids (consumed by motion.css) */
+      document
+        .querySelectorAll('main .reveal :is(.grid, .gallery, .stats, .venue-strip__nums, .home-news-rows, .steps, .checks)')
+        .forEach((list) => Array.from(list.children).forEach((c, i) => (c as HTMLElement).style.setProperty('--i', String(Math.min(i, 8)))));
+
+      /* hover layer: card spotlight + magnetic CTAs (fine pointers, motion allowed) */
+      if (window.matchMedia('(hover: hover) and (pointer: fine)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const SPOT = '.feature, .ev, .pc, .mini, a.card';
+        document.addEventListener('pointermove', (e) => {
+          const t = e.target as Element | null;
+          const card = t?.closest?.(SPOT) as HTMLElement | null;
+          if (card) {
+            const r = card.getBoundingClientRect();
+            card.style.setProperty('--mx', `${e.clientX - r.left}px`);
+            card.style.setProperty('--my', `${e.clientY - r.top}px`);
+          }
+          const btn = t?.closest?.('.btn--accent, .btn--gold') as HTMLElement | null;
+          if (btn) {
+            const r = btn.getBoundingClientRect();
+            btn.style.setProperty('--tx', `${((e.clientX - r.left) / r.width - 0.5) * 8}px`);
+            btn.style.setProperty('--ty', `${((e.clientY - r.top) / r.height - 0.5) * 6}px`);
+          }
+        }, { passive: true });
+        document.addEventListener('pointerout', (e) => {
+          const btn = (e.target as Element | null)?.closest?.('.btn--accent, .btn--gold') as HTMLElement | null;
+          if (btn && !btn.contains(e.relatedTarget as Node)) { btn.style.removeProperty('--tx'); btn.style.removeProperty('--ty'); }
+        }, { passive: true });
+      }
+
+      /* header state + reading progress: one passive, rAF-throttled listener */
+      const root = document.documentElement;
+      const bar = document.querySelector('.progress') as HTMLElement | null;
+      let ticking = false;
+      const onScroll = () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          const y = window.scrollY;
+          root.classList.toggle('is-scrolled', y > 8);
+          const max = root.scrollHeight - window.innerHeight;
+          bar?.style.setProperty('--p', max > 0 ? String(Math.min(1, y / max)) : '0');
+          ticking = false;
+        });
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+
+      /* count-up for figures when they scroll into view (text stays correct without JS) */
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const nums = document.querySelectorAll<HTMLElement>('main .stat b.num, main .venue-strip__nums b');
+        const cio = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              cio.unobserve(entry.target);
+              const el = entry.target as HTMLElement;
+              const node = Array.from(el.childNodes).find((n) => n.nodeType === 3 && /\d/.test(n.textContent || ''));
+              if (!node) continue;
+              const raw = node.textContent || '';
+              const m = /(\d[\d\s,\u00a0]*)/.exec(raw);
+              if (!m) continue;
+              const target = Number(m[1].replace(/[^\d]/g, ''));
+              if (!target || target < 10) continue;
+              const sep = /,/.test(m[1]) ? ',' : /\d\s\d/.test(m[1]) ? '\u00a0' : '';
+              const fmt = (n: number) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, sep);
+              const t0 = performance.now();
+              const dur = 1400;
+              const step = (t: number) => {
+                const k = Math.min(1, (t - t0) / dur);
+                const e = 1 - Math.pow(1 - k, 4);
+                node.textContent = raw.replace(m[1], fmt(Math.round(target * e)) + (/\s$/.test(m[1]) ? ' ' : ''));
+                if (k < 1) requestAnimationFrame(step);
+                else node.textContent = raw;
+              };
+              requestAnimationFrame(step);
+            }
+          },
+          { threshold: 0.6 },
+        );
+        nums.forEach((n) => cio.observe(n));
       }
     </script>
     <TableEnhancements />

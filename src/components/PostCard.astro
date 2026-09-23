@@ -34,6 +34,7 @@ const href = postHref(locale, path.replace(/^\/|\/$/g, '') as PostKind, slug);
 const relatedEvent = post.data.event ? getEvent(post.data.event) : undefined;
 /** never a phantom path: poster of the linked show, otherwise the hall photo */
 const hero = post.data.hero ?? relatedEvent?.heroImage ?? '/images/hero-hall.jpg';
+const Hx = variant === 'lead' ? 'h2' : 'h3';
 ---
 
 <article class:list={['pc', `pc--${variant}`]}>
@@ -49,9 +50,9 @@ const hero = post.data.hero ?? relatedEvent?.heroImage ?? '/images/hero-hall.jpg
       <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date.toISOString().slice(0, 10), locale)}</time>
       {post.data.readingMinutes ? <span class="pc__rt"><Icon name="clock" size={13} /> {post.data.readingMinutes} {ru ? 'мин' : 'min'}</span> : null}
     </p>
-    <h3 class:list={[variant === 'lead' ? 'pc__t--lead' : 'pc__t']}>
+    <Hx class:list={[variant === 'lead' ? 'pc__t--lead' : 'pc__t', 'h3']}>
       <a href={href}>{post.data.title}</a>
-    </h3>
+    </Hx>
     <p class="pc__d">{post.data.description}</p>
     <p class="pc__go">
       <a href={href}>{ru ? 'Читать' : 'Read'} →</a>
@@ -137,11 +138,11 @@ const hero = post.data.hero ?? relatedEvent?.heroImage ?? '/images/hero-hall.jpg
     font-size: clamp(1.3rem, 1.05rem + 1vw, 1.85rem);
     max-width: 22ch;
   }
-  .pc h3 a {
+  .pc :is(h2, h3) a {
     color: inherit;
     text-decoration: none;
   }
-  .pc h3 a:hover {
+  .pc :is(h2, h3) a:hover {
     color: var(--moss);
   }
   .pc__go {

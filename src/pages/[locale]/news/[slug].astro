@@ -1,4 +1,5 @@
 ---
+import { relatedTo } from '@/lib/content';
 /** A single press release or announcement. */
 import type { GetStaticPaths } from 'astro';
 import { sourceLocales as locales } from '@/i18n/config';
@@ -22,10 +23,7 @@ export const getStaticPaths = (async () => {
 const { entry } = Astro.props as { entry: Awaited<ReturnType<typeof getCollection>>[number] };
 const locale = Astro.params.locale as 'ru' | 'en';
 const { Content } = await render(entry);
-const others = (await getCollection('news'))
-  .filter((e) => e.id.startsWith(`${locale}/`) && e.id !== entry.id && !e.data.draft)
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-  .slice(0, 2);
+const others = relatedTo(entry, (await getCollection('news')).filter((e) => e.id.startsWith(`${locale}/`) && !e.data.draft), 2);
 ---
 
 <PostDetail

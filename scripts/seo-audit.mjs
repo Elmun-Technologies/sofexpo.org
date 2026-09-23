@@ -57,9 +57,11 @@ for (const file of files) {
      page: no h1/og/hreflang contract — the existence check below still runs */
   if (url === "/") continue;
   const cjk = url.startsWith("/zh/");
-  const isPost = /^\/(ru|en|zh|tr)\/(news|articles)\/[^/]+\/$/.test(url);
+  const isPost = /^\/(ru|en|zh|tr|uz)\/(news|articles)\/[^/]+\/$/.test(url);
   const htmlRaw = readFileSync(file, "utf8");
   const html = htmlRaw.replace(/<script[\s\S]*?<\/script>/g, "");
+  /* page-by-page editions (uz) publish incomplete pages as noindex drafts: not audited for SERP rules */
+  if (/^\/uz\//.test(url) && /name="robots" content="noindex/.test(html)) continue;
 
   for (const src of new Set(
     [...html.matchAll(/<img[^]+?src="([^"]+)"/g)].map((m) => m[1]),

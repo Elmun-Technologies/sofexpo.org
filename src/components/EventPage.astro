@@ -18,6 +18,7 @@ import PostCard from '@/components/PostCard.astro';
 import SectionHead from '@/components/SectionHead.astro';
 import { getCollection } from 'astro:content';
 import { events } from '@/data/events';
+import { eventPages } from '@/data/pages/event-pages';
 import { brandForEvent } from '@/data/brands';
 import { speakers as speakerWall } from '@/data/speakers';
 
@@ -53,8 +54,13 @@ const ld: Record<string, unknown>[] = [
   organizationJsonLd(),
   eventJsonLd({ ...event, locale, performers: posterSpeakers }),
 ];
+const _kind = page.path.split('/').filter(Boolean)[2] ?? 'overview';
+const _owner = ['exhibitors', 'overview', 'visitors', 'program'].find((k) => ((eventPages[event.slug] as any)?.[k]?.after ?? []).includes('faq'));
+const renderFaq = ((page.after ?? []) as string[]).includes('faq') && _kind === _owner;
 const faq = blocks.find((b) => b.type === 'faq');
-if (faq?.items?.length) ld.push(faqJsonLd(faq.items as never, abs(L(page.path))));
+if (faq?.items?.length) ld.push(faqJsonLd(faq.items as never, L(page.path)));
+else if (renderFaq && event.faq.length)
+  ld.push(faqJsonLd(event.faq.map((f) => ({ q: f.q[locale], a: f.a[locale] })), L(page.path)));
 ld.push(breadcrumbJsonLd(trail));
 /* editorial that talks about this exact show — inbound link for the article,
    reading time for the visitor, and topical depth for the cluster */
@@ -69,10 +75,41 @@ const reading = (
 )
   .flat()
   .sort((a: any, b: any) => b.entry.data.date.getTime() - a.entry.data.date.getTime())
-  .slice(0, 3);
+  .slice(0, 6);
 
+/* one CTA line per page of the cluster, so four pages of one show never repeat a paragraph */
+const kind = page.path.split('/').filter(Boolean)[2] ?? 'overview';
+const name = event.brand[locale];
+const when = event.dates.display[locale];
+const ctaText = past
+  ? ru
+    ? `${name} завершилась. Оставьте заявку — пришлём даты следующей редакции и условия раннего бронирования.`
+    : `${name} has closed. Leave a request and we will send the next edition's dates and early-booking terms.`
+  : ({
+      overview: ru
+        ? `${name}, ${when}, Самарканд. Укажите продукт и площадь — пришлём план зала и расчёт.`
+        : `${name}, ${when}, Samarkand. Name your product and area — we send the floor plan and a quote.`,
+      exhibitors: ru
+        ? `Места на ${event.shortName} распределяются по дате заявки: удержим выбранную локацию на 3–5 дней без оплаты.`
+        : `Space at ${event.shortName} goes in order of request: we hold the location you pick for 3–5 days, no payment.`,
+      visitors: ru
+        ? `Хотите не только посетить ${event.shortName}, но и показать свой продукт? Стенд можно забронировать до открытия.`
+        : `Want to show your own product at ${event.shortName}, not just walk the aisles? Stands can be booked until opening.`,
+      program: ru
+        ? `Слоты деловой программы ${event.shortName} — для экспонентов и партнёров. Заявка на стенд открывает доступ к выступлению.`
+        : `Business-programme slots at ${event.shortName} go to exhibitors and partners first — a stand request opens the door to a talk.`,
+    } as Record<string, string>)[kind] ?? (ru ? `Заявка на участие в ${name}.` : `Request to exhibit at ${name}.`);
+
+/* editorial cards: overview shows the newest three, programme the next three; the
+   exhibitor/visitor pages keep their own content and do not repeat the same cards */
+const readingHere = kind === 'overview' ? reading.slice(0, 3) : kind === 'program' ? (reading.slice(3, 6).length ? reading.slice(3, 6) : []) : [];
 const before = (page.before ?? []) as SectionKey[];
-const after = (page.after ?? []) as SectionKey[];
+/* The show FAQ is one set of questions; repeating it on 3–4 pages of a cluster is the
+   textbook duplicate-FAQ pattern. It lives on ONE page of the cluster — exhibitors if that
+   page has it, otherwise the first page that asks for it. */
+const cluster = ['exhibitors', 'overview', 'visitors', 'program'];
+const faqOwner = _owner;
+const after = ((page.after ?? []) as SectionKey[]).filter((s) => s !== 'faq' || kind === faqOwner);
 ---
 
 <Base
@@ -94,13 +131,14 @@ const after = (page.after ?? []) as SectionKey[];
     title={page.hero.title[locale]}
     lead={page.hero.lead[locale]}
     bullets={page.hero.bullets?.map((b) => b[locale])}
+    showHighlight={kind === 'overview'}
   />
   <EventNav {locale} {event} {past} active={page.path} />
   {before.map((s) => <EventSections {locale} {event} section={s} tone={s === 'facts' ? 'forest' : 'default'} />)}
   <Blocks {blocks} {locale} />
   {after.map((s) => <EventSections {locale} {event} section={s} />)}
   {
-    reading.length > 0 && (
+    readingHere.length > 0 && (
       <section class="sec sec--sand">
         <div class="wrap">
           <SectionHead
@@ -109,7 +147,7 @@ const after = (page.after ?? []) as SectionKey[];
             title={ru ? 'Разборы рынка вокруг этой выставки' : 'Market breakdowns around this show'}
           />
           <div class="grid g3">
-            {reading.map(({ entry, kind }) => (
+            {readingHere.map(({ entry, kind }) => (
               <PostCard {locale} post={entry} path={kind === 'articles' ? '/articles/' : '/news/'} />
             ))}
           </div>
@@ -123,7 +161,7 @@ const after = (page.after ?? []) as SectionKey[];
     title={past
       ? ru ? 'Участвовать в следующей редакции' : 'Take part in the next edition'
       : ru ? 'Забронировать место на выставке' : 'Reserve your place at the show'}
-    text={ru ? 'Заявка занимает пять минут: укажите продукт и площадь — вернёмся с планом зала и расчётом.' : 'A request takes five minutes: name the product and the area, we come back with the floor plan and a quote.'}
+    text={ctaText}
     primary={{ label: t('cta.stand'), href: L('/request-stand/') }}
     secondary={{ label: ru ? 'Все выставки' : 'All shows', href: L('/events/') }}
   />

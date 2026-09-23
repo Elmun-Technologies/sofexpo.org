@@ -167,7 +167,7 @@ const Content = body;
         <div>
           <p class="kicker">{isArticle ? (ru ? 'Практика' : 'Practice') : ru ? 'Событие' : 'Event'}</p>
           <h2>{isArticle ? (ru ? 'Проверьте выводы на выставке' : 'Test the conclusions at a trade show') : ru ? 'Участвовать в ближайшей выставке' : 'Take part in the next show'}</h2>
-          <p>{isArticle ? (ru ? 'Мы собираем в одном зале тех, о ком говорится в этом материале: сравните предложения и цены за один день.' : 'We gather in one hall exactly the people this article is about: compare offers and prices in one day.') : (ru ? 'Заявка на стенд занимает пять минут, ответ — в течение рабочего дня.' : 'A stand request takes five minutes; we answer within the business day.')}</p>
+          <p>{isArticle ? (ru ? `«${post.data.title}» — проверьте на практике: на выставке эти люди и предложения собраны в одном зале.` : `Put “${post.data.title}” to the test: at the show these people and offers are in one hall.`) : (ru ? `После новости «${post.data.title}» — следующий шаг: заявка на стенд, ответ в течение рабочего дня.` : `Next step after “${post.data.title}”: a stand request, answered within the business day.`)}</p>
         </div>
         <div class="btn-row">
           <a class="btn btn--gold" href={L('/request-stand/')}>{t('cta.stand')}</a>

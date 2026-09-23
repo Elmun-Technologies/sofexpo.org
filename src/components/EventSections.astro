@@ -1,4 +1,5 @@
 ---
+import { fig } from '@/lib/figures';
 /**
  * Data-driven sections for an exhibition page. Authored copy lives in
  * `src/data/pages/event-pages.ts`; these blocks pull the per-event facts out of
@@ -188,7 +189,7 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
         <div class="pkg">
           {event.stands.map((s) => (
             <article class="card">
-              <p class="mono-label">{s.area}</p>
+              <p class="mono-label">{fig(s.area, locale)}</p>
               <h3>{s.name[locale]}</h3>
               <p class="muted">{s.note[locale]}</p>
               <a class="btn btn--sm" href={L('/request-stand/')}>{ru ? 'Забронировать' : 'Reserve'}</a>
@@ -197,8 +198,8 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
         </div>
         <p class="small muted" style="margin-top:1rem">
           {ru
-            ? 'Полный прайс на метраж и услуги — в разделе «Пакеты участия и цены».'
-            : 'The full rate card for space and services is in the packages section.'}
+            ? `Ставки ${event.shortName} за метр и услуги — в разделе «Пакеты участия и цены».`
+            : `Per-m² rates and services for ${event.shortName} are in the packages section.`}
         </p>
       </div>
     </section>
@@ -267,7 +268,7 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
 }
 
 {
-  section === 'faq' && <Faq locale={locale} items={event.faq.map((f) => ({ q: f.q[locale], a: f.a[locale] }))} />
+  section === 'faq' && <Faq locale={locale} topic={event.brand[locale]} title={ru ? `${event.shortName}: частые вопросы` : `${event.shortName}: frequently asked questions`} items={event.faq.map((f) => ({ q: f.q[locale], a: f.a[locale] }))} />
 }
 
 {
@@ -306,7 +307,7 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
             </div>
           ))}
         </div>
-        <p class="small muted" style="margin-top:1.1rem">{site.location.airport[locale]} · {site.location.station[locale]}</p>
+        <p class="small muted" style="margin-top:1.1rem">{ru ? `Как добраться на ${event.shortName}: ${site.location.airport.ru} · ${site.location.station.ru}` : `Getting to ${event.shortName}: ${site.location.airport.en} · ${site.location.station.en}`}</p>
       </div>
     </section>
   )

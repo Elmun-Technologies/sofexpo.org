@@ -10,7 +10,7 @@ const t = useUI(locale);
 const hasSamples = hrefs.some(isSampleDownload);
 ---
 {hasSamples && (
-  <aside class="download-notice" aria-label={t('downloads.sample')}>
+  <aside class="download-notice" data-nosnippet aria-label={t('downloads.sample')}>
     <span class="download-notice__icon"><Icon name="doc" size={20} /></span>
     <div>
       <strong>{t('downloads.sample')}</strong>

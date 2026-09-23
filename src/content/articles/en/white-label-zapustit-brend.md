@@ -4,7 +4,7 @@ description: "Contract manufacturing in Uzbekistan: where a marketplace seller s
 date: 2026-06-30
 category: "ecommerce"
 readingMinutes: 6
-tags: ["white label", "маркетплейсы"]
+tags: ["white label", "marketplaces"]
 ---
 ### White label in Uzbek practice
 

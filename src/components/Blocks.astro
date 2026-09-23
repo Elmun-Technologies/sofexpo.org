@@ -1,4 +1,5 @@
 ---
+import { fig, figHtml } from '@/lib/figures';
 /**
  * Block renderer. Every page is authored as an ordered, individual list of blocks,
  * so no two pages share the same composition while the markup stays one system.
@@ -67,6 +68,8 @@ const H = (p?: string) => {
 
 {
   blocks.map((b, idx) => {
+    /* outline: card titles are h3 only once a section h2 exists above them; otherwise h2 */
+    const H3 = blocks.slice(0, idx).some((x) => x.type === 'h2' || x.type === 'cta') ? 'h3' : 'h2';
     const wide = b.width !== 'narrow';
     const ground = (x?: Block) => (x?.tone === 'paper' || x?.tone === 'forest' || x?.tone === 'sand' ? x.tone : 'default');
     const prev = idx > 0 ? blocks[idx - 1] : undefined;
@@ -163,7 +166,7 @@ const H = (p?: string) => {
                         <Icon name={i.icon} size={24} />
                       </span>
                     )}
-                    <h3>{i.title}</h3>
+                    <H3 class="h3">{i.title}</H3>
                     {i.text && <p>{i.text}</p>}
                     {i.meta && <span class="mono-label">{i.meta}</span>}
                     {href && <span class="feature__go">→</span>}
@@ -178,7 +181,7 @@ const H = (p?: string) => {
               {((b.items ?? []) as BlockRow[]).map((i, n) => (
                 <article class="row">
                   <span class="row__n num">{String(n + 1).padStart(2, '0')}</span>
-                  <h3>{i.title}</h3>
+                  <H3 class="h3">{i.title}</H3>
                   <p>{i.text}</p>
                 </article>
               ))}
@@ -190,14 +193,14 @@ const H = (p?: string) => {
               <table class:list={['table', { 'table--rates': b.plain }]}>
                 {b.head?.length ? (
                   <thead>
-                    <tr>{b.head.map((h) => <th scope="col">{h}</th>)}</tr>
+                    <tr>{b.head.map((h) => <th scope="col">{fig(h, locale)}</th>)}</tr>
                   </thead>
                 ) : null}
                 <tbody>
                   {(b.rows ?? []).map((r) => (
                     <tr>
                       {r.map((cell, i) =>
-                        b.head?.length ? <td set:html={cell} /> : <th scope="row" set:html={cell} />,
+                        b.head?.length ? <td set:html={figHtml(cell, locale)} /> : <th scope="row" set:html={figHtml(cell, locale)} />,
                       )}
                     </tr>
                   ))}
@@ -212,7 +215,7 @@ const H = (p?: string) => {
                 <li>
                   <span class="steps__n num">{i + 1}</span>
                   <div>
-                    <h3>{s.title}</h3>
+                    <H3 class="h3">{s.title}</H3>
                     <p>{s.text}</p>
                   </div>
                 </li>
@@ -235,7 +238,7 @@ const H = (p?: string) => {
             <div class:list={['callout', b.tone === 'gold' && 'callout--gold', b.image && 'callout--media']}>
               <div class="callout__body">
                 {b.kicker && <p class="kicker">{b.kicker}</p>}
-                <h3>{b.title}</h3>
+                <H3 class="h3">{b.title}</H3>
                 {b.text && <p class="muted" style="margin-bottom:1rem">{b.text}</p>}
                 {b.action && (
                   <a class="btn btn--sm" href={H(b.action.href)} data-quiz-open={b.action.href === '/request-stand/' ? '' : undefined}>{b.action.label}</a>
@@ -335,11 +338,12 @@ const H = (p?: string) => {
               )}
               {!(b as any).formType && (
                 <LeadForm
+                  level={H3 === 'h2' ? 2 : 3}
                   locale={locale}
                   title={b.title}
                   subtitle={b.text}
                   directions={b.directions}
-                  areas={b.areas}
+                  areas={b.areas?.map((a) => fig(a, locale))}
                   eventName={b.event}
                   note={b.note}
                   id={b.id ?? 'lead-form'}
@@ -363,7 +367,7 @@ const H = (p?: string) => {
             </div>
           )}
 
-          {b.type === 'faq' && <Faq locale={locale} items={(b.items as unknown as { q: string; a: string }[]) ?? []} title={b.title} />}
+          {b.type === 'faq' && <Faq locale={locale} items={(b.items as unknown as { q: string; a: string }[]) ?? []} title={b.title} topic={b.topic} />}
 
           {b.type === 'cta' && (
             <div class="cta-inline">
@@ -517,7 +521,7 @@ const H = (p?: string) => {
     place-items: center;
     font-size: .95rem;
   }
-  .steps h3 {
+  .steps :is(h2, h3) {
     margin: 0 0 .3em;
     font-size: 1.12rem;
   }
@@ -694,7 +698,7 @@ const H = (p?: string) => {
   .feature:hover {
     border-color: var(--ink);
     }
-  .feature h3 {
+  .feature :is(h2, h3) {
     font-size: clamp(1.02rem, .96rem + .3vw, 1.2rem);
     margin: 0 0 .35em;
   }

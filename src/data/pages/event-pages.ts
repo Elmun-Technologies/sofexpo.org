@@ -155,7 +155,7 @@ export const eventPages: Record<string, EventPages> = {
               type: "text",
               paragraphs: [
                 "FOODERA is held in Samarkand for a reason: the city is a logistics node of southern Uzbekistan where flows from Tashkent, Bukhara, Karshi and the border regions meet. For a supplier it is three days that replace a season of field trips.",
-                "The market is generous and demanding at once: Uzbekistan retail reached 182 billion UZS in 2024, but shelf space is finite. The one who arrives with a sample, a price and a first delivery date wins.",
+                "The market is generous and demanding at once: Uzbekistan retail reached UZS 182 trillion in 2024, but shelf space is finite. The one who arrives with a sample, a price and a first delivery date wins.",
               ],
               image: "/images/food-tasting.jpg",
               imageAlt: "Tastings at FOODERA EXPO",

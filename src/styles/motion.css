@@ -1,0 +1,538 @@
+/* ============================================================
+   Motion layer — the site's "breath".
+   Rules: transform/opacity only (compositor-friendly, no CLS), JS-gated
+   (html.js is set inline in <head>; without JS everything is static and
+   visible), and fully disabled under prefers-reduced-motion.
+   ============================================================ */
+
+:root {
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ---------- 1 · hero entrance: a short staggered rise on first paint ---------- */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes kenburns {
+  from {
+    transform: scale(1.12);
+  }
+  to {
+    transform: scale(1.02);
+  }
+}
+
+.js .home-hero__kicker,
+.js .home-hero h1,
+.js .home-hero__lead,
+.js .home-hero .btn-row,
+.js .home-hero .hero-location,
+.js .home-hero__side,
+.js .ehero h1,
+.js .ehero .kicker,
+.js .phero h1,
+.js .phero .kicker,
+.js .phero__lead,
+.js .block--hero .wrap > * {
+  animation: rise 900ms var(--ease-out) both;
+}
+.js .home-hero h1 {
+  animation-delay: 80ms;
+}
+.js .home-hero__lead,
+.js .ehero h1,
+.js .phero h1 {
+  animation-delay: 160ms;
+}
+.js .home-hero .btn-row,
+.js .phero__lead {
+  animation-delay: 240ms;
+}
+.js .home-hero .hero-location {
+  animation-delay: 320ms;
+}
+.js .home-hero__side {
+  animation-delay: 380ms;
+}
+.js .home-hero .rail {
+  animation: fade 900ms var(--ease-out) 480ms both;
+}
+.js .home-hero__bg img {
+  animation: kenburns 14s var(--ease-out) both;
+}
+
+/* ---------- 2 · staggered children inside revealed sections ---------- */
+.reveal-pending :is(.grid, .gallery, .stats, .venue-strip__nums, .home-news-rows, .steps, .checks) > * {
+  opacity: 0;
+  transform: translateY(16px);
+}
+.reveal-in :is(.grid, .gallery, .stats, .venue-strip__nums, .home-news-rows, .steps, .checks) > * {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 700ms var(--ease-out),
+    transform 700ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 70ms + 120ms);
+}
+
+/* ---------- 3 · header: condenses and gains a shadow once the page scrolls ---------- */
+.hdr__in::before {
+  transition: box-shadow var(--tr-slow), background-color var(--tr-slow);
+}
+.is-scrolled .hdr__in::before {
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 10px 30px -20px rgba(13, 42, 27, 0.45);
+}
+
+/* ---------- 4 · reading progress (top edge) ---------- */
+.progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 3px;
+  z-index: 100;
+  pointer-events: none;
+  background: linear-gradient(90deg, var(--moss), var(--accent));
+  transform-origin: 0 50%;
+  transform: scaleX(var(--p, 0));
+}
+
+/* ---------- 5 · micro-interactions ---------- */
+.btn svg,
+.txt-link svg,
+.ev__more svg,
+.featured-link svg {
+  transition: transform 320ms var(--ease-spring);
+}
+.btn:hover svg,
+.txt-link:hover svg,
+.ev__more:hover svg,
+.featured-link:hover svg {
+  transform: translateX(4px);
+}
+.btn {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+/* a single soft sheen passes over the primary CTAs on hover */
+.btn--accent::after,
+.btn:not(.btn--ghost)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.22) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 700ms var(--ease-out);
+}
+.btn--accent:hover::after,
+.btn:not(.btn--ghost):hover::after {
+  transform: translateX(120%);
+}
+
+.feature,
+a.feature {
+  transition:
+    box-shadow var(--tr-slow),
+    border-color var(--tr-slow),
+    transform var(--tr-slow);
+}
+a.feature:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lift);
+}
+.feature__media img,
+.gallery img {
+  transition: transform 900ms var(--ease-out);
+}
+a.feature:hover .feature__media img {
+  transform: scale(1.05);
+}
+
+.mini {
+  transition:
+    border-color var(--tr),
+    transform var(--tr),
+    box-shadow var(--tr);
+}
+.mini:hover {
+  border-color: var(--moss);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-soft);
+}
+
+/* underline that draws itself on text links inside prose */
+.prose a:not(.btn),
+.venue-strip__links a {
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+  transition: background-size 420ms var(--ease-out);
+}
+.prose a:not(.btn):hover,
+.venue-strip__links a:hover {
+  background-size: 100% 1px;
+}
+
+/* live badge breathes */
+.featured-live .dot,
+.chip--live .dot {
+  animation: pulse 2.4s infinite;
+}
+
+/* ---------- 6 · industries marquee (home) ---------- */
+.marquee {
+  --gap: 2.6rem;
+  display: flex;
+  overflow: hidden;
+  user-select: none;
+  gap: var(--gap);
+  padding-block: 1.1rem;
+  border-block: 1px solid var(--line);
+  background: var(--paper);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.marquee__track {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--gap);
+  min-width: 100%;
+  justify-content: space-around;
+  animation: marquee 38s linear infinite;
+}
+.marquee:hover .marquee__track {
+  animation-play-state: paused;
+}
+.marquee__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap);
+  font-family: var(--f-display);
+  font-size: clamp(1rem, 0.85rem + 0.6vw, 1.35rem);
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  white-space: nowrap;
+  text-decoration: none;
+}
+.marquee__item:hover {
+  color: var(--moss);
+}
+.marquee__item::after {
+  content: "✦";
+  font-size: 0.7em;
+  color: var(--accent);
+}
+@keyframes marquee {
+  to {
+    transform: translateX(calc(-100% - var(--gap)));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .home-hero *,
+  .js .ehero *,
+  .js .phero *,
+  .js .home-hero__bg img {
+    animation: none !important;
+  }
+  .reveal-pending :is(.grid, .gallery, .stats, .venue-strip__nums, .home-news-rows, .steps, .checks) > * {
+    opacity: 1;
+    transform: none;
+  }
+  .marquee__track {
+    animation: none;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .marquee__track[aria-hidden="true"] {
+    display: none;
+  }
+  .progress {
+    display: none;
+  }
+}
+
+@media print {
+  .progress,
+  .marquee {
+    display: none !important;
+  }
+  .reveal-pending :is(.grid, .gallery, .stats, .venue-strip__nums, .home-news-rows, .steps, .checks) > * {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* home H1 = keyword pill + slogan (see [locale]/index.astro) */
+.home-hero h1 .home-hero__kicker {
+  display: flex;
+  width: fit-content;
+  line-height: 1.3;
+  font-weight: 500;
+  text-shadow: none;
+  max-width: 100%;
+}
+.home-hero h1 .home-hero__slogan {
+  display: block;
+}
+.js .home-hero h1 .home-hero__kicker {
+  animation: rise 900ms var(--ease-out) both;
+}
+.js .home-hero h1 .home-hero__slogan {
+  animation: rise 900ms var(--ease-out) 90ms both;
+}
+.js .home-hero h1 {
+  animation: none;
+}
+.home-hero h1 .home-hero__slogan {
+  max-width: 15ch;
+}
+
+/* the hint is UI chrome, not content: rendered from an attribute so it never repeats in the indexed text */
+.table-hint[data-hint]::before {
+  content: attr(data-hint);
+}
+
+/* ============================================================
+   7 · Hover layer v2 (ideas adapted from rush-agency.ru):
+   cursor spotlight on cards, numbered FAQ, filling icon tiles,
+   drawn nav underlines, stat accent bars, magnetic CTAs.
+   Hover effects only on real pointers; all off under reduced motion.
+   ============================================================ */
+@media (hover: hover) and (pointer: fine) {
+  /* spotlight: --mx/--my are set by a delegated pointermove in Base.astro */
+  :is(.feature, .ev, .pc, .mini, .stat, a.card) {
+    position: relative;
+    isolation: isolate;
+  }
+  :is(.feature, .ev, .pc, .mini, a.card)::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(200, 136, 44, 0.12), transparent 45%);
+    transition: opacity 400ms var(--ease-out);
+  }
+  :is(.feature, .ev, .pc, .mini, a.card):hover::before {
+    opacity: 1;
+  }
+  .sec--forest :is(.feature, .mini)::before {
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(231, 213, 174, 0.14), transparent 45%);
+  }
+
+  /* icon tile fills with brand colour and tilts */
+  .ico-tile {
+    transition: background-color 360ms var(--ease-out), color 360ms var(--ease-out), transform 480ms var(--ease-spring);
+  }
+  :is(.feature, a.card, .mini):hover .ico-tile {
+    background: var(--evergreen);
+    color: var(--gold-soft);
+    transform: rotate(-6deg) scale(1.06);
+  }
+
+  /* post cards: image zoom + title colour */
+  .pc img {
+    transition: transform 900ms var(--ease-out);
+  }
+  .pc:hover img {
+    transform: scale(1.05);
+  }
+  .pc:hover :is(h2, h3) {
+    color: var(--moss);
+  }
+
+  /* stat tiles: accent bar grows on hover */
+  .stat::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 100%;
+    background: linear-gradient(90deg, var(--moss), var(--accent));
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: transform 520ms var(--ease-out);
+  }
+  .stat:hover::after {
+    transform: scaleX(1);
+  }
+  .stat b {
+    transition: color 300ms;
+  }
+  .stat:hover b {
+    color: var(--moss);
+  }
+  .sec--forest .stat:hover b {
+    color: var(--gold-soft);
+  }
+
+  /* header nav + footer: underline that draws from the left */
+  .nav__link:not([aria-current="page"]),
+  .ftr a:not(.btn):not(.askai a) {
+    background-image: linear-gradient(var(--accent), var(--accent));
+    background-repeat: no-repeat;
+    background-size: 0 2px;
+    background-position: 0.8rem calc(100% - 0.35rem);
+    transition: background-size 380ms var(--ease-out), background-color var(--tr), color var(--tr);
+  }
+  .ftr a:not(.btn):not(.askai a) {
+    background-position: 0 100%;
+  }
+  .nav__link:not([aria-current="page"]):hover {
+    background-size: calc(100% - 1.6rem) 2px;
+  }
+  .ftr a:not(.btn):not(.askai a):hover {
+    background-size: 100% 1px;
+  }
+  .mega a {
+    transition: transform 320ms var(--ease-out), background-color var(--tr);
+  }
+  .mega a:hover {
+    transform: translateX(4px);
+  }
+
+  /* gallery tiles */
+  .gallery > * {
+    overflow: hidden;
+  }
+  .gallery > *:hover img {
+    transform: scale(1.06);
+  }
+
+  /* magnetic primary CTAs: --tx/--ty from JS */
+  .btn--accent,
+  .btn--gold {
+    transform: translate(var(--tx, 0), var(--ty, 0));
+    transition: transform 380ms var(--ease-spring), background-color var(--tr), box-shadow var(--tr);
+  }
+  .btn--accent:hover,
+  .btn--gold:hover {
+    box-shadow: 0 14px 30px -14px rgba(200, 136, 44, 0.7);
+  }
+}
+
+/* numbered FAQ (01, 02 …) with an accent rail on the open item — like rush-agency */
+.acc {
+  counter-reset: faq;
+}
+.acc details {
+  counter-increment: faq;
+  position: relative;
+  transition: background-color 300ms var(--ease-out);
+}
+.acc summary {
+  gap: 1.1rem;
+  transition: color var(--tr);
+}
+.acc summary::before {
+  content: counter(faq, decimal-leading-zero);
+  flex: none;
+  min-width: 2ch;
+  font-family: var(--f-mono, monospace);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+.acc summary > span {
+  flex: 1;
+}
+.acc summary::after {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: transform 360ms var(--ease-spring), background-color var(--tr), color var(--tr), border-color var(--tr);
+}
+.acc details[open] summary::after {
+  background: var(--evergreen);
+  border-color: var(--evergreen);
+  color: #fff;
+}
+.acc details::before {
+  content: "";
+  position: absolute;
+  left: -1rem;
+  top: 0.9rem;
+  bottom: 0.9rem;
+  width: 3px;
+  border-radius: 3px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transition: transform 420ms var(--ease-out);
+}
+.acc details[open]::before {
+  transform: scaleY(1);
+}
+.acc__body {
+  padding-left: calc(2ch + 1.1rem + 0.2rem);
+}
+@media (hover: hover) {
+  .acc summary:hover {
+    color: var(--moss);
+  }
+  .acc summary:hover::after {
+    border-color: var(--moss);
+  }
+}
+/* smooth open where the browser supports animating <details> content */
+@supports selector(::details-content) {
+  .acc details {
+    interpolate-size: allow-keywords;
+  }
+  .acc details::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition: block-size 420ms var(--ease-out), content-visibility 420ms allow-discrete;
+  }
+  .acc details[open]::details-content {
+    block-size: auto;
+  }
+}
+
+/* keyboard users get the same clarity as mouse users */
+:is(a, button, summary, .btn):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--r-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(.feature, .ev, .pc, .mini, a.card)::before,
+  .stat::after,
+  .acc details::before {
+    transition: none !important;
+  }
+  .btn--accent,
+  .btn--gold {
+    transform: none !important;
+  }
+  .ico-tile,
+  .mega a {
+    transform: none !important;
+  }
+}

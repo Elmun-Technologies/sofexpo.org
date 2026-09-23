@@ -17,6 +17,12 @@ const ru = locale === 'ru';
 const d = bigDate(event.dates.start, event.dates.end, locale);
 /** the industry colour only paints the 4px line — nothing else (docs/08 §3.4) */
 const ic = industryColor(event.industry);
+const n = event.categories.length;
+const ruPlural = (k: number, one: string, few: string, many: string) =>
+  k % 10 === 1 && k % 100 !== 11 ? one : k % 10 >= 2 && k % 10 <= 4 && (k % 100 < 10 || k % 100 >= 20) ? few : many;
+const sectionsLine = `${n} ${ru ? ruPlural(n, 'раздел', 'раздела', 'разделов') : n === 1 ? 'section' : 'sections'} · ${
+  event.status === 'past' ? (ru ? 'архив' : 'archive') : ru ? 'идёт набор' : 'booking open'
+}`;
 ---
 
 <article class:list={['ev', { 'ev--wide': variant === 'wide' }]}>
@@ -42,14 +48,7 @@ const ic = industryColor(event.industry);
     <h3><a href={href}>{event.brand[locale]}</a></h3>
     <p class="ev__tagline">{event.tagline[locale]}</p>
     <div class="ev__foot">
-      <span class="ev__sections">
-        {event.categories.length} {ru ? 'разделов' : 'sections'}
-        {event.status === 'past'
-          ? ` · ${ru ? 'архив' : 'archive'}`
-          : ru
-            ? ' · идёт набор'
-            : ' · sales open'}
-      </span>
+      <span class="ev__sections">{sectionsLine}</span>
       <a class="ev__more" href={href}>
         {event.status === 'past' ? (ru ? 'Итоги' : 'Report') : (ru ? 'Подробнее' : 'Details')} <Icon name="arrow" size={14} />
       </a>

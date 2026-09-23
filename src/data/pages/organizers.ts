@@ -201,6 +201,14 @@ export const organizerPages: PageDef[] = [
             { label: "Техническая спецификация", href: "/venue/tech-specs/" },
           ],
         },
+        {
+          type: "faq",
+          items: [
+            { q: "Можно ли арендовать зал под своё мероприятие?", a: "Да, зал 4 400 м², открытую площадку 5 000 м² и конференц-зал на 350 мест сдаём под выставки, форумы и фестивали." },
+            { q: "Сколько дней нужно на монтаж?", a: "Стандартно один день монтажа, до трёх дней выставки и полдня демонтажа; ночной монтаж согласуется отдельно." },
+            { q: "Как получить смету?", a: "Опишите формат, даты и площадь — пришлём смету в течение рабочего дня; итог фиксируется договором." },
+          ],
+        },
       ],
       en: [
         {
@@ -363,6 +371,14 @@ export const organizerPages: PageDef[] = [
             },
             { label: "Readiness checklist", href: "/organizers/checklist/" },
             { label: "Technical data sheet", href: "/venue/tech-specs/" },
+          ],
+        },
+        {
+          type: "faq",
+          items: [
+            { q: "Can I rent the hall for my own event?", a: "Yes, the 4,400 m² hall, the 5,000 m² open area and the 350-seat conference hall are available for shows, forums and festivals." },
+            { q: "How many days does build-up take?", a: "Typically one build day, up to three show days and half a day to dismantle; night build-up is agreed separately." },
+            { q: "How do I get a quote?", a: "Describe the format, dates and area — we send a quote within the business day, and the final figure is fixed by contract." },
           ],
         },
       ],

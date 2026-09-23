@@ -1,4 +1,5 @@
 ---
+import { fig, figHtml } from '@/lib/figures';
 import type { SourceLocale as Locale } from '@/i18n/config';
 import { site } from '@/data/site';
 
@@ -13,8 +14,8 @@ const data = items ?? site.stats;
     data.map((s) => (
       <div class="stat">
         <b class="num">
-          {s.value}
-          {s.unit && <small style="font-size:.5em;letter-spacing:0"> {s.unit}</small>}
+          {fig(s.value, locale)}
+          {s.unit && <small style="font-size:.5em;letter-spacing:0"> {fig(s.unit, locale)}</small>}
         </b>
         <span>{locale === 'ru' ? s.ru : s.en}</span>
       </div>

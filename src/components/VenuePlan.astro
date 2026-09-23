@@ -12,8 +12,8 @@ const ru = locale === 'ru';
 const H = (p: string) => localize(locale, p);
 
 const z = {
-  hall: { t: ru ? 'Главный зал' : 'Main hall', a: '4 400 м²' },
-  open: { t: ru ? 'Открытая площадка' : 'Open-air area', a: '5 000 м²' },
+  hall: { t: ru ? 'Главный зал' : 'Main hall', a: ru ? '4 400 м²' : '4,400 m²' },
+  open: { t: ru ? 'Открытая площадка' : 'Open-air area', a: ru ? '5 000 м²' : '5,000 m²' },
   conf: { t: ru ? 'Конференц-зал' : 'Conference hall', a: ru ? 'до 350 мест' : 'up to 350 seats' },
   cafe: { t: ru ? 'Кафе' : 'Cafés', a: ru ? '350 мест' : '350 seats' },
   entrance: ru ? 'Вход посетителей' : 'Visitor entrance',

@@ -15,6 +15,7 @@ const {
   compact = false,
   note = '',
   id = 'lead',
+  level = 3,
 } = Astro.props as {
   locale: 'ru' | 'en';
   title: string;
@@ -25,6 +26,7 @@ const {
   compact?: boolean;
   note?: string;
   id?: string;
+  level?: 2 | 3;
 };
 
 const ru = locale === 'ru';
@@ -39,6 +41,8 @@ const L = {
   area: ru ? 'Площадь стенда' : 'Stand area',
   event: ru ? 'Выставка' : 'Exhibition',
   comment: ru ? 'Комментарий' : 'Comment',
+  channel: ru ? 'Как с вами связаться' : 'How should we reach you',
+  channels: ru ? ['Звонок', 'Telegram', 'WhatsApp'] : ['Phone call', 'Telegram', 'WhatsApp'],
   submit: ru ? 'Отправить заявку' : 'Send request',
   consent: ru
     ? 'Отправляя заявку, вы соглашаетесь с обработкой персональных данных.'
@@ -56,11 +60,12 @@ const L = {
   areaOptions: ['9 m²', '18 m²', '27 m²', '36 m²', '50+ m²', ''],
 };
 const areaList = areas.length ? areas : L.areaOptions.filter(Boolean);
+const Hf = level === 2 ? 'h2' : 'h3';
 ---
 
 <form translate="no" class:list={['card', 'form-wrap', { 'form--compact': compact }]} id={id} data-lead-form data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} data-fallback={L.fallback} novalidate>
   <div>
-    <h3 style="margin-bottom:.25em">{title}</h3>
+    <Hf class="h3" style="margin-bottom:.25em">{title}</Hf>
     {subtitle && <p class="muted small" style="margin:0">{subtitle}</p>}
   </div>
 
@@ -130,6 +135,13 @@ const areaList = areas.length ? areas : L.areaOptions.filter(Boolean);
     }
   </div>
 
+  <fieldset class="lead-channel">
+    <legend>{L.channel}</legend>
+    {L.channels.map((c, i) => (
+      <label><input type="radio" name="channel" value={['call', 'telegram', 'whatsapp'][i]} checked={i === 0} /> <span>{c}</span></label>
+    ))}
+  </fieldset>
+
   <label style="display:flex;gap:.55rem;align-items:flex-start;font-size:.8rem;color:var(--ink-40)">
     <input type="checkbox" name="consent" required style="width:16px;height:16px;margin-top:2px" />
     <span>{L.consent}</span>
@@ -137,7 +149,7 @@ const areaList = areas.length ? areas : L.areaOptions.filter(Boolean);
 
   <div style="display:flex;flex-wrap:wrap;gap:.7rem;align-items:center">
     <button class="btn btn--gold" type="submit">{L.submit}</button>
-    <a class="btn btn--ghost btn--sm" href={`mailto:info@sofexpo.org?subject=${encodeURIComponent(ru ? 'Заявка на участие' : 'Participation request')}`}
+    <a class="btn btn--ghost btn--sm" href={`mailto:info@sofexpo.uz?subject=${encodeURIComponent(ru ? 'Заявка на участие' : 'Participation request')}`}
       >{ru ? 'Написать на почту' : 'Or write an email'}</a
     >
   </div>
@@ -186,12 +198,17 @@ const areaList = areas.length ? areas : L.areaOptions.filter(Boolean);
         } catch (e) {}
       }
       msg.textContent = endpoint ? form.dataset.ok : form.dataset.fallback;
-      form.querySelectorAll('input:not([type=checkbox]):not([readonly]), textarea, select').forEach((el) => (el.value = ''));
+      form.querySelectorAll('input:not([type=checkbox]):not([type=radio]):not([readonly]), textarea, select').forEach((el) => (el.value = ''));
     });
   });
 </script>
 
 <style>
+  .lead-channel { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: .5rem; }
+  .lead-channel legend { font-size: .8rem; color: var(--ink-40); margin-bottom: .4rem; width: 100%; }
+  .lead-channel label { display: inline-flex; align-items: center; gap: .4rem; padding: .45rem .85rem; border: 1px solid var(--line, rgba(0,0,0,.12)); border-radius: 999px; font-size: .85rem; cursor: pointer; transition: border-color .2s, background .2s; }
+  .lead-channel label:has(input:checked) { border-color: var(--gold, #c8882c); background: rgba(200,136,44,.08); }
+  .lead-channel input { accent-color: var(--gold, #c8882c); margin: 0; }
   .form-wrap {
     display: grid;
     gap: 1.2rem;

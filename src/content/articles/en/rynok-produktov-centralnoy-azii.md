@@ -4,7 +4,7 @@ description: "Why producers from Türkiye, China, Russia and Europe should treat
 date: 2026-07-15
 category: "market"
 readingMinutes: 8
-tags: ["food", "экспорт"]
+tags: ["food", "export"]
 ---
 ### Size and growth
 

@@ -1,4 +1,5 @@
 ---
+import { fig, figHtml } from '@/lib/figures';
 /**
  * Per-event hero: brand plate, dates, venue, live countdown and the three actions
  * a visitor or exhibitor actually needs. Past editions get an archive treatment.
@@ -27,6 +28,8 @@ const t = useUI(locale);
 const ru = locale === 'ru';
 const L = (p: string) => localize(locale, p);
 const upcoming = variant === 'open';
+/* the hero highlight is one sentence per show — printed on the overview only */
+const showHighlight = Astro.props.showHighlight ?? true;
 const d = bigDate(event.dates.start, event.dates.end, locale);
 const days = Math.max(
   1,
@@ -78,7 +81,7 @@ const actions = [
       <div class="btn-row">
         {actions.map((a, i) => <a class:list={['btn', { 'btn--gold': i === 0, 'btn--ghost': i > 0 }]} href={a.href.startsWith('http') ? a.href : a.href}>{a.label}</a>)}
       </div>
-      {event.highlight && upcoming && (
+      {event.highlight && upcoming && showHighlight && (
         <p class="ehero__note">
           <Icon name="sparkle" size={15} /> <b>{event.highlight.label[locale]}</b> —{' '}
           {event.highlight.text[locale]}
@@ -90,7 +93,7 @@ const actions = [
         <div class="ehero__archive">
           <p class="mono-label">{ru ? 'Прошедшая редакция' : 'Past edition'}</p>
           <ul>
-            {event.facts.slice(0, 4).map((f) => <li><b class="num">{f.value}</b> {f.label[locale]}</li>)}
+            {event.facts.slice(0, 4).map((f) => <li><b class="num">{fig(f.value, locale)}</b> {f.label[locale]}</li>)}
           </ul>
         </div>
       )}

@@ -63,7 +63,7 @@ export const events: ExpoEvent[] = [
     },
     pitch: {
       ru: 'Регион Центральной Азии и Афганистана — рынок от 58 до 78 млрд долларов и более 125 млн потребителей. Розница Узбекистана в 2024 году достигла 182 трлн сумов. FOODERA — точка входа в этот рынок с готовой аудиторией закупщиков.',
-      en: 'Central Asia and Afghanistan is a market of $58–78 billion and 125 million+ consumers. Uzbekistan retail reached 182 billion UZS in 2024. FOODERA is the entry point with a pre-built audience of buyers.',
+      en: 'Central Asia and Afghanistan is a market of $58–78 billion and 125 million+ consumers. Uzbekistan retail reached UZS 182 trillion in 2024. FOODERA is the entry point with a pre-built audience of buyers.',
     },
     categories: [
       { name: { ru: 'Безалкогольные напитки', en: 'Soft drinks' }, icon: 'drink' },

@@ -166,7 +166,7 @@ export function serviceJsonLd(locale: Locale, url: string) {
 export function breadcrumbJsonLd(items: { name: string; url: string }[]) {
   return {
     '@type': 'BreadcrumbList',
-    '@id': `${SITE}${items.at(-1)?.url ?? '/'}#breadcrumbs`,
+    '@id': `${abs(items.at(-1)?.url ?? '/')}#breadcrumbs`,
     itemListElement: items.map((item, i) => ({
       '@type': 'ListItem',
       position: i + 1,
@@ -226,7 +226,7 @@ export function rootJsonLd() {
       url: `${SITE}/`,
       name: 'SOF EXPO Samarkand',
       alternateName: ['Выставочный центр SOF EXPO', 'SOF EXPO Exhibition Centre'],
-      inLanguage: ['ru', 'en', 'zh-CN', 'tr'],
+      inLanguage: ['ru', 'en', 'zh-CN', 'tr', 'uz'],
       publisher: { '@id': `${SITE}/#organization` },
       /* site search in Google sitelinks (docs/08 §5c): the search page reads ?q=
          on load, so the template is honest */
@@ -274,7 +274,7 @@ export function entityNodes() {
       '@id': `${SITE}/#website`,
       url: `${SITE}/`,
       name: ORG,
-      inLanguage: ['ru', 'en', 'zh-CN', 'tr'],
+      inLanguage: ['ru', 'en', 'zh-CN', 'tr', 'uz'],
       publisher: { '@id': `${SITE}/#organization` },
     },
     {

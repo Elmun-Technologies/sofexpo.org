@@ -30,6 +30,6 @@ test('table labels are escaped as text and unrelated Markdown remains unchanged'
   const doc=parseFragment(scrollableTables('<table><tr><td>内容</td></tr></table>',{label,hint}));
   assert.equal(all(doc,n=>n.tagName==='script').length,0);
   assert.equal(attr(all(doc,n=>attr(n,'class')==='table-scroll')[0],'aria-label'),label);
-  assert.equal(all(doc,n=>attr(n,'class')==='table-hint')[0].childNodes[0].value,hint);
+  assert.equal(attr(all(doc,n=>attr(n,'class')==='table-hint')[0],'data-hint'),hint);
   assert.equal(scrollableTables('<p>No table here.</p>',options),'<p>No table here.</p>');
 });

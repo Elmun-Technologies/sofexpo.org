@@ -7,8 +7,9 @@ import { localize, type SourceLocale as Locale } from '@/i18n/config';
 import { useUI } from '@/i18n/ui';
 import { upcoming } from '@/data/events';
 import Icon from '@/components/Icon.astro';
+import AskAI from '@/components/AskAI.astro';
 
-const { locale } = Astro.props as { locale: Locale };
+const { locale, path = '/' } = Astro.props as { locale: Locale; path?: string };
 const t = useUI(locale);
 const P = (p: string) => localize(locale, p);
 const year = 2026;
@@ -93,12 +94,14 @@ const ru = locale === 'ru';
       </div>
     </div>
 
+    <AskAI locale={locale} path={path} />
+
     <div class="ftr__bottom">
       <p style="margin:0">
         © {year} {site.brand[locale]}. {t('footer.rights')} {ru ? site.brand.legal : site.brand.legalEn}.
       </p>
       <p style="margin:0">
-        <a href={P('/legal/privacy/')}>{t('form.privacy')}</a> · <a href={P('/legal/terms/')}><span data-i18n>Пользовательское соглашение</span></a>
+        <a href={P('/legal/privacy/')}>{t('form.privacy')}</a> · <a href={P('/legal/terms/')}>{ru ? 'Пользовательское соглашение' : 'Terms of use'}</a>
       </p>
       <a href="#top" style="display:inline-flex;gap:.4rem;align-items:center">
         <Icon name="arrow-up" size={14} /> {t('misc.scrollToTop')}

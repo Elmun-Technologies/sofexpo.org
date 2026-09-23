@@ -5,7 +5,7 @@ const { locale } = Astro.props as { locale: Locale };
 const t = useUI(locale);
 ---
 <div class="table-frame">
-  <p class="table-hint">{t('table.hint')}</p>
+  <p class="table-hint" data-hint={t('table.hint')} data-nosnippet aria-hidden="true"></p>
   <div class="table-scroll" role="region" tabindex="0" aria-label={t('table.label')}>
     <slot />
   </div>

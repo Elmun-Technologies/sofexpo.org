@@ -1,0 +1,45 @@
+---
+/**
+ * Industries ticker: a slow, pausable marquee of the portfolio's trade-show topics.
+ * Every item is a real internal link with descriptive anchor text ("food exhibition",
+ * "construction expo"…), so the motion also carries topical relevance for search.
+ * The second track is a visual duplicate only: aria-hidden and out of the tab order.
+ */
+import { localize, type SourceLocale as Locale } from '@/i18n/config';
+
+const { locale } = Astro.props as { locale: Locale };
+const ru = locale === 'ru';
+const P = (p: string) => localize(locale, p);
+const items: [string, string][] = ru
+  ? [
+      ['Выставка продуктов питания', '/events/foodera-expo/'],
+      ['Строительная выставка', '/events/buildpro-expo/'],
+      ['Агровыставка', '/events/agropro-expo/'],
+      ['Выставка образования', '/events/world-edu-expo/'],
+      ['E-commerce и ритейл', '/events/ecom-retail-expo/'],
+      ['Автошоу', '/events/promotors-show-samarkand/'],
+      ['Аренда выставочного зала', '/organizers/'],
+      ['Застройка стендов', '/exhibitors/stand-construction/'],
+      ['Конференции и форумы', '/organizers/conferences/'],
+    ]
+  : [
+      ['Food & drink exhibition', '/events/foodera-expo/'],
+      ['Construction expo', '/events/buildpro-expo/'],
+      ['Agriculture trade show', '/events/agropro-expo/'],
+      ['Education fair', '/events/world-edu-expo/'],
+      ['E-commerce & retail expo', '/events/ecom-retail-expo/'],
+      ['Motor show', '/events/promotors-show-samarkand/'],
+      ['Exhibition hall rental', '/organizers/'],
+      ['Stand construction', '/exhibitors/stand-construction/'],
+      ['Conferences & forums', '/organizers/conferences/'],
+    ];
+---
+
+<nav class="marquee" aria-label={ru ? 'Тематики выставок' : 'Exhibition topics'}>
+  <div class="marquee__track">
+    {items.map(([label, href]) => <a class="marquee__item" href={P(href)}>{label}</a>)}
+  </div>
+  <div class="marquee__track" aria-hidden="true">
+    {items.map(([label, href]) => <a class="marquee__item" href={P(href)} tabindex="-1">{label}</a>)}
+  </div>
+</nav>

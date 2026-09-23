@@ -103,6 +103,8 @@ export interface Block {
   /** media */
   image?: string;
   imageAlt?: string;
+  /** hero media: override the default 4/3 frame (1/1 for finished artboards that must never be cropped) */
+  mediaRatio?: string;
   /** layout */
   tone?: "default" | "paper" | "forest" | "sand" | "gold";
   width?: "narrow" | "wide";

@@ -8,12 +8,16 @@
  * CSS grid. This file is the one place a team member is described; the page reads it and
  * when somebody joins or leaves the array is edited without touching any layout.
  *
- * `kind` sorts the wall in the order a visitor actually wants to read it: leadership and
- * commercial decision-makers first, then the customer-facing managers a buyer will get
- * routed to, then the back-office people who keep the centre running.
+ * `kind` sorts the wall in the order a visitor actually wants to read it: leadership
+ * first, then the media and marketing voice of the venue, then sales and the
+ * customer-facing managers a buyer will get routed to, then the technical, operations
+ * and support people who keep the centre running. The array itself is laid out in that
+ * same order — the ItemList markup mirrors it, so the wall and the structured data
+ * always tell the same story.
  */
 export type TeamKind =
   | "leadership"
+  | "media"
   | "sales"
   | "client"
   | "technical"
@@ -56,37 +60,45 @@ export const team: TeamMember[] = [
     kind: "leadership",
   },
 
-  /* ── customer-facing managers ───────────────────────────────────── */
+  /* ── media & marketing ──────────────────────────────────────────── */
   {
-    card: `team-norbutaev-ilkhom`,
-    name: { ru: "Илхом Норбутаев", en: "Ilkhom Norbutaev" },
-    role: { ru: "Электрик SOF EXPO", en: "Electrician at SOF EXPO" },
+    card: `team-nazir-elmuradov`,
+    name: { ru: "Назир Эльмурадов", en: "Nazir Elmuradov" },
+    role: { ru: "Маркетолог SOF EXPO", en: "Marketing manager at SOF EXPO" },
     blurb: {
-      ru: "Электрика стенда и зала: мощность, разводка, подключение во время монтажа.",
-      en: "Stand and hall power: load, wiring and live hook-ups during build-up.",
+      ru: "Медиаплан, партнёрские публикации, аккредитация прессы на дни события.",
+      en: "Media plan, partner publications and press accreditation for show days.",
     },
-    kind: "operations",
+    kind: "media",
   },
   {
-    card: `team-kholmonov-sardor`,
-    name: { ru: "Холмонов Сардор", en: "Sardor Kholmonov" },
-    role: { ru: "Энергетик SOF EXPO", en: "Power engineer at SOF EXPO" },
+    card: `team-ziyadullaev-firdaus`,
+    name: { ru: "Зиядуллаев Фируавс", en: "Firdaus Ziyadullaev" },
+    role: { ru: "SMM-менеджер SOF EXPO", en: "SMM manager at SOF EXPO" },
     blurb: {
-      ru: "Энергоснабжение площадки: распределение нагрузки и резервные линии.",
-      en: "Site power distribution: load balancing and reserve feeds.",
+      ru: "Каналы площадки в соцсетях, анонсы событий и работа с подписчиками.",
+      en: "The venue's social channels, event announcements and follower engagement.",
     },
-    kind: "operations",
+    kind: "media",
   },
+
+  /* ── show sales ─────────────────────────────────────────────────── */
   {
-    card: `team-govur-kulimuradov`,
-    name: { ru: "Говур Кулиуродов", en: "Govur Kulimuradov" },
-    role: { ru: "Технический директор SOF EXPO", en: "Technical director of SOF EXPO" },
-    blurb: {
-      ru: "Утверждает техплан: электричество, высота, кран, звук, свет, пожарная безопасность.",
-      en: "Approves the technical plan: power, heights, crane, sound, light, fire safety.",
+    card: `team-ziyaev-oybek`,
+    name: { ru: "Зияев Ойбек", en: "Oybek Ziyaev" },
+    role: {
+      ru: "Менеджер по продажам BUILD PRO EXPO",
+      en: "Sales manager for BUILD PRO EXPO",
     },
-    kind: "technical",
+    blurb: {
+      ru: "Заявки на BUILD PRO EXPO: строительные материалы, техника, инструмент.",
+      en: "BUILD PRO EXPO enquiries: construction materials, equipment, tools.",
+    },
+    phone: "+998 97 392 07 05",
+    kind: "sales",
   },
+
+  /* ── client-facing managers ─────────────────────────────────────── */
   {
     card: `team-alieva-dilafruz`,
     name: { ru: "Алиева Дилафруз", en: "Dilafruz Alieva" },
@@ -125,15 +137,50 @@ export const team: TeamMember[] = [
     kind: "client",
   },
   {
-    card: `team-mahmudjonov-abdulvosit`,
-    name: { ru: "Махмуджонов Абдулвосиит", en: "Abdulvosit Mahmudjonov" },
-    role: { ru: "Отдел закупок SOF EXPO", en: "Procurement at SOF EXPO" },
+    card: `team-vakhobov-sheroz`,
+    name: { ru: "Вахобов Шероз", en: "Sheroz Vakhobov" },
+    role: { ru: "Менеджер по работе с клиентами SOF EXPO", en: "Client manager at SOF EXPO" },
     blurb: {
-      ru: "Закупки для собственных событий и хозяйственные закупки площадки.",
-      en: "Procurement for in-house events and venue operations.",
+      ru: "Заявки на участие: пакеты, метраж, сопровождение до подписания договора.",
+      en: "Participation enquiries: packages, space, handover to contract.",
     },
-    kind: "operations",
+    phone: "+998 88 938 07 05",
+    kind: "client",
   },
+  {
+    card: `team-mirzabekov-farkhod`,
+    name: { ru: "Мирзабеков Фарход", en: "Farkhod Mirzabekov" },
+    role: { ru: "Менеджер по работе с клиентами SOF EXPO", en: "Client manager at SOF EXPO" },
+    blurb: {
+      ru: "Заявки на участие и сопровождение экспонента от заявки до закрытия события.",
+      en: "Participation enquiries and end-to-end exhibitor support.",
+    },
+    kind: "client",
+  },
+
+  /* ── technical service ──────────────────────────────────────────── */
+  {
+    card: `team-govur-kulimuradov`,
+    name: { ru: "Говур Кулиуродов", en: "Govur Kulimuradov" },
+    role: { ru: "Технический директор SOF EXPO", en: "Technical director of SOF EXPO" },
+    blurb: {
+      ru: "Утверждает техплан: электричество, высота, кран, звук, свет, пожарная безопасность.",
+      en: "Approves the technical plan: power, heights, crane, sound, light, fire safety.",
+    },
+    kind: "technical",
+  },
+  {
+    card: `team-narziqulov-sunnatbek`,
+    name: { ru: "Нарзикулов Суннатбек", en: "Sunnatbek Narziqulov" },
+    role: { ru: "IT-специалист SOF EXPO", en: "IT specialist at SOF EXPO" },
+    blurb: {
+      ru: "Интернет на площадке, регистрация, бейджи, сеть в дни монтажа и работы.",
+      en: "On-site internet, registration, badges and networking during build-up and show.",
+    },
+    kind: "technical",
+  },
+
+  /* ── operations & procurement (deputy director first, then the team) ── */
   {
     card: `team-ibragimov-botir`,
     name: {
@@ -151,6 +198,38 @@ export const team: TeamMember[] = [
     kind: "operations",
   },
   {
+    card: `team-mahmudjonov-abdulvosit`,
+    name: { ru: "Махмуджонов Абдулвосиит", en: "Abdulvosit Mahmudjonov" },
+    role: { ru: "Отдел закупок SOF EXPO", en: "Procurement at SOF EXPO" },
+    blurb: {
+      ru: "Закупки для собственных событий и хозяйственные закупки площадки.",
+      en: "Procurement for in-house events and venue operations.",
+    },
+    kind: "operations",
+  },
+  {
+    card: `team-kholmonov-sardor`,
+    name: { ru: "Холмонов Сардор", en: "Sardor Kholmonov" },
+    role: { ru: "Энергетик SOF EXPO", en: "Power engineer at SOF EXPO" },
+    blurb: {
+      ru: "Энергоснабжение площадки: распределение нагрузки и резервные линии.",
+      en: "Site power distribution: load balancing and reserve feeds.",
+    },
+    kind: "operations",
+  },
+  {
+    card: `team-norbutaev-ilkhom`,
+    name: { ru: "Илхом Норбутаев", en: "Ilkhom Norbutaev" },
+    role: { ru: "Электрик SOF EXPO", en: "Electrician at SOF EXPO" },
+    blurb: {
+      ru: "Электрика стенда и зала: мощность, разводка, подключение во время монтажа.",
+      en: "Stand and hall power: load, wiring and live hook-ups during build-up.",
+    },
+    kind: "operations",
+  },
+
+  /* ── support ────────────────────────────────────────────────────── */
+  {
     card: `team-kurbanova-bakhora`,
     name: { ru: "Курбанова Бахора", en: "Bakhora Kurbanova" },
     role: { ru: "HR-менеджер SOF EXPO", en: "HR manager at SOF EXPO" },
@@ -160,79 +239,15 @@ export const team: TeamMember[] = [
     },
     kind: "support",
   },
-  {
-    card: `team-vakhobov-sheroz`,
-    name: { ru: "Вахобов Шероз", en: "Sheroz Vakhobov" },
-    role: { ru: "Менеджер по работе с клиентами SOF EXPO", en: "Client manager at SOF EXPO" },
-    blurb: {
-      ru: "Заявки на участие: пакеты, метраж, сопровождение до подписания договора.",
-      en: "Participation enquiries: packages, space, handover to contract.",
-    },
-    phone: "+998 88 938 07 05",
-    kind: "client",
-  },
-  {
-    card: `team-ziyadullaev-firdaus`,
-    name: { ru: "Зиядуллаев Фируавс", en: "Firdaus Ziyadullaev" },
-    role: { ru: "SMM-менеджер SOF EXPO", en: "SMM manager at SOF EXPO" },
-    blurb: {
-      ru: "Каналы площадки в соцсетях, анонсы событий и работа с подписчиками.",
-      en: "The venue's social channels, event announcements and follower engagement.",
-    },
-    kind: "support",
-  },
-  {
-    card: `team-narziqulov-sunnatbek`,
-    name: { ru: "Нарзикулов Суннатбек", en: "Sunnatbek Narziqulov" },
-    role: { ru: "IT-специалист SOF EXPO", en: "IT specialist at SOF EXPO" },
-    blurb: {
-      ru: "Интернет на площадке, регистрация, бейджи, сеть в дни монтажа и работы.",
-      en: "On-site internet, registration, badges and networking during build-up and show.",
-    },
-    kind: "technical",
-  },
-  {
-    card: `team-mirzabekov-farkhod`,
-    name: { ru: "Мирзабеков Фарход", en: "Farkhod Mirzabekov" },
-    role: { ru: "Менеджер по работе с клиентами SOF EXPO", en: "Client manager at SOF EXPO" },
-    blurb: {
-      ru: "Заявки на участие и сопровождение экспонента от заявки до закрытия события.",
-      en: "Participation enquiries and end-to-end exhibitor support.",
-    },
-    kind: "client",
-  },
-  {
-    card: `team-nazir-elmuradov`,
-    name: { ru: "Назир Эльмурадов", en: "Nazir Elmuradov" },
-    role: { ru: "Маркетолог SOF EXPO", en: "Marketing manager at SOF EXPO" },
-    blurb: {
-      ru: "Медиаплан, партнёрские публикации, аккредитация прессы на дни события.",
-      en: "Media plan, partner publications and press accreditation for show days.",
-    },
-    kind: "support",
-  },
-  {
-    card: `team-ziyaev-oybek`,
-    name: { ru: "Зияев Ойбек", en: "Oybek Ziyaev" },
-    role: {
-      ru: "Менеджер по продажам BUILD PRO EXPO",
-      en: "Sales manager for BUILD PRO EXPO",
-    },
-    blurb: {
-      ru: "Заявки на BUILD PRO EXPO: строительные материалы, техника, инструмент.",
-      en: "BUILD PRO EXPO enquiries: construction materials, equipment, tools.",
-    },
-    phone: "+998 97 392 07 05",
-    kind: "sales",
-  },
 ];
 
 /** kind → display label (one per locale) */
 export const teamKinds: Record<TeamKind, { ru: string; en: string }> = {
   leadership: { ru: "Руководство", en: "Leadership" },
+  media: { ru: "Медиа и маркетинг", en: "Media & marketing" },
   sales: { ru: "Продажи выставок", en: "Show sales" },
   client: { ru: "Работа с клиентами", en: "Client managers" },
   technical: { ru: "Техническая служба", en: "Technical" },
   operations: { ru: "Хозяйство и закупки", en: "Operations & procurement" },
-  support: { ru: "Поддержка и медиа", en: "Support & media" },
+  support: { ru: "Поддержка", en: "Support" },
 };

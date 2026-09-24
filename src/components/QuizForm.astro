@@ -98,9 +98,7 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
     <div class="quiz__labels">
       {labelSets.map((set) =>
         set.labels.map((label) => (
-          <span data-step-label data-mode={set.mode} hidden>
-            {label}
-          </span>
+          <span data-step-label data-mode={set.mode} hidden>{label}</span>
         )),
       )}
     </div>
@@ -581,10 +579,16 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
     outline: none;
     box-shadow: 0 0 0 4px rgba(29, 122, 72, 0.16);
   }
+  /* the input covers the whole option (transparent, on top) so the card is
+     one reliable click target for users, keyboards and automation alike */
   .quiz__opt input {
     position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
     opacity: 0;
-    pointer-events: none;
+    cursor: pointer;
   }
   .quiz__opt-check {
     color: var(--moss);

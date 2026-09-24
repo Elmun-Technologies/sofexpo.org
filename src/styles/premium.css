@@ -14,8 +14,8 @@
   --ink: #172c27;
   --ink-60: #5d6a64;
   --line: #dedfd5;
-  --accent: #dfb56c;
-  --gold: #b78a43;
+  --accent: #b07a24;
+  --gold: #b07a24;
   --gold-soft: #e5c88d;
   /* fluid column: 1380px floor on a laptop, wider on a 4K TV (docs/04 §5) */
   --maxw: clamp(1380px, 76vw, 1840px);
@@ -34,8 +34,8 @@ p { text-wrap: pretty; }
 a, button, summary { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 3px solid #b58a42; outline-offset: 4px; }
 .btn { min-height: 48px; border-radius: 6px; padding: .85rem 1.4rem; gap: .8rem; }
-.btn--accent { --btn-bg: var(--accent); --btn-fg: #172c27; }
-.btn--accent:hover { background: #edc785; color: #172c27; }
+.btn--accent { --btn-bg: var(--accent); --btn-fg: #1d1204; }
+.btn--accent:hover { background: #c5903a; color: #1d1204; }
 .kicker, .mono-label { letter-spacing: .12em; }
 .sec-head { flex-wrap: wrap; gap: 1rem; align-items: end; }
 .sec-head p { max-width: 60ch; }

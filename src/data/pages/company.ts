@@ -394,6 +394,12 @@ export const companyPages: PageDef[] = [
           imageAlt: "Отраслевая выставка",
         },
         {
+          type: "partners",
+          kicker: "Логотипы партнёров",
+          title: "Кто стоит за выставками SOF EXPO",
+          text: "Организаторы, отраслевые союзы, отели и сервисы. Список обновляется по мере подписания партнёрств.",
+        },
+        {
           type: "grid",
           cols: 3,
           items: [
@@ -454,6 +460,12 @@ export const companyPages: PageDef[] = [
           lead: "Associations bring industries, universities bring audiences, hotels solve logistics, media bring visibility. Here is who we work with and what it gives you as an exhibitor or visitor.",
           image: "/images/event-agropro.jpg",
           imageAlt: "Trade exhibition",
+        },
+        {
+          type: "partners",
+          kicker: "Partner logos",
+          title: "Who stands behind the SOF EXPO shows",
+          text: "Organizers, industry unions, hotels and services. The list grows as partnerships are signed.",
         },
         {
           type: "grid",

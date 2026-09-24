@@ -18,7 +18,7 @@ export const conversionConfig = {
 
   // LiveChat widget config
   liveChat: {
-    enabled: true,
+    enabled: false,
     position: 'bottom-right' as const,
     // working hours Asia/Samarkand UTC+5
     workingHours: {
@@ -72,16 +72,16 @@ export const conversionConfig = {
     },
     sidebar: {
       priority: 5,
-      enabled: true,
+      enabled: false,
       showOn: ['exhibitors', 'visitors', 'organizers', 'event'],
     },
     exitIntent: {
       priority: 6,
-      enabled: true,
+      enabled: false,
     },
     footerBand: {
       priority: 7,
-      enabled: true,
+      enabled: false,
     },
   },
 
@@ -106,7 +106,7 @@ export const conversionConfig = {
         cta: { ru: 'Подобрать формат участия', en: 'Find participation format' },
         frequency: 'once-per-session',
         pages: ['home', 'events'],
-        enabled: true,
+        enabled: false,
       },
       {
         id: 'exit-intent',
@@ -122,7 +122,7 @@ export const conversionConfig = {
           en: 'Leave your contact in messenger — we’ll send catalogue and quote in 15 min',
         },
         frequency: 'once-per-day',
-        enabled: true,
+        enabled: false,
       },
       {
         id: 'scroll-50-catalog',
@@ -133,7 +133,7 @@ export const conversionConfig = {
         magnet: 'catalog',
         frequency: 'once-per-session',
         pages: ['exhibitors', 'event'],
-        enabled: true,
+        enabled: false,
       },
       {
         id: 'pricing-interest',
@@ -148,7 +148,7 @@ export const conversionConfig = {
         },
         frequency: 'once-per-session',
         pages: ['exhibitors/packages', 'organizers/rates'],
-        enabled: true,
+        enabled: false,
       },
       {
         id: 'form-abandon',
@@ -157,7 +157,7 @@ export const conversionConfig = {
         delay: 10000,
         template: 'contact-hold-mini',
         frequency: 'once-per-session',
-        enabled: true,
+        enabled: false,
       },
       {
         id: 'tg-whatsapp-hold',
@@ -166,7 +166,7 @@ export const conversionConfig = {
         scrollPercent: 75,
         template: 'messengers',
         frequency: 'once-per-day',
-        enabled: true,
+        enabled: false,
       },
     ],
   },

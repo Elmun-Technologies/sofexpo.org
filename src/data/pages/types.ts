@@ -29,6 +29,9 @@ export type BlockType =
   | "rail"
   | "plan"
   | "map"
+  /* The partner logo wall: reads src/data/partners.ts (logos drop in 1:1 by
+     filename from public/images/partners/). `event` narrows it to one show. */
+  | "partners"
   /* The team wall: 17 finished 1:1 poster artboards grouped by role, rendered by
      `src/components/TeamWall.astro`. The block carries no items of its own — the wall
      reads `src/data/team.ts` so a hire or a departure is a one-line edit. */

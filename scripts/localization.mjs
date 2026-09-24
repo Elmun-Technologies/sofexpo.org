@@ -76,6 +76,8 @@ function dynamicText(text, locale, translate) {
     const prefix = descriptor ? `${translate(descriptor)} · ` : '';
     return prefix + (locale === 'zh' ? `${countdown[2]}天后` : `${countdown[2]} gün sonra`);
   }
+  const orgs = /^(\d+) organizations?$/.exec(text);
+  if (orgs) return locale === 'zh' ? `${orgs[1]}家机构` : `${orgs[1]} kuruluş`;
   const people = /^(\d+) (?:person|people)$/.exec(text);
   if (people) return locale === 'zh' ? `${people[1]}人` : `${people[1]} kişi`;
   const eventDay = /^day (\d+)$/i.exec(text);
@@ -100,6 +102,8 @@ function dynamicText(text, locale, translate) {
     [/^(.+) has closed\. Leave a request and we will send the next edition's dates and early-booking terms\.$/, (m) => locale === 'zh' ? `${m[1]} 已结束。留下申请,我们将发送下一届日期和早鸟预订条件。` : `${m[1]} sona erdi. Talep bırakın, bir sonraki fuarın tarihlerini ve erken rezervasyon koşullarını gönderelim.`],
   ];
   tpl.push([/^Getting to (.+): 16 km from Samarkand International Airport · 23 km from the railway station$/, (m) => locale === 'zh' ? `前往 ${m[1]}:距撒马尔罕国际机场 16 公里 · 距火车站 23 公里` : `${m[1]} fuarına ulaşım: Semerkant Uluslararası Havalimanı'na 16 km · tren istasyonuna 23 km`]);
+  /* 2026-09-24 partner wall: the show name is protected text, the tail is translated */
+  tpl.push([/^(.+) is held with support from$/, (m) => locale === 'zh' ? `${m[1]} 的举办获得以下支持` : `${m[1]} şu kuruluşların destekleriyle düzenleniyor`]);
   for (const [re, fn] of tpl) { const m = re.exec(text); if (m) return fn(m); }
   const duration = /^(\d+) days\.$/.exec(text);
   if (duration) return locale === 'zh' ? `${duration[1]}天。` : `${duration[1]} gün.`;
@@ -267,6 +271,7 @@ function dynamicUz(text, translate) {
   if (cd) { const d = cd[1].replace(/\s*[·—]\s*$/, '').trim(); return (d ? `${translate(d)} · ` : '') + `${cd[2]} kundan keyin`; }
   let m;
   if ((m = /^(\d+) (?:person|people)$/.exec(text))) return `${m[1]} kishi`;
+  if ((m = /^(\d+) organizations?$/.exec(text))) return `${m[1]} ta tashkilot`;
   if ((m = /^day (\d+)$/i.exec(text))) return `${m[1]}-kun`;
   if ((m = /^(\d+(?:[–-]\d+)?) days (ahead|out|after)$/.exec(text))) return `${m[1]} kun ${m[2] === 'after' ? 'keyin' : 'oldin'}`;
   const tpl = [
@@ -281,6 +286,8 @@ function dynamicUz(text, translate) {
     [/^Business-programme slots at (.+) go to exhibitors and partners first — a stand request opens the door to a talk\.$/, m => `${m[1]} biznes-dasturidagi chiqishlar avvalo ishtirokchilar va hamkorlarga beriladi — stendga ariza chiqish imkonini ochadi.`],
     [/^(.+) has closed\. Leave a request and we will send the next edition's dates and early-booking terms\.$/, m => `${m[1]} yakunlandi. Ariza qoldiring — keyingi ko‘rgazma sanalari va erta bron shartlarini yuboramiz.`],
     [/^Getting to (.+): 16 km from Samarkand International Airport · 23 km from the railway station$/, m => `${m[1]}ga qanday borish: Samarqand xalqaro aeroportidan 16 km · temir yo‘l vokzalidan 23 km`],
+    /* 2026-09-24 partner wall: the show name is protected text, the tail is translated */
+    [/^(.+) is held with support from$/, m => `${m[1]} quyidagilarning ko‘magida o‘tadi`],
   ];
   for (const [re, fn] of tpl) { const x = re.exec(text); if (x) return fn(x); }
   if ((m = /^(\d+) days\.$/.exec(text))) return `${m[1]} kun.`;

@@ -34,14 +34,18 @@
   --evergreen-2: #14402a;
   --moss: #1d7a48;
   --sage: #dfe8e0;
-  /* one warm accent, used only where money changes hands (primary CTA, live badge, rule) */
-  --accent: #c8882c;
+  /* one warm accent, used only where money changes hands (primary CTA, live badge, rule).
+     2026-09-24: deepened so the brass reads against both cream and evergreen — the old
+     #c8882c flattened to a sand tone on the hero and on paper (docs requested reworked
+     colour harmony). */
+  --accent: #b07a24;
   --accent-soft: #f3e3c9;
   /* identity layer: --ornament is the colour of the national scroll bands, --brand-mark the
      fill of the host's own mark; the centre uses its greens, a show host overrides both */
   --ornament: #dfe8e0;
   --brand-mark: var(--evergreen);
-  --gold: #c8882c;
+  --gold: #b07a24;
+  /* light brass for text/accents ON dark grounds — must stay light (do not darken) */
   --gold-soft: #e7d5ae;
   --danger: #a33518;
 
@@ -424,7 +428,7 @@ li::marker {
 }
 
 .btn--accent:hover {
-  background: #d9962f;
+  background: #c5903a;
 }
 
 .btn--gold {

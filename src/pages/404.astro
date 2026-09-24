@@ -49,10 +49,11 @@ const copy = {
   .error-brand span { font-size: .8rem; color: var(--ink-60); }
   h1 { max-width: 20ch; font-size: clamp(2.6rem, 6vw, 5rem); }
   .error-languages { display: flex; flex-wrap: wrap; gap: 1.5rem; margin: 1.5rem 0 3rem; }
-  .error-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1.2rem; }
+  /* mobile-first: one language card per row on a phone, two from ≥700px */
+  .error-grid { display: grid; grid-template-columns: minmax(0,1fr); gap: 1.2rem; }
   h2 { font-size: 1.5rem; }
   .card { scroll-margin-top: 2rem; }
   .card p:not(.kicker) { color: var(--ink-60); margin-block: 1rem 1.5rem; }
   .error-home { align-self: center; padding: .5rem; }
-  @media(max-width: 700px) { .error-grid { grid-template-columns: minmax(0,1fr); } }
+  @media(min-width: 700px) { .error-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
 </style>

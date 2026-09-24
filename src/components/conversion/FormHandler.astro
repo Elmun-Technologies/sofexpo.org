@@ -6,6 +6,10 @@
 ---
 
 <script>
+  /* NOTE: must stay a plain <script> (no is:inline / no translate="no"): Astro then
+     transpiles this TypeScript and bundles it as a deferred module. Extra attributes
+     make Astro emit it raw, which breaks in every browser. It skips forms already
+     bound by LeadForm's inline handler (dataset.handlerBound). */
   (() => {
     const ENDPOINT = (import.meta.env.PUBLIC_LEAD_ENDPOINT || '').trim();
     const LEADS_KEY = 'sofexpo.leads';

@@ -72,14 +72,15 @@ const L = {
 </div>
 
 <style>
-  /* Desktop rail — left side, vertical */
+  /* Desktop rail — left side, vertical; hidden by default (mobile-first: the
+     bottom bar is the phone layout), the rail is a ≥901px enhancement */
   .fc-rail {
     position: fixed;
     left: 0;
     top: 50%;
     transform: translateY(-50%);
     z-index: 40;
-    display: flex;
+    display: none;
     flex-direction: column;
     gap: 2px;
     padding: 6px 0;
@@ -149,7 +150,7 @@ const L = {
     border-top: 1px solid var(--line);
     transform: translateY(0);
     transition: transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
-    display: none;
+    display: block;
   }
   .fc-mob.is-hidden {
     transform: translateY(110%);
@@ -191,20 +192,25 @@ const L = {
     color: #fff;
   }
 
-  @media (max-width: 900px) {
-    .fc-rail { display: none; }
-    .fc-mob { display: block; }
-    /* add padding to body so content not hidden behind bar */
-    :global(body) {
-      padding-bottom: 72px;
-    }
+  /* mobile-first: the bottom bar reserves room in the document flow on every
+     phone; the ≥901px tier swaps to the side rail and releases the padding */
+  :global(body) {
+    padding-bottom: 72px;
   }
   @media (min-width: 901px) {
+    .fc-rail { display: flex; }
     .fc-mob { display: none !important; }
+    :global(body) {
+      padding-bottom: 0;
+    }
   }
 </style>
 
 <script>
+  /* NOTE: must stay a plain <script> (no is:inline / no translate="no"): Astro then
+     transpiles this TypeScript and bundles it as a deferred module. Extra attributes
+     make Astro emit it raw, which breaks in every browser. The i18n build pass
+     rewrites only the known UI strings inside it (scripts/localization.mjs). */
   (() => {
     const bar = document.getElementById('fc-mob');
     if (!bar) return;

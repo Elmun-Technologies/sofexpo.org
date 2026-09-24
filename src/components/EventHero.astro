@@ -137,12 +137,14 @@ const actions = [
   .ehero--past::after {
     background: linear-gradient(100deg, rgba(10, 26, 17, 0.96) 0%, rgba(10, 26, 17, 0.8) 60%, rgba(10, 26, 17, 0.5) 100%);
   }
+  /* mobile-first: one column on a phone; the ticket panel sits beside the
+     headline only from ≥960px (docs/04 §5) */
   .ehero__in {
     display: grid;
-    grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
+    grid-template-columns: minmax(0, 1fr);
     gap: clamp(1.6rem, 1rem + 3vw, 3.4rem);
     padding-block: clamp(2.6rem, 1.4rem + 5vw, 5.4rem);
-    align-items: end;
+    align-items: start;
   }
   .ehero h1 {
     color: #fff;
@@ -248,10 +250,10 @@ const actions = [
     margin: 0;
     text-align: right;
   }
-  @media (max-width: 960px) {
+  @media (min-width: 960px) {
     .ehero__in {
-      grid-template-columns: minmax(0, 1fr);
-      align-items: start;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
+      align-items: end;
     }
   }
 </style>

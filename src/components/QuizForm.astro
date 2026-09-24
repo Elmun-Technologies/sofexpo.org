@@ -98,9 +98,7 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
     <div class="quiz__labels">
       {labelSets.map((set) =>
         set.labels.map((label) => (
-          <span data-step-label data-mode={set.mode} hidden>
-            {label}
-          </span>
+          <span data-step-label data-mode={set.mode} hidden>{label}</span>
         )),
       )}
     </div>
@@ -535,6 +533,9 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
     margin: 0;
     min-width: 0;
   }
+  .quiz > form {
+    min-width: 0;
+  }
   .quiz__step legend {
     font-weight: 700;
     font-size: var(--t-h3);
@@ -545,11 +546,11 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
   }
   .quiz__opts {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.55rem;
   }
   .quiz__opts--row {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .quiz__opt {
     position: relative;
@@ -578,10 +579,16 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
     outline: none;
     box-shadow: 0 0 0 4px rgba(29, 122, 72, 0.16);
   }
+  /* the input covers the whole option (transparent, on top) so the card is
+     one reliable click target for users, keyboards and automation alike */
   .quiz__opt input {
     position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
     opacity: 0;
-    pointer-events: none;
+    cursor: pointer;
   }
   .quiz__opt-check {
     color: var(--moss);
@@ -763,9 +770,8 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
   }
   .quiz__summary > div {
     display: flex;
-    gap: 0.6rem;
-    justify-content: space-between;
-    gap: 1rem;
+    flex-direction: column;
+    gap: 0.1rem;
   }
   .quiz__summary dt {
     color: var(--ink-40);
@@ -775,7 +781,7 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
     margin: 0;
     font-weight: 600;
     font-size: 0.9rem;
-    text-align: right;
+    text-align: left;
   }
   .quiz__done-links {
     display: flex;
@@ -783,17 +789,20 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
     gap: 0.6rem;
   }
 
-  @media (max-width: 560px) {
-    .quiz__opts,
+  @media (min-width: 561px) {
+    .quiz__opts {
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    }
     .quiz__opts--row {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     }
     .quiz__summary > div {
-      flex-direction: column;
-      gap: 0.1rem;
+      flex-direction: row;
+      justify-content: space-between;
+      gap: 1rem;
     }
     .quiz__summary dd {
-      text-align: left;
+      text-align: right;
     }
   }
 </style>

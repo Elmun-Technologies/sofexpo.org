@@ -4,7 +4,7 @@ import {test,expect} from '@playwright/test';
  * success state confirms the selection and the payload lands in the preview store.
  */
 const answers = (locale:string) => ({
-  ru: { q1any:'Ещё не выбрал', goal:'Новые клиенты', area:'18 м²', done:'Заявка принята', event:'Выставка', open:'Забронировать стенд' },
+  ru: { q1any:'Ещё не выбрал', goal:'Новые клиенты и продажи', area:'18 м²', done:'Заявка принята', event:'Выставка', open:'Забронировать стенд' },
   en: { q1any:'Not sure yet — help me choose', goal:'New buyers and sales', area:'18 m²', done:'Request received', event:'Exhibition', open:'Book a stand' },
 }[locale]!);
 

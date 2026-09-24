@@ -107,13 +107,13 @@ const L = {
   }
   .form-sp__grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 12px;
   }
   .form-sp__full { grid-column: 1 / -1; }
   .form-sp__pkgs {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 8px;
     margin-top: 6px;
   }
@@ -136,7 +136,7 @@ const L = {
   .form-sp__pkg input {
     accent-color: var(--gold);
   }
-  @media (max-width: 600px) {
-    .form-sp__grid, .form-sp__pkgs { grid-template-columns: 1fr; }
+  @media (min-width: 600px) {
+    .form-sp__grid, .form-sp__pkgs { grid-template-columns: 1fr 1fr; }
   }
 </style>

@@ -180,13 +180,15 @@ const groups = ORDER.map((k) => ({
   .tw__chip {
     white-space: nowrap;
   }
+  /* mobile-first: two cards per row on a phone (the square portraits need the room),
+     four only at ≥900px (docs/04 §5) */
   .tw__grid {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: clamp(1rem, .6rem + 1.4vw, 1.8rem);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .8rem;
   }
   /* leadership gets the two big cards — the names a visitor scans for first */
   .tw__grid--lead {
@@ -241,7 +243,7 @@ const groups = ORDER.map((k) => ({
   }
   .tw__meta b {
     font-family: var(--f-display);
-    font-size: 1rem;
+    font-size: .92rem;
     letter-spacing: -.012em;
     transition: color var(--tr);
   }
@@ -249,7 +251,7 @@ const groups = ORDER.map((k) => ({
     color: var(--evergreen);
   }
   .tw__meta span {
-    font-size: .85rem;
+    font-size: .78rem;
     color: var(--ink-60);
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -290,21 +292,20 @@ const groups = ORDER.map((k) => ({
       transform: none !important;
     }
   }
-  @media (max-width: 900px) {
+  @media (min-width: 481px) {
     .tw__grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-  @media (max-width: 480px) {
-    .tw__grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: .8rem;
+      gap: clamp(1rem, .6rem + 1.4vw, 1.8rem);
     }
     .tw__meta b {
-      font-size: .92rem;
+      font-size: 1rem;
     }
     .tw__meta span {
-      font-size: .78rem;
+      font-size: .85rem;
+    }
+  }
+  @media (min-width: 900px) {
+    .tw__grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
   }
 </style>

@@ -116,6 +116,8 @@ const L = {
   .form-org__specs {
     display: flex;
     gap: 12px;
+    width: 100%;
+    justify-content: space-between;
   }
   .form-org__specs div {
     display: flex;
@@ -143,7 +145,7 @@ const L = {
   }
   .form-org__grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 12px;
   }
   .form-org__full { grid-column: 1 / -1; }
@@ -191,8 +193,8 @@ const L = {
   .form-org__submit:hover {
     background: var(--gold-soft);
   }
-  @media (max-width: 600px) {
-    .form-org__grid { grid-template-columns: 1fr; }
-    .form-org__specs { width: 100%; justify-content: space-between; }
+  @media (min-width: 600px) {
+    .form-org__grid { grid-template-columns: 1fr 1fr; }
+    .form-org__specs { width: auto; }
   }
 </style>

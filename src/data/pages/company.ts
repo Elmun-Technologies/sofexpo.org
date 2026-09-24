@@ -741,6 +741,7 @@ export const companyPages: PageDef[] = [
           title: "Подберём стенд за 4 шага",
           text: "Четыре вопроса — и менеджер пришлёт план зала, свободные метры и расчёт пакета.",
           note: "Если нужны демонстрационная зона, улица или отдельный павильон — отметьте «Пока не знаю» и опишите задачу в комментарии.",
+          areas: ["9 м²", "12 м²", "18 м²", "36 м²", "от 50 м² / улица"],
         },
         {
           type: "form",
@@ -804,6 +805,7 @@ export const companyPages: PageDef[] = [
           title: "Find your stand in four steps",
           text: "Four questions — and the manager sends the hall plan, free metres and the package quote.",
           note: "Need a demo area, outdoor space or a separate pavilion? Pick “Not sure yet” and describe the task in the comment.",
+          areas: ["9 m²", "12 m²", "18 m²", "36 m²", "50 m²+ / outdoor"],
         },
         {
           type: "form",

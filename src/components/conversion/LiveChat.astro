@@ -229,12 +229,14 @@ const L = {
     .lc__fab-pulse { animation: none; opacity: 0; }
   }
 
+  /* mobile-first: on a phone the panel is near-full-bleed; the floating 380px
+     bubble is a ≥480px enhancement (docs/04 §5) */
   .lc__panel {
     position: absolute;
-    right: 0;
-    bottom: 76px;
-    width: min(380px, calc(100vw - 24px));
-    max-height: min(560px, calc(100dvh - 100px));
+    right: -8px;
+    bottom: 70px;
+    width: calc(100vw - 16px);
+    max-height: calc(100dvh - 90px);
     display: flex;
     flex-direction: column;
     background: var(--paper);
@@ -337,6 +339,7 @@ const L = {
     padding: 16px;
     display: flex;
     flex-direction: column;
+    max-height: 42dvh;
     gap: 12px;
     background: #f8faf8;
     min-height: 180px;
@@ -537,21 +540,24 @@ const L = {
     color: var(--evergreen);
   }
 
-  @media (max-width: 480px) {
+  @media (min-width: 480px) {
     .lc__panel {
-      width: calc(100vw - 16px);
-      right: -8px;
-      bottom: 70px;
-      max-height: calc(100dvh - 90px);
-      border-radius: 16px;
+      width: min(380px, calc(100vw - 24px));
+      right: 0;
+      bottom: 76px;
+      max-height: min(560px, calc(100dvh - 100px));
     }
     .lc__messages {
-      max-height: 42dvh;
+      max-height: none;
     }
   }
 </style>
 
 <script>
+  /* NOTE: must stay a plain <script> (no is:inline / no translate="no"): Astro then
+     transpiles this TypeScript and bundles it as a deferred module. Extra attributes
+     make Astro emit it raw, which breaks in every browser. The i18n build pass
+     rewrites only the known UI strings inside it (scripts/localization.mjs). */
   (() => {
     const root = document.getElementById('sof-livechat');
     if (!root) return;

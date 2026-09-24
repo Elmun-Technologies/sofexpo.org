@@ -115,10 +115,12 @@ const list: Edition[] = [...archive].sort((a, b) => b.year - a.year);
     overflow: hidden;
     margin-top: 1.4rem;
   }
+  /* mobile-first: the year plate stacks above the edition on a phone;
+     side by side from ≥760px */
   .ed {
     background: var(--paper);
     display: grid;
-    grid-template-columns: 150px minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
     gap: clamp(1rem, 0.5rem + 2vw, 2.4rem);
     padding: clamp(1.2rem, 0.8rem + 1.6vw, 2rem);
   }
@@ -170,9 +172,9 @@ const list: Edition[] = [...archive].sort((a, b) => b.year - a.year);
     gap: 0.5rem;
     margin-top: 1.1rem;
   }
-  @media (max-width: 760px) {
+  @media (min-width: 760px) {
     .ed {
-      grid-template-columns: minmax(0, 1fr);
+      grid-template-columns: 150px minmax(0, 1fr);
     }
   }
 </style>

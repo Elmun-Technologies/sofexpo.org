@@ -535,6 +535,9 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
     margin: 0;
     min-width: 0;
   }
+  .quiz > form {
+    min-width: 0;
+  }
   .quiz__step legend {
     font-weight: 700;
     font-size: var(--t-h3);
@@ -545,11 +548,11 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
   }
   .quiz__opts {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.55rem;
   }
   .quiz__opts--row {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .quiz__opt {
     position: relative;

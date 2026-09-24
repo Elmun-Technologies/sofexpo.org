@@ -291,18 +291,5 @@ const L = {
         try { (window as any).sofTrack?.('cta_click', { cta, source: 'sticky-bar', pageType: PAGE_TYPE }); } catch {}
       });
     });
-
-    // Hide on mobile contact bar hidden? Keep above
-    const mobBar = document.getElementById('fc-mob');
-    if (mobBar) {
-      const mo = new MutationObserver(() => {
-        if (mobBar.classList.contains('is-hidden')) {
-          (bar as HTMLElement).style.bottom = '0';
-        } else {
-          (bar as HTMLElement).style.bottom = window.innerWidth <= 900 ? '64px' : '0';
-        }
-      });
-      mo.observe(mobBar, { attributes: true, attributeFilter: ['class'] });
-    }
   })();
 </script>

@@ -22,6 +22,7 @@ import PostCard from '@/components/PostCard.astro';
 import Photo from '@/components/Photo.astro';
 import EventCard from '@/components/EventCard.astro';
 import Marquee from '@/components/Marquee.astro';
+import PartnerLogoWall from '@/components/PartnerLogoWall.astro';
 
 export function getStaticPaths() {
   return localePaths();
@@ -356,6 +357,20 @@ const jsonLd = [
       <div class="home-news-rows">
         {newsRest.slice(0, 3).map((n) => <PostCard locale={locale} post={n} path="/news/" variant="row" />)}
       </div>
+    </div>
+  </section>
+
+  <!-- 5.5 · partners: the organisations that carry the shows (logos drop in by filename) -->
+  <section class="sec sec--sand reveal">
+    <div class="wrap">
+      <PartnerLogoWall
+        locale={locale}
+        kicker={ru ? 'Партнёры' : 'Partners'}
+        title={ru ? 'Выставки идут при поддержке партнёров' : 'The shows run with our partners behind them'}
+        text={ru
+          ? 'Отраслевые ассоциации, государственные программы, отели и сервисы. Логотипы партнёров каждой выставки — на её странице.'
+          : 'Industry associations, state programmes, hotels and services. Each show\'s own partners are listed on its page.'}
+      />
     </div>
   </section>
 

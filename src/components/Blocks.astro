@@ -21,6 +21,7 @@ import CalendarRail from '@/components/CalendarRail.astro';
 import VenuePlan from '@/components/VenuePlan.astro';
 import MapSchema from '@/components/MapSchema.astro';
 import TeamWall from '@/components/TeamWall.astro';
+import PartnerLogoWall from '@/components/PartnerLogoWall.astro';
 import ExhibitorForm from '@/components/conversion/forms/ExhibitorForm.astro';
 import VisitorForm from '@/components/conversion/forms/VisitorForm.astro';
 import OrganizerForm from '@/components/conversion/forms/OrganizerForm.astro';
@@ -282,6 +283,16 @@ const H = (p?: string) => {
           )}
 
           {b.type === 'rail' && <CalendarRail locale={locale} tone="light" count={b.railCount ?? 4} />}
+
+          {b.type === 'partners' && (
+            <PartnerLogoWall
+              locale={locale}
+              event={b.event}
+              kicker={b.kicker}
+              title={b.title}
+              text={b.text}
+            />
+          )}
 
           {b.type === 'plan' && <VenuePlan locale={locale} />}
 

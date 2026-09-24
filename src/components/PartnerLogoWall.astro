@@ -1,0 +1,176 @@
+---
+/**
+ * PartnerLogoWall — a restrained, greyscale logo strip (official-consortium style).
+ *
+ * The client sends the real logos (per edition + the shared SOF EXPO set,
+ * docs/08 §7 Q4). Until then each tile renders a typographic monogram on a soft
+ * paper ground, so the layout and the relationship are already in place and a
+ * real SVG dropped into `public/images/partners/<id>.svg` simply appears.
+ *
+ * Size classes keep logos on one optical line: `--tile` controls the monogram,
+ * the real logo is auto-width up to `--maxw` and capped at `--maxh`. The strip is
+ * monochrome (ink → 55% ink on hover) — a wall of full-colour vendor logos would
+ * fight the exhibition identity (docs/04), so colour is reserved for the mark.
+ */
+import type { SourceLocale as Locale } from '@/i18n/config';
+import { sitePartners, partnersForEvent, partnerSrc, type Partner } from '@/lib/partners';
+
+interface Props {
+  locale: Locale;
+  /** exhibition slug — narrows the wall to that show's own partners */
+  event?: string | null;
+  title?: string;
+  kicker?: string;
+  text?: string;
+  /** show the shared SOF EXPO set together with the event set */
+  includeSite?: boolean;
+}
+
+const { locale, event, title, kicker, text, includeSite = true } = Astro.props as Props;
+const ru = locale === 'ru';
+
+const eventPartners = event ? partnersForEvent(event) : [];
+const shared = includeSite ? sitePartners() : [];
+const list: Partner[] = [...eventPartners, ...shared];
+
+const L = {
+  kicker: kicker ?? (ru ? 'Партнёры' : 'Partners'),
+  title: title ?? (ru ? 'Выставку делают вместе с нами' : 'Built together with our partners'),
+  text:
+    text ??
+    (ru
+      ? 'Ассоциации, государственные программы, отели и сервисы — каждый партнёр берёт на себя конкретную часть работы на выставке.'
+      : 'Associations, state programmes, hotels and services — each partner carries a concrete part of the show.'),
+  countable: ru ? 'организаций' : 'organizations',
+};
+
+const withNote = list.filter((p) => p.note);
+---
+
+
+<div class="pwl">
+  <div class="pwl__head">
+    <div>
+      {L.kicker && <p class="kicker">{L.kicker}</p>}
+      <h3>{L.title}</h3>
+      {L.text && <p>{L.text}</p>}
+    </div>
+    {list.length > 0 && (
+      <span class="mono-label pwl__count">{list.length} {L.countable}</span>
+    )}
+  </div>
+
+  <ul class="pwl__grid">
+    {
+      list.map((p) => (
+        <li class="pwl__item" data-kind={p.kind} data-note={withNote.includes(p) ? p.note?.[ru ? 'ru' : 'en'] : undefined}>
+          {/* real logo once provided; the build only ships these files when added */}
+          {p.hasLogo ? (
+            <img
+              class="pwl__logo"
+              src={partnerSrc(p.id)}
+              alt={p.name[ru ? 'ru' : 'en']}
+              width="240"
+              height="96"
+              loading="lazy"
+            />
+          ) : (
+            /* initials are a graphic mark, never translated */
+            <span class="pwl__tile" aria-hidden="true" translate="no">{p.name[ru ? 'ru' : 'en'].slice(0, 2)}</span>
+          )}
+          <span class="pwl__name">{p.name[ru ? 'ru' : 'en']}</span>
+          {p.note && <span class="pwl__note">{p.note[ru ? 'ru' : 'en']}</span>}
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .pwl__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.8rem;
+    margin-bottom: 1.4rem;
+  }
+  .pwl__head h3 {
+    margin: 0.4rem 0 0.5rem;
+    font-size: var(--t-h3);
+  }
+  .pwl__head p:last-child {
+    margin: 0;
+    max-width: 62ch;
+    color: var(--ink-60);
+    font-size: 0.95rem;
+  }
+  .pwl__count {
+    flex: none;
+    color: var(--ink-40);
+  }
+  .pwl__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.8rem;
+  }
+  .pwl__item {
+    min-height: 132px;
+    padding: 1rem 0.9rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    text-align: center;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+  }
+  .pwl__logo {
+    width: auto;
+    height: auto;
+    max-width: 176px;
+    max-height: 56px;
+    object-fit: contain;
+    filter: grayscale(1);
+    opacity: 0.82;
+    transition: filter var(--tr), opacity var(--tr);
+  }
+  .pwl__item:hover .pwl__logo {
+    filter: grayscale(0);
+    opacity: 1;
+  }
+  .pwl__tile {
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-family: var(--f-display);
+    font-weight: 680;
+    font-size: 1.1rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    background: var(--cream-2);
+    color: var(--evergreen);
+    border: 1px solid var(--line);
+  }
+  .pwl__item[data-kind='state'] .pwl__tile { background: var(--sage); }
+  .pwl__item[data-kind='media'] .pwl__tile { background: var(--accent-soft); }
+  .pwl__item[data-kind='hotel'] .pwl__tile { background: #eef1ec; }
+  .pwl__item[data-kind='service'] .pwl__tile { color: var(--ink-60); }
+  .pwl__name {
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1.3;
+    max-width: 24ch;
+  }
+  .pwl__note {
+    font-size: 0.7rem;
+    color: var(--ink-40);
+  }
+</style>

@@ -2666,7 +2666,7 @@ eventPages["world-edu-expo"] = {
 eventPages["ecom-retail-expo"] = {
   overview: {
     path: "/events/ecom-retail-expo/",
-    image: "/images/event-ecom.jpg",
+    image: "/images/supermarket-aisle.jpg",
     meta: {
       ru: {
         title: "ECOM & RETAIL EXPO 2027 — форум e-commerce в Самарканде",

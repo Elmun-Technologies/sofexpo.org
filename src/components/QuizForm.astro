@@ -545,11 +545,11 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
   }
   .quiz__opts {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    grid-template-columns: 1fr 1fr;
     gap: 0.55rem;
   }
   .quiz__opts--row {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    grid-template-columns: 1fr 1fr;
   }
   .quiz__opt {
     position: relative;
@@ -763,9 +763,8 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
   }
   .quiz__summary > div {
     display: flex;
-    gap: 0.6rem;
-    justify-content: space-between;
-    gap: 1rem;
+    flex-direction: column;
+    gap: 0.1rem;
   }
   .quiz__summary dt {
     color: var(--ink-40);
@@ -775,7 +774,7 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
     margin: 0;
     font-weight: 600;
     font-size: 0.9rem;
-    text-align: right;
+    text-align: left;
   }
   .quiz__done-links {
     display: flex;
@@ -783,17 +782,20 @@ const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru
     gap: 0.6rem;
   }
 
-  @media (max-width: 560px) {
-    .quiz__opts,
+  @media (min-width: 561px) {
+    .quiz__opts {
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    }
     .quiz__opts--row {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     }
     .quiz__summary > div {
-      flex-direction: column;
-      gap: 0.1rem;
+      flex-direction: row;
+      justify-content: space-between;
+      gap: 1rem;
     }
     .quiz__summary dd {
-      text-align: left;
+      text-align: right;
     }
   }
 </style>

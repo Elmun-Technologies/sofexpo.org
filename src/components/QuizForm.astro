@@ -83,7 +83,7 @@ const labelSets = focused
 const phoneCodes = ['+998', '+7', '+90', '+86', '+996', '+992', '+966', '+971', '+48', '+49', '+44', '+1'];
 const tgHref = site.contacts.telegramManager;
 const telHref = `tel:${site.contacts.phoneMain.replace(/\s/g, '')}`;
-const mailto = `mailto:${site.contacts.emailAlt}?subject=${encodeURIComponent(ru ? 'Заявка на участие' : 'Participation request')}`;
+const mailto = `mailto:${site.contacts.email}?subject=${encodeURIComponent(ru ? 'Заявка на участие' : 'Participation request')}`;
 ---
 
 <div class:list={['quiz', 'card', { 'quiz--compact': compact }]} data-quiz data-quiz-mode={focused ? '3' : '4'} data-endpoint={endpoint || undefined} data-ok={t('form.sent')} data-err={t('form.error')} data-fallback={ru ? 'Мы получили ваш контакт только в этом браузере — отправьте заявку также на почту.' : 'Your request was kept in this browser only — please also send it by email.'}>

@@ -1,0 +1,26 @@
+---
+/**
+ * One post-show report per finished edition: /events/past/<id>/ (docs/13 §P0-5).
+ * The archive listing links here instead of sending the reader to the show page, so a
+ * finished edition keeps earning — figures, materials, and the dates of the next one.
+ * The centre owns these pages in every topology (an event host links to them absolutely).
+ */
+import type { GetStaticPaths } from 'astro';
+import { sourceLocales as locales } from '@/i18n/config';
+import { rootOnlyPaths } from '@/lib/hostRoutes';
+import { archive, type Edition } from '@/data/archive';
+import EditionReport from '@/components/EditionReport.astro';
+
+export const getStaticPaths = (() =>
+  rootOnlyPaths().flatMap(({ params }) =>
+    archive.map((edition) => ({
+      params: { ...params, edition: edition.id },
+      props: { edition: edition as Edition, path: `/events/past/${edition.id}/` },
+    })),
+  )) satisfies GetStaticPaths;
+
+const { locale } = Astro.params as { locale: 'ru' | 'en' };
+const { edition, path } = Astro.props as { edition: Edition; path: string };
+---
+
+<EditionReport {locale} {edition} {path} />

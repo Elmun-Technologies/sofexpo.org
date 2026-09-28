@@ -34,7 +34,13 @@ export type SectionKey =
   | 'materials'
   | 'faq'
   | 'related'
-  | 'venue';
+  | 'venue'
+  /* docs/13 — the three patterns every leading food show runs: a hosted buyer
+     programme (FOODEX), pre-arranged meetings (SIAL Match Me) and an innovation
+     contest (SIAL Innovation). Each renders only when the event carries the data. */
+  | 'buyers'
+  | 'matchmaking'
+  | 'award';
 
 const { locale, event, section, tone = 'paper' } = Astro.props as {
   locale: Locale;
@@ -54,6 +60,9 @@ const head = {
   speakers: { k: ru ? 'Спикеры' : 'Speakers', t: ru ? 'Кто выступает' : 'Who speaks', text: undefined },
   materials: { k: ru ? 'Материалы' : 'Materials', t: ru ? 'Скачать до переговоров' : 'Download before you negotiate', text: undefined },
   faq: { k: '', t: '', text: undefined },
+  buyers: { k: ru ? 'Программа закупщика' : 'Buyer programme', t: ru ? 'Приезжайте на переговоры, а не на прогулку' : 'Arrive for meetings, not for a walk', text: undefined },
+  matchmaking: { k: ru ? 'Биржа контактов' : 'Meeting marketplace', t: ru ? 'Встречи, назначенные до открытия' : 'Meetings booked before the doors open', text: undefined },
+  award: { k: ru ? 'Конкурс' : 'Contest', t: ru ? 'Лучший продукт выставки' : 'Best product of the show', text: undefined },
   related: { k: ru ? 'Другие события' : 'Other events', t: ru ? 'Следующие выставки центра' : 'Next shows at the centre', text: undefined },
   venue: { k: ru ? 'Где проходит' : 'Where', t: ru ? 'Один зал, одна площадка, минимум логистики' : 'One hall, one site, minimal logistics', text: undefined },
 }[section];
@@ -188,10 +197,18 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
         <SectionHead locale={locale} kicker={head.k} title={head.t} text={head.text} />
         <div class="pkg">
           {event.stands.map((s) => (
-            <article class="card">
+            <article class:list={['card', s.best && 'card--best']}>
+              {s.best && <p class="pkg__flag">{ru ? 'Выбирают чаще всего' : 'Most often chosen'}</p>}
               <p class="mono-label">{fig(s.area, locale)}</p>
               <h3>{s.name[locale]}</h3>
               <p class="muted">{s.note[locale]}</p>
+              {s.includes?.length ? (
+                <ul class="pkg__list">
+                  {s.includes.map((i) => (
+                    <li>{i[locale]}</li>
+                  ))}
+                </ul>
+              ) : null}
               <a class="btn btn--sm" href={L('/request-stand/')}>{ru ? 'Забронировать' : 'Reserve'}</a>
             </article>
           ))}
@@ -308,6 +325,111 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
           ))}
         </div>
         <p class="small muted" style="margin-top:1.1rem">{ru ? `Как добраться на ${event.shortName}: ${site.location.airport.ru} · ${site.location.station.ru}` : `Getting to ${event.shortName}: ${site.location.airport.en} · ${site.location.station.en}`}</p>
+      </div>
+    </section>
+  )
+}
+
+{
+  section === 'buyers' && event.buyerProgram && (
+    <section class:list={['sec', 'reveal', `sec--${tone}`]}>
+      <div class="wrap">
+        <SectionHead locale={locale} kicker={head.k} title={head.t}>
+          <div class="prog__deadline" slot="aside">
+            <span class="mono-label">{event.buyerProgram.deadline.label[locale]}</span>
+            <b>{event.buyerProgram.deadline.value[locale]}</b>
+          </div>
+        </SectionHead>
+        <p class="lead">{event.buyerProgram.intro[locale]}</p>
+        <ol class="prog">
+          {event.buyerProgram.steps.map((s, i) => (
+            <li class="prog__i">
+              <span class="prog__n">{String(i + 1).padStart(2, '0')}</span>
+              <div>
+                <p class="prog__when">{s.when[locale]}</p>
+                <h3>{s.label[locale]}</h3>
+                <p class="muted">{s.text[locale]}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <h4 class="prog__sub">{ru ? 'Что получает закупщик' : 'What a buyer receives'}</h4>
+        <div class="grid g3">
+          {event.buyerProgram.privileges.map((p) => (
+            <div class="vcard">
+              <Icon name="check" size={20} />
+              <p class="mono-label">{p.title[locale]}</p>
+              <span class="muted">{p.text[locale]}</span>
+            </div>
+          ))}
+        </div>
+        {event.buyerProgram.note ? <p class="small muted" style="margin-top:1rem">{event.buyerProgram.note[locale]}</p> : null}
+      </div>
+    </section>
+  )
+}
+
+{
+  section === 'matchmaking' && event.matchmaking && (
+    <section class:list={['sec', 'reveal', `sec--${tone}`]}>
+      <div class="wrap">
+        <SectionHead locale={locale} kicker={head.k} title={head.t}>
+          <div class="prog__deadline" slot="aside">
+            <span class="mono-label">{ru ? 'Длительность встречи' : 'One meeting'}</span>
+            <b>{event.matchmaking.duration[locale]}</b>
+          </div>
+        </SectionHead>
+        <p class="lead">{event.matchmaking.intro[locale]}</p>
+        <div class="grid g3">
+          {event.matchmaking.steps.map((s, i) => (
+            <div class="vcard">
+              <p class="mono-label">{ru ? `Шаг ${i + 1}` : `Step ${i + 1}`}</p>
+              <b>{s.title[locale]}</b>
+              <span class="muted">{s.text[locale]}</span>
+            </div>
+          ))}
+        </div>
+        <p class="small muted" style="margin-top:1rem">
+          {ru ? `Столов в зоне переговоров: ${event.matchmaking.slots}.` : `Tables in the negotiation area: ${event.matchmaking.slots}.`}
+          {event.matchmaking.note ? ` ${event.matchmaking.note[locale]}` : ''}
+        </p>
+      </div>
+    </section>
+  )
+}
+
+{
+  section === 'award' && event.award && (
+    <section class:list={['sec', 'reveal', `sec--${tone}`]}>
+      <div class="wrap">
+        <SectionHead locale={locale} kicker={head.k} title={event.award.name[locale]} />
+        <p class="lead">{event.award.intro[locale]}</p>
+        <div class="grid g4">
+          {event.award.nominations.map((n) => (
+            <div class="vcard">
+              <Icon name="star" size={20} />
+              <p class="mono-label">{ru ? 'Номинация' : 'Category'}</p>
+              <b>{n[locale]}</b>
+            </div>
+          ))}
+        </div>
+        <h4 class="prog__sub">{ru ? 'Сроки' : 'Timeline'}</h4>
+        <ol class="prog prog--flat">
+          {event.award.timeline.map((s) => (
+            <li class="prog__i">
+              <span class="prog__n" aria-hidden="true">—</span>
+              <div>
+                <p class="prog__when">{s.when[locale]}</p>
+                <h3>{s.label[locale]}</h3>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <div class="callout">
+          <p class="mono-label">{ru ? 'Что получает победитель' : 'What the winner receives'}</p>
+          <p>{event.award.prize[locale]}</p>
+        </div>
+        {event.award.note ? <p class="small muted" style="margin-top:1rem">{event.award.note[locale]}</p> : null}
       </div>
     </section>
   )
@@ -443,5 +565,110 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
   .vcard b {
     font-family: var(--f-display);
     font-size: 1.15rem;
+  }
+
+  /* ---- package contents (docs/13 P0-3, the Anuga solution-package list) ---- */
+  .card--best {
+    border-color: var(--gold);
+    box-shadow: inset 0 0 0 1px var(--gold);
+  }
+  .pkg__flag {
+    font-family: var(--f-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--evergreen);
+    background: var(--gold-soft);
+    border-radius: 999px;
+    padding: 0.2rem 0.6rem;
+    justify-self: start;
+    margin-bottom: 0.4rem;
+  }
+  .pkg__list {
+    list-style: none;
+    padding: 0;
+    margin: 0.8rem 0 1rem;
+    display: grid;
+    gap: 0.45rem;
+    border-top: 1px solid var(--line);
+    padding-top: 0.8rem;
+  }
+  .pkg__list li {
+    position: relative;
+    padding-left: 1.15rem;
+    font-size: 0.94rem;
+    line-height: 1.4;
+    color: var(--ink-60);
+  }
+  .pkg__list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--moss);
+  }
+
+  /* ---- buyer programme / award timeline (docs/13 P0-1, P0-4) ---- */
+  .prog__deadline {
+    border-left: 2px solid var(--gold);
+    padding-left: 0.8rem;
+    display: grid;
+    gap: 0.1rem;
+  }
+  .prog__deadline b {
+    font-family: var(--f-display);
+    font-size: 1.1rem;
+  }
+  .prog {
+    list-style: none;
+    padding: 0;
+    margin: 1.4rem 0 0;
+    display: grid;
+    gap: 0;
+  }
+  .prog__i {
+    display: grid;
+    grid-template-columns: 3.2rem 1fr;
+    gap: 0.9rem;
+    padding: 0.9rem 0;
+    border-top: 1px solid var(--line);
+  }
+  .prog__i:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .prog__n {
+    font-family: var(--f-mono);
+    font-size: 0.95rem;
+    color: var(--moss);
+    padding-top: 0.15rem;
+  }
+  .prog__when {
+    font-family: var(--f-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.2rem;
+  }
+  .prog__i h3 {
+    font-size: 1.05rem;
+    margin-bottom: 0.25rem;
+  }
+  .prog__sub {
+    font-family: var(--f-display);
+    font-size: 1.15rem;
+    margin: 1.6rem 0 0.9rem;
+  }
+  .prog--flat .prog__i {
+    grid-template-columns: 1.6rem 1fr;
+  }
+  @media (max-width: 640px) {
+    .prog__i {
+      grid-template-columns: 2.2rem 1fr;
+      gap: 0.6rem;
+    }
   }
 </style>

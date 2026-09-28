@@ -446,3 +446,52 @@ raqamlar. Saytda o'zgartirish kerak emas.
 **Hujjat holati:** taklif, tasdiqlanmagan. Raqamlar o'rganilgan saytlarning o'z e'lonlaridan
 olingan (yuqoridagi havolalar); bizning saytga yoziladigan har qanday raqam buyurtmachi
 tomonidan tasdiqlanishi shart.
+
+---
+
+## 11. Amalga oshirildi (2026-09-28)
+
+Quyidagilar kodda qilingan — `npm run check` va `npm run check:hosts` yashil.
+
+| # | Nima | Qayerda |
+|---|---|---|
+| 1 | **`StandPackage`** — paket tarkibi ro'yxati (`includes`), tavsiya belgisi (`best`), narx maydoni (`priceNote`, hozir to'ldirilmagan) | `src/data/events.ts` |
+| 2 | FOODERA uchun 4 ta paket: **Debyut 6 m²**, Standart 9 m² (tavsiya), Premium 18 m², Xom maydon 36 m²+ — har biri 5–7 bandlik tarkib bilan | `src/data/events.ts` |
+| 3 | **`buyerProgram`** tipi + FOODERA uchun to'liq kontent: 6 bosqichli jarayon (sanalar bilan), 5 ta imtiyoz, muddat | `src/data/events.ts` |
+| 4 | **`/events/<slug>/buyers/` sahifasi** — FOODEX uslubida: jarayon jadvali, imtiyozlar, ariza formasi | `event-pages.ts` + `[section].astro` + `[locale]/[section].astro` |
+| 5 | **`matchmaking`** tipi + bo'lim — `/program/` sahifasida (SIAL "Match Me" uslubi) | `EventSections.astro` |
+| 6 | **`award`** tipi + **`/events/<slug>/award/` sahifasi** — 4 nominatsiya, muddatlar, sovrin, ariza | `event-pages.ts` |
+| 7 | Nav'da 5- va 6-tugma — faqat ma'lumoti bor ko'rgazmalarda paydo bo'ladi | `EventNav.astro` |
+| 8 | Har bir sahifa uchun alohida CTA matni (`buyers`, `award`) | `EventPage.astro` |
+| 9 | `host-map.json` → `sections` ga `buyers`, `award` qo'shildi; subdomen rejimida `foodera.sofexpo.org/buyers/` | `src/data/host-map.json` |
+| 10 | Ko'chirilgan sahifalar uchun 301 faqat haqiqatan qurilgan bo'limlarga yoziladi | `scripts/host-rules.mjs` (`movedRedirectsAsync`) |
+| 11 | Tarjimalar: yangi 118 ta satr × zh/tr/uz | `src/i18n/catalogs/*.json` |
+
+**Yo'l davomida tuzatilgan (oldingi bug'lar):**
+- `npm run check:hosts` ishlamasdi: subdomen rejimidagi ko'chirish-stub sahifalarining UZ
+  tarjimalari yo'q edi (60 ta satr) → qo'shildi.
+- Har bir host build'ida `fit-meta.mjs` ishlamasdi, shuning uchun tarjima qilingan
+  nashrlarning title/description uzunligi tekshiruvdan o'tmasdi → qo'shildi.
+- `rewrite-host-links.mjs` `/uz/` havolalarini qayta yozmasdi (uz `LOCALES` ga kirmaydi) →
+  skaner ro'yxati kengaytirildi.
+- `tests/quiz.test.mjs` endi ishtirok arizasi (xaridor/tanlov) formalarini stend kvizidan
+  ajratib hisoblaydi.
+
+### Buyurtmachidan kutilayotgan ma'lumotlar (koddagi joylar bo'sh/tekshirilishi kerak)
+
+1. **Paket narxlari** — `stands[].priceNote` (hozir yo'q: narx o'ylab topilmadi).
+2. **Haqiqiy tarkib** — `stands[].includes`: elektr quvvati, mebel, katalog hajmi rostdan shundaymi?
+3. **Muzokara zonasi** — 60 ta stol, 15 daqiqa: tasdiqlansin.
+4. **Hakamlar tarkibi** — `award.jury` (hozir bo'sh; sahifada "5 oktyabrgacha e'lon qilinadi").
+5. **Imtiyozlar** — alohida kirish, lounj, garderob, transfer, viza: bajariladimi?
+6. **60 ta xaridor limiti** — hozir "stollar soni bilan cheklangan" deb yozilgan (anonim raqam o'rniga).
+
+### Navbatdagi partiya (keyingi so'rov bo'yicha)
+
+- P0-5 post-show report shabloni + ko'rgazma kunida yig'iladigan ro'yxat.
+- P1-1 ishtirokchilar direktoriyasi (statik → qidiruv).
+- P1-2 FHA uslubida 12 ta segment sahifasi (halol segmenti alohida).
+- P1-3/4 xaridor va ishtirokchi logolari devori + testimoniallar.
+- P1-5 logistika hamkorlari (aviakompaniya/mehmonxona), P1-7 lid magnit.
+- Paket tarkibi va xaridor dasturini qolgan 4 ta ko'rgazmaga (BUILDPRO, AGROPRO, WORLD EDU,
+  ECOM & RETAIL) ko'chirish — mexanika tayyor, faqat kontent + tarjima kerak.

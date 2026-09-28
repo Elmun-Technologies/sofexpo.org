@@ -142,7 +142,52 @@ export function isBuiltHere(
   return owner.host === currentHost && owner.path === stripLocale(path);
 }
 
+/**
+ * Which cluster sections a show actually publishes. `SECTIONS` is the vocabulary
+ * (host-map.json); the authored pages decide which of them exist for a given show —
+ * a hosted-buyer programme or a contest is per-show data (docs/13), so a redirect to
+ * a page the show host never builds would be a 301 into a 404.
+ *
+ * Loaded lazily and cached: `event-pages.ts` is a large authored file and this module is
+ * imported by the Astro config, the app bundle and three Node scripts.
+ */
+let eventPagesCache = null;
+async function authoredSections(eventSlug) {
+  if (!eventPagesCache) {
+    const mod = await import("../src/data/pages/event-pages.ts");
+    eventPagesCache = mod.eventPages;
+  }
+  return Object.keys(eventPagesCache[eventSlug] ?? {}).filter((k) =>
+    SECTIONS.includes(k),
+  );
+}
+
 /** Legacy root URLs that must 301 to the cluster's own host (subdomain mode only). */
+export async function movedRedirectsAsync(mode = "subdomain") {
+  if (mode !== "subdomain") return [];
+  const out = [];
+  for (const def of HOSTS) {
+    const sections = await authoredSections(def.event);
+    for (const locale of LOCALES) {
+      out.push({
+        from: `/${locale}/events/${def.event}/`,
+        to: `https://${def.host}/${locale}/`,
+      });
+      for (const section of sections)
+        out.push({
+          from: `/${locale}/events/${def.event}/${section}/`,
+          to: `https://${def.host}/${locale}/${section}/`,
+        });
+    }
+  }
+  return out;
+}
+
+/**
+ * Synchronous form for callers that only need the four sections every show builds
+ * (overview children that are never optional). Kept so `src/data/hosts.ts` — which is
+ * imported at prerender time — does not have to become async.
+ */
 export function movedRedirects(mode = "subdomain") {
   if (mode !== "subdomain") return [];
   const out = [];

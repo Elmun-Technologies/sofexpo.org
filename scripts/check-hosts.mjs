@@ -16,7 +16,7 @@
  */
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
-import { LOCALES, allHosts, map, movedRedirects } from "./host-rules.mjs";
+import { LOCALES, allHosts, map, movedRedirectsAsync } from "./host-rules.mjs";
 
 const args = process.argv.slice(2);
 const arg = (name, fallback) => {
@@ -193,7 +193,7 @@ for (const [path, owners] of ownerConflicts) {
 
 /* 5: the centre must hand over the paths it gave up */
 if (mode === "subdomain") {
-  const expected = movedRedirects("subdomain");
+  const expected = await movedRedirectsAsync("subdomain");
   const file = join(DIR, map.root, "_redirects");
   if (!expected.length) {
     console.log(

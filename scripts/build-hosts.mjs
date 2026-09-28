@@ -29,7 +29,7 @@ import {
   allHosts,
   eventOfHost,
   map,
-  movedRedirects,
+  movedRedirectsAsync,
 } from "./host-rules.mjs";
 
 const args = process.argv.slice(2);
@@ -68,13 +68,13 @@ function robotsFor(host) {
 }
 
 /** Path-based 301s for the site's own `_redirects` file (Cloudflare Pages / Netlify). */
-function redirectsFor(host) {
+async function redirectsFor(host) {
   /* Q1 (docs/08 §7): the bare root 301s to the EN home on every host; the
      centre additionally carries the legacy event-path redirects. */
   const lines = [`/ /en/ 301`];
   if (host !== map.root) return lines.join("\n");
   lines.push(
-    ...movedRedirects(mode).map((r) => `${r.from} ${r.to} 301`),
+    ...(await movedRedirectsAsync(mode)).map((r) => `${r.from} ${r.to} 301`),
   );
   return lines.join("\n");
 }
@@ -131,9 +131,14 @@ for (const { host } of ordered) {
       stdio: "inherit",
     },
   );
+  /* The single-host pipeline trims titles and descriptions AFTER the editions are
+     materialised (package.json "build"). A per-host build must do the same, or the
+     translated editions keep their full authored length and the per-host SEO audit
+     flags them. */
+  execFileSync("node", ["scripts/fit-meta.mjs", "dist"], { env, stdio: "inherit" });
 
   writeFileSync("dist/robots.txt", robotsFor(host));
-  const redirects = redirectsFor(host);
+  const redirects = await redirectsFor(host);
   if (redirects) writeFileSync("dist/_redirects", redirects);
   if (host === map.root)
     writeFileSync(join(out, "redirects.vanity.md"), vanityConfig(mode));

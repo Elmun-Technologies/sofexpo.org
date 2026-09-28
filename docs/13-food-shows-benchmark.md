@@ -1,0 +1,448 @@
+# 13 · Jahon oziq-ovqat ko'rgazmalari saytlari tahlili va FOODERA uchun takliflar
+
+Sana: 2026-09-28 · Muallif: agentlik tahlili · Holat: taklif (hali tasdiqlanmagan)
+
+O'rganilgan saytlar: [Gulfood](https://www.gulfood.com/),
+[Anuga](https://www.anuga.com/), [SIAL Paris](https://www.sialparis.com/en),
+[SIAL China (Shanghai/Guangzhou)](https://www.sialchina.com/),
+[THAIFEX – Anuga Asia](https://thaifex-anuga.com/),
+[FHA – Food & Hospitality Asia](https://www.foodnhotelasia.com/),
+[FOODEX Japan](https://foodex.jma.or.jp/),
+[WorldFood Istanbul](https://worldfood-istanbul.com/),
+[Summer Fancy Food Show](https://www.specialtyfood.com/fancy-food-shows/summer/).
+
+> **Eslatma.** Bu hujjatda "biz" = SOF EXPO Samarkand sayti (`sofexpo.org`) va uning
+> oziq-ovqat ko'rgazmasi **FOODERA EXPO**. Takliflarning aksari FOODERA uchun yozilgan,
+> lekin mexanika bir xil bo'lgani uchun BUILDPRO / AGROPRO / WORLD EDU / ECOM & RETAIL ga
+> ham ko'chiriladi.
+
+---
+
+## 0. Bir paragraf xulosa
+
+Dunyoning yetakchi oziq-ovqat ko'rgazmalari saytlarining **hammasi bir xil 14 ta patternni**
+takrorlaydi. Ular orasida qimmat va sekin quriladiganlari (online marketplace, hisob kabineti,
+AI-matchmaking) bor — ularni hozir qilish shart emas. Lekin **arzon va daromadga bevosita
+ta'sir qiladigan 5 tasi** bor, ularni bizda deyarli yo'q yoki saytda ko'rinmaydi:
+
+1. **Hosted buyer (rasmiy xaridor) dasturi** — aniq muddatlari bilan (FOODEX pattern).
+2. **Oldindan belgilangan uchrashuvlar (matchmaking)** — hatto Google Form + statik jadval
+   ko'rinishida ham (SIAL "Match Me", ICA Connect, THAIFEX).
+3. **Ishtirokchilar direktoriyasi** — ro'yxat + logolar + mahsulot kesimi (SIAL China
+   online marketplace, SFA brendlar katalogi).
+4. **Post-show report** — ko'rgazmadan keyingi hisobot sahifasi: raqamlar, iqtiboslar,
+   foto/video, "keyingi nashr" ga ariza (THAIFEX, WorldFood, FOODEX).
+5. **Paketlar sahifasi** — "narx + nimalar kiradi" aniq ro'yxati (Anuga solution packages).
+
+Va **muhim vaqt omili**: FOODERA EXPO 2026 **20–22 oktyabr 2026** — bugundan **22 kun**.
+Bu degani, yuqoridagilardan 1, 2 va 5-qismlarining "yengil versiyasi"ni shuncha vaqt ichida
+ishga tushirish mumkin; 3 va 4-qismlar esa ko'rgazmadan keyin, 2027 sotuvini ochadigan
+asosiy qurolga aylanadi. Shuning uchun §6 da ikki alohida reja bor.
+
+---
+
+## 1. Tezkor jadval — kim nimasi bilan kuchli
+
+| Sayt | Shahar / keyingi sana | O'lcham (ular e'lon qilgan) | Saytdagi eng kuchli narsa | Bizga kerakmi |
+|---|---|---|---|---|
+| **Gulfood** | Dubay, 2027 (2 ta mega maydon: DWTC + DEC) | 8 000+ ishtirokchi, 1M+ mahsulot | Ikki maydonli floor-plan, "BOOK YOUR STAND" alohida mktg domenida, Instagram lentasi | Qisman — Instagram embed emas |
+| **Anuga** | Kyoln, 9–13 Okt 2027 | 10 ta ko'rgazma bir tom ostida, 8 000+ ishtirokchi (110 davlat), 145 000+ tashrif (190 davlat), 94% xalqaro | **Solution packages** (narx + nimalar kiradi), start-up maydoni, jurnal + newsletter + podcast, qardosh ko'rgazmalar tarmog'i | Ha — asosiy namuna |
+| **SIAL Paris** | Parij, 2026 (2 yilda bir) | 130 davlat, 8 000 ishtirokchi, 400 000 mahsulot, 650 startap | Rol bo'yicha yo'naltirish ("Siz chakana savdo xaridorisiz…"), **SIAL Innovation** (30 yil), SIAL Summits (pullik bilet), SIAL Analytics, interaktiv floor-plan | Ha — rol segmentatsiyasi + innovation |
+| **SIAL China** | Shanxay 18–20 May 2027; Guanchjou 6–8 Sen 2027 | Guanchjou 2026: 66 517 mutaxassis, €1,3 mlrd kelishuvlar; Summit: 400+ ekspert, 12 000+ ishtirokchi | **Online marketplace** (ishtirokchi + mahsulot ro'yxati), **Match Me**, Top Buyer Program, SIAL Elite Hour, RU/TH/VI/KO/ID promo-sahifalar | Ha — direktoriya + matchmaking namunasi |
+| **THAIFEX – Anuga Asia** | Bangkok, 25–29 May 2027 | 9 ta ko'rgazma, 140+ davlat, **$4,01 mlrd buyurtma qiymati** (2026) | Buyurtma qiymati ko'rsatkichi, ishtirokchi + xaridor logolari devori, post-show report, testimonials sahifasi | Ha — aynan bizning bosqich uchun |
+| **FHA** | Singapur, 20–23 Apr 2027 | prognoz statistikasi, "Projected Stats" belgisi bilan | Countdown timer, 12 ta segment ikonkasi (har biri alohida sahifa), tashqi passport registratsiya, sponsorship sahifasi | Ha — segment sahifalari |
+| **FOODEX Japan** | Tokio, 2027 (52-nashr) | 2026: 3 238 kompaniya, 4 026 stend, 36 234 m² (ichki/xorijiy kesimda jadval) | **Hosted buyer dasturi**: kunma-kun jadval, imtiyozlar (VIP-lounj, navbatsiz kirish), muammo→yechim bloki, video iqtiboslar | Ha — eng to'liq namuna |
+| **WorldFood Istanbul** | Istanbul, 15–18 Dek 2026 (34-nashr) | 386 933+ B2B uchrashuv, 31 002 brend | Rasmiy aviakompaniya hamkori (Turkish Airlines chegirmasi), market-insights/blog, ICA Connect matchmaking, testimonial + logolar, mahsulot guruhlari | Ha — logistika + kontent |
+| **Summer Fancy Food Show** | Nyu-York, 25–27 Iyul 2027 | 9 000+ xaridor, 700+ yangi mahsulot, 2 500+ kompaniya, 401 ta birinchi marta ishtirokchi, 57 davlat | Tashqi brendlar katalogi, "Download Registered Buyer List" (lid magnit), YouTube'da to'liq sessiya yozuvlari | Ha — kontent + lid magnit |
+
+---
+
+## 2. Saytma-sayt: nimalar e'tiborga loyiq
+
+### 2.1 Gulfood — [gulfood.com](https://www.gulfood.com/)
+- Bitta oddiy CTA butun bosh sahifada takrorlanadi: **"BOOK YOUR STAND"**. Muloqot yo'q,
+  faqat bitta harakat.
+- Ikki maydon (DWTC + Dubai Exhibition Centre) bitta platforma sifatida ko'rsatilgan,
+  umumiy floor-plan rasmi bilan.
+- Buyurtma formasi alohida domenga chiqarilgan: `mktg.gulfood.com/2027-exhibitor-enquiry`.
+- **Salbiy:** statistika raqamlari JS yuklanguncha `0,000+` bo'lib turadi (HTML'da 0),
+  bosh sahifaga Instagram embed qo'yilgan — 3-tomon so'rovlar.
+- **Bizga:** bitta CTA tamoyili to'g'ri, lekin raqamlar statik bo'lishi shart (bizda
+  `Countdown` allaqachon build-time hisoblanadi — xuddi shunday yondashuv).
+
+### 2.2 Anuga — [anuga.com](https://www.anuga.com/)
+Eng "to'liq" sayt. To'rtta narsa ayniqsa muhim:
+
+1. **Solution packages** — to'rtta paket (First attendance / B2B / Brand / Product), har biri
+   aniq narx va nimalar kirishi bilan. Masalan *First attendance 12 m² — EUR 13 499 (+QQS)*,
+   ichida: gilam, 3 m devor konstruksiyasi, 1 ta qulflanadigan kabin, yoritish, stol,
+   8 kVt elektr, har kunlik tozalash, **energiya xarajatlari, AUMA badali, marketing-paket,
+   sayt va ilovada logo + kompaniya tavsifi, slider'da logo, ijtimoiy tarmoqlar uchun
+   kontent ishlab berish**.
+   → *Bizda FOODERA paketlari faqat "9 m² / 18 m² / 36 m²+" va bitta qator izoh. Narx yo'q,
+   "nimalar kiradi" yo'q.*
+2. **"10 ta ko'rgazma bir tom ostida"** — bitta chipta bilan 10 ta segment. FOODERA ham
+   12 ta kategoriyani (`events.ts` → `categories`) shunday "zallar/yo'nalishlar" sifatida
+   ko'rsata oladi.
+3. **Kontent dvigateli:** *Anuga F&B News* jurnali, newsletter, *Anuga F&B Talks* podcasti.
+   Ko'rgazma 3 kun, sayt yil bo'yi ishlaydi.
+4. **Tarmoq:** Anuga Select (Yaponiya, Braziliya, Hindiston, Janubiy Afrika, Iberiya),
+   THAIFEX, ISM, Tuttofood, Alimentec — "biz global brendmiz" signali.
+
+### 2.3 SIAL Paris — [sialparis.com](https://www.sialparis.com/en)
+- **Rol bo'yicha kirish nuqtalari**: "Siz xalqaro importyormisiz / chakana savdo / food
+  service xaridori / qayta ishlash sanoatisiz?" — har biri alohida sahifaga olib boradi.
+  (Bizda `/visitors/` hub'i bor, lekin rol kesimida emas.)
+- **SIAL Innovation** — 30 yillik tanlov, ekspertlar hay'ati, "Oskar" framing'i.
+  Bizda `events.ts` da "Конкурс «Лучший продукт»" bor, lekin sahifasi, hay'ati, ariza
+  formasi yo'q.
+- **SIAL Summits** — alohida pullik bilet ("Limited seats available").
+- **SIAL Analytics** — ma'lumot/razvedka platformasi, "Book a demo".
+- Yangiliklar ikki oqimga bo'lingan: *Show news* va *Market news*.
+- To'rtta amaliy tugma to'g'ridan-to'g'ri bosh sahifada: dasturni ko'rish, ishtirokchilarni
+  qidirish, interaktiv floor-plan, uchrashuvlarni rejalash, tashrifni tayyorlash.
+
+### 2.4 SIAL China — [sialchina.com](https://www.sialchina.com/)
+Bizning bosqichimiz uchun eng amaliy namuna:
+- **Online marketplace**: `online.sialchina.cn` — *Exhibitor list* + *Product list* (yil bo'yicha).
+  Bu statik sahifalardan iborat, murakkab tizim emas.
+- **Match Me** — "oldindan saralangan yuzma-yuz uchrashuvlar, AI yordamida".
+- **Top Buyer Program** + **SIAL Elite Hour** (faqat taklif bilan, yopiq qabul).
+- **Ko'p tilli promo-sahifalar**: `…/promote/ru.html`, `/th.html`, `/vi.html`, `/ko.html`,
+  `/id.html` — xaridorlarni o'z tillarida jalb qilish. Bizda RU/EN/ZH/TR/UZ bor — bu
+  tayyor ustunlik.
+- **Post-show report** sarlavhasi sifatida bitta raqam: "66 517 mutaxassis, €1,3 mlrd".
+- **Media center** sourcing-maqolalari: "Thai snacks: sourcing guide", "Coffee import to
+  Singapore" — bu sof SEO trafik. Bizda `src/content/articles/` shu maqsadda bor.
+
+### 2.5 THAIFEX – Anuga Asia — [thaifex-anuga.com](https://thaifex-anuga.com/)
+- Eng ta'sirli ko'rsatkich — **$4,01 mlrd taxminiy buyurtma qiymati** (2026). "Ishtirokchi
+  soni" emas, **pul**.
+- Ishtirokchi logolari (38 ta) va *hosted buyer* logolari (7-Eleven, Big-C, Bidfood,
+  Metro…) alohida devorlar bilan.
+- `Register Your Interest to Exhibit` — to'g'ridan-to'g'ri sotuv emas, "qiziqish" formasi
+  (bizda `LeadForm`/`QuizForm` shu ishni qiladi).
+- **Post-show report** alohida sahifa; **Testimonials** alohida sahifa (foto + iqtibos).
+
+### 2.6 FHA — [foodnhotelasia.com](https://www.foodnhotelasia.com/)
+- Countdown timer (kun/soat/daqiqa/soniya) — bizda `Countdown.astro` build-time, yaxshiroq.
+- **12 ta segment, har biri alohida sahifa**: beverage, convenience food, dairy, fine food,
+  fresh produce, **halal**, international selection, meat & poultry, seafood, sustainable,
+  snacks & confectionery, wine & spirits.
+  → *Bizda FOODERA `categories` 12 ta, lekin ular faqat ikonka + nom; alohida sahifalari
+  yo'q. Halal alohida e'tiborga loyiq — Markaziy Osiyo uchun katta segment.*
+- Statistika yonida halol belgi: "*Projected Stats".
+- "Download brochure" tugmasi aslida **mailing-list ga yozilish** — lid yig'ish.
+- Alohida `Advertising & Sponsorship` sahifasi.
+
+### 2.7 FOODEX Japan — [foodex.jma.or.jp](https://foodex.jma.or.jp/)
+Eng yaxshi **hosted buyer** namunasi. To'liq ko'chirishga arziydi:
+- O'lcham **jadvalda**, ichki/xorijiy kesimda: 3 238 kompaniya (1 112 ichki / 2 126 xorijiy),
+  4 026 stend, 36 234 m².
+- **"Sizda bunday muammolar bormi?"** bloki → 4 ta muammo → "FOODEX bilan hal bo'ladi".
+  Juda kuchli framing.
+- **Hosted buyer dasturi** sahifasida kunma-kun jarayon:
+  1. Xaridor ariza beradi → 2. Tashkilotchi tekshiradi → 3. Login/parol yuboriladi →
+  4. Xaridor xohishlari ishtirokchilarga yuboriladi → 5. Ishtirokchi uchrashuv so'raydi →
+  6. Xaridor tanlaydi va vaqt belgilaydi → 7. Tashkilotchi moslashtiradi → 8. Yakuniy
+  jadval → 9. Ko'rgazma kuni alohida xonada uchrashuv.
+- Imtiyozlar: bepul garderob, VIP-lounj, navbatsiz kirish.
+- Video: "Xaridor nima qidiradi?", "Xaridorlar fikri" — YouTube'da.
+
+### 2.8 WorldFood Istanbul — [worldfood-istanbul.com](https://worldfood-istanbul.com/)
+- **Rasmiy aviakompaniya hamkori**: Turkish Airlines, maxsus chegirma kodi. Tashrif
+  logistikasini hal qiladi — bizda Samarqandga kelish masalasi aynan shunday.
+- **Exhibitor & Visitor Profiles** — 4 ta rol: importyor/distribyutor, chakana tarmoqlar,
+  HoReCa, private label. Bizda `events.ts` → `audience` shu narsa.
+- **Testimonials** logolar bilan ("Yevropa va Yaqin Sharqdan xaridorlar, ba'zi
+  muhokamalar shartnoma bosqichiga o'tdi").
+- **Market insights** blog'i + ICA Connect matchmaking + Photos/Videos bo'limlari.
+- Yangi mahsulot guruhi (FoodTech) "yangi" deb alohida e'lon qilingan — har yili
+  yangilanish signali.
+
+### 2.9 Summer Fancy Food Show — [specialtyfood.com](https://www.specialtyfood.com/fancy-food-shows/summer/)
+- Framing: "Find Your Fancy", "Olti ko'rgazmaga borishingiz mumkin — yoki faqat bunga".
+- Ko'rsatkichlar orasida **401 ta birinchi marta ishtirokchi** — "yangi brendlar uchun
+  joy bor" signali.
+- **Download Registered Buyer List** — ishtirokchilar uchun lid magnit.
+- Tashqi katalog: `events.specialtyfood.com/.../exhibitors/`.
+- YouTube'da to'liq sessiya yozuvlari (trend sessiyasi, panellar) — ko'rgazmadan keyingi
+  kontent.
+- Eslatma: "oxirida mahsulotlar mahalliy notijorat tashkilotlarga hadya qilinadi" —
+  PR/ijtimoiy mas'uliyat bloki.
+
+---
+
+## 3. Hammasida takrorlanadigan 14 ta pattern
+
+| # | Pattern | Kimda | Bizda holat |
+|---|---|---|---|
+| 1 | Ishonch raqamlari (o'lcham, davlatlar, **pul hajmi**) | hammasi | Bor, lekin faqat bozor hajmi; ko'rgazma natijasi yo'q |
+| 2 | Rol bo'yicha kirish (xaridor / ishtirokchi / importyor / HoReCa) | SIAL Paris, WorldFood | Qisman (`/visitors/`) |
+| 3 | Hosted / official buyer dasturi | FOODEX, SIAL, THAIFEX, Gulfood | **Yo'q** |
+| 4 | Oldindan belgilangan uchrashuvlar (matchmaking) | SIAL Match Me, ICA Connect, FOODEX | Faqat matnda tilga olingan, mexanikasi yo'q |
+| 5 | Ishtirokchilar direktoriyasi + mahsulot ro'yxati | SIAL China, SFA, Anuga (sayt+ilova) | **Yo'q** (faqat `foodera-catalogue.pdf`) |
+| 6 | Paketlar: narx + "nimalar kiradi" | Anuga | Narxsiz 3 ta stend turi |
+| 7 | Innovation / "eng yaxshi mahsulot" tanlovi | SIAL Innovation, Anuga, FOODERA matnda | Matnda bor, sahifasi yo'q |
+| 8 | Segment/zal sahifalari | FHA (12 ta), Anuga (10 ta), SIAL (10 ta) | Faqat ikonkalar |
+| 9 | Post-show report | THAIFEX, WorldFood, FOODEX, SIAL China | `archive.ts` bor, sahifa sifatida yo'q |
+| 10 | Testimonials (iqtibos + logo + foto) | hammasi | `SpeakerWall` bor, testimonial yo'q |
+| 11 | Yil bo'yi kontent: jurnal/blog/podcast/video | Anuga, WorldFood, SFA | `news/` + `articles/` bor, video/podcast yo'q |
+| 12 | Logistika hamkorlari (aviakompaniya, mehmonxona, viza) | WorldFood | `/visitors/travel/` bor — chuqurlashtirish kerak |
+| 13 | Countdown + "N kun qoldi" | FHA, WorldFood | `Countdown.astro` bor (build-time 👍) |
+| 14 | Startap / ilk marta ishtirokchi maydoni | Anuga, SIAL (650 startap), SFA (401) | **Yo'q** |
+
+---
+
+## 4. Bizda hozir nima bor — qisqa audit (FOODERA misolida)
+
+`src/data/events.ts` → `foodera-expo`:
+
+| Bor | Holat |
+|---|---|
+| 12 ta kategoriya (ichimliklar… uskunalar) | ✅ lekin sahifalari yo'q |
+| 4 ta afzallik (benefits) | ✅ |
+| 4 ta dastur bandi (degustatsiya, **birja**, forum, **tanlov**) | ✅ matnda; mexanika yo'q |
+| 4 ta auditoriya profili | ✅ |
+| 4 ta fakt (125 mln iste'molchi, $58–78 mlrd…) | ✅ ajoyib, lekin saytda yuqorida emas |
+| 3 ta stend turi (9/18/36 m²) | ⚠️ narx va "nimalar kiradi" yo'q |
+| 2 ta material (PDF prezentatsiya + katalog) | ✅ |
+| 3 ta FAQ | ⚠️ kam |
+| `speakers: []` | ⚠️ bo'sh |
+| Ishtirokchilar ro'yxati | ❌ |
+| Post-show / natijalar | ❌ |
+| Hosted buyer | ❌ |
+
+Infratuzilma tayyor: `LeadForm`, `QuizForm`, `StandQuizModal`, `PartnerLogoWall`,
+`SpeakerWall`, `Countdown`, `VenuePlan`, `StatBand`, `Faq`, ko'p tilli kataloglar,
+`src/data/conversion.ts`, `scripts/lead-webhook.mjs` (CRM fan-out). Ya'ni **yangi komponent
+o'ylab topish shart emas — ma'lumot qo'shish va 2–3 ta blok turi qo'shish kifoya.**
+(Bu aynan `docs/01` §6 falsafasi.)
+
+---
+
+## 5. Takliflar — ustuvorlik bo'yicha
+
+**Baholash:** 🟢 = kichik (1–3 kun), 🟡 = o'rtacha (3–8 kun), 🔴 = katta (2 hafta+).
+Kun = bir dasturchi ish kuni.
+
+| # | Taklif | Namuna | Qayerda | Hajm | Ta'sir |
+|---|---|---|---|---|---|
+| **P0-1** | Hosted buyer dasturi sahifasi + ariza formasi + jarayon jadvali | FOODEX | yangi `/events/[slug]/buyers/` + `events.ts` | 🟡 | ⭐⭐⭐⭐⭐ |
+| **P0-2** | Uchrashuvlar (matchmaking) sahifasi: forma + 3 qadam + muddatlar jadvali | SIAL Match Me | `/events/[slug]/program/` ichida bo'lim | 🟢 | ⭐⭐⭐⭐⭐ |
+| **P0-3** | Paketlar: narx + "nimalar kiradi" ro'yxati (Anuga uslubi) | Anuga | `/events/[slug]/exhibitors/` | 🟡 | ⭐⭐⭐⭐⭐ |
+| **P0-4** | "Eng yaxshi mahsulot" tanlovi sahifasi: nizom, hay'at, muddat, ariza | SIAL Innovation | yangi `/events/[slug]/award/` | 🟡 | ⭐⭐⭐⭐ |
+| **P0-5** | Post-show report shabloni + ko'rgazma kunida yig'iladigan ro'yxat | THAIFEX/WorldFood | `archive.ts` + yangi `/events/[slug]/results/` | 🟡 | ⭐⭐⭐⭐⭐ |
+| **P1-1** | Ishtirokchilar direktoriyasi (statik, keyin dinamik) | SIAL China | yangi `/events/[slug]/exhibitors-list/` | 🔴 | ⭐⭐⭐⭐⭐ |
+| **P1-2** | Segment sahifalari (12 ta kategoriya → 12 ta landing) | FHA | `/events/[slug]/sections/[name]/` | 🟡 | ⭐⭐⭐⭐ (SEO) |
+| **P1-3** | Xaridor/ishtirokchi logolari devori (2 ta alohida) | THAIFEX | `PartnerLogoWall` kengaytmasi | 🟢 | ⭐⭐⭐⭐ |
+| **P1-4** | Testimonials bloki (iqtibos + logo + foto) | WorldFood | yangi blok turi | 🟢 | ⭐⭐⭐⭐ |
+| **P1-5** | Logistika hamkorlari: avia/mehmonxona/viza taklifnomasi | WorldFood | `/visitors/travel/` | 🟢 | ⭐⭐⭐ |
+| **P1-6** | Startap / ilk-marta ishtirokchi maydoni (kichik paket) | Anuga, SIAL | `exhibitors/` bo'limi | 🟢 | ⭐⭐⭐ |
+| **P1-7** | Lid magnit: "Xaridorlar ro'yxati / bozor hisoboti" PDF evaziga kontakt | SFA | `downloads.json` + forma | 🟢 | ⭐⭐⭐ |
+| **P2-1** | Online marketplace (mahsulot + ishtirokchi qidiruv) | SIAL China | keyingi bosqich, alohida | 🔴 | ⭐⭐⭐⭐⭐ (2027+) |
+| **P2-2** | Yil bo'yi kontent: trend hisoboti, video sessiyalar, podkast | Anuga, SFA | `content/` + YouTube | 🔴 | ⭐⭐⭐⭐ |
+| **P2-3** | SIAL Analytics o'xshashi: "Markaziy Osiyo oziq-ovqat bozori" statistikasi | SIAL | `articles/` + hisobot | 🟡 | ⭐⭐⭐ |
+| **P2-4** | Qardosh ko'rgazmalar tarmog'i bloki ("SOF EXPO portfeli") | Anuga | `site.ts`/footer | 🟢 | ⭐⭐ |
+
+---
+
+### 5.1 P0-1 — Hosted buyer dasturi (eng muhimi)
+
+**Nima uchun birinchi.** Yangi ko'rgazmaning eng katta muammosi — xaridorlar kelmasligi.
+Xaridor kelmasa, ishtirokchi keyingi yil qaytmaydi. Barcha yetakchi ko'rgazmalar xaridorlarni
+**taklif bilan, imtiyozlar bilan va oldindan** jalb qiladi.
+
+FOODEX patternini to'g'ridan-to'g'ri moslashtirish:
+
+```
+1. Ariza (forma)           → 10 oktyabrgacha
+2. Tekshiruv / saralash    → 3 ish kuni ichida
+3. Login/kabinet (keyinroq)→ hozircha: Telegram/email orqali tasdiq
+4. Xaridor xohishlari      → ishtirokchilarga yuboriladi (14 okt)
+5. Ishtirokchi so'rovlari  → xaridorga (16 okt)
+6. Xaridor tanlaydi        → vaqt belgilaydi (17–18 okt)
+7. Yakuniy jadval          → ikki tomonga (19 okt)
+8. Ko'rgazma kunlari       → alohida stol/negotiation area
+```
+
+**Imtiyozlar** (haqiqatan bajara olishimiz kerak bo'lganlari):
+- navbatsiz kirish (alohida kirish yo'lagi);
+- bepul garderob;
+- xaridorlar lounji (choy/kofe, rozetka, stol);
+- bepul uchrashuv stoli (oldindan band);
+- Samarqand bo'yicha mehmonxona/transfer yordami.
+
+**Amalga oshirish (bizning arxitekturada):**
+- `src/data/events.ts` → `ExpoEvent` ga yangi maydon: `buyerProgram?: { intro, steps[{label,date,text}], privileges[], deadline, formHref }` (RU/EN).
+- Yangi sahifa: `src/data/pages/event-pages.ts` ga `"foodera-expo/buyers"` yozuvi
+  (path `/events/foodera-expo/buyers/`), `src/data/host-map.json` → `sections` ga `"buyers"`
+  qo'shiladi (subdomen rejimida `foodera.sofexpo.org/buyers/` bo'lib chiqadi).
+- Bloklar: `steps` (raqamli jadval) + `featureGrid` (imtiyozlar) + `form` (LeadForm,
+  `conversion.ts` da yangi forma turi `buyer-program`) + `faq`.
+- `EventNav.astro` ga 5-tugma qo'shiladi; `docs/03-link-map.md` va `check-hosts` avtomatik
+  tekshiradi.
+
+**Eslatma:** sahifada faqat haqiqatan bajara oladigan narsani yozish kerak
+(`docs/02-semantic-core.md` talabi: `offers` ni asossiz e'lon qilmaslik).
+
+---
+
+### 5.2 P0-2 — Matchmaking: "uchrashuvlar birjasi"
+
+Bizda `events.ts` da *"Предварительно отобранные 15-минутные встречи с категорийными
+менеджерами"* degan matn bor — ajoyib vaqt, lekin **ariza qabul qilish mexanikasi yo'q**.
+
+Minimal (3 hafta ichida ulguradigan) variant:
+- bitta forma: kompaniya, kimni izlayapsiz (rol), kategoriya, qaysi kun, 3 ta vaqt oralig'i;
+- `src/data/conversion.ts` → `forms.matchmaking`, `LeadForm` orqali;
+- `scripts/lead-webhook.mjs` orqali CRM/Telegramga;
+- `/program/` sahifasida **uch qadam** bloki: *Ariza → Saralash → Jadval* va
+  "joy soni cheklangan: 60 ta slot" kabi **rost** cheklov.
+
+Keyingi bosqich (2027): ikki tomonlama tanlov + avto-jadval.
+
+---
+
+### 5.3 P0-3 — Paketlar: narx + tarkib
+
+Anuga uslubi: har paket = **nom + maydon + narx + "nimalar kiradi" ro'yxati + rasm**.
+Bizning minimal versiya (narxni ochiq yozmasak ham):
+
+| Paket | Maydon | Ichida | Kimga |
+|---|---|---|---|
+| Startap / ilk marta | 6 m² | stend konstruksiyasi, yoritish, 1 stol + 2 stul, elektr, kompaniya nomi, saytdagi katalog yozuvi, 1 ta degustatsiya stoli | birinchi marta ishtirokchi, kichik brend |
+| Standart | 9 m² | yuqoridagilar + brendlangan fon devori, 2 ta degustatsiya stoli, katalogda yarim sahifa, matchmaking'ga kirish | asosiy |
+| Premium | 18 m² | + yaxshiroq joy, katta reklama yuzasi, dasturda logo, 1 ta forum chiqishi | tarmoq/eksportchi |
+| Xom maydon | 36 m²+ | o'z qurilmangiz | yirik brend |
+
+Muhim: **"1 ta degustatsiya stoli", "katalogda yarim sahifa"** kabi narsalar — ularni
+aniq sanab yozish ishtirokchini "nima uchun qimmat" degan savoldan qutqaradi. Bu Anuga
+paketlarida eng yaxshi ishlaydigan qism.
+
+Texnik: `events.ts` → `stands[]` ga `includes: L[]` va `priceNote: L` maydonlari;
+`Blocks.astro` dagi stendlar jadvali shu maydonlarni chiqaradi. Jadval hozir `area` +
+`note` ko'rsatadi — kengaytirish kichik.
+
+---
+
+### 5.4 P0-4 — "Eng yaxshi mahsulot" tanlovi
+
+SIAL Innovation 30 yillik brendga aylangan; biz 1-nashrdan boshlaymiz — bu ustunlik,
+chunki tanlov ko'rgazma bilan birga katta bo'ladi.
+
+Sahifa tarkibi:
+- nizom (kim qatnasha oladi: faqat ishtirokchilar; narx: bepul/ariza);
+- nominatsiyalar (masalan: "Eng yaxshi mahalliy mahsulot", "Eng yaxshi yangi SKU",
+  "Eng yaxshi qadoqlash", "Halol mahsulot");
+- hay'at (`speakers` massivi bo'sh — aynan shu yerga kerak: tarmoq xaridorlari,
+  O'zbekiston oziq-ovqat assotsiatsiyasi, HoReCa vakillari);
+- muddatlar (ariza → saralash → ko'rgazmaning 1-kuni e'lon);
+- ariza formasi;
+- g'olib uchun nima: keyingi yil bepul ishtirok / katalogda birinchi sahifa / media.
+
+---
+
+### 5.5 P0-5 — Post-show report (ko'rgazmadan keyingi hisobot)
+
+Birinchi nashrdan keyingi eng qimmatli aktiv. THAIFEX, WorldFood, FOODEX, SIAL China
+hammasida alohida sahifa + PDF.
+
+**Ko'rgazma kunida yig'ish kerak bo'lgan ro'yxat** (oldindan tayyorlab qo'yiladi):
+- ro'yxatdan o'tganlar soni (jami / kunma-kun / xorijiy);
+- ishtirokchilar soni, mamlakatlar, regionlar;
+- o'tkazilgan uchrashuvlar soni;
+- imzolangan shartnomalar / memorandumlar (faqat tasdiqlangan);
+- "taxminiy kelishuvlar qiymati" (ihtiyoriy, ishtirokchi so'rovi asosida — THAIFEX uslubi);
+- 8–12 ta foto, 1–2 daqiqalik video;
+- 5–8 ta iqtibos (ishtirokchi + xaridor, logo bilan);
+- "FOODERA EXPO 2027: sana + erta band qilish" CTA.
+
+Texnik: `archive.ts` kengaytiriladi (hozir `PROMOTORS SHOW` uchun ishlatilgan), yangi
+blok turi `results` (raqamlar + iqtiboslar + galereya), `noindex` siyosati o'zgarishsiz
+qoladi.
+
+---
+
+## 6. FOODERA 2026 ga 22 kun qoldi — ulguradigan reja
+
+> Maqsad: ko'rgazmani o'tkazib yubormasdan, **kelgusi yil sotuvini ochadigan** narsalarni
+> ishga tushirish. Hammasini qilishga urinmaslik kerak.
+
+**1-hafta (29 sen – 5 okt)**
+1. ✅ P0-1 hosted buyer sahifasi + forma (eng katta leveraj).
+2. ✅ P0-2 matchmaking bo'limi + forma (birgalashgan bitta forma ham bo'ladi).
+3. ✅ "Eng yaxshi mahsulot" tanlovi — ariza formasi (sahifasini keyin to'ldiramiz).
+4. ✅ Paketlar jadvalini "nimalar kiradi" bilan to'ldirish (faqat kontent, kod deyarli yo'q).
+
+**2-hafta (6 – 12 okt)**
+5. ✅ Xaridorlar/imtiyozlar blokini `/visitors/` ga chiqarish.
+6. ✅ Logistika: transfer + mehmonxona + viza taklifnomasi bloki (`/visitors/travel/`).
+7. ✅ Kun tartibi (1/2/3-kun dasturi) — PDF + sahifa.
+8. ✅ `speakers[]` ni to'ldirish (kamida 4–6 kishi) → `SpeakerWall` ishga tushadi.
+
+**3-hafta (13 – 19 okt)**
+9. ✅ Post-show report shabloni + ko'rgazmada yig'iladigan ro'yxat (bo'sh sahifa chop etish).
+10. ✅ Uchrashuv jadvali: forma javoblari asosida qo'lda tuzib, 19 okt kuni yuborish.
+11. ✅ Bosh sahifaga "Bugun/ertaga" holati, countdown.
+
+**Ko'rgazma kunlari (20–22 okt):** faqat kontent yig'ish — fotosurat, video, iqtibos,
+raqamlar. Saytda o'zgartirish kerak emas.
+
+---
+
+## 7. 2027 sikli — asosiy qurilma (noyabr 2026 – aprel 2027)
+
+1. **Post-show report** chop etish → darhol "FOODERA 2027 ga ariza" (erta band qiluvchiga
+   chegirma/ustun joy).
+2. **Ishtirokchilar direktoriyasi** (P1-1): avval statik sahifa (kompaniya, mamlakat,
+   kategoriya, logo, stend raqami), keyin qidiruv (`src/pages/[locale]/search/` tayyor
+   infratuzilma bor!).
+3. **Segment sahifalari** (P1-2) — 12 ta kategoriya, har biri alohida landing. Halol
+   segmentini alohida ajratish.
+4. **Logolar devori** (P1-3, P1-4): ishtirokchilar + xaridorlar + testimoniallar.
+5. **Kontent dvigateli**: har oy 2 ta maqola; "Markaziy Osiyo sourcing guide" seriyasi
+   (SIAL China uslubida) — sof SEO.
+6. **Marketplace** (P2-1) — faqat direktoriya ishlagandan keyin.
+
+---
+
+## 8. Nusxa ko'chirmaslik kerak bo'lgan narsalar
+
+| Anti-pattern | Kimda | Nega yo'q |
+|---|---|---|
+| JS'da 0 dan hisoblanadigan animatsion hisoblagichlar | Gulfood, FHA, THAIFEX | HTML'da `0` turadi; SEO va ishonchga zarar. Bizda statik raqam + build-time `Countdown` yaxshiroq |
+| Bosh sahifaga Instagram embed | Gulfood | 3-tomon so'rovlar, privacy, tezlik. Bizning "0 third-party request" qoidamizga zid |
+| Hamma narsa tashqi badge/passport tizimiga chiqarib yuborilgan | SIAL Paris, FHA | Asosiy CTA saytda qolishi kerak; `LeadForm` yetarli |
+| Marketing popuplar | (oldingi bizda) | Buyurtmachi allaqachon rad etgan — `docs/12` |
+| Manbasiz dumaloq raqamlar | ayrimlari | `docs/02` ga zid: faqat tasdiqlangan fakt |
+| Cheksiz segment/logo ro'yxati | Gulfood | 8–12 ta yetarli, qolgani "and more" |
+
+---
+
+## 9. Qanday o'lchaymiz (KPI)
+
+| Ko'rsatkich | Bugun | Maqsad (FOODERA 2026) |
+|---|---|---|
+| Hosted buyer arizalari | — | 60+ |
+| Matchmaking so'rovlari | — | 120+ |
+| Tanlov arizalari | — | 25+ |
+| `/exhibitors/` sahifasidan forma yuborish | ? | +30% (paketlar tufayli) |
+| Post-show report sahifasi | yo'q | 1 ta, 2027 arizalari bilan |
+| Direktoriyadagi kompaniyalar | 0 | 100% ishtirokchilar |
+
+---
+
+## 10. Keyingi qadam
+
+1. Tasdiqlash: qaysi takliflar P0 ga kiradi (tavsiya: P0-1…P0-5).
+2. Buyurtmachidan **haqiqiy ma'lumotlar**: paket narxlari va tarkibi, hay'at tarkibi,
+   imtiyozlar ro'yxati, logistika hamkorlari, ko'rgazma kunidagi sanalar.
+3. `events.ts` ga maydonlar qo'shish → `event-pages.ts` ga sahifalar → `npm run check`
+   yashil bo'lishi shart.
+4. Har bir yangi maydon RU/EN (+ ZH/TR/UZ kataloglar) bo'yicha tarjimadan o'tkaziladi —
+   `docs/09` qoidalari.
+
+**Hujjat holati:** taklif, tasdiqlanmagan. Raqamlar o'rganilgan saytlarning o'z e'lonlaridan
+olingan (yuqoridagi havolalar); bizning saytga yoziladigan har qanday raqam buyurtmachi
+tomonidan tasdiqlanishi shart.

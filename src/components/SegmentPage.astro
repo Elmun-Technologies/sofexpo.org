@@ -149,7 +149,11 @@ ld.push(
         <a class="btn btn--primary" href={L('/request-stand/')} data-quiz-open data-quiz-source="section-page" data-quiz-event={event.slug}>
           {ru ? 'Забронировать стенд' : 'Book a stand'}
         </a>
-        <a class="btn btn--ghost" href={L(`${cluster}buyers/`)}>{ru ? 'Программа закупщика' : 'Buyer programme'}</a>
+        {/* the buyer programme is per-show data: where the organiser does not run one,
+            the second action is the visitor page, not a broken tab */}
+        <a class="btn btn--ghost" href={event.buyerProgram ? L(`${cluster}buyers/`) : L(`${cluster}visitors/`)}>
+          {event.buyerProgram ? (ru ? 'Программа закупщика' : 'Buyer programme') : ru ? 'Посетителям' : 'For visitors'}
+        </a>
       </p>
     </div>
   </section>

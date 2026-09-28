@@ -538,11 +538,21 @@ qiladi). Bu ro'yxat — P0-5 ning asl og'ir qismi: hisobot shabloni koddan ko'ra
 28/28 test). `npm run check:hosts` yashil: `sofexpo.org` 447 sahifa (+25 = 5 × 5),
 28 450 mutlaq + 45 202 nisbiy havola.
 
+**Keyingi kun:** BUILDPRO (9–11 noyabr 2026 — eng yaqin ko'rgazma) uchun ham xuddi shu
+mexanika bilan **10 ta segment sahifasi** qo'shildi: `/events/buildpro-expo/sections/…`
+(qurilish materiallari, instrument va krepyoj, stanoklar, domostroenie, nedvijimost,
+landshaft, interyer, svet va elektrika, okna-dveri-fasady, keramika va tosh). Yangi
+sahifada xaridor dasturi bo'lmagan ko'rgazma uchun ikkinchi tugma "Посетителям" ga
+yo'naladi — uzilgan havola qolmaydi (`seo-audit` buni ushladi).
+
 ### Navbatdagi partiya (keyingi so'rov bo'yicha)
 
-- P1-1 ishtirokchilar direktoriyasi (statik → qidiruv).
-- P1-3/4 xaridor va ishtirokchi logolari devori + testimoniallar (mexanika bor, real logolar
-  va tasdiqlangan iqtiboslar kerak).
+- Segment sahifalarini qolgan 3 ta ko'rgazmaga ko'chirish: AGROPRO (9 ta kategoriya),
+  WORLD EDU (8 ta), ECOM & RETAIL (8 ta) — mexanika tayyor, faqat kontent + tarjima.
+- P1-1 ishtirokchilar direktoriyasi (statik → qidiruv) — real ishtirokchilar ro'yxati kerak.
+- P1-3/4 xaridor va ishtirokchi logolari devori + testimoniallar: **mexanika yo'q, aktiv
+  kerak** — `public/images/partners/` bo'sh, tasdiqlangan iqtibos yo'q. O'ylab topilgan
+  logo yoki iqtibos qo'shilmaydi.
 - P1-1 ishtirokchilar direktoriyasi (statik → qidiruv).
 - P1-3/4 xaridor va ishtirokchi logolari devori + testimoniallar.
 - P1-5 logistika hamkorlari (aviakompaniya/mehmonxona) — **buyurtmachi ma'lumoti kerak**:

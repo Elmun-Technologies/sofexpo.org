@@ -110,6 +110,78 @@ export const sectionPages: Record<string, SectionPage[]> = {
       exhibitors: { ru: 'Ставьте образцы упаковки и, если позволяет площадь, работающий образец: техника продаётся в действии.', en: 'Show packaging samples and, if the space allows, a working machine: equipment sells in action.' },
     },
   ],
+  'buildpro-expo': [
+    {
+      slug: 'building-materials',
+      title: { ru: 'Строительные материалы', en: 'Building materials' },
+      lead: { ru: 'Цемент, сухие смеси, блоки, утеплитель и кровля — раздел, с которого начинается смета.', en: 'Cement, dry mixes, blocks, insulation and roofing — the section a specification starts with.' },
+      buyers: { ru: 'Смотрят сертификат, расход на квадратный метр и дойдёт ли объём до Самарканда в сезон.', en: 'They check the certificate, the consumption per square metre and whether the volume reaches Samarkand in season.' },
+      exhibitors: { ru: 'Берите техкарту и паллет самого продукта: стройматериалы покупают по документам.', en: 'Bring the technical data sheet and a pallet of the actual product: materials are bought on documents.' },
+    },
+    {
+      slug: 'tools-fasteners',
+      title: { ru: 'Инструмент и крепёж', en: 'Tools and fasteners' },
+      lead: { ru: 'Ручной и электроинструмент, крепёж, оснастка и расходники — раздел, где решение принимают за минуту.', en: 'Hand and power tools, fasteners, bits and consumables — the section where the decision is taken in a minute.' },
+      buyers: { ru: 'Пробуют в руках, сравнивают цену за единицу и спрашивают, есть ли расходник в наличии круглый год.', en: 'They try it in the hand, compare the unit price and ask whether consumables are stocked all year.' },
+      exhibitors: { ru: 'Держите рабочий стенд с инструментом под напряжением и коробку расходников на раздачу.', en: 'Keep a working stand with live tools and a box of consumables to hand out.' },
+    },
+    {
+      slug: 'machine-tools-equipment',
+      title: { ru: 'Станки и оборудование', en: 'Machine tools and equipment' },
+      lead: { ru: 'Станки, линии, компрессоры и оснастка для производства — раздел для тех, кто расширяет цех.', en: 'Machine tools, production lines, compressors and tooling — the section for those expanding a workshop.' },
+      buyers: { ru: 'Сравнивают производительность, срок поставки, пусконаладку и кто чинит оборудование в Узбекистане.', en: 'They compare output, delivery time, commissioning and who services the machine in Uzbekistan.' },
+      exhibitors: { ru: 'Готовьте расчёт окупаемости и график поставки: оборудование покупают цифрами, а не каталогом.', en: 'Prepare a payback calculation and a delivery schedule: machinery is bought with numbers, not with a catalogue.' },
+    },
+    {
+      slug: 'house-building',
+      title: { ru: 'Домостроение', en: 'House building' },
+      lead: { ru: 'Каркасные и модульные технологии, готовые дома, сэндвич-панели — раздел быстрого строительства.', en: 'Frame and modular systems, finished houses, sandwich panels — the section of fast construction.' },
+      buyers: { ru: 'Считают срок сборки, цену за квадратный метр под ключ и как дом поведёт себя в жару и холод.', en: 'They count the assembly time, the turnkey price per square metre and how the house behaves in heat and cold.' },
+      exhibitors: { ru: 'Покажите проект, смету и построенный объект: в домостроении продаёт уже сданный дом.', en: 'Show the project, the estimate and a finished building: in house building a delivered house sells.' },
+    },
+    {
+      slug: 'real-estate',
+      title: { ru: 'Недвижимость', en: 'Real estate' },
+      lead: { ru: 'Застройщики, агентства, ипотека и рассрочка — раздел, куда приходят не за товаром, а за решением.', en: 'Developers, agencies, mortgages and instalment plans — where people come for a decision, not a product.' },
+      buyers: { ru: 'Спрашивают про срок сдачи, документы на землю, рассрочку и кто будет управлять домом.', en: 'They ask about completion dates, land documents, instalment terms and who will manage the building.' },
+      exhibitors: { ru: 'Привозите планировки, прайс по корпусам и документы: недвижимость покупают после проверки бумаг.', en: 'Bring floor plans, a price list by building and the documents: property is bought after the paperwork checks out.' },
+    },
+    {
+      slug: 'landscape-greening',
+      title: { ru: 'Ландшафт и озеленение', en: 'Landscape and greening' },
+      lead: { ru: 'Саженцы, газоны, системы полива, малые формы и уход за территорией — раздел благоустройства.', en: 'Seedlings, lawns, irrigation systems, small architecture and grounds maintenance — the landscaping section.' },
+      buyers: { ru: 'Смотрят приживаемость в местном климате, расход воды и кто будет обслуживать систему после сдачи.', en: 'They look at survival in the local climate, water consumption and who will service the system after handover.' },
+      exhibitors: { ru: 'Покажите живые образцы и расчёт полива на сезон: озеленение продаётся глазами и водой.', en: 'Show live samples and a seasonal irrigation calculation: landscaping sells through the eye and through water.' },
+    },
+    {
+      slug: 'interior-design',
+      title: { ru: 'Интерьер и дизайн', en: 'Interior and design' },
+      lead: { ru: 'Мебель, свет, текстиль, напольные покрытия и декор — раздел, где покупают глазами и тактильно.', en: 'Furniture, lighting, textiles, floor coverings and decor — the section bought with the eyes and the hands.' },
+      buyers: { ru: 'Сравнивают износостойкость, срок изготовления, наличие на складе и условия работы с дизайнерами.', en: 'They compare wear resistance, production time, stock availability and the terms for working with designers.' },
+      exhibitors: { ru: 'Соберите на стенде готовый фрагмент интерьера: по каталогу отделочные материалы не выбирают.', en: 'Build a finished interior fragment on the stand: finishing materials are not chosen from a catalogue.' },
+    },
+    {
+      slug: 'light-electricity',
+      title: { ru: 'Свет и электрика', en: 'Light and electricity' },
+      lead: { ru: 'Светильники, кабель, щиты, автоматика и энергоэффективные решения — раздел инженерии здания.', en: 'Luminaires, cable, switchboards, automation and energy-efficient systems — the building engineering section.' },
+      buyers: { ru: 'Проверяют соответствие нормам, срок службы, гарантию и совместимость с уже смонтированным.', en: 'They check compliance with standards, service life, warranty and compatibility with what is already installed.' },
+      exhibitors: { ru: 'Возьмите образцы, сертификаты и схему подключения; включённый свет продаёт лучше описания.', en: 'Bring samples, certificates and a wiring diagram; switched-on light sells better than a description.' },
+    },
+    {
+      slug: 'windows-doors-facades',
+      title: { ru: 'Окна, двери, фасады', en: 'Windows, doors, facades' },
+      lead: { ru: 'Оконные системы, двери, фасадные материалы и фурнитура — раздел, где считают тепло и шум.', en: 'Window systems, doors, facade materials and hardware — the section where heat and noise are counted.' },
+      buyers: { ru: 'Смотрят на коэффициент теплопотери, шумоизоляцию, срок изготовления и монтаж под ключ.', en: 'They look at the heat-loss coefficient, sound insulation, production time and turnkey installation.' },
+      exhibitors: { ru: 'Ставьте образец в разрезе и считайте экономию на отоплении: фасад продаётся расчётом.', en: 'Show a cut-away sample and calculate the heating saving: a facade sells with a calculation.' },
+    },
+    {
+      slug: 'ceramics-stone',
+      title: { ru: 'Керамика и камень', en: 'Ceramics and stone' },
+      lead: { ru: 'Плитка, керамогранит, мозаика, натуральный и искусственный камень — раздел отделки и мощения.', en: 'Tiles, porcelain stoneware, mosaics, natural and engineered stone — the section of finishes and paving.' },
+      buyers: { ru: 'Сравнивают износостойкость, партию (чтобы тон совпал), срок поставки и цену за квадратный метр.', en: 'They compare wear class, batch (so the shade matches), delivery time and the price per square metre.' },
+      exhibitors: { ru: 'Выкладывайте плитку на стенде: цвет и фактуру на фото не покупают, их щупают.', en: 'Lay the tile out on the stand: colour and texture are not bought from a photo — they are touched.' },
+    },
+  ],
 };
 
 /** Sections of one show, in the order they are listed on the overview page. */

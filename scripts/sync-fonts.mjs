@@ -1,16 +1,14 @@
 /**
- * Builds the woff2 files in public/fonts/ from the two TT Norms Pro variable TTFs that
- * live at the repository root:
+ * Builds the woff2 files in public/fonts/ from the TT Norms Pro variable TTF that lives at
+ * the repository root:
  *
- *   TTNormsProVariable.ttf      → tt-norms-pro-{latin,latin-ext,cyrillic}.woff2
- *   TTNormsProMonoVariable.ttf  → tt-norms-pro-mono-{latin,latin-ext,cyrillic}.woff2
+ *   TTNormsProVariable.ttf → tt-norms-pro-{latin,latin-ext,cyrillic}.woff2
  *
- * Why subsets and not the TTFs as they are: the variable file is a single 1.45 MB face with
+ * Why subsets and not the TTF as it is: the variable file is a single 1.45 MB face with
  * 2 081 glyphs covering every script at once. A page that only shows English would pay for
- * Turkish and Cyrillic too. Splitting by unicode-range keeps the weight where it was before
- * this migration (a Latin page downloads ~114 KB + ~42 KB of mono instead of ~123 KB of
- * Inter Tight + Golos Text + JetBrains Mono), and an English visitor never fetches a
- * Cyrillic byte.
+ * Turkish and Cyrillic too. Splitting by unicode-range keeps a Latin page at ~115 KB — less
+ * than the ~123 KB of Inter Tight + Golos Text + JetBrains Mono it replaced — and an English
+ * visitor never fetches a Cyrillic byte.
  *
  * src/styles/fonts.css declares these six faces by hand with their unicode-ranges intact.
  * The committed woff2 files are build artefacts checked in on purpose — see below.
@@ -33,11 +31,8 @@ import { dirname, join } from 'node:path';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = join(ROOT, 'public', 'fonts');
 
-/** every source face: TTF at the repo root → woff2 basename in public/fonts */
-const SOURCES = [
-  { ttf: 'TTNormsProVariable.ttf', out: 'tt-norms-pro' },
-  { ttf: 'TTNormsProMonoVariable.ttf', out: 'tt-norms-pro-mono' },
-];
+/** the single source face: TTF at the repo root → woff2 basename in public/fonts */
+const SOURCES = [{ ttf: 'TTNormsProVariable.ttf', out: 'tt-norms-pro' }];
 
 /**
  * The three scripts this site renders, in the order src/styles/fonts.css declares them.

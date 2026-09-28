@@ -50,13 +50,14 @@
   --danger: #a33518;
 
   /* type — TT Norms Pro for the whole product: one variable family (wght 100–900) carries
-     headings, body and UI, so the old display/body split is now two tokens pointing at the
-     same face; --f-mono stays monospaced for anything that is a label, a figure or a date.
+     headings, body, UI, labels, figures and dates alike. The three tokens stay as role
+     markers — display / body / mono — so every existing rule keeps its meaning, but all
+     three resolve to the same family; dates and figures keep their alignment through
+     `font-variant-numeric: tabular-nums` instead of through a monospaced face.
      Native Cyrillic and Latin Extended (Turkish İ/ı/Ş/ş/Ğ/ğ); CJK is handled in premium.css */
   --f-display: "TT Norms Pro", Arial, Helvetica, sans-serif;
   --f-body: "TT Norms Pro", Arial, Helvetica, sans-serif;
-  --f-mono:
-    "TT Norms Pro Mono", ui-monospace, "SFMono-Regular", monospace;
+  --f-mono: "TT Norms Pro", Arial, Helvetica, sans-serif;
   /* the biggest element on a trade-show page is the date/number, not the slogan (docs/08 §2.3).
      All sizes are rem: the fluid root scale (html below) carries them from phone to TV. */
   --t-hero: clamp(2.2rem, 1.5rem + 3.2vw, 3.6rem);

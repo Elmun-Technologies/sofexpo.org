@@ -1,25 +1,25 @@
 /**
- * TT Norms Pro — the one type family this site uses, for every role.
+ * TT Norms Pro — the one type family this site uses, for every role:
+ * headings, body, UI, labels, figures and dates.
  *
- * Source of truth: the two variable TTFs at the repository root.
- *   TTNormsProVariable.ttf      → wght 100–950 (plus wdth 75–125 and slnt 0–12)
- *   TTNormsProMonoVariable.ttf  → wght 100–700 (plus slnt 0–12)
- * Both cover Latin, Latin Extended (Turkish İ/ı/Ş/ş/Ğ/ğ) and Cyrillic natively.
+ * Source of truth: TTNormsProVariable.ttf at the repository root — variable,
+ * wght 100–950 (plus wdth 75–125 and slnt 0–12), 2 081 glyphs, native Cyrillic
+ * and Latin Extended (Turkish İ/ı/Ş/ş/Ğ/ğ).
  *
- * The woff2 files in public/fonts/ are generated from those two TTFs by `npm run fonts:sync`
- * as three subsets each — latin, latin-ext, cyrillic — so a page downloads only the scripts
- * it actually renders: ~115 KB of TT Norms Pro + ~43 KB of mono for a Latin page, instead of
- * one 1.45 MB face. Every @font-face below keeps its unicode-range intact for that reason.
+ * The woff2 files in public/fonts/ are generated from that TTF by `npm run fonts:sync` as
+ * three subsets — latin, latin-ext, cyrillic — so a page downloads only the scripts it
+ * actually renders: ~115 KB for a Latin page instead of one 1.45 MB face. Every @font-face
+ * below keeps its unicode-range intact for that reason.
  *
  * Chinese is deliberately not subsetted: TT Norms Pro has no CJK glyphs, so zh pages keep the
  * system CJK stack declared in premium.css (`html:lang(zh-CN)`), with no extra download.
  *
- * The family is registered as "TT Norms Pro" / "TT Norms Pro Mono" and wired into the design
- * system through the --f-display / --f-body / --f-mono tokens in global.css — nothing in a
- * component should name a font directly.
+ * The family is registered as "TT Norms Pro" and wired into the design system through the
+ * --f-display / --f-body / --f-mono tokens in global.css — nothing in a component names a font
+ * directly. All three tokens resolve to this family; the mono one is kept as the role marker
+ * for labels, figures and dates, which now set in TT Norms Pro with tabular figures.
  */
 
-/* ---------- TT Norms Pro Variable — headings, body, UI, everything ---------- */
 @font-face {
   font-family: "TT Norms Pro";
   font-style: normal;
@@ -55,42 +55,5 @@
     url(/fonts/tt-norms-pro-latin-ext.woff2) format("woff2-variations"),
     url(/fonts/tt-norms-pro-latin-ext.woff2) format("woff2");
   /* Latin Extended-A: the Turkish edition's İ ı Ş ş Ğ ğ */
-  unicode-range: U+0100-017F;
-}
-
-/* ---------- TT Norms Pro Mono Variable — labels, figures, dates, codes ---------- */
-@font-face {
-  font-family: "TT Norms Pro Mono";
-  font-style: normal;
-  font-display: swap;
-  /* the mono face's wght axis runs 100–700 */
-  font-weight: 100 700;
-  src:
-    url(/fonts/tt-norms-pro-mono-latin.woff2) format("woff2-variations"),
-    url(/fonts/tt-norms-pro-mono-latin.woff2) format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
-    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2190-2199, U+2212, U+2215,
-    U+2264-2265, U+FEFF, U+FFFD;
-}
-
-@font-face {
-  font-family: "TT Norms Pro Mono";
-  font-style: normal;
-  font-display: swap;
-  font-weight: 100 700;
-  src:
-    url(/fonts/tt-norms-pro-mono-cyrillic.woff2) format("woff2-variations"),
-    url(/fonts/tt-norms-pro-mono-cyrillic.woff2) format("woff2");
-  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
-}
-
-@font-face {
-  font-family: "TT Norms Pro Mono";
-  font-style: normal;
-  font-display: swap;
-  font-weight: 100 700;
-  src:
-    url(/fonts/tt-norms-pro-mono-latin-ext.woff2) format("woff2-variations"),
-    url(/fonts/tt-norms-pro-mono-latin-ext.woff2) format("woff2");
   unicode-range: U+0100-017F;
 }

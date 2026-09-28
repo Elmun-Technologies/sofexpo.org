@@ -49,14 +49,14 @@
   --gold-soft: #e7d5ae;
   --danger: #a33518;
 
-  /* type — Inter Tight for headings (Archivo has no Cyrillic subset, this does), Golos Text to
-     read in, JetBrains Mono for anything that is a label, a figure or a date */
-  --f-display:
-    "Inter Tight Variable", "Inter Tight", "Golos Text Variable", system-ui,
-    sans-serif;
-  --f-body: "Golos Text Variable", system-ui, -apple-system, sans-serif;
+  /* type — TT Norms Pro for the whole product: one variable family (wght 100–900) carries
+     headings, body and UI, so the old display/body split is now two tokens pointing at the
+     same face; --f-mono stays monospaced for anything that is a label, a figure or a date.
+     Native Cyrillic and Latin Extended (Turkish İ/ı/Ş/ş/Ğ/ğ); CJK is handled in premium.css */
+  --f-display: "TT Norms Pro", Arial, Helvetica, sans-serif;
+  --f-body: "TT Norms Pro", Arial, Helvetica, sans-serif;
   --f-mono:
-    "JetBrains Mono Variable", ui-monospace, "SFMono-Regular", monospace;
+    "TT Norms Pro Mono", ui-monospace, "SFMono-Regular", monospace;
   /* the biggest element on a trade-show page is the date/number, not the slogan (docs/08 §2.3).
      All sizes are rem: the fluid root scale (html below) carries them from phone to TV. */
   --t-hero: clamp(2.2rem, 1.5rem + 3.2vw, 3.6rem);
@@ -125,6 +125,16 @@ body {
   letter-spacing: 0.002em;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+/* Buttons and form controls do not inherit font-family from the page: without this they fall
+   back to the UA font (and so out of TT Norms Pro). font-family only — font-size, weight and
+   line-height stay exactly where the component styles put them, so no control changes size. */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
 }
 
 img,

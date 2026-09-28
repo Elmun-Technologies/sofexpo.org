@@ -3,7 +3,7 @@ import '@/styles/fonts.css';
 import '@/styles/global.css';
 import '@/styles/premium.css';
 import '@/styles/motion.css';
-/* display: Inter Tight (has the Cyrillic subset Archivo lacks) · body: Golos Text · data: JetBrains Mono */
+/* type: TT Norms Pro Variable for everything, TT Norms Pro Mono for labels/figures/dates */
 import { buildMeta, entityNodes, SITE } from '@/lib/seo';
 import { localize, localeMeta, type SourceLocale as Locale } from '@/i18n/config';
 import { CURRENT_BRAND, isRootHost } from '@/data/hosts';
@@ -161,23 +161,18 @@ const preload = props.preload
       <link rel="alternate" type="application/rss+xml" title="SOF EXPO Samarkand" href={`/${locale}/rss.xml`} />
     )}
     {props.redirect && <meta http-equiv="refresh" content={`0; url=${props.redirect}`} />}
-    {/* The two faces that render above the fold in this locale. They are declared inside
-        fonts.css, so without these hints the browser cannot discover them until the
-        stylesheet has parsed — a whole round trip of FOUT on the headline. Only the
-        matching script is preloaded: an English visitor never fetches the Cyrillic cut. */}
+    {/* The face that renders above the fold in this locale. It is declared inside fonts.css,
+        so without this hint the browser cannot discover it until the stylesheet has parsed —
+        a whole round trip of FOUT on the headline. One variable family covers headings and
+        body now, so one hint replaces the old display+body pair; the mono cut is small and
+        only carries labels, so it is left to the stylesheet. Only the matching script is
+        preloaded: an English visitor never fetches the Cyrillic cut. */}
     <link
       rel="preload"
       as="font"
       type="font/woff2"
       crossorigin="anonymous"
-      href={locale === 'ru' ? '/fonts/inter-tight-cyrillic.woff2' : '/fonts/inter-tight-latin.woff2'}
-    />
-    <link
-      rel="preload"
-      as="font"
-      type="font/woff2"
-      crossorigin="anonymous"
-      href={locale === 'ru' ? '/fonts/golos-text-cyrillic.woff2' : '/fonts/golos-text-latin.woff2'}
+      href={locale === 'ru' ? '/fonts/tt-norms-pro-cyrillic.woff2' : '/fonts/tt-norms-pro-latin.woff2'}
     />
     <link rel="icon" href={`${ICON}/favicon.svg`} type="image/svg+xml" />
     <link rel="icon" href={`${ICON}/favicon.png`} type="image/png" sizes="512x512" />

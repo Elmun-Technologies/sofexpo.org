@@ -1,43 +1,121 @@
 /**
- * Copies the woff2 subsets this site actually renders out of the @fontsource-variable
- * packages into public/fonts/.
+ * Builds the woff2 files in public/fonts/ from the TT Norms Pro variable TTF that lives at
+ * the repository root:
  *
- * Why not just `import '@fontsource-variable/inter-tight/wght.css'`? Because those
- * stylesheets declare every subset the family ships — 17 files across our three
- * families, including greek, greek-ext and vietnamese. A scan of all 151 built pages
- * found no codepoints outside latin and cyrillic, so those subsets were downloaded
- * by nobody and paid for by everybody (inter-tight-latin-ext alone is 88 KB).
+ *   TTNormsProVariable.ttf → tt-norms-pro-{latin,latin-ext,cyrillic}.woff2
  *
- * src/styles/fonts.css declares these six faces by hand with their unicode-ranges
- * intact. Run this after bumping a @fontsource-variable dependency:
+ * Why subsets and not the TTF as it is: the variable file is a single 1.45 MB face with
+ * 2 081 glyphs covering every script at once. A page that only shows English would pay for
+ * Turkish and Cyrillic too. Splitting by unicode-range keeps a Latin page at ~115 KB — less
+ * than the ~123 KB of Inter Tight + Golos Text + JetBrains Mono it replaced — and an English
+ * visitor never fetches a Cyrillic byte.
+ *
+ * src/styles/fonts.css declares these six faces by hand with their unicode-ranges intact.
+ * The committed woff2 files are build artefacts checked in on purpose — see below.
  *
  *   npm run fonts:sync
+ *
+ * Requires fonttools (a one-off dev tool, deliberately NOT an npm dependency, so `npm ci`
+ * never installs it):
+ *
+ *   pip install fonttools brotli     # or: python3 -m pip install --user fonttools brotli
+ *
+ * Without it the script leaves the committed woff2 files alone and tells you what is missing,
+ * so `npm run build` never breaks on a machine that has no Python toolchain.
  */
-import { cp, mkdir, stat } from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
+import { mkdir, stat } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = join(ROOT, 'public', 'fonts');
 
-/** family (npm package name) → subsets to ship */
-const WANTED = {
-  'inter-tight': ['latin', 'latin-ext', 'cyrillic'],
-  'golos-text': ['latin', 'latin-ext', 'cyrillic'],
-  'jetbrains-mono': ['latin', 'latin-ext', 'cyrillic'],
+/** the single source face: TTF at the repo root → woff2 basename in public/fonts */
+const SOURCES = [{ ttf: 'TTNormsProVariable.ttf', out: 'tt-norms-pro' }];
+
+/**
+ * The three scripts this site renders, in the order src/styles/fonts.css declares them.
+ * Latin first (every page), then the ranges that only some locales reach.
+ */
+const SUBSETS = {
+  /* every page: ASCII, the Latin-1 block, common punctuation/quotes/dashes, €, №-adjacent
+     symbols and the arrows the cards and CTAs use (→ ↗ ↑ ↓) */
+  latin:
+    'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,' +
+    'U+2000-206F,U+20AC,U+2122,U+2190-2199,U+2212,U+2215,U+2264-2265,U+FEFF,U+FFFD',
+  /* Latin Extended-A: the Turkish İ/ı/Ş/ş/Ğ/ğ the tr edition is built on */
+  'latin-ext': 'U+0100-017F',
+  /* Russian plus the Uzbek/Kazakh letters (Ґ Ұ) and № */
+  cyrillic: 'U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116',
 };
+
+/**
+ * Layout features to keep. `kern` carries the whole GPOS kerning table — dropping it would
+ * flatten the spacing of every headline. `tnum` backs `font-variant-numeric: tabular-nums`,
+ * which the stat blocks, dates and tables rely on. Everything else (small caps, stylistic
+ * sets, fractions) is unused here and only costs bytes.
+ */
+const FEATURES = 'kern,mark,mkmk,calt,ccmp,liga,locl,tnum';
+
+/** the fonttools CLI, as an argv prefix — the standalone script or `python -m fontTools.subset` */
+function pyftsubset() {
+  const candidates = [
+    ['pyftsubset', ['--help']],
+    ['python3', ['-c', 'import fontTools.subset']],
+    ['python', ['-c', 'import fontTools.subset']],
+  ];
+  for (const [bin, probe] of candidates) {
+    try {
+      execFileSync(bin, probe, { stdio: 'ignore' });
+      return bin === 'pyftsubset' ? [bin] : [bin, '-m', 'fontTools.subset'];
+    } catch {
+      /* try the next candidate */
+    }
+  }
+  return null;
+}
+
+const tool = pyftsubset();
+if (!tool) {
+  console.log('fonttools not found — keeping the committed woff2 files in public/fonts/.');
+  console.log('To rebuild them from the TTFs at the repository root:');
+  console.log('  pip install fonttools brotli && npm run fonts:sync');
+  process.exit(0);
+}
 
 await mkdir(OUT, { recursive: true });
 
 let total = 0;
-for (const [family, subsets] of Object.entries(WANTED)) {
-  for (const subset of subsets) {
-    const from = join(ROOT, 'node_modules', '@fontsource-variable', family, 'files', `${family}-${subset}-wght-normal.woff2`);
-    const to = join(OUT, `${family}-${subset}.woff2`);
-    await cp(from, to);
+for (const { ttf, out } of SOURCES) {
+  const src = join(ROOT, ttf);
+  try {
+    await stat(src);
+  } catch {
+    console.error(`missing source font: ${ttf} (expected at the repository root)`);
+    process.exit(1);
+  }
+  for (const [subset, unicodes] of Object.entries(SUBSETS)) {
+    const to = join(OUT, `${out}-${subset}.woff2`);
+    execFileSync(
+      tool[0],
+      [
+        ...tool.slice(1),
+        src,
+        `--output-file=${to}`,
+        '--flavor=woff2',
+        `--unicodes=${unicodes}`,
+        `--layout-features=${FEATURES}`,
+        '--name-IDs=*',
+        '--name-legacy',
+        '--name-languages=*',
+        '--notdef-outline',
+      ],
+      { stdio: 'pipe' },
+    );
     const { size } = await stat(to);
     total += size;
-    console.log(`  ${family}-${subset}.woff2  ${(size / 1024).toFixed(0)} KB`);
+    console.log(`  ${out}-${subset}.woff2  ${(size / 1024).toFixed(0)} KB`);
   }
 }
-console.log(`\nfont payload: ${(total / 1024).toFixed(0)} KB across ${Object.values(WANTED).flat().length} files`);
+console.log(`\nfont payload: ${(total / 1024).toFixed(0)} KB across ${SOURCES.length * 3} files`);

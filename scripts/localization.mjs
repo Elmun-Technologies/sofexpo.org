@@ -104,6 +104,26 @@ function dynamicText(text, locale, translate) {
   tpl.push([/^Getting to (.+): 16 km from Samarkand International Airport · 23 km from the railway station$/, (m) => locale === 'zh' ? `前往 ${m[1]}:距撒马尔罕国际机场 16 公里 · 距火车站 23 公里` : `${m[1]} fuarına ulaşım: Semerkant Uluslararası Havalimanı'na 16 km · tren istasyonuna 23 km`]);
   /* 2026-09-24 partner wall: the show name is protected text, the tail is translated */
   tpl.push([/^(.+) is held with support from$/, (m) => locale === 'zh' ? `${m[1]} 的举办获得以下支持` : `${m[1]} şu kuruluşların destekleriyle düzenleniyor`]);
+  /* 2026-09-28 section pages: the hero kicker is "<segment> section · <edition>"; both halves
+     are copy that already lives in the catalog, so only the frame is new here. */
+  tpl.push([/^(.+) section · (.+)$/, (m) => locale === 'zh' ? `${translate(m[1])}专区 · ${translate(m[2])}` : `${translate(m[1])} bölümü · ${translate(m[2])}`]);
+  /* 2026-09-28 section pages: the section name comes from the catalog, the frame is fixed.
+     Doubling the name keeps twelve CTA paragraphs distinct instead of one repeated block. */
+  tpl.push([/^Space in the (.+) section goes in order of request: we send the floor plan with the free plots and a quote for your area\.$/, (m) => locale === 'zh'
+    ? `${translate(m[1])} 专区展位按申请顺序分配:我们会发送标有空余位置的平面图,并按您的面积报价。`
+    : `${translate(m[1])} bölümündeki alan başvuru sırasına göre verilir: boş parselleri gösteren salon planını ve alanınıza göre fiyatı göndeririz.`]);
+  /* 2026-09-28 section pages: the section name comes from the catalog, the frame is fixed */
+  tpl.push([/^A stand in the (.+) section$/, (m) => locale === 'zh' ? `${translate(m[1])} 专区的一个展位` : `${translate(m[1])} bölümünde bir stant`]);
+  /* 2026-09-28 section pages (docs/13 §P1-2): the show name is protected text, the tail is translated */
+  tpl.push([/^What else is on show at (.+)$/, (m) => locale === 'zh' ? `${m[1]} 还展出什么` : `${m[1]} fuarında başka neler sergileniyor`]);
+  /* 2026-09-28 section pages (docs/13 §P1-2): the segment name is translated through the
+     catalog, the frame is fixed — twelve pages, three strings each instead of thirty-six. */
+  tpl.push([/^(.+) at (.+): exhibitors, buyers, samples$/, (m) => locale === 'zh'
+    ? `${translate(m[1])}在 ${m[2]}:参展商、买家与样品`
+    : `${translate(m[1])} · ${m[2]}: katılımcılar, alıcılar, numuneler`]);
+  tpl.push([/^(.+) at (.+) in Samarkand: what buyers ask for, who exhibits in the section and how to book a stand\.$/, (m) => locale === 'zh'
+    ? `${translate(m[1])}在撒马尔罕 ${m[2]}:买家关注什么、该展区有哪些参展商,以及如何预订展位。`
+    : `${translate(m[1])} · Semerkant ${m[2]}: alıcıların sordukları, bölümde kimlerin yer aldığı ve stant nasıl rezerve edilir.`]);
   for (const [re, fn] of tpl) { const m = re.exec(text); if (m) return fn(m); }
   const duration = /^(\d+) days\.$/.exec(text);
   if (duration) return locale === 'zh' ? `${duration[1]}天。` : `${duration[1]} gün.`;
@@ -288,6 +308,14 @@ function dynamicUz(text, translate) {
     [/^Getting to (.+): 16 km from Samarkand International Airport · 23 km from the railway station$/, m => `${m[1]}ga qanday borish: Samarqand xalqaro aeroportidan 16 km · temir yo‘l vokzalidan 23 km`],
     /* 2026-09-24 partner wall: the show name is protected text, the tail is translated */
     [/^(.+) is held with support from$/, m => `${m[1]} quyidagilarning ko‘magida o‘tadi`],
+    [/^Space in the (.+) section goes in order of request: we send the floor plan with the free plots and a quote for your area\.$/, m => `${translate(m[1])} bo'limidagi joylar ariza tartibida beriladi: bo'sh maydonlar ko'rsatilgan zal rejasini va maydoningiz bo'yicha hisob-kitobni yuboramiz.`],
+    [/^(.+) section · (.+)$/, m => `${translate(m[1])} bo'limi · ${translate(m[2])}`],
+    /* 2026-09-28 section pages: the section name comes from the catalog, the frame is fixed */
+    [/^A stand in the (.+) section$/, m => `${translate(m[1])} bo'limidagi stend`],
+    /* 2026-09-28 section pages (docs/13 §P1-2): the show name stays as it is, the tail is translated */
+    [/^What else is on show at (.+)$/, m => `${m[1]}da yana nimalar namoyish etiladi`],
+    [/^(.+) at (.+): exhibitors, buyers, samples$/, m => `${translate(m[1])} · ${m[2]}: ishtirokchilar, xaridorlar, namunalar`],
+    [/^(.+) at (.+) in Samarkand: what buyers ask for, who exhibits in the section and how to book a stand\.$/, m => `${translate(m[1])} · Samarqand ${m[2]}: xaridorlar nima so'raydi, bo'limda kimlar ishtirok etadi va stendni qanday band qilish mumkin.`],
   ];
   for (const [re, fn] of tpl) { const x = re.exec(text); if (x) return fn(x); }
   if ((m = /^(\d+) days\.$/.exec(text))) return `${m[1]} kun.`;

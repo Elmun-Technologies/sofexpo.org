@@ -486,12 +486,45 @@ Quyidagilar kodda qilingan — `npm run check` va `npm run check:hosts` yashil.
 5. **Imtiyozlar** — alohida kirish, lounj, garderob, transfer, viza: bajariladimi?
 6. **60 ta xaridor limiti** — hozir "stollar soni bilan cheklangan" deb yozilgan (anonim raqam o'rniga).
 
+## 12. Amalga oshirildi — 2-partiya (2026-09-29): 12 ta segment sahifasi
+
+**P1-2.** FHA (Food & Hotel Asia) uslubi: har bir mahsulot segmentining o'z landing
+sahifasi. "tea and coffee exhibition Samarkand" deb qidirgan xaridor choy va kofe haqidagi
+matnga tushadi — nomi almashgan shablonga emas.
+
+| # | Nima | Qayerda |
+|---|---|---|
+| 1 | **`src/data/pages/sections.ts`** — yangi ma'lumotlar fayli: har segment uchun `slug`, `title`, `lead`, `buyers` (xaridor nima so'raydi), `exhibitors` (eksponent nima olib keladi) | yangi fayl |
+| 2 | FOODERA uchun **12 ta segment**: ichimliklar, choy va kofe, bakaleya, konditer/non, sut va pishloq, go'sht-parranda, muzlatilgan va yarim tayyor, konservatsiya, yog' va souslar, delikateslar, organik, qadoq va uskunalar | `sections.ts` |
+| 3 | **`/events/foodera-expo/sections/<segment>/`** — 12 × 5 til = 60 ta sahifa | `src/pages/[locale]/events/[slug]/sections/[section].astro` |
+| 4 | **`SegmentPage.astro`** — klaster bilan bir xil hero (sana, joy, teskari hisob), segment bo'yicha 2 karta, qolgan 11 segmentga havolalar, CTA | yangi komponent |
+| 5 | Klaster bosh sahifasidagi "Что показывают" bloki endi **katalog**: 12 ta karta — sarlavha + bir satr tavsif + havola (ilgiri oddiy chiplar edi). Segment sahifalari yo'q ko'rgazmalar avvalgidek chiplar bilan qoladi | `EventSections.astro` (`sectionsOf`) |
+| 6 | Har sahifada `BreadcrumbList` + qolgan 11 segment uchun `ItemList` (JSON-LD) | `SegmentPage.astro` |
+| 7 | Dinamik tarjima qoidalari: `«<segment>» at <show>: exhibitors, buyers, samples`, meta tavsif, `A stand in the <segment> section`, `<segment> section · <edition>` — 12 × 4 satr o'rniga 4 ta qoida | `scripts/localization.mjs` |
+| 8 | Tarjimalar: 36 ta segment satri + 12 ta ramka satri × zh/tr/uz | `src/i18n/catalogs/*.json` |
+
+**Me'moriy qaror (docs/02 dan yagona chetlanish):** bu loyihada sahifalar qo'lda
+yoziladi, shablonlashtirilmaydi. Segment sahifalari — *direktoriya oilasi*: renderer bitta,
+matn har bir segmentga alohida yozilgan, takrorlanuvchi paragraf yo'q (`page-audit` buni
+tekshiradi va 2 marta ogohlantirdi — kiker va CTA matni segment nomi bilan farqlanadigan
+qilindi). Sahifalar **har doim markaz domenida** qoladi: subdomen rejimida
+`foodera.sofexpo.org` dagi havolalar `localize()` orqali mutlaq (`https://sofexpo.org/…`)
+bo'ladi — direktoriya ikkilanmaydi, havola uzilmaydi.
+
+**Tekshiruv:** `npm run check` yashil (356 sahifa, SEO audit 0 muammo, tarjimalar
+3681 × 2, 28/28 test). `npm run check:hosts` yashil: 6 host, `sofexpo.org` 422 sahifa
+(+60 = 12 × 5), 27 950 mutlaq + 42 822 nisbiy havola tekshirildi.
+
 ### Navbatdagi partiya (keyingi so'rov bo'yicha)
 
 - P0-5 post-show report shabloni + ko'rgazma kunida yig'iladigan ro'yxat.
 - P1-1 ishtirokchilar direktoriyasi (statik → qidiruv).
-- P1-2 FHA uslubida 12 ta segment sahifasi (halol segmenti alohida).
 - P1-3/4 xaridor va ishtirokchi logolari devori + testimoniallar.
-- P1-5 logistika hamkorlari (aviakompaniya/mehmonxona), P1-7 lid magnit.
-- Paket tarkibi va xaridor dasturini qolgan 4 ta ko'rgazmaga (BUILDPRO, AGROPRO, WORLD EDU,
-  ECOM & RETAIL) ko'chirish — mexanika tayyor, faqat kontent + tarjima kerak.
+- P1-5 logistika hamkorlari (aviakompaniya/mehmonxona) — **buyurtmachi ma'lumoti kerak**:
+  chegirma kodlari va hamkor nomlari o'ylab topilmaydi. Hozircha faqat mavjud faktlar bor:
+  `EventSections` → `venue` blokida aeroport/vokzal masofasi, `/visitors/travel/` da Reikartz
+  −15%.
+- P1-7 lid magnit (katalog yuklab olish → mailing-list).
+- Paket tarkibi, xaridor dasturi va segment sahifalarini qolgan 4 ta ko'rgazmaga (BUILDPRO,
+  AGROPRO, WORLD EDU, ECOM & RETAIL) ko'chirish — mexanika tayyor, faqat kontent + tarjima
+  kerak (har bir ko'rgazma uchun o'z kategoriyalari ro'yxati asosida).

@@ -1,0 +1,188 @@
+---
+/**
+ * One product section of a show — the FHA / SIAL segment landing page (docs/13 §P1-2).
+ *
+ * A directory family: the composition is fixed, the copy is not. The h1 is the section
+ * name, the three paragraphs are written per section, and the page closes with the two
+ * actions a reader in this section actually takes — apply for a stand, or join the buyer
+ * programme. Meta title, description and the CTA lines are composed from the section name
+ * and translated by the parameterized rules in scripts/localization.mjs.
+ */
+import type { SourceLocale as Locale } from '@/i18n/config';
+import { localize } from '@/i18n/config';
+import type { ExpoEvent } from '@/data/events';
+import type { SectionPage } from '@/data/pages/sections';
+import { sectionsOf } from '@/data/pages/sections';
+import { abs, breadcrumbJsonLd, organizationJsonLd, itemListJsonLd } from '@/lib/seo';
+import Base from '@/layouts/Base.astro';
+import EventHero from '@/components/EventHero.astro';
+import EventNav from '@/components/EventNav.astro';
+import SectionHead from '@/components/SectionHead.astro';
+import FeatureGrid from '@/components/FeatureGrid.astro';
+
+const { locale, event, section, path } = Astro.props as {
+  locale: Locale;
+  event: ExpoEvent;
+  section: SectionPage;
+  /** locale-free path, e.g. /events/foodera-expo/sections/tea-and-coffee/ */
+  path: string;
+};
+
+const ru = locale === 'ru';
+const L = (p: string) => localize(locale, p);
+const name = section.title[locale];
+const cluster = `/events/${event.slug}/`;
+const siblings = sectionsOf(event.slug).filter((s) => s.slug !== section.slug);
+const past = event.status === 'past';
+
+const title = ru
+  ? `«${name}» на ${event.brand[locale]}: участники, закупщики, образцы`
+  : `${name} at ${event.brand[locale]}: exhibitors, buyers, samples`;
+const description = ru
+  ? `Раздел «${name}» на ${event.brand[locale]} в Самарканде: что ищут закупщики, кто выставляется в разделе и как забронировать стенд.`
+  : `${name} at ${event.brand[locale]} in Samarkand: what buyers ask for, who exhibits in the section and how to book a stand.`;
+
+const trail = [
+  { name: 'SOF EXPO Samarkand', url: abs(`/${locale}/`) },
+  { name: ru ? 'Афиша' : 'Line-up', url: abs(L('/events/')) },
+  { name: event.brand[locale], url: abs(L(cluster)) },
+  { name, url: abs(L(path)) },
+];
+
+const ld: Record<string, unknown>[] = [organizationJsonLd(), breadcrumbJsonLd(trail)];
+
+/* the other sections, as a real ItemList — every page is a hub for the whole directory */
+ld.push(
+  itemListJsonLd(
+    siblings.map((s) => ({
+      name: s.title[locale],
+      url: abs(L(`${cluster}sections/${s.slug}/`)),
+    })),
+    L(path),
+    ru ? `Разделы ${event.shortName}` : `${event.shortName} sections`,
+  ),
+);
+---
+
+<Base
+  {locale}
+  {title}
+  {description}
+  path={path}
+  image={event.heroImage}
+  breadcrumbs={[
+    { name: ru ? 'Афиша' : 'Line-up', path: '/events/' },
+    { name: event.brand[locale], path: cluster },
+    { name, path },
+  ]}
+  jsonLd={ld}
+  preload={event.heroImage}
+>
+  <EventHero
+    {locale}
+    {event}
+    variant={past ? 'past' : 'open'}
+    kicker={ru ? `Раздел «${name}»` : `${name} section`}
+    title={name}
+    lead={section.lead[locale]}
+    showHighlight={false}
+  />
+  <EventNav {locale} {event} {past} active={path} />
+
+  <section class="sec sec--paper reveal">
+    <div class="wrap">
+      <SectionHead
+        locale={locale}
+        kicker={ru ? 'Что решает сделку' : 'What decides the deal'}
+        title={ru ? 'Две стороны одного раздела: закупщик и экспонент' : 'Two sides of one section: the buyer and the exhibitor'}
+      />
+      <FeatureGrid
+        locale={locale}
+        cols={2}
+        items={[
+          {
+            icon: 'check',
+            title: ru ? 'Что ищут закупщики' : 'What buyers ask for',
+            text: section.buyers[locale],
+          },
+          {
+            icon: 'star',
+            title: ru ? 'Что подготовить экспоненту' : 'What an exhibitor brings',
+            text: section.exhibitors[locale],
+          },
+        ]}
+      />
+    </div>
+  </section>
+
+  <section class="sec reveal">
+    <div class="wrap">
+      <SectionHead
+        locale={locale}
+        kicker={ru ? 'Другие разделы' : 'Other sections'}
+        title={ru ? `Что ещё показывают на ${event.shortName}` : `What else is on show at ${event.shortName}`}
+      />
+      <nav class="seg__nav" aria-label={ru ? 'Разделы выставки' : 'Exhibition sections'}>
+        {
+          siblings.map((s) => (
+            <a href={L(`${cluster}sections/${s.slug}/`)}>
+              {s.title[locale]}
+              <span aria-hidden="true">→</span>
+            </a>
+          ))
+        }
+      </nav>
+    </div>
+  </section>
+
+  <section class="sec sec--sand reveal">
+    <div class="wrap seg__cta">
+      <h2 class="h2">{ru ? `Стенд в разделе «${name}»` : `A stand in the ${name} section`}</h2>
+      <p class="lead">
+        {
+          ru
+            ? `Места в разделе «${name}» распределяются по дате заявки: пришлём план зала со свободными участками и расчёт по вашей площади.`
+            : `Space in the ${name} section goes in order of request: we send the floor plan with the free plots and a quote for your area.`
+        }
+      </p>
+      <p class="seg__actions">
+        <a class="btn btn--primary" href={L('/request-stand/')} data-quiz-open data-quiz-source="section-page" data-quiz-event={event.slug}>
+          {ru ? 'Забронировать стенд' : 'Book a stand'}
+        </a>
+        <a class="btn btn--ghost" href={L(`${cluster}buyers/`)}>{ru ? 'Программа закупщика' : 'Buyer programme'}</a>
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .seg__nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .seg__nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0.5rem 1rem;
+    font-size: 0.95rem;
+    background: var(--paper);
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .seg__nav a:hover {
+    border-color: var(--gold);
+    color: var(--evergreen);
+  }
+  .seg__cta {
+    max-width: 640px;
+  }
+  .seg__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    margin-top: 1.4rem;
+  }
+</style>

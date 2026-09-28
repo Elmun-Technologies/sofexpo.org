@@ -10,6 +10,7 @@ import { localize } from '@/i18n/config';
 import type { ExpoEvent } from '@/data/events';
 import { site } from '@/data/site';
 import { events } from '@/data/events';
+import { sectionsOf } from '@/data/pages/sections';
 import { humanDate } from '@/lib/labels';
 import SectionHead from '@/components/SectionHead.astro';
 import FeatureGrid from '@/components/FeatureGrid.astro';
@@ -67,6 +68,7 @@ const head = {
   venue: { k: ru ? 'Где проходит' : 'Where', t: ru ? 'Один зал, одна площадка, минимум логистики' : 'One hall, one site, minimal logistics', text: undefined },
 }[section];
 
+const segments = sectionsOf(event.slug);
 const peers = events.filter((e) => e.slug !== event.slug).slice(0, 3);
 
 /* E-COM & RETAIL is the one show whose speaker line-up arrived as finished poster artwork
@@ -109,14 +111,40 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
     <section class:list={['sec', 'reveal', `sec--${tone}`]}>
       <div class="wrap">
         <SectionHead locale={locale} kicker={head.k} title={head.t} text={head.text} />
-        <div class="cats">
-          {event.categories.map((c) => (
-            <span class="cats__i">
-              <Icon name={c.icon} size={18} />
-              {c.name[locale]}
-            </span>
-          ))}
-        </div>
+        {/* docs/13 §P1-2 (FHA): where a show has a landing page per segment, the
+            category list becomes a directory of links with a line of copy each —
+            twelve crawlable entries, not twelve labels. Shows without section
+            pages keep the plain chips, so nothing else changes. */}
+        {segments.length > 0 ? (
+          <div class="cats cats--dir">
+            {event.categories.map((c) => {
+              const seg = segments.find((x) => x.title.en === c.name.en);
+              return seg ? (
+                <a class="cats__seg" href={L(`/events/${event.slug}/sections/${seg.slug}/`)}>
+                  <span class="cats__h">
+                    <Icon name={c.icon} size={18} />
+                    {seg.title[locale]}
+                  </span>
+                  <span class="cats__lead">{seg.lead[locale]}</span>
+                </a>
+              ) : (
+                <span class="cats__i">
+                  <Icon name={c.icon} size={18} />
+                  {c.name[locale]}
+                </span>
+              );
+            })}
+          </div>
+        ) : (
+          <div class="cats">
+            {event.categories.map((c) => (
+              <span class="cats__i">
+                <Icon name={c.icon} size={18} />
+                {c.name[locale]}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   )
@@ -453,6 +481,40 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
   }
   .cats__i :global(svg) {
     color: var(--moss);
+  }
+  .cats--dir {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+    gap: 0.7rem;
+  }
+  .cats__seg {
+    display: grid;
+    gap: 0.35rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--paper);
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+  .cats__seg:hover {
+    border-color: var(--gold);
+    transform: translateY(-2px);
+  }
+  .cats__h {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--f-display);
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+  .cats__h :global(svg) {
+    color: var(--moss);
+    flex: none;
+  }
+  .cats__lead {
+    font-size: 0.88rem;
+    color: color-mix(in srgb, var(--ink) 64%, transparent);
   }
   .prog {
     display: grid;

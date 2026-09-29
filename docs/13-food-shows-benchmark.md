@@ -538,28 +538,47 @@ qiladi). Bu ro'yxat — P0-5 ning asl og'ir qismi: hisobot shabloni koddan ko'ra
 28/28 test). `npm run check:hosts` yashil: `sofexpo.org` 447 sahifa (+25 = 5 × 5),
 28 450 mutlaq + 45 202 nisbiy havola.
 
-**Keyingi kun:** BUILDPRO (9–11 noyabr 2026 — eng yaqin ko'rgazma) uchun ham xuddi shu
-mexanika bilan **10 ta segment sahifasi** qo'shildi: `/events/buildpro-expo/sections/…`
-(qurilish materiallari, instrument va krepyoj, stanoklar, domostroenie, nedvijimost,
-landshaft, interyer, svet va elektrika, okna-dveri-fasady, keramika va tosh). Yangi
-sahifada xaridor dasturi bo'lmagan ko'rgazma uchun ikkinchi tugma "Посетителям" ga
-yo'naladi — uzilgan havola qolmaydi (`seo-audit` buni ushladi).
+### Segment direktoriyasi: barcha 5 ta ko'rgazma (2026-09-30)
+
+Xuddi shu mexanika qolgan to'rtta ko'rgazmaga ham ko'chirildi — har biri o'z
+kategoriyalari ro'yxati asosida, nomlar `events.ts` dagi kategoriyalar bilan bir xil
+(shunda klaster bosh sahifasidagi katalog 1:1 mos keladi):
+
+| Ko'rgazma | Segmentlar | Misollar |
+|---|---|---|
+| FOODERA | 12 | choy va kofe, sut va pishloq, qadoq va uskunalar |
+| BUILD PRO | 10 | qurilish materiallari, okna-dveri-fasady, keramika va tosh |
+| AGROPRO | 9 | sug'orish, urug'lar, issiqxonalar, veterinariya |
+| WORLD EDU | 8 | davlat va xususiy universitetlar, grantlar, til markazlari |
+| ECOM & RETAIL | 8 | vayt-label, marketpleyslar, ekvayring, fulfilment |
+
+Jami **47 ta segment sahifasi × 5 til = 235 sahifa**; klaster bosh sahifalaridagi
+katalog ularning barchasiga havola beradi.
+
+**Ikki muhim tafsilot:**
+
+1. **So'zlar ko'rgazmaga qarab o'zgaradi** (`sectionLabels`): WORLD EDU da "закупщики"
+   o'rniga "абитуриенты и родители", ECOM & RETAIL da "заказчики" — ta'lim ko'rgazmasida
+   xaridor yo'q. Standart so'zlar savdo ko'rgazmalari uchun qoladi.
+2. **Xaridor dasturi yo'q ko'rgazmada** ikkinchi tugma "Посетителям" ga yo'naladi —
+   uzilgan havola qolmaydi (`seo-audit` buni ushladi).
+
+**Yo'l davomida tuzatilgan:** `scripts/fit-meta.mjs` → `fitTitle` ajratuvchi belgi
+topilmaganda sarlavhani umuman qisqartirmasdi, shuning uchun uch so'zli kategoriya
+nomli segment sahifasining ruscha sarlavhasi 102 belgi bo'lib qolib, SEO auditdan
+o'tmasdi. Endi so'z chegarasida qisqartiradi; CJK sarlavhalar avvalgidek tegilmaydi
+(36 belgi o'zi qisqa, va ko'chirilgan sahifa stub'ida ajratuvchi yo'q — ularni kesish
+klaster sarlavhalarini bir-biriga o'xshatib qo'yardi, `check:hosts` buni ushladi).
 
 ### Navbatdagi partiya (keyingi so'rov bo'yicha)
 
-- Segment sahifalarini qolgan 3 ta ko'rgazmaga ko'chirish: AGROPRO (9 ta kategoriya),
-  WORLD EDU (8 ta), ECOM & RETAIL (8 ta) — mexanika tayyor, faqat kontent + tarjima.
 - P1-1 ishtirokchilar direktoriyasi (statik → qidiruv) — real ishtirokchilar ro'yxati kerak.
-- P1-3/4 xaridor va ishtirokchi logolari devori + testimoniallar: **mexanika yo'q, aktiv
-  kerak** — `public/images/partners/` bo'sh, tasdiqlangan iqtibos yo'q. O'ylab topilgan
-  logo yoki iqtibos qo'shilmaydi.
-- P1-1 ishtirokchilar direktoriyasi (statik → qidiruv).
-- P1-3/4 xaridor va ishtirokchi logolari devori + testimoniallar.
-- P1-5 logistika hamkorlari (aviakompaniya/mehmonxona) — **buyurtmachi ma'lumoti kerak**:
-  chegirma kodlari va hamkor nomlari o'ylab topilmaydi. Hozircha faqat mavjud faktlar bor:
-  `EventSections` → `venue` blokida aeroport/vokzal masofasi, `/visitors/travel/` da Reikartz
-  −15%.
+- P1-3/4 xaridor va ishtirokchilar logolari devori + testimoniallar: **aktiv kerak** —
+  `public/images/partners/` bo'sh, tasdiqlangan iqtibos yo'q. O'ylab topilgan logo yoki
+  iqtibos qo'shilmaydi (hisobot sahifasidagi `report.quotes` maydoni tayyor turibdi).
+- P1-5 logistika hamkorlari (aviakompaniya/mehmonxona) — chegirma kodlari va hamkor
+  nomlari buyurtmachidan. Hozircha saytda faqat mavjud faktlar: `venue` blokidagi
+  aeroport/vokzal masofasi va `/visitors/travel/` dagi Reikartz −15%.
 - P1-7 lid magnit (katalog yuklab olish → mailing-list).
-- Paket tarkibi, xaridor dasturi va segment sahifalarini qolgan 4 ta ko'rgazmaga (BUILDPRO,
-  AGROPRO, WORLD EDU, ECOM & RETAIL) ko'chirish — mexanika tayyor, faqat kontent + tarjima
-  kerak (har bir ko'rgazma uchun o'z kategoriyalari ro'yxati asosida).
+- Post-show reportni to'ldirish: `report.method` (raqamlar manbasi), `report.outcome`,
+  tasdiqlangan `report.quotes` — ro'yxat `docs/14-post-show-report.md` da.

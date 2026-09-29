@@ -329,7 +329,64 @@ export const sectionPages: Record<string, SectionPage[]> = {
       exhibitors: { ru: 'Проведите мини-урок на стенде: язык продают, когда на нём заговорили.', en: 'Run a mini lesson on the stand: a language sells when the visitor has spoken it.' },
     },
   ],
-};
+  'ecom-retail-expo': [
+    {
+      slug: 'white-label',
+      title: { ru: 'Вайт-лейбл и контрактное производство', en: 'White label and contract manufacturing' },
+      lead: { ru: 'Товары под вашей маркой без своего цеха: рецептура, линия, фасовка и документы.', en: 'Products under your own brand without a plant of your own: formulation, line, packing and documents.' },
+      buyers: { ru: 'Спрашивают минимальную партию, срок запуска и кто отвечает за качество и сертификаты.', en: 'They ask about the minimum batch, the launch time and who answers for quality and certificates.' },
+      exhibitors: { ru: 'Привозите образцы, кейсы запусков и расчёт себестоимости: вайт-лейбл считают в марже.', en: 'Bring samples, launch cases and a cost calculation: white label is counted in margin.' },
+    },
+    {
+      slug: 'marketplaces',
+      title: { ru: 'Маркетплейсы', en: 'Marketplaces' },
+      lead: { ru: 'Выход на площадки, комиссии, карточки, рейтинг и работа с отзывами.', en: 'Getting listed, commissions, product cards, ratings and working with reviews.' },
+      buyers: { ru: 'Сравнивают комиссию, график выплат, условия хранения и кто ведёт карточки.', en: 'They compare the commission, the payout schedule, storage terms and who runs the product cards.' },
+      exhibitors: { ru: 'Берите аудит карточек и кейс роста: услуги маркетплейсов покупают цифрами.', en: 'Bring a card audit and a growth case: marketplace services are bought with numbers.' },
+    },
+    {
+      slug: 'fintech-acquiring',
+      title: { ru: 'Финтех и эквайринг', en: 'Fintech and acquiring' },
+      lead: { ru: 'Эквайринг, онлайн-кассы, онлайн-кредитование и учёт денег для интернет-торговли.', en: 'Acquiring, online checkout, digital lending and money management for online trade.' },
+      buyers: { ru: 'Смотрят ставку, срок зачисления, интеграцию и как решаются спорные операции.', en: 'They look at the rate, the settlement time, the integration and how disputed transactions are settled.' },
+      exhibitors: { ru: 'Покажите схему интеграции и реальную ставку: финтех покупают по условиям, а не по логотипу.', en: 'Show the integration scheme and the real rate: fintech is bought on terms, not on a logo.' },
+    },
+    {
+      slug: 'logistics-fulfillment',
+      title: { ru: 'Логистика и фулфилмент', en: 'Logistics and fulfillment' },
+      lead: { ru: 'Фулфилмент, склад, доставка и возвраты — раздел, где считают каждый километр и час.', en: 'Fulfilment, warehousing, delivery and returns — the section where every kilometre and hour is counted.' },
+      buyers: { ru: 'Сравнивают стоимость заказа, скорость доставки по регионам и как оформляются возвраты.', en: 'They compare the cost per order, delivery speed by region and how returns are processed.' },
+      exhibitors: { ru: 'Привозите тарифы по регионам и SLA: логистику покупают вместе с уровнем сервиса.', en: 'Bring regional rates and an SLA: logistics is bought together with a service level.' },
+    },
+    {
+      slug: 'digital-marketing',
+      title: { ru: 'Цифровой маркетинг', en: 'Digital marketing' },
+      lead: { ru: 'Перформанс, таргет, SEO, контент и аналитика для интернет-магазинов.', en: 'Performance, targeting, SEO, content and analytics for online stores.' },
+      buyers: { ru: 'Спрашивают про бюджет, модель атрибуции и что агентство показывает в отчёте каждую неделю.', en: 'They ask about the budget, the attribution model and what the agency reports every week.' },
+      exhibitors: { ru: 'Покажите кейсы с цифрами и план теста: маркетинг покупают как гипотезу на проверку.', en: 'Show cases with numbers and a test plan: marketing is bought as a hypothesis to test.' },
+    },
+    {
+      slug: 'it-services-retail',
+      title: { ru: 'IT-услуги для ритейла', en: 'IT services for retail' },
+      lead: { ru: 'CRM, ERP, складской учёт, чат-боты и интеграции для розницы и e-commerce.', en: 'CRM, ERP, inventory control, chatbots and integrations for retail and e-commerce.' },
+      buyers: { ru: 'Смотрят интеграцию с текущими системами, срок внедрения и условия поддержки.', en: 'They check integration with the systems already in place, the rollout time and support terms.' },
+      exhibitors: { ru: 'Дайте демо-доступ и план внедрения: софт покупают после того, как попробовали.', en: 'Give demo access and a rollout plan: software is bought after it has been tried.' },
+    },
+    {
+      slug: 'packaging-photo-production',
+      title: { ru: 'Упаковка и фотопроизводство', en: 'Packaging and photo production' },
+      lead: { ru: 'Упаковка, этикетка, предметная и модельная съёмка, контент для карточек.', en: 'Packaging, labels, product and model photography, content for product pages.' },
+      buyers: { ru: 'Сравнивают цену за кадр или партию, сроки и права на использование снимков.', en: 'They compare the price per shot or per batch, the turnaround and the rights to the images.' },
+      exhibitors: { ru: 'Покажите напечатанный образец и портфолио: упаковку и контент выбирают глазами.', en: 'Show a printed sample and a portfolio: packaging and content are chosen with the eyes.' },
+    },
+    {
+      slug: 'payments-instalments',
+      title: { ru: 'Платежи и рассрочка', en: 'Payments and instalments' },
+      lead: { ru: 'Рассрочка, оплата частями, BNPL-сервисы и платёжные решения для покупателя.', en: 'Instalments, buy-now-pay-later services and checkout solutions for the shopper.' },
+      buyers: { ru: 'Смотрят процент одобрения, комиссию магазина и как оформляются возвраты.', en: 'They look at the approval rate, the shop\'s commission and how returns are handled.' },
+      exhibitors: { ru: 'Привозите статистику одобрения и условия подключения: рассрочку продают конверсией.', en: 'Bring approval statistics and connection terms: instalments sell on conversion.' },
+    },
+  ],};
 
 /** Sections of one show, in the order they are listed on the overview page. */
 export function sectionsOf(slug: string): SectionPage[] {

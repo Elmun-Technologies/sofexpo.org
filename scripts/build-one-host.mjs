@@ -64,7 +64,9 @@ run("node", [
 if (mode === "subdomain" && host === map.root) {
   // the centre hands the moved cluster paths over at the CDN level too
   const { writeFileSync } = await import("node:fs");
-  const rules = (await import("./host-rules.mjs")).movedRedirects("subdomain");
+  const rules = await (
+    await import("./host-rules.mjs")
+  ).movedRedirectsAsync("subdomain");
   writeFileSync(
     "dist/_redirects",
     rules.map((r) => `${r.from} ${r.to} 301`).join("\n") + "\n",

@@ -75,6 +75,9 @@ const list: Edition[] = [...archive].sort((a, b) => b.year - a.year);
                   ))}
                 </ul>
                 <div class="ed__links">
+                  <a class="btn btn--sm btn--primary" href={L(`/events/past/${e.id}/`)}>
+                    {ru ? 'Отчёт по итогам' : 'Post-show report'} <Icon name="arrow" size={15} />
+                  </a>
                   {ev && (
                     <a class="btn btn--sm btn--ghost" href={L(`/events/${ev.slug}/`)}>
                       {ru ? 'Страница выставки' : 'Show page'} <Icon name="arrow" size={15} />

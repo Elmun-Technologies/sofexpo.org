@@ -15,7 +15,7 @@ import Icon from '@/components/Icon.astro';
 interface Props {
   locale: Locale;
   event: ExpoEvent;
-  section: 'overview' | 'exhibitors' | 'visitors' | 'program';
+  section: 'overview' | 'exhibitors' | 'visitors' | 'program' | 'buyers' | 'award';
   to: string;
 }
 
@@ -29,6 +29,8 @@ const labels: Record<Props['section'], { ru: string; en: string }> = {
   exhibitors: { ru: 'Раздел для экспонентов', en: 'the exhibitor section' },
   visitors: { ru: 'Раздел для посетителей', en: 'the visitor section' },
   program: { ru: 'Деловая программа', en: 'the business programme' },
+  buyers: { ru: 'Раздел для закупщиков', en: 'the buyer programme section' },
+  award: { ru: 'Конкурс продуктов', en: 'the product contest' },
 };
 
 const short: Record<Props['section'], { ru: string; en: string }> = {
@@ -36,6 +38,8 @@ const short: Record<Props['section'], { ru: string; en: string }> = {
   exhibitors: { ru: 'экспонентам', en: 'for exhibitors' },
   visitors: { ru: 'посетителям', en: 'for visitors' },
   program: { ru: 'деловая программа', en: 'business programme' },
+  buyers: { ru: 'закупщикам', en: 'for buyers' },
+  award: { ru: 'конкурс продуктов', en: 'product contest' },
 };
 
 const copy = {

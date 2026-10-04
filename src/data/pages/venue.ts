@@ -1404,74 +1404,116 @@ export const venuePages: PageDef[] = [
         },
         {
           type: "gallery",
-          items: [
+          albums: [
             {
-              src: "/images/hall-stand.jpg",
-              caption: "Главный зал: экспозиция и переговорные зоны",
+              title: "Закрытый павильон — 4 400 м²",
+              items: [
+                {
+                  src: "/images/hall-empty.jpg",
+                  caption: "Зал 4 400 м² без застройки: шаг колонн и высота потолка",
+                },
+                {
+                  src: "/images/hall-stand.jpg",
+                  caption: "Главный зал: экспозиция и переговорные зоны",
+                },
+                {
+                  src: "/images/hall-walk.jpg",
+                  caption: "Проход между стендами в главный зал",
+                },
+                {
+                  src: "/images/hall-windows.jpg",
+                  caption: "Витражи и ворота для заезда техники",
+                },
+                {
+                  src: "/images/stand-green.jpg",
+                  caption: "Индивидуальная застройка стенда",
+                },
+              ],
             },
             {
-              src: "/images/hall-crowd.jpg",
-              caption: "День выставки: поток посетителей в главном зале",
+              title: "Открытая площадка — 5 000 м²",
+              items: [
+                {
+                  src: "/images/outdoor-area.jpg",
+                  caption: "Открытая площадка 5 000 м²: крупногабаритная техника",
+                },
+                {
+                  src: "/images/machinery-outdoor.jpg",
+                  caption: "Крупногабаритная техника на открытой площадке",
+                },
+                {
+                  src: "/images/stand-agro.jpg",
+                  caption: "Стенд агротехники: демонстрация мотоблоков и навесного",
+                },
+              ],
             },
             {
-              src: "/images/venue-exterior.jpg",
-              caption: "Входная группа и парковка",
+              title: "Конференц-зал и переговорные",
+              items: [
+                {
+                  src: "/images/conference-audience.jpg",
+                  caption: "Конференц-зал во время деловой программы",
+                },
+                {
+                  src: "/images/conference-room.jpg",
+                  caption: "Переговорная в павильоне",
+                },
+                {
+                  src: "/images/officials-tour.jpg",
+                  caption: "Официальная делегация на обходе экспозиции",
+                },
+              ],
             },
             {
-              src: "/images/conference-audience.jpg",
-              caption: "Конференц-зал во время деловой программы",
+              title: "На выставках центра",
+              items: [
+                {
+                  src: "/images/hall-crowd.jpg",
+                  caption: "День выставки: поток посетителей в главном зале",
+                },
+                {
+                  src: "/images/food-tasting.jpg",
+                  caption: "FOODERA EXPO: дегустационный стенд",
+                },
+                {
+                  src: "/images/food-tasting-counter.jpg",
+                  caption: "FOODERA EXPO: дегустационная линия",
+                },
+                {
+                  src: "/images/visitors-flowers.jpg",
+                  caption: "Цветочная экспозиция: посетители на садовом разделе",
+                },
+              ],
             },
             {
-              src: "/images/food-tasting.jpg",
-              caption: "FOODERA EXPO: дегустационный стенд",
+              title: "Здание, кафе и территория",
+              items: [
+                {
+                  src: "/images/venue-exterior.jpg",
+                  caption: "Входная группа и парковка",
+                },
+                {
+                  src: "/images/venue-facade.jpg",
+                  caption: "Фасад павильона и рекламные носители",
+                },
+                {
+                  src: "/images/venue-aerial.jpg",
+                  caption: "Центр сверху: павильон, открытая площадка и парковка",
+                },
+                {
+                  src: "/images/cafe-interior.jpg",
+                  caption: "Кафе в павильоне",
+                },
+              ],
             },
             {
-              src: "/images/food-tasting-counter.jpg",
-              caption: "FOODERA EXPO: дегустационная линия",
-            },
-            {
-              src: "/images/hall-walk.jpg",
-              caption: "Проход между стендами в главный зал",
-            },
-            {
-              src: "/images/hall-empty.jpg",
-              caption: "Зал 4 400 м² без застройки: шаг колонн и высота потолка",
-            },
-            {
-              src: "/images/hall-windows.jpg",
-              caption: "Витражи и ворота для заезда техники",
-            },
-            {
-              src: "/images/outdoor-area.jpg",
-              caption: "Открытая площадка 5 000 м²: крупногабаритная техника",
-            },
-            {
-              src: "/images/stand-green.jpg",
-              caption: "Индивидуальная застройка стенда",
-            },
-            {
-              src: "/images/officials-tour.jpg",
-              caption: "Официальная делегация на обходе экспозиции",
-            },
-            {
-              src: "/images/venue-facade.jpg",
-              caption: "Фасад павильона и рекламные носители",
-            },
-            {
-              src: "/images/machinery-outdoor.jpg",
-              caption: "Крупногабаритная техника на открытой площадке",
-            },
-            {
-              src: "/images/stand-agro.jpg",
-              caption: "Стенд агротехники: демонстрация мотоблоков и навесного",
-            },
-            {
-              src: "/images/visitors-flowers.jpg",
-              caption: "Цветочная экспозиция: посетители на садовом разделе",
-            },
-            {
-              src: "/images/samarkand.jpg",
-              caption: "Самарканд: город, в который приезжает аудитория выставок",
+              title: "Самарканд",
+              items: [
+                {
+                  src: "/images/samarkand.jpg",
+                  caption: "Самарканд: город, в который приезжает аудитория выставок",
+                },
+              ],
             },
           ],
         },
@@ -1513,74 +1555,116 @@ export const venuePages: PageDef[] = [
         },
         {
           type: "gallery",
-          items: [
+          albums: [
             {
-              src: "/images/hall-stand.jpg",
-              caption: "Main hall: expo and meeting zones",
+              title: "The indoor pavilion — 4,400 m²",
+              items: [
+                {
+                  src: "/images/hall-empty.jpg",
+                  caption: "The 4,400 m² hall before build-up: column grid and clear height",
+                },
+                {
+                  src: "/images/hall-stand.jpg",
+                  caption: "Main hall: expo and meeting zones",
+                },
+                {
+                  src: "/images/hall-walk.jpg",
+                  caption: "Aisle between stands to the main hall",
+                },
+                {
+                  src: "/images/hall-windows.jpg",
+                  caption: "Glazing and the drive-in gates",
+                },
+                {
+                  src: "/images/stand-green.jpg",
+                  caption: "Custom stand build",
+                },
+              ],
             },
             {
-              src: "/images/hall-crowd.jpg",
-              caption: "Show day: visitor flow in the main hall",
+              title: "The open-air area — 5,000 m²",
+              items: [
+                {
+                  src: "/images/outdoor-area.jpg",
+                  caption: "The 5,000 m² open-air area: large machinery",
+                },
+                {
+                  src: "/images/machinery-outdoor.jpg",
+                  caption: "Large machinery on the open-air area",
+                },
+                {
+                  src: "/images/stand-agro.jpg",
+                  caption: "Agri-machinery stand: power tillers and implements on show",
+                },
+              ],
             },
             {
-              src: "/images/venue-exterior.jpg",
-              caption: "Entrance and parking",
+              title: "Conference hall and meeting rooms",
+              items: [
+                {
+                  src: "/images/conference-audience.jpg",
+                  caption: "Conference hall during the business programme",
+                },
+                {
+                  src: "/images/conference-room.jpg",
+                  caption: "A meeting room inside the pavilion",
+                },
+                {
+                  src: "/images/officials-tour.jpg",
+                  caption: "An official delegation touring the exhibition",
+                },
+              ],
             },
             {
-              src: "/images/conference-audience.jpg",
-              caption: "Conference hall during the business programme",
+              title: "At the centre's shows",
+              items: [
+                {
+                  src: "/images/hall-crowd.jpg",
+                  caption: "Show day: visitor flow in the main hall",
+                },
+                {
+                  src: "/images/food-tasting.jpg",
+                  caption: "FOODERA EXPO: tasting stand",
+                },
+                {
+                  src: "/images/food-tasting-counter.jpg",
+                  caption: "FOODERA EXPO: tasting line",
+                },
+                {
+                  src: "/images/visitors-flowers.jpg",
+                  caption: "Horticulture display: visitors in the garden section",
+                },
+              ],
             },
             {
-              src: "/images/food-tasting.jpg",
-              caption: "FOODERA EXPO: tasting stand",
+              title: "Building, cafe and grounds",
+              items: [
+                {
+                  src: "/images/venue-exterior.jpg",
+                  caption: "Entrance and parking",
+                },
+                {
+                  src: "/images/venue-facade.jpg",
+                  caption: "Pavilion facade and advertising carriers",
+                },
+                {
+                  src: "/images/venue-aerial.jpg",
+                  caption: "The centre from above: pavilion, open-air area and parking",
+                },
+                {
+                  src: "/images/cafe-interior.jpg",
+                  caption: "The cafe inside the pavilion",
+                },
+              ],
             },
             {
-              src: "/images/food-tasting-counter.jpg",
-              caption: "FOODERA EXPO: tasting line",
-            },
-            {
-              src: "/images/hall-walk.jpg",
-              caption: "Aisle between stands to the main hall",
-            },
-            {
-              src: "/images/hall-empty.jpg",
-              caption: "The 4,400 m² hall before build-up: column grid and clear height",
-            },
-            {
-              src: "/images/hall-windows.jpg",
-              caption: "Glazing and the drive-in gates",
-            },
-            {
-              src: "/images/outdoor-area.jpg",
-              caption: "The 5,000 m² open-air area: large machinery",
-            },
-            {
-              src: "/images/stand-green.jpg",
-              caption: "Custom stand build",
-            },
-            {
-              src: "/images/officials-tour.jpg",
-              caption: "An official delegation touring the exhibition",
-            },
-            {
-              src: "/images/venue-facade.jpg",
-              caption: "Pavilion facade and advertising carriers",
-            },
-            {
-              src: "/images/machinery-outdoor.jpg",
-              caption: "Large machinery on the open-air area",
-            },
-            {
-              src: "/images/stand-agro.jpg",
-              caption: "Agri-machinery stand: power tillers and implements on show",
-            },
-            {
-              src: "/images/visitors-flowers.jpg",
-              caption: "Horticulture display: visitors in the garden section",
-            },
-            {
-              src: "/images/samarkand.jpg",
-              caption: "Samarkand: the city the show audience travels to",
+              title: "Samarkand",
+              items: [
+                {
+                  src: "/images/samarkand.jpg",
+                  caption: "Samarkand: the city the show audience travels to",
+                },
+              ],
             },
           ],
         },

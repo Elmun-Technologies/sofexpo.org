@@ -1,0 +1,163 @@
+---
+/**
+ * The markets around the centre, as numbers with a source (docs/13 — the "why Samarkand"
+ * block of sofexpo.uz, adopted with the citation kept).
+ *
+ * A table, not a chart: five rows read on a phone, are copyable into a budget memo, and
+ * survive being printed. The source line is part of the block — a market figure without
+ * a source is decoration.
+ */
+import type { SourceLocale as Locale } from '@/i18n/config';
+import { neighbours, neighbourTotals, marketSource } from '@/data/markets';
+
+const { locale } = Astro.props as { locale: Locale };
+const ru = locale === 'ru';
+
+/* RU is rendered at build time, so it can format its own figures: 90,4 and 1 320. The
+   English shape (90.4 / 1,320) is what the zh, tr and uz editions are localized from —
+   scripts/localization.mjs re-shapes bare figures for tr and uz on the way out. */
+const num = (v: number, digits = 1) =>
+  (ru ? v.toFixed(digits).replace('.', ',') : v.toFixed(digits));
+const int = (v: number) =>
+  String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g, ru ? ' ' : ',');
+
+const columns = [
+  ru ? 'Рынок' : 'Market',
+  ru ? 'Расстояние' : 'Distance',
+  ru ? 'Население' : 'Population',
+  ru ? 'ВВП' : 'GDP',
+];
+---
+
+<div class="mkt">
+  <table class="mkt__table">
+    <caption class="sr-only">
+      {ru ? 'Пять соседних рынков: расстояние, население и ВВП' : 'Five neighbouring markets: distance, population and GDP'}
+    </caption>
+    <thead>
+      <tr>
+        {columns.map((c) => <th scope="col">{c}</th>)}
+      </tr>
+    </thead>
+    <tbody>
+      {
+        neighbours.map((m) => (
+          <tr>
+            <th scope="row">
+              <b>{m.name[locale]}</b>
+              <span>{m.note[locale]}</span>
+            </th>
+            <td>
+              <b>{int(m.distanceKm)}</b> <small>{ru ? 'км' : 'km'}</small>
+            </td>
+            <td>
+              <b>{num(m.populationMln)}</b> <small>{ru ? 'млн' : 'mln'}</small>
+            </td>
+            <td>
+              <b>{num(m.gdpBlnUsd)}</b> <small>{ru ? 'млрд $' : 'bln USD'}</small>
+              <span class="mkt__growth">
+                {ru ? 'ВВП на душу' : 'per capita'} {int(m.gdpPerCapitaUsd)} $ · {ru ? 'рост' : 'growth'} +{num(m.growthPct)}% · {m.year}
+              </span>
+            </td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+  <p class="mkt__total">
+    {
+      ru
+        ? `Пять соседних рынков вместе: ${num(neighbourTotals.populationMln)} млн человек и ${num(neighbourTotals.gdpBlnUsd)} млрд $ ВВП.`
+        : `Five neighbouring markets together: ${num(neighbourTotals.populationMln)} mln people and ${num(neighbourTotals.gdpBlnUsd)} bln USD of GDP.`
+    }
+  </p>
+  <p class="mkt__source">{marketSource[locale]}</p>
+</div>
+
+<style>
+  .mkt {
+    margin-top: 1.2rem;
+  }
+  .mkt__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+  }
+  .mkt__table th,
+  .mkt__table td {
+    text-align: left;
+    padding: 0.6rem 0.5rem;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  .mkt__table thead th {
+    font-family: var(--f-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-40);
+    border-bottom-color: var(--ink-40);
+    white-space: nowrap;
+  }
+  .mkt__table tbody th {
+    font-weight: 400;
+    max-width: 15rem;
+  }
+  .mkt__table tbody th b {
+    display: block;
+    font-family: var(--f-display);
+    font-size: 1rem;
+  }
+  .mkt__table tbody th span {
+    display: block;
+    font-size: 0.82rem;
+    color: var(--ink-60);
+  }
+  .mkt__table td b {
+    font-family: var(--f-display);
+    font-size: 1.05rem;
+    color: var(--evergreen);
+  }
+  .mkt__table td small {
+    font-family: var(--f-mono);
+    font-size: 0.7rem;
+    color: var(--ink-40);
+  }
+  .mkt__growth {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.78rem;
+    color: var(--ink-60);
+  }
+  .mkt__total {
+    margin: 1rem 0 0.3rem;
+    font-weight: 600;
+  }
+  .mkt__source {
+    margin: 0;
+    font-family: var(--f-mono);
+    font-size: 0.72rem;
+    color: var(--ink-40);
+  }
+  /* mobile-first: on a phone the four columns stack into a labelled list */
+  @media (max-width: 640px) {
+    .mkt__table thead {
+      display: none;
+    }
+    .mkt__table tbody th,
+    .mkt__table td {
+      display: block;
+      border-bottom: 0;
+      padding: 0.15rem 0;
+    }
+    .mkt__table tr {
+      display: block;
+      padding: 0.7rem 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .mkt__table tbody th {
+      max-width: none;
+      margin-bottom: 0.3rem;
+    }
+  }
+</style>

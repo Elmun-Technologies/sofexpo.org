@@ -99,6 +99,12 @@ const ctaText = past
       program: ru
         ? `Слоты деловой программы ${event.shortName} — для экспонентов и партнёров. Заявка на стенд открывает доступ к выступлению.`
         : `Business-programme slots at ${event.shortName} go to exhibitors and partners first — a stand request opens the door to a talk.`,
+      buyers: ru
+        ? `Заявка в программу закупщика ${event.shortName}: пришлём список экспонентов по вашим категориям и соберём расписание встреч.`
+        : `Apply to the ${event.shortName} buyer programme: we send the exhibitor list for your categories and build a meeting schedule.`,
+      award: ru
+        ? `Подайте продукт на конкурс ${event.shortName} — заявка бесплатная для экспонентов, образцы сдаются в первый день.`
+        : `Enter your product in the ${event.shortName} contest — free for exhibitors, samples are submitted on day one.`,
     } as Record<string, string>)[kind] ?? (ru ? `Заявка на участие в ${name}.` : `Request to exhibit at ${name}.`);
 
 /* editorial cards: overview shows the newest three, programme the next three; the
@@ -180,7 +186,7 @@ const after = ((page.after ?? []) as SectionKey[]).filter((s) => s !== 'faq' || 
       ? ru ? 'Участвовать в следующей редакции' : 'Take part in the next edition'
       : ru ? 'Забронировать место на выставке' : 'Reserve your place at the show'}
     text={ctaText}
-    primary={{ label: t('cta.stand'), href: L('/request-stand/') }}
+    primary={{ label: t('cta.stand'), href: L('/request-stand/') + `?event=${event.slug}` }}
     secondary={{ label: ru ? 'Все выставки' : 'All shows', href: L('/events/') }}
   />
 

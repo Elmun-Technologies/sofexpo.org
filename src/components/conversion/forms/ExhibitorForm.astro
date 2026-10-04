@@ -41,6 +41,7 @@ const L = {
     : ['This month', 'Next 3 months', 'In 3–6 months', 'Exploring'],
   comment: ru ? 'Что покажете на стенде?' : 'What will you showcase?',
   submit: ru ? 'Получить план зала и расчёт' : 'Get floor plan & quote',
+  sponsorship: ru ? 'Интересуюсь спонсорством и рекламными носителями' : 'Also interested in sponsorship and advertising',
   consent: ru ? 'Отправляя, вы соглашаетесь с обработкой данных. Ответим за 15 минут.' : 'By sending you agree to data processing. Reply in 15 min.',
   ok: ru ? 'Заявка принята! Менеджер пришлёт план зала и расчёт в течение 15 минут в Telegram/WhatsApp.' : 'Request received! Manager will send floor plan and quote within 15 min via Telegram/WhatsApp.',
   err: ru ? 'Заполните обязательные поля' : 'Please fill required fields',
@@ -130,6 +131,13 @@ const events = [
     </div>
   </div>
 
+  {/* sofexpo.uz asks this on its stand form: one tick that tells the manager the lead is
+      worth a sponsorship call too, without sending the visitor to a second form. */}
+  <label class="form-ex__opt">
+    <input type="checkbox" name="sponsorship" value="yes" />
+    <span>{L.sponsorship}</span>
+  </label>
+
   <label class="form-ex__consent">
     <input type="checkbox" name="consent" required />
     <span>{L.consent}</span>
@@ -214,6 +222,21 @@ const events = [
   }
   .form-ex__full {
     grid-column: 1 / -1;
+  }
+  .form-ex__opt {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    font-size: 13px;
+    color: var(--ink-60);
+    line-height: 1.4;
+  }
+  .form-ex__opt input {
+    margin-top: 2px;
+    width: 16px;
+    height: 16px;
+    flex: none;
+    accent-color: var(--evergreen);
   }
   .form-ex__consent {
     display: flex;

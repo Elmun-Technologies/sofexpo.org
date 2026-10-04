@@ -1,0 +1,346 @@
+---
+/**
+ * Post-show report for one finished edition: /events/past/<id>/ (docs/13 §P0-5).
+ *
+ * The pattern every leading show runs (THAIFEX keeps a whole Post Show Report page,
+ * WorldFood publishes figures and testimonials): after the doors close the edition
+ * keeps working — it is the proof layer that sells the next one.
+ *
+ * Everything except the figures and the highlights is optional and renders only when
+ * the organiser has supplied it: no invented method, no invented quote.
+ */
+import type { SourceLocale as Locale } from '@/i18n/config';
+import { localize } from '@/i18n/config';
+import { useUI } from '@/i18n/ui';
+import type { Edition } from '@/data/archive';
+import { getEvent } from '@/data/events';
+import { fig } from '@/lib/figures';
+import { abs, articleJsonLd, breadcrumbJsonLd, organizationJsonLd } from '@/lib/seo';
+import Base from '@/layouts/Base.astro';
+import PageHero from '@/components/PageHero.astro';
+import SectionHead from '@/components/SectionHead.astro';
+import Icon from '@/components/Icon.astro';
+import Photo from '@/components/Photo.astro';
+import CtaBand from '@/components/CtaBand.astro';
+
+const { locale, edition, path } = Astro.props as {
+  locale: Locale;
+  edition: Edition;
+  path: string;
+};
+const t = useUI(locale);
+const ru = locale === 'ru';
+const L = (p: string) => localize(locale, p);
+const event = getEvent(edition.eventSlug);
+const upcoming = event && event.status !== 'past';
+const image = edition.image ?? event?.heroImage;
+
+/* the archive title already carries "· results" in some editions; a report page needs its own
+   title anyway — the plain brand string would collide with the show's own page (seo-audit) */
+const base = edition.title[locale].split(' · ')[0];
+const title = ru ? `${base} — итоги выставки` : `${base} — post-show report`;
+const description = edition.summary[locale];
+const highlights = edition.report?.highlights?.map((h) => h[locale]) ?? [];
+const quotes = edition.report?.quotes ?? [];
+
+const trail = [
+  { name: 'SOF EXPO Samarkand', url: abs(`/${locale}/`) },
+  { name: ru ? 'Афиша' : 'Line-up', url: abs(L('/events/')) },
+  { name: ru ? 'Архив' : 'Archive', url: abs(L('/events/past/')) },
+  { name: title, url: abs(L(path)) },
+];
+
+const ld: Record<string, unknown>[] = [
+  organizationJsonLd(),
+  breadcrumbJsonLd(trail),
+  articleJsonLd({
+    headline: title,
+    description,
+    date: edition.start,
+    locale,
+    url: L(path),
+    image,
+  }),
+];
+---
+
+<Base
+  {locale}
+  {title}
+  {description}
+  path={path}
+  image={image}
+  type="article"
+  publishedTime={edition.start}
+  breadcrumbs={[
+    { name: ru ? 'Афиша' : 'Line-up', path: '/events/' },
+    { name: ru ? 'Архив' : 'Archive', path: '/events/past/' },
+    { name: title, path },
+  ]}
+  jsonLd={ld}
+>
+  <PageHero
+    {locale}
+    kicker={ru ? 'Отчёт по итогам' : 'Post-show report'}
+    title={title}
+    lead={description}
+    image={image}
+    imageAlt={title}
+  />
+
+  <section class="sec sec--paper reveal">
+    <div class="wrap">
+      <SectionHead locale={locale} kicker={String(edition.year)} title={t('label.results')} />
+      <div class="rep__stats">
+        {
+          edition.results.map((r) => (
+            <div class="rep__stat">
+              <b class="num">{fig(r.value, locale)}</b>
+              <span>{r.label[locale]}</span>
+            </div>
+          ))
+        }
+      </div>
+      {
+        edition.report?.method && (
+          <p class="rep__method">
+            <Icon name="chart" size={16} />
+            {edition.report.method[locale]}
+          </p>
+        )
+      }
+    </div>
+  </section>
+
+  {
+    highlights.length > 0 && (
+      <section class="sec reveal">
+        <div class="wrap">
+          <SectionHead
+            locale={locale}
+            kicker={ru ? 'Как это было' : 'How it went'}
+            title={ru ? 'Что было на этой редакции' : 'What happened at this edition'}
+          />
+          <ul class="rep__list">
+            {highlights.map((h) => (
+              <li>
+                <Icon name="check" size={18} />
+                <span>{h}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    edition.report?.outcome && (
+      <section class="sec sec--sand reveal">
+        <div class="wrap">
+          <p class="rep__outcome">{edition.report.outcome[locale]}</p>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    quotes.length > 0 && (
+      <section class="sec reveal">
+        <div class="wrap">
+          <SectionHead
+            locale={locale}
+            kicker={ru ? 'Голоса участников' : 'In their words'}
+            title={ru ? 'Что говорят экспоненты и закупщики' : 'What exhibitors and buyers say'}
+          />
+          <div class="grid g2">
+            {quotes.map((q) => (
+              <figure class="rep__quote">
+                <blockquote>{q.text[locale]}</blockquote>
+                <figcaption>
+                  <b>{q.author}</b>
+                  <span>{q.role[locale]}</span>
+                  <span class="mono-label">{q.org}</span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    (edition.catalogue || edition.photo) && (
+      <section class="sec sec--paper reveal">
+        <div class="wrap">
+          <SectionHead locale={locale} kicker={String(edition.year)} title={t('label.materials')} />
+          <div class="rep__files">
+            {edition.catalogue && (
+              <a class="rep__file" href={edition.catalogue} rel="noopener">
+                <Icon name="doc" size={22} />
+                <span>
+                  <b>{ru ? 'Каталог участников' : 'Exhibitor catalogue'}</b>
+                  <small>PDF</small>
+                </span>
+                <em aria-hidden="true">↓</em>
+              </a>
+            )}
+            {edition.photo && (
+              <a class="rep__file" href={edition.photo} target="_blank" rel="noopener">
+                <Icon name="image" size={22} />
+                <span>
+                  <b>{ru ? 'Фотоотчёт' : 'Photo report'}</b>
+                  <small>{ru ? 'Внешняя ссылка' : 'External link'}</small>
+                </span>
+                <em aria-hidden="true">→</em>
+              </a>
+            )}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <CtaBand
+    locale={locale}
+    kicker={upcoming ? (ru ? 'Следующее событие' : 'Next event') : undefined}
+    title={upcoming
+      ? ru
+        ? `Следующая редакция: ${event!.dates.display[locale]}`
+        : `Next edition: ${event!.dates.display[locale]}`
+      : ru
+        ? 'Участвовать в следующей редакции'
+        : 'Take part in the next edition'}
+    text={upcoming
+      ? ru
+        ? `Места на ${event!.brand[locale]} распределяются по дате заявки: пришлём план зала и расчёт по вашей площади.`
+        : `Space at ${event!.brand[locale]} goes in order of request: we send the floor plan and a quote for your area.`
+      : ru
+        ? 'Оставьте заявку — пришлём даты и условия раннего бронирования.'
+        : 'Leave a request and we will send the dates and early-booking terms.'}
+    primary={{
+      label: event && upcoming ? t('cta.stand') : ru ? 'Все выставки' : 'All shows',
+      href: event && upcoming ? L('/request-stand/') + `?event=${event.slug}` : L('/events/'),
+    }}
+    secondary={{
+      label: ru ? 'Архив редакций' : 'Edition archive',
+      href: L('/events/past/'),
+    }}
+  />
+</Base>
+
+<style>
+  .rep__stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+  }
+  .rep__stat {
+    background: var(--paper);
+    padding: 1.2rem 1.3rem;
+    display: grid;
+    gap: 0.25rem;
+  }
+  .rep__stat b {
+    font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.2rem);
+    color: var(--evergreen);
+    line-height: 1;
+  }
+  .rep__stat span {
+    font-size: 0.88rem;
+    color: color-mix(in srgb, var(--ink) 62%, transparent);
+  }
+  .rep__method {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-top: 1.1rem;
+    font-size: 0.9rem;
+    color: color-mix(in srgb, var(--ink) 62%, transparent);
+  }
+  .rep__list {
+    display: grid;
+    gap: 0.7rem;
+    list-style: none;
+    padding: 0;
+    max-width: 720px;
+  }
+  .rep__list li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.6rem;
+    align-items: start;
+    font-size: 1.02rem;
+  }
+  .rep__list :global(svg) {
+    color: var(--moss);
+    margin-top: 0.15rem;
+  }
+  .rep__outcome {
+    max-width: 720px;
+    font-size: clamp(1.05rem, 1rem + 0.4vw, 1.25rem);
+    line-height: 1.5;
+  }
+  .rep__quote {
+    margin: 0;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: 1.2rem 1.3rem;
+    display: grid;
+    gap: 0.9rem;
+    align-content: start;
+  }
+  .rep__quote blockquote {
+    margin: 0;
+    font-family: var(--f-display);
+    font-size: 1.05rem;
+    line-height: 1.45;
+  }
+  .rep__quote figcaption {
+    display: grid;
+    gap: 0.1rem;
+    font-size: 0.9rem;
+  }
+  .rep__files {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: 0.8rem;
+  }
+  .rep__file {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.8rem;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--paper);
+    padding: 0.9rem 1.1rem;
+    transition: border-color 0.15s ease;
+  }
+  .rep__file:hover {
+    border-color: var(--gold);
+  }
+  .rep__file :global(svg) {
+    color: var(--moss);
+  }
+  .rep__file span {
+    display: grid;
+  }
+  .rep__file small {
+    font-family: var(--f-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-40);
+  }
+  .rep__file em {
+    font-style: normal;
+    color: var(--gold);
+  }
+</style>

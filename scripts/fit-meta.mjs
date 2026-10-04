@@ -27,6 +27,18 @@ export function fitTitle(t, max = 70) {
     const i = t.lastIndexOf(sep, max);
     if (i >= max * 0.4) return t.slice(0, i);
   }
+  /* No separator inside the window — a long composed title (a segment page whose category
+     name is three words long) used to survive untouched and fail the SEO audit. Cut on a
+     word boundary instead. CJK is left alone: 36 ideographs already read short, and a
+     relocated-page stub carries no separator at all, so trimming would collapse the
+     titles of a whole cluster into one string. */
+  if (cjk(t)) return t;
+  const hard = max + 8;
+  if (t.length > hard) {
+    const sp = t.lastIndexOf(' ', hard);
+    if (sp > max * 0.5) return t.slice(0, sp).replace(/[,;:—–-]+$/, '').trim();
+    return t.slice(0, hard).trim();
+  }
   return t;
 }
 if (process.argv[1]?.endsWith('fit-meta.mjs')) {

@@ -34,6 +34,12 @@ const tabs = past
       { path: `${base}exhibitors/`, ru: 'Экспонентам', en: 'For exhibitors' },
       { path: `${base}visitors/`, ru: 'Посетителям', en: 'For visitors' },
       { path: `${base}program/`, ru: 'Деловая программа', en: 'Business programme' },
+      /* docs/13: the hosted buyer programme and the product contest are per-show data —
+         the tab appears only where the organiser actually runs them. */
+      ...(event.buyerProgram
+        ? [{ path: `${base}buyers/`, ru: 'Программа закупщика', en: 'Buyer programme' }]
+        : []),
+      ...(event.award ? [{ path: `${base}award/`, ru: 'Конкурс', en: 'Contest' }] : []),
     ];
 
 const hubs = [

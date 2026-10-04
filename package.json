@@ -23,7 +23,7 @@
     "audit:downloads": "node scripts/audit-downloads.mjs",
     "check:release": "npm run check && npm run audit:downloads -- --require-final",
     "lead-webhook": "node scripts/lead-webhook.mjs",
-    "typecheck": "tsc --noEmit -p .",
+    "typecheck": "astro sync && tsc --noEmit -p .",
     "logos": "node scripts/build-logos.mjs"
   },
   "dependencies": {

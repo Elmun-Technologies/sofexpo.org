@@ -1,6 +1,7 @@
 ---
 /**
- * Sub-pages of an exhibition cluster: /exhibitors/, /visitors/, /program/.
+ * Sub-pages of an exhibition cluster: /exhibitors/, /visitors/, /program/ and,
+ * where the show runs them, /buyers/ and /award/.
  * Each is authored per event, so the exhibitor page of FOODERA and the exhibitor
  * page of AGROPRO are different documents, not the same grid with new dates.
  */
@@ -16,7 +17,9 @@ export const getStaticPaths = (async () => {
   const out: { params: { locale: string; slug: string; section: string }; props: { page: EventPage } }[] = [];
   for (const locale of locales) {
     for (const event of events) {
-      for (const section of ['exhibitors', 'visitors', 'program'] as const) {
+      /* 'buyers' and 'award' are per-show: a hosted buyer programme and a product
+         contest exist only where the organiser runs them (docs/13). */
+      for (const section of ['exhibitors', 'visitors', 'program', 'buyers', 'award'] as const) {
         const page = eventPages[event.slug]?.[section];
         if (!page) continue;
         const path = `/events/${event.slug}/${section}/`;

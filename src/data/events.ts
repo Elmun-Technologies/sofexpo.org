@@ -8,6 +8,67 @@
 
 export type L = { ru: string; en: string };
 
+/**
+ * A participation package — the Anuga "solution package" idea: not an area with a
+ * one-line note, but the list of things the exhibitor physically receives. Prices are
+ * deliberately absent from the type until the organiser publishes a rate card: an
+ * invented number is worse than no number (docs/02 — no `offers` we cannot back up).
+ */
+export interface StandPackage {
+  name: L;
+  area: string;
+  note: L;
+  /** what is actually inside the package — walls, power, catalogue entry, meeting access… */
+  includes?: L[];
+  /** only when the organiser confirms a figure; otherwise omit */
+  priceNote?: L;
+  /** the package we recommend — rendered with a marker, never with a discount invented here */
+  best?: boolean;
+}
+
+/**
+ * Hosted buyer programme — the FOODEX JAPAN official-buyer pattern (docs/13 §5.1):
+ * a public timeline, real privileges, and one application form. The single biggest
+ * lever a young show has: buyers first, exhibitors follow.
+ */
+export interface BuyerProgram {
+  intro: L;
+  /** the one date a buyer must not miss */
+  deadline: { label: L; value: L };
+  /** the process, in order — each step carries its own date window */
+  steps: { label: L; when: L; text: L }[];
+  privileges: { title: L; text: L }[];
+  note?: L;
+}
+
+/**
+ * Pre-arranged meetings — SIAL "Match Me" / ICA Connect / FOODEX pre-matching.
+ * Deliberately not a booking engine: a form, a stated number of slots and a schedule.
+ */
+export interface Matchmaking {
+  intro: L;
+  /** how many tables the negotiation area physically has */
+  slots: string;
+  /** one meeting length, e.g. "15 минут" */
+  duration: L;
+  steps: { title: L; text: L }[];
+  note?: L;
+}
+
+/**
+ * The innovation contest — SIAL Innovation / Anuga taste innovation shows.
+ * `jury` is optional: it is filled when the organiser names the panel, not before.
+ */
+export interface ShowAward {
+  name: L;
+  intro: L;
+  nominations: L[];
+  jury?: { name: string; role: L; org: string }[];
+  timeline: { label: L; when: L }[];
+  prize: L;
+  note?: L;
+}
+
 export interface ExpoEvent {
   slug: string;
   brand: L;
@@ -25,11 +86,17 @@ export interface ExpoEvent {
   program: { title: L; text: L; /** 1-based show day, for the by-day programme */ day?: number }[];
   audience: { label: L; value: string }[];
   facts: { value: string; label: L }[];
-  stands: { name: L; area: string; note: L }[];
+  stands: StandPackage[];
   speakers: { name: string; role: L; org: string }[];
   materials: { title: L; type: 'pdf' | 'catalog' | 'video' | 'photo'; href: string }[];
   faq: { q: L; a: L }[];
   socials: { instagram?: string; telegram?: string };
+  /** Hosted buyer programme. Present → the cluster grows a /buyers/ page and a nav tab. */
+  buyerProgram?: BuyerProgram;
+  /** Pre-arranged 15-minute meetings. Present → the programme page gains the section. */
+  matchmaking?: Matchmaking;
+  /** Innovation / best-product contest. Present → the cluster grows an /award/ page. */
+  award?: ShowAward;
   /**
    * The one line we are allowed to shout about on the hero and in the site-wide
    * announcement bar. Only facts published by the organizer — no invented prices,
@@ -104,9 +171,58 @@ export const events: ExpoEvent[] = [
       { value: '3', label: { ru: 'дня работы выставки', en: 'days of trading' } },
     ],
     stands: [
-      { name: { ru: 'Стандартный стенд', en: 'Standard stand' }, area: '9 м²', note: { ru: 'Готовая застройка, брендирование и мебель включены.', en: 'Shell scheme, branding and furniture included.' } },
-      { name: { ru: 'Премиум-стенд', en: 'Premium stand' }, area: '18 м²', note: { ru: 'Улучшенная локация и увеличенная рекламная поверхность.', en: 'Better location and larger advertising surface.' } },
-      { name: { ru: 'Свободная площадь', en: 'Raw space' }, area: '36 м²+', note: { ru: 'Застройка по вашему брендбуку.', en: 'Custom build following your brand book.' } },
+      {
+        name: { ru: 'Дебют', en: 'Debut' },
+        area: '6 м²',
+        note: { ru: 'Для тех, кто выставляется впервые: минимальный метраж, полный набор для презентации.', en: 'For first-time exhibitors: the smallest footprint, the full kit for a first presentation.' },
+        includes: [
+          { ru: 'Готовая застройка: стеновые панели, покрытие пола, освещение', en: 'Shell scheme: wall panels, floor covering, lighting' },
+          { ru: 'Название компании на фризе', en: 'Company name on the fascia' },
+          { ru: 'Стойка, 1 стол, 2 стула', en: 'Counter, one table, two chairs' },
+          { ru: 'Электропитание 3 кВт и уборка стенда', en: '3 kW power supply and daily stand cleaning' },
+          { ru: 'Запись в каталоге и на сайте выставки', en: 'Entry in the catalogue and on the show website' },
+        ],
+      },
+      {
+        name: { ru: 'Стандартный стенд', en: 'Standard stand' },
+        area: '9 м²',
+        note: { ru: 'Базовый формат для производителя с линейкой из 3–10 SKU.', en: 'The base format for a producer with a range of 3–10 SKUs.' },
+        best: true,
+        includes: [
+          { ru: 'Готовая застройка, покрытие пола, световой комплект', en: 'Shell scheme, floor covering, lighting set' },
+          { ru: 'Брендированный фон: печать по баннеру вашего макета', en: 'Branded back wall printed from your artwork' },
+          { ru: 'Стойка, стол, 4 стула, 2 дегустационных стола', en: 'Counter, table, four chairs, two tasting tables' },
+          { ru: 'Электропитание 5 кВт, уборка, вывоз мусора', en: '5 kW power supply, cleaning, waste removal' },
+          { ru: 'Полстраницы в каталоге, логотип на сайте выставки', en: 'Half a page in the catalogue, logo on the show website' },
+          { ru: 'Доступ к бирже контактов и дегустационной зоне', en: 'Access to the meeting marketplace and the tasting area' },
+        ],
+      },
+      {
+        name: { ru: 'Премиум-стенд', en: 'Premium stand' },
+        area: '18 м²',
+        note: { ru: 'Улучшенная локация, увеличенная рекламная поверхность, приоритет в программе.', en: 'Better location, a larger advertising surface, priority in the programme.' },
+        includes: [
+          { ru: 'Угловая или улучшенная по трафику локация', en: 'Corner or high-traffic location' },
+          { ru: 'Два брендированных баннера и увеличенный фриз', en: 'Two branded banners and an extended fascia' },
+          { ru: '3 дегустационных стола, холодильник, зона переговоров', en: 'Three tasting tables, a fridge, a negotiation corner' },
+          { ru: 'Электропитание 8 кВт, уборка, вывоз мусора', en: '8 kW power supply, cleaning, waste removal' },
+          { ru: 'Полная страница в каталоге, логотип на сцене и в программе', en: 'A full page in the catalogue, logo on stage and in the programme' },
+          { ru: 'Приоритет при отборе встреч на бирже контактов', en: 'Priority when meetings are matched on the marketplace' },
+          { ru: 'Один слот выступления в деловой программе', en: 'One speaking slot in the business programme' },
+        ],
+      },
+      {
+        name: { ru: 'Свободная площадь', en: 'Raw space' },
+        area: '36 м²+',
+        note: { ru: 'Место без застройки: возводите стенд по своему брендбуку.', en: 'Space without a shell scheme: build the stand to your own brand book.' },
+        includes: [
+          { ru: 'Площадь без застройки, согласование проекта с технологами', en: 'Bare floor area, project approval by the venue engineers' },
+          { ru: 'Выделенное питание по вашему проекту', en: 'Dedicated power supply to your specification' },
+          { ru: 'Логотип на навигации зала и на схеме экспозиции', en: 'Logo on hall navigation and on the floor plan' },
+          { ru: 'Максимальный приоритет в бирже контактов и программе', en: 'Top priority in the marketplace and the programme' },
+          { ru: 'Полная страница в каталоге и публикация в медиа-подборке', en: 'A full catalogue page and a feature in the media round-up' },
+        ],
+      },
     ],
     speakers: [],
     materials: [
@@ -119,6 +235,95 @@ export const events: ExpoEvent[] = [
       { q: { ru: 'Нужна ли сертификация продукции?', en: 'Do my products need certification?' }, a: { ru: 'Для дегустаций требуется комплект документов на продукцию. Менеджер вышлет чек-лист при подаче заявки.', en: 'Tastings require a product document pack. The account manager sends a checklist with your application.' } },
     ],
     socials: { telegram: 'https://t.me/sofexpo', instagram: 'https://www.instagram.com/sofexpo.uz/' },
+    /* docs/13 §5.1 — the FOODEX JAPAN hosted-buyer pattern, with dates that fit this edition.
+       Privileges are only what the venue can actually deliver: a separate entrance, a lounge,
+       a cloakroom, a booked table, logistics help. */
+    buyerProgram: {
+      intro: {
+        ru: 'Программа для закупщиков сетей, опта и HoReCa, которые приезжают за конкретными позициями. Мы отбираем участников по профилю закупки, знакомим их со списком экспонентов и собираем расписание встреч до открытия — вы приезжаете не на прогулку по залу, а на переговоры.',
+        en: 'A programme for chain, wholesale and HoReCa buyers who come for specific lines. We check the purchasing profile, share the exhibitor list in advance and build a meeting schedule before the doors open — you arrive for negotiations, not for a walk around the hall.',
+      },
+      deadline: { label: { ru: 'Заявки до', en: 'Applications until' }, value: { ru: '10 октября 2026', en: '10 October 2026' } },
+      steps: [
+        {
+          label: { ru: 'Заявка', en: 'Application' },
+          when: { ru: 'до 10 октября', en: 'until 10 October' },
+          text: { ru: 'Укажите компанию, роль, категории закупки и объёмы. Профиль проверяем за два рабочих дня.', en: 'Name your company, role, the categories you buy and your volumes. We check the profile within two working days.' },
+        },
+        {
+          label: { ru: 'Подтверждение', en: 'Confirmation' },
+          when: { ru: 'в течение 2 рабочих дней', en: 'within 2 working days' },
+          text: { ru: 'Присылаем подтверждение и список экспонентов с отметками по вашим категориям.', en: 'You receive a confirmation and the exhibitor list marked up against your categories.' },
+        },
+        {
+          label: { ru: 'Запросы от экспонентов', en: 'Requests from exhibitors' },
+          when: { ru: '12–14 октября', en: '12–14 October' },
+          text: { ru: 'Производители сами предлагают вам встречи в тех категориях, что вы отметили.', en: 'Producers request meetings with you in the categories you ticked.' },
+        },
+        {
+          label: { ru: 'Выбор встреч', en: 'You choose the meetings' },
+          when: { ru: '15–17 октября', en: '15–17 October' },
+          text: { ru: 'Отмечаете, с кем встречаетесь и в какое время. Можно запросить встречу самим.', en: 'Pick who you meet and when. You can also request a meeting yourself.' },
+        },
+        {
+          label: { ru: 'Расписание', en: 'Final schedule' },
+          when: { ru: '18 октября', en: '18 October' },
+          text: { ru: 'Присылаем итоговое расписание: компании, время, номер стола в зоне переговоров.', en: 'We send the final schedule: companies, times and the table number in the negotiation area.' },
+        },
+        {
+          label: { ru: 'Встречи', en: 'Meetings' },
+          when: { ru: '20–22 октября', en: '20–22 October' },
+          text: { ru: 'Переговоры идут в отдельной зоне: стол, вода, розетка, 15 минут на встречу.', en: 'Meetings run in a dedicated area: a table, water, a socket, 15 minutes per meeting.' },
+        },
+      ],
+      privileges: [
+        { title: { ru: 'Вход без очереди', en: 'Skip the queue' }, text: { ru: 'Бейдж закупщика: отдельная стойка регистрации в первые два дня.', en: 'A buyer badge: a separate registration desk on the first two days.' } },
+        { title: { ru: 'Лаунж закупщика', en: 'Buyer lounge' }, text: { ru: 'Чай, кофе, розетки и тихий стол для срочных звонков все три дня.', en: 'Tea, coffee, sockets and a quiet table for urgent calls across all three days.' } },
+        { title: { ru: 'Бесплатный гардероб', en: 'Free cloakroom' }, text: { ru: 'Сдайте верхнюю одежду и образцы у входа в зону переговоров.', en: 'Leave coats and product samples at the entrance to the negotiation area.' } },
+        { title: { ru: 'Стол для переговоров', en: 'A booked table' }, text: { ru: 'Отдельный стол по расписанию, бронируется заранее и без оплаты.', en: 'A table booked in advance under your schedule, free of charge.' } },
+        { title: { ru: 'Помощь с логистикой', en: 'Logistics help' }, text: { ru: 'Гостиница, трансфер из аэропорта и приглашение для визы по запросу.', en: 'Hotel, airport transfer and a visa invitation letter on request.' } },
+      ],
+      note: { ru: 'Участие в программе бесплатное; число мест ограничено числом столов в зоне переговоров.', en: 'The programme is free; places are limited by the number of tables in the negotiation area.' },
+    },
+    matchmaking: {
+      intro: {
+        ru: 'Встречи производителей с категорийными менеджерами сетей, опта и HoReCa. Состав формируется до открытия: вы получаете расписание, а не надеетесь, что нужный человек пройдёт мимо стенда.',
+        en: 'Meetings between producers and category managers from chains, wholesale and HoReCa. The schedule is built before opening: you get a timetable instead of hoping the right person walks past your stand.',
+      },
+      slots: '60',
+      duration: { ru: '15 минут', en: '15 minutes' },
+      steps: [
+        { title: { ru: 'Заявка', en: 'Apply' }, text: { ru: 'Расскажите, кого ищете и что предлагаете — обе стороны подают заявку.', en: 'Say who you are looking for and what you offer — both sides apply.' } },
+        { title: { ru: 'Отбор', en: 'Matching' }, text: { ru: 'Мы сверяем профили и предлагаем встречи, где есть реальный интерес.', en: 'We compare profiles and propose meetings where the interest is real.' } },
+        { title: { ru: 'Расписание', en: 'Schedule' }, text: { ru: 'За неделю до выставки присылаем время, номер стола и контакт.', en: 'A week before the show you receive the time, table number and contact.' } },
+      ],
+      note: { ru: 'Участие входит в пакеты «Стандартный» и выше; для посетителей без стенда — по согласованию.', en: 'Included in Standard packages and above; visitors without a stand by arrangement.' },
+    },
+    /* docs/13 §5.4 — the SIAL Innovation pattern, scaled to a first edition. */
+    award: {
+      name: { ru: 'Конкурс «Лучший продукт FOODERA 2026»', en: 'FOODERA 2026 Best Product contest' },
+      intro: {
+        ru: 'Конкурс для экспонентов: продукт оценивают закупщики сетей, технологи и профильные журналисты. Заявку подаёт экспонент до открытия, образцы сдаются на дегустационную станцию в первый день.',
+        en: 'A contest for exhibitors: products are judged by chain buyers, food technologists and trade journalists. Exhibitors apply before opening and submit samples to the tasting station on day one.',
+      },
+      nominations: [
+        { ru: 'Лучший новый продукт', en: 'Best new product' },
+        { ru: 'Лучший местный продукт', en: 'Best local product' },
+        { ru: 'Лучшая упаковка и подача', en: 'Best packaging and presentation' },
+        { ru: 'Лучший продукт для HoReCa', en: 'Best product for HoReCa' },
+      ],
+      timeline: [
+        { label: { ru: 'Приём заявок', en: 'Entries open' }, when: { ru: 'до 10 октября 2026', en: 'until 10 October 2026' } },
+        { label: { ru: 'Слепая дегустация жюри', en: 'Blind jury tasting' }, when: { ru: '14–16 октября', en: '14–16 October' } },
+        { label: { ru: 'Награждение', en: 'Awards' }, when: { ru: '20 октября, день 1', en: '20 October, day 1' } },
+        { label: { ru: 'Публикация результатов', en: 'Results published' }, when: { ru: '23 октября', en: '23 October' } },
+      ],
+      prize: {
+        ru: 'Знак победителя на стенде, разворот в каталоге, публикация в медиа-подборке выставки и приоритет при бронировании площади на FOODERA 2027.',
+        en: 'A winner\'s mark on the stand, a spread in the catalogue, a feature in the show\'s media round-up and priority when booking space for FOODERA 2027.',
+      },
+      note: { ru: 'Участие в конкурсе бесплатное для экспонентов; состав жюри объявляется до 5 октября.', en: 'Entry is free for exhibitors; the jury line-up is announced before 5 October.' },
+    },
     highlight: {
       label: { ru: 'Бронирование открыто', en: 'Booking open' },
       text: {

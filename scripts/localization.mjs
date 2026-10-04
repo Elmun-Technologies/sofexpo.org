@@ -104,6 +104,42 @@ function dynamicText(text, locale, translate) {
   tpl.push([/^Getting to (.+): 16 km from Samarkand International Airport · 23 km from the railway station$/, (m) => locale === 'zh' ? `前往 ${m[1]}:距撒马尔罕国际机场 16 公里 · 距火车站 23 公里` : `${m[1]} fuarına ulaşım: Semerkant Uluslararası Havalimanı'na 16 km · tren istasyonuna 23 km`]);
   /* 2026-09-24 partner wall: the show name is protected text, the tail is translated */
   tpl.push([/^(.+) is held with support from$/, (m) => locale === 'zh' ? `${m[1]} 的举办获得以下支持` : `${m[1]} şu kuruluşların destekleriyle düzenleniyor`]);
+  /* 2026-09-29 post-show report: the CTA names the show, so four reports do not share a paragraph */
+  tpl.push([/^Space at (.+) goes in order of request: we send the floor plan and a quote for your area\.$/, (m) => locale === 'zh'
+    ? `${m[1]} 的展位按申请顺序分配:我们会发送展厅平面图和按您面积计算的报价。`
+    : `${m[1]} fuarında alan başvuru sırasına göre verilir: salon planını ve alanınıza göre fiyatı göndeririz.`]);
+  /* 2026-09-30 market block: one row of figures per neighbour, five rows, one rule */
+  tpl.push([/^per capita (.+) \$ · growth \+(.+)% · (\d{4})$/, (m) => locale === 'zh'
+    ? `人均 ${m[1]} 美元 · 增长 +${m[2]}% · ${m[3]}`
+    : `kişi başı ${figure(m[1], 'tr')} $ · büyüme +${figure(m[2], 'tr')}% · ${m[3]}`]);
+  /* 2026-09-30 market block: the two figures are rendered by the component, the frame is fixed */
+  tpl.push([/^Five neighbouring markets together: (.+) mln people and (.+) bln USD of GDP\.$/, (m) => locale === 'zh'
+    ? `五个邻近市场合计:${m[1]} 百万人口,${m[2]} 十亿美元 GDP。`
+    : `Beş komşu pazar toplamda: ${figure(m[1], 'tr')} milyon kişi ve ${figure(m[2], 'tr')} milyar $ GSYİH.`]);
+  /* 2026-09-29 post-show report: the show name is protected text, the frame is translated */
+  tpl.push([/^(.+) — post-show report$/, (m) => locale === 'zh' ? `${m[1]} — 展后报告` : `${m[1]} — fuar sonrası rapor`]);
+  /* 2026-09-29 post-show report: the CTA names the next edition's dates (already localized) */
+  tpl.push([/^Next edition: (.+)$/, (m) => locale === 'zh' ? `下一届:${m[1]}` : `Sonraki edisyon: ${m[1]}`]);
+  /* 2026-09-28 section pages: the hero kicker is "<segment> section · <edition>"; both halves
+     are copy that already lives in the catalog, so only the frame is new here. */
+  tpl.push([/^(.+) section · (.+)$/, (m) => locale === 'zh' ? `${translate(m[1])}专区 · ${translate(m[2])}` : `${translate(m[1])} bölümü · ${translate(m[2])}`]);
+  /* 2026-09-28 section pages: the section name comes from the catalog, the frame is fixed.
+     Doubling the name keeps twelve CTA paragraphs distinct instead of one repeated block. */
+  tpl.push([/^Space in the (.+) section goes in order of request: we send the floor plan with the free plots and a quote for your area\.$/, (m) => locale === 'zh'
+    ? `${translate(m[1])} 专区展位按申请顺序分配:我们会发送标有空余位置的平面图,并按您的面积报价。`
+    : `${translate(m[1])} bölümündeki alan başvuru sırasına göre verilir: boş parselleri gösteren salon planını ve alanınıza göre fiyatı göndeririz.`]);
+  /* 2026-09-28 section pages: the section name comes from the catalog, the frame is fixed */
+  tpl.push([/^A stand in the (.+) section$/, (m) => locale === 'zh' ? `${translate(m[1])} 专区的一个展位` : `${translate(m[1])} bölümünde bir stant`]);
+  /* 2026-09-28 section pages (docs/13 §P1-2): the show name is protected text, the tail is translated */
+  tpl.push([/^What else is on show at (.+)$/, (m) => locale === 'zh' ? `${m[1]} 还展出什么` : `${m[1]} fuarında başka neler sergileniyor`]);
+  /* 2026-09-28 section pages (docs/13 §P1-2): the segment name is translated through the
+     catalog, the frame is fixed — twelve pages, three strings each instead of thirty-six. */
+  tpl.push([/^(.+) at (.+): exhibitors, buyers, samples$/, (m) => locale === 'zh'
+    ? `${translate(m[1])}在 ${m[2]}:参展商、买家与样品`
+    : `${translate(m[1])} · ${m[2]}: katılımcılar, alıcılar, numuneler`]);
+  tpl.push([/^(.+) at (.+) in Samarkand: what buyers ask for, who exhibits in the section and how to book a stand\.$/, (m) => locale === 'zh'
+    ? `${translate(m[1])}在撒马尔罕 ${m[2]}:买家关注什么、该展区有哪些参展商,以及如何预订展位。`
+    : `${translate(m[1])} · Semerkant ${m[2]}: alıcıların sordukları, bölümde kimlerin yer aldığı ve stant nasıl rezerve edilir.`]);
   for (const [re, fn] of tpl) { const m = re.exec(text); if (m) return fn(m); }
   const duration = /^(\d+) days\.$/.exec(text);
   if (duration) return locale === 'zh' ? `${duration[1]}天。` : `${duration[1]} gün.`;
@@ -115,8 +151,36 @@ function dynamicText(text, locale, translate) {
   if (minutes) return locale === 'zh' ? `阅读约${minutes[1]}分钟` : `${minutes[1]} dk okuma`;
   return null;
 }
+/* ---------- tr / uz figures ---------- */
+/* The English files group with a comma and write the decimal point (1,320 / 90.4).
+   Turkish groups with a point and writes the decimal comma (1.320 / 90,4); Uzbek groups
+   with a space (1 320 / 90,4). Chinese keeps the English shape, so it is left alone.
+   Only a bare figure is rewritten — a number inside a sentence is the caller's business
+   (see `figure`, used by the market-block rules below). */
+const figureLocales = new Set(['tr', 'uz']);
+function relocaleFigures(value, locale) {
+  const s = value.trim();
+  if (!/^\d+(?:[.,]\d+)+$/.test(s)) return null;
+  const thou = locale === 'tr' ? '.' : ' ';
+  const last = Math.max(s.lastIndexOf(','), s.lastIndexOf('.'));
+  const head = s.slice(0, last);
+  const tail = s.slice(last + 1);
+  /* a comma followed by exactly three digits is a thousands group (1,320), not a decimal */
+  const grouped = s[last] === ',' && tail.length === 3;
+  return head.replace(/[.,]/g, thou) + (grouped ? thou : ',') + tail;
+}
+/** The same rule for a figure that a translated sentence carries in a capture group. */
+function figure(value, locale) {
+  return relocaleFigures(value, locale) ?? value;
+}
+
 export function translator(locale, { collect, missing, strict = false } = {}) {
   return function translate(value) {
+    /* A bare figure is not copy, but it still carries a locale shape in tr and uz. */
+    if (figureLocales.has(locale)) {
+      const figures = relocaleFigures(value, locale);
+      if (figures != null) return value.replace(value.trim(), figures);
+    }
     const key = normalize(value);
     if (!isCopy(key) && !reviewed[key]) return value.replace(/м²/g, 'm²');
     const dynamic = dynamicText(key, locale, translate);
@@ -288,6 +352,19 @@ function dynamicUz(text, translate) {
     [/^Getting to (.+): 16 km from Samarkand International Airport · 23 km from the railway station$/, m => `${m[1]}ga qanday borish: Samarqand xalqaro aeroportidan 16 km · temir yo‘l vokzalidan 23 km`],
     /* 2026-09-24 partner wall: the show name is protected text, the tail is translated */
     [/^(.+) is held with support from$/, m => `${m[1]} quyidagilarning ko‘magida o‘tadi`],
+    [/^Space in the (.+) section goes in order of request: we send the floor plan with the free plots and a quote for your area\.$/, m => `${translate(m[1])} bo'limidagi joylar ariza tartibida beriladi: bo'sh maydonlar ko'rsatilgan zal rejasini va maydoningiz bo'yicha hisob-kitobni yuboramiz.`],
+    [/^(.+) section · (.+)$/, m => `${translate(m[1])} bo'limi · ${translate(m[2])}`],
+    [/^Next edition: (.+)$/, m => `Keyingi ko'rgazma: ${m[1]}`],
+    [/^(.+) — post-show report$/, m => `${m[1]} — ko'rgazma yakunlari hisoboti`],
+    [/^Five neighbouring markets together: (.+) mln people and (.+) bln USD of GDP\.$/, m => `Besh qo'shni bozor birgalikda: ${figure(m[1], 'uz')} mln aholi va ${figure(m[2], 'uz')} mlrd $ YaIM.`],
+    [/^per capita (.+) \$ · growth \+(.+)% · (\d{4})$/, m => `jon boshiga ${figure(m[1], 'uz')} $ · o'sish +${figure(m[2], 'uz')}% · ${m[3]}`],
+    [/^Space at (.+) goes in order of request: we send the floor plan and a quote for your area\.$/, m => `${m[1]}da joylar ariza tartibida beriladi: zal rejasi va maydoningiz bo'yicha hisob-kitobni yuboramiz.`],
+    /* 2026-09-28 section pages: the section name comes from the catalog, the frame is fixed */
+    [/^A stand in the (.+) section$/, m => `${translate(m[1])} bo'limidagi stend`],
+    /* 2026-09-28 section pages (docs/13 §P1-2): the show name stays as it is, the tail is translated */
+    [/^What else is on show at (.+)$/, m => `${m[1]}da yana nimalar namoyish etiladi`],
+    [/^(.+) at (.+): exhibitors, buyers, samples$/, m => `${translate(m[1])} · ${m[2]}: ishtirokchilar, xaridorlar, namunalar`],
+    [/^(.+) at (.+) in Samarkand: what buyers ask for, who exhibits in the section and how to book a stand\.$/, m => `${translate(m[1])} · Samarqand ${m[2]}: xaridorlar nima so'raydi, bo'limda kimlar ishtirok etadi va stendni qanday band qilish mumkin.`],
   ];
   for (const [re, fn] of tpl) { const x = re.exec(text); if (x) return fn(x); }
   if ((m = /^(\d+) days\.$/.exec(text))) return `${m[1]} kun.`;

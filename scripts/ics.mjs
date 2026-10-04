@@ -6,10 +6,12 @@
  *
  * Node ≥ 22.18 strips the types from the imported .ts on its own.
  */
-import { writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { events } from '../src/data/events.ts';
 import { site } from '../src/data/site.ts';
+import { eventOfHost, isBuiltHere } from './host-rules.mjs';
 
 const ROOT = site.domain.replace(/\/$/, '');
 
@@ -34,6 +36,36 @@ function fold(line) {
     rest = rest.slice(74);
   }
   return out;
+}
+
+function stamp(now, p) {
+  return `${now.getUTCFullYear()}${p(now.getUTCMonth() + 1)}${p(now.getUTCDate())}T${p(now.getUTCHours())}${p(now.getUTCMinutes())}00Z`;
+}
+
+/** One VEVENT wrapped in its own calendar — the file behind "add this show to calendar". */
+export function buildEventIcs(e, stampValue) {
+  const p = (n) => String(n).padStart(2, '0');
+  const s = stampValue ?? stamp(new Date(), p);
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//SOF EXPO Samarkand//Line-up 2026-2027//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    `X-WR-CALNAME:${e.brand.en} — SOF EXPO Samarkand`,
+    'BEGIN:VEVENT',
+    `UID:${e.slug}-${e.dates.start}@sofexpo.org`,
+    `DTSTAMP:${s}`,
+    `DTSTART;VALUE=DATE:${fmtDate(e.dates.start)}`,
+    `DTEND;VALUE=DATE:${endExclusive(e.dates.end)}`,
+    ...fold(`SUMMARY:${e.brand.en} — SOF EXPO Samarkand`),
+    'LOCATION:SOF EXPO Samarkand, Dzhambay district, Samarkand, Uzbekistan',
+    ...fold(`DESCRIPTION:${e.tagline?.en ?? e.edition?.en ?? ''} — ${ROOT}/en/events/${e.slug}/`),
+    `URL:${ROOT}/en/events/${e.slug}/`,
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ];
+  return `${lines.join('\r\n')}\r\n`;
 }
 
 export function buildIcs() {
@@ -78,6 +110,21 @@ export function icsIntegration() {
         // dir arrives as a file:// URL (Astro ≥5) or a path string — normalise both
         const root = dir instanceof URL ? fileURLToPath(dir) : String(dir).replace(/\/+$/, '');
         writeFileSync(`${root}/sofexpo-calendar.ics`, buildIcs());
+        /* one file per edition, next to the edition's own page (see src/lib/ics.ts) */
+        const mode = process.env.PUBLIC_HOSTS_MODE === 'subdomain' ? 'subdomain' : 'alias';
+        const currentHost = (process.env.SITE || `https://${site.domain.replace(/^https?:\/\//, '')}`)
+          .replace(/^https?:\/\//, '')
+          .replace(/\/+$/, '');
+        for (const e of events) {
+          const file = `${e.slug}-${e.dates.start.slice(0, 4)}.ics`;
+          let rel = null;
+          if (isBuiltHere(`/events/${e.slug}/`, { mode, currentHost })) rel = `events/${e.slug}/${file}`;
+          else if (eventOfHost(currentHost) === e.slug) rel = file;
+          if (!rel) continue;
+          const target = `${root}/${rel}`;
+          mkdirSync(dirname(target), { recursive: true });
+          writeFileSync(target, buildEventIcs(e));
+        }
       },
     },
   };

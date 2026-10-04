@@ -5,7 +5,7 @@ import { fig, figHtml } from '@/lib/figures';
  * so no two pages share the same composition while the markup stays one system.
  * Phase 2: auto CTA + form injection based on path — ideal placement.
  */
-import type { Block, BlockCard, BlockFile, BlockLink, BlockRow, BlockShot, BlockStat } from '@/data/pages/types';
+import type { Block, BlockAlbum, BlockCard, BlockFile, BlockLink, BlockRow, BlockShot, BlockStat } from '@/data/pages/types';
 import { localize, type SourceLocale as Locale } from '@/i18n/config';
 import { useUI } from '@/i18n/ui';
 import Icon from '@/components/Icon.astro';
@@ -65,6 +65,9 @@ const H = (p?: string) => {
   if (/^\/(files|images|og)\//.test(p) || /\.[a-z0-9]+$/i.test(p)) return p;
   return L(p);
 };
+/** A gallery is drawn as one grid per album; a block without albums stays a flat grid. */
+const galleryGroups = (b: Block): BlockAlbum[] =>
+  b.albums?.length ? b.albums : [{ title: '', items: (b.items ?? []) as BlockShot[] }];
 ---
 
 {
@@ -272,14 +275,24 @@ const H = (p?: string) => {
           )}
 
           {b.type === 'gallery' && (
-            <div class="gal">
-              {((b.items ?? []) as BlockShot[]).map((g, i) => (
-                <div class="gal__item">
-                  <Photo src={g.src} alt={g.alt ?? g.caption ?? ''} ratio="4/3" zoom priority={i === 0} sizes="(max-width: 680px) 100vw, (max-width: 1080px) 50vw, 33vw" />
-                  {g.caption && <p class="gal__cap">{g.caption}</p>}
-                </div>
-              ))}
-            </div>
+            <>
+              {galleryGroups(b).map((album, gi) => {
+                const AlbumTitle = b.title || H3 === 'h3' ? 'h3' : 'h2';
+                return (
+                  <section class="gal-album">
+                    {album.title && <AlbumTitle class="gal-album__title">{album.title}</AlbumTitle>}
+                    <div class="gal">
+                      {((album.items ?? []) as BlockShot[]).map((g, i) => (
+                        <div class="gal__item">
+                          <Photo src={g.src} alt={g.alt ?? g.caption ?? ''} ratio="4/3" zoom priority={gi === 0 && i === 0} sizes="(max-width: 680px) 100vw, (max-width: 1080px) 50vw, 33vw" />
+                          {g.caption && <p class="gal__cap">{g.caption}</p>}
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                );
+              })}
+            </>
           )}
 
           {b.type === 'rail' && <CalendarRail locale={locale} tone="light" count={b.railCount ?? 4} />}
@@ -472,6 +485,10 @@ const H = (p?: string) => {
   .gal { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: clamp(.7rem, .4rem + .8vw, 1.1rem); }
   .gal__item :global(.ph) { box-shadow: var(--shadow-soft); }
   .gal__cap { margin: .65rem 0 0; font-size: .86rem; line-height: 1.45; color: var(--ink-60); }
+  /* albums: one heading per space, so the grid answers a question instead of showing 16 files */
+  .gal-album + .gal-album { margin-top: clamp(1.7rem, 1.2rem + 2vw, 2.8rem); }
+  .gal-album__title { margin: 0 0 .9rem; font-family: var(--f-display); font-size: clamp(1.05rem, .95rem + .5vw, 1.3rem); line-height: 1.25; letter-spacing: -.01em; }
+  .gal-album__title::before { content: ''; display: block; width: 34px; height: 2px; margin-bottom: .7rem; background: var(--gold); }
   .quote { margin: 0; padding: clamp(1.4rem, 1rem + 2vw, 2.4rem); border-left: 3px solid var(--gold); background: var(--cream-2); border-radius: 0 var(--r-lg) var(--r-lg) 0; }
   .quote blockquote { margin: 0 0 .8rem; font-family: var(--f-display); font-size: clamp(1.15rem, 1rem + .8vw, 1.65rem); line-height: 1.35; letter-spacing: -.01em; }
   .quote figcaption { color: var(--ink-60); font-size: .9rem; }

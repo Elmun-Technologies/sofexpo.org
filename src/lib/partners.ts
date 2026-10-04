@@ -30,6 +30,12 @@ export interface Partner {
   event?: string;
   /* has real artwork been dropped in? */
   hasLogo?: boolean;
+  /**
+   * The partner's own site. A logo wall that does not link out wastes the strongest
+   * signal a partner page has: who these organizations are. External links are plain
+   * anchors — no request, no embed, no third-party script (docs/02).
+   */
+  url?: string;
 }
 
 const SHARED: Partner[] = [
@@ -39,12 +45,24 @@ const SHARED: Partner[] = [
   { id: 'uzexpo', kind: 'org', show: 'site', name: { ru: 'UzExpoCentre', en: 'UzExpoCentre' }, note: { ru: 'отраслевой партнёр', en: 'industry partner' } },
   { id: 'cci-uz', kind: 'state', show: 'site', name: { ru: 'Торгово-промышленная палата', en: 'Chamber of Commerce & Industry' } },
   { id: 'hotel-partner', kind: 'hotel', show: 'site', name: { ru: 'Hilton Samarkand', en: 'Hilton Samarkand' }, note: { ru: 'рекомендованный отель', en: 'recommended hotel', hasLogo: false } },
+  /* The centre's own partner list, as published by the organiser (sofexpo.uz, 2026).
+     Names and links come from there; artwork still arrives per partner, so every tile
+     keeps the monogram until the real file is dropped in. */
+  { id: 'samarkand-region', kind: 'state', show: 'site', name: { ru: 'Хокимият Самаркандской области', en: 'Samarkand Regional Administration' }, note: { ru: 'при поддержке', en: 'with support of' }, url: 'https://samarkand.uz/' },
+  { id: 'uza', kind: 'media', show: 'site', name: { ru: 'UzA — Национальное информационное агентство Узбекистана', en: 'UzA — National News Agency of Uzbekistan' }, note: { ru: 'информационный партнёр', en: 'media partner' }, url: 'https://uza.uz/' },
+  { id: 'tashkent-times', kind: 'media', show: 'site', name: { ru: 'The Tashkent Times', en: 'The Tashkent Times' }, note: { ru: 'информационный партнёр', en: 'media partner' }, url: 'https://tashkenttimes.uz/' },
+  { id: 'expomap', kind: 'org', show: 'site', name: { ru: 'Expomap', en: 'Expomap' }, note: { ru: 'отраслевой каталог', en: 'industry directory' }, url: 'https://expomap.ru/' },
+  { id: 'exposale', kind: 'service', show: 'site', name: { ru: 'Exposale', en: 'Exposale' }, note: { ru: 'отраслевой каталог', en: 'industry directory' }, url: 'https://exposale.net/en' },
+  { id: 'totalexpo', kind: 'org', show: 'site', name: { ru: 'TotalExpo', en: 'TotalExpo' }, note: { ru: 'отраслевой каталог', en: 'industry directory' }, url: 'https://totalexpo.ru/' },
+  { id: 'worldexpo', kind: 'org', show: 'site', name: { ru: 'WorldExpo', en: 'WorldExpo' }, note: { ru: 'отраслевой каталог', en: 'industry directory' }, url: 'https://worldexpo.pro/' },
+  { id: 'advantour', kind: 'service', show: 'site', name: { ru: 'Advantour', en: 'Advantour' }, url: 'https://www.advantour.com/' },
+  { id: 'led-master', kind: 'service', show: 'site', name: { ru: 'LED Master', en: 'LED Master' }, url: 'https://www.instagram.com/ledmasteruz/' },
+  { id: 'iimps', kind: 'org', show: 'site', name: { ru: 'International Institute of Meta Professional', en: 'International Institute of Meta Professional' }, url: 'https://iimps.org/' },
 ];
 
 const EVENT: Partner[] = [
   /* FOODERA EXPO 2026 — the organizer is the co-hosts + retail/food bodies */
   { id: 'foodera-organizer', kind: 'org', show: 'event', event: 'foodera-expo', name: { ru: 'RESOF EXPO', en: 'RESOF EXPO' }, note: { ru: 'организатор', en: 'organizer' } },
-  { id: 'foodera-chamber', kind: 'state', show: 'event', event: 'foodera-expo', name: { ru: 'Хокимият Самаркандской области', en: 'Samarkand Regional Administration' }, note: { ru: 'при поддержке', en: 'with support of' } },
   { id: 'foodera-retail', kind: 'org', show: 'event', event: 'foodera-expo', name: { ru: 'Союз предприятий пищевой промышленности', en: 'Food Industry Union' }, note: { ru: 'отраслевой союз', en: 'industry union' } },
   /* BUILDPRO EXPO 2026 */
   { id: 'buildpro-organizer', kind: 'org', show: 'event', event: 'buildpro-expo', name: { ru: 'RESOF EXPO', en: 'RESOF EXPO' }, note: { ru: 'организатор', en: 'organizer' } },

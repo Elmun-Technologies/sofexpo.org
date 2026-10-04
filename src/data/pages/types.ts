@@ -74,6 +74,15 @@ export interface BlockShot {
   alt?: string;
   caption?: string;
 }
+/**
+ * A named group of photos inside a `gallery` block. Sixteen captioned photos in one
+ * flat grid answer nothing; the same photos grouped by the space they show answer
+ * "where will my stand be", "can I bring machinery" and "is there a room to talk".
+ */
+export interface BlockAlbum {
+  title: string;
+  items?: BlockShot[];
+}
 export interface BlockQA {
   q: string;
   a: string;
@@ -117,6 +126,8 @@ export interface Block {
   railCount?: number;
   /** collection-ish blocks */
   items?: BlockItem[];
+  /** `gallery` block: photos grouped under their own headings (see BlockAlbum) */
+  albums?: BlockAlbum[];
   head?: string[];
   rows?: string[][];
   paragraphs?: string[];

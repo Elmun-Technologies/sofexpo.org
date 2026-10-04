@@ -180,7 +180,46 @@
       });
     };
 
+    /* A link that names the show (/request-stand/?event=foodera-expo, or sofexpo.uz's
+       ?exhibition=<slug>) should arrive with the show already chosen: one field less to
+       fill is one field less to abandon. The show names live in the form itself — the
+       script matches the slug's first word against whatever the page renders, in any
+       language, so nothing has to be duplicated here. */
+    const prefillEvent = () => {
+      let raw = '';
+      try {
+        const qs = new URLSearchParams(location.search);
+        raw = (qs.get('event') || qs.get('exhibition') || '').trim();
+      } catch (err) {
+        return;
+      }
+      if (!raw) return;
+      const norm = (v) => String(v || '').toLowerCase().replace(/[^a-z0-9а-яё]+/g, '');
+      const token = norm(raw.split('-')[0]);
+      if (!token) return;
+      let label = '';
+      /* Values are set silently: the stand quiz advances on `change`, so firing one here
+         would scroll the visitor past the hero and log a quiz start they never made.
+         The selected card is visible, and one tap on it moves the quiz on as usual. */
+      document.querySelectorAll('select[name="event"]').forEach((sel) => {
+        const hit = Array.from(sel.options).find((o) => norm(o.textContent || o.value).includes(token));
+        if (!hit) return;
+        sel.value = hit.value;
+        label = label || hit.value;
+      });
+      document.querySelectorAll('input[type="radio"][name="event"]').forEach((radio) => {
+        if (!norm(radio.value).includes(token)) return;
+        radio.checked = true;
+        label = label || radio.value;
+      });
+      if (!label) return;
+      document.querySelectorAll('input[name="event"]:not([type="hidden"])').forEach((input) => {
+        if (!input.value) input.value = label;
+      });
+    };
+
     const initAll = () => {
+      prefillEvent();
       getForms().forEach(initForm);
     };
 

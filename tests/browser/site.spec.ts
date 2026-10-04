@@ -76,7 +76,7 @@ test('localized content remains usable without JavaScript',async({browser})=>{
   for(const c of cases.slice(2)) {
     await page.goto(`${process.env.BASE_URL||'http://127.0.0.1:4321'}/${c.locale}/venue/`);
     await expect(page.locator('h1')).toBeVisible();await expect(page.locator('html')).toHaveAttribute('lang',c.lang);
-    await page.locator('.language-picker summary').click();await expect(page.locator('.language-picker__menu a')).toHaveCount(4);
+    await page.locator('.language-picker summary').click();await expect(page.locator('.language-picker__menu a')).toHaveCount(5); // ru, en, zh, tr, uz
   }
   await context.close();
 });

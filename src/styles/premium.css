@@ -163,7 +163,7 @@ html:lang(tr) { --f-body: "TT Norms Pro", Arial, sans-serif; }
   .language-picker { font-size: .8rem; }
   .language-picker summary { gap: .4rem; }
   .language-picker summary svg { display: inline; }
-  .home-hero__bg::after { background: linear-gradient(90deg,rgba(9,31,25,.93) 0%,rgba(9,31,25,.77) 45%,rgba(9,31,25,.35) 100%),linear-gradient(0deg,rgba(9,31,25,.85),transparent 55%); }
+  .home-hero__bg::after { background: linear-gradient(90deg,rgba(9,31,25,.9) 0%,rgba(9,31,25,.66) 38%,rgba(9,31,25,.16) 70%,rgba(9,31,25,.3) 100%),linear-gradient(0deg,rgba(9,31,25,.82),transparent 42%); }
   .home-hero__in { grid-template-columns: minmax(0,1fr) 300px; }
   .home-hero h1 { font-size: 3.5rem; max-width: 14ch; }
   .home-hero__kicker { font-size: .68rem; margin-bottom: 1.8rem; }

@@ -20,7 +20,7 @@ import sharp from 'sharp';
 
 const SRC = 'images';
 const OUT = 'public/images';
-const WIDTHS = [640, 1024, 1600];
+const WIDTHS = [640, 1024, 1600, 2048];
 
 /** name → [source file, focal position] ; position drives the smart crop. */
 const MAP = {
@@ -123,8 +123,27 @@ const HERO = new Set([
 
 const ratio = 16 / 10;
 
+/**
+ * Tone pass (docs/15 §11). The client's photos are phone and event-photographer frames shot
+ * under hall lighting: flat, grey, slightly under-exposed. A 0.5–99.5 percentile stretch puts
+ * real blacks and whites back, a small saturation lift brings stands and products forward,
+ * and a final unsharp pass at output size restores the edge contrast every resize removes.
+ * Plans, diagrams and banners are artwork and are left exactly as drawn.
+ */
+const tone = (p, name) =>
+  NO_CROP.has(name)
+    ? p
+    : p
+        .normalise({ lower: 0.5, upper: 99.5 })
+        .modulate({ saturation: 1.1, brightness: 1.03 })
+        .sharpen({ sigma: 0.7, m1: 0.5, m2: 1.2 });
+
+/** images/hd/<stem>.jpg is the Real-ESRGAN 4x master of a small source (scripts/upscale-photos.py) */
+const hdOf = (file) => path.join(SRC, 'hd', file.replace(/\.[a-z]+$/i, '.jpg'));
+
 async function one(name, [file]) {
-  const src = path.join(SRC, file);
+  const hd = hdOf(file);
+  const src = existsSync(hd) ? hd : path.join(SRC, file);
   if (!existsSync(src)) {
     console.warn(`  ! missing source ${src} for ${name}`);
     return 0;
@@ -132,8 +151,10 @@ async function one(name, [file]) {
   const meta = await sharp(src).metadata();
   const hero = HERO.has(name);
   /* a tiny source is never blown up to 1600: it is capped at 3x, which keeps the artefacts
-     below what a card-sized viewport can resolve */
-  const maxW = hero ? Math.min(1600, Math.max(640, (meta.width ?? 0) * 3)) : Math.min(1600, meta.width ?? 1600);
+     below what a card-sized viewport can resolve. Full-bleed heroes with a real (or
+     AI-restored) 2000px+ master also get a 2048 rung for 1440px screens at 2x. */
+  const top = hero && (meta.width ?? 0) >= 2000 ? 2048 : 1600;
+  const maxW = hero ? Math.min(top, Math.max(640, (meta.width ?? 0) * 3)) : Math.min(1600, meta.width ?? 1600);
   let bytes = 0;
 
   const crop = (w) => {
@@ -147,7 +168,7 @@ async function one(name, [file]) {
       kernel: 'lanczos3',
       withoutEnlargement: !hero,
     });
-    return hero && (meta.width ?? 0) < w ? out.sharpen({ sigma: 0.8, m1: 0.6, m2: 1.4 }) : out;
+    return tone(out, name);
   };
 
   /* The JPEG has two jobs and neither of them needs 1600 pixels:
@@ -159,7 +180,7 @@ async function one(name, [file]) {
      actually receives — is untouched. */
   const JPEG_MAX = 1200;
   const jpg = path.join(OUT, `${name}.jpg`);
-  await sharp(src, { failOn: 'none' })
+  await tone(sharp(src, { failOn: 'none' })
     .rotate()
     .resize(
       NO_CROP.has(name)
@@ -172,7 +193,7 @@ async function one(name, [file]) {
             kernel: 'lanczos3',
             withoutEnlargement: !hero,
           },
-    )
+    ), name)
     .jpeg({ quality: 76, progressive: true, mozjpeg: true, chromaSubsampling: '4:2:0' })
     .toFile(jpg);
   bytes += statSync(jpg).size;
@@ -182,7 +203,7 @@ async function one(name, [file]) {
     const out = path.join(OUT, `${name}-${w}.webp`);
     /* bigger rung = seen larger but also further from the eye's detail budget: the quality
        ladder drops as the pixel count climbs, which is what keeps a 1600w hero under 200 KB */
-    const q = w >= 1600 ? 64 : w >= 1024 ? 70 : 74;
+    const q = w >= 2048 ? 60 : w >= 1600 ? 64 : w >= 1024 ? 70 : 74;
     await crop(w).webp({ quality: q, effort: 6 }).toFile(out);
     bytes += statSync(out).size;
   }

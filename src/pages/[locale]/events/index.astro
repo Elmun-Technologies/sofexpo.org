@@ -14,6 +14,7 @@ import { abs, itemListJsonLd, breadcrumbJsonLd, organizationJsonLd } from '@/lib
 import Base from '@/layouts/Base.astro';
 import SectionHead from '@/components/SectionHead.astro';
 import Icon from '@/components/Icon.astro';
+import ShowLogo from '@/components/ShowLogo.astro';
 import CtaBand from '@/components/CtaBand.astro';
 import { bigDate, daysUntil, industryColor, industryLabel } from '@/lib/labels';
 
@@ -118,6 +119,10 @@ const copy = {
             const status = past ? copy.statusPast : e.status === 'open' ? copy.statusOpen : copy.statusReg;
             return (
               <a class="cal__row" href={L(`/events/${e.slug}/`)} data-ind={e.industry} style={{ '--ic': industryColor(e.industry) } as Record<string, string>} aria-label={`${e.brand[locale]} — ${e.dates.display[locale]}`}>
+                <span class="cal__img" aria-hidden="true">
+                  <img src={e.heroImage.replace(/\.jpg$/, '-640.webp')} alt="" aria-hidden="true" width="640" height="400" loading="lazy" decoding="async" />
+                  <ShowLogo slug={e.slug} height={30} class="cal__logo" />
+                </span>
                 <span class="cal__date">
                   <b>{d.days}</b>
                   <span>{d.month} {d.year}</span>

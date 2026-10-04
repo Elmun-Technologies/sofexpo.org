@@ -275,11 +275,21 @@ const heroKicker =
     gap: 0.6rem;
     padding: 1.2rem 1.3rem;
     border-radius: var(--r-lg);
-    background: rgba(10, 26, 17, 0.5);
+    background: color-mix(in srgb, var(--scrim, #0a1a11) 72%, transparent);
     backdrop-filter: blur(14px);
     border: 1px solid rgba(255, 255, 255, 0.18);
     font-size: 0.85rem;
   }
+  /* the countdown sits on the lighter right side of the photo: same glass as the facts */
+  .ehero__side :global(.cd-wrap),
+  .ehero__archive {
+    padding: 1rem 1.1rem 0.2rem;
+    border-radius: var(--r-lg);
+    background: color-mix(in srgb, var(--scrim, #0a1a11) 72%, transparent);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+  .ehero__archive { padding-bottom: 1rem; }
   .ehero__key div {
     display: flex;
     justify-content: space-between;
@@ -296,6 +306,17 @@ const heroKicker =
     .ehero__in {
       grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
       align-items: end;
+    }
+    /* two columns: the wash only has to carry the headline column, so the photograph stays
+       a photograph on the right instead of a navy sheet (docs/15 §11); the side panels carry
+       their own glass ground */
+    .ehero::after {
+      background:
+        linear-gradient(100deg, color-mix(in srgb, var(--scrim) 93%, transparent) 0%, color-mix(in srgb, var(--scrim) 74%, transparent) 36%, color-mix(in srgb, var(--scrim) 22%, transparent) 68%, color-mix(in srgb, var(--scrim) 30%, transparent) 100%),
+        linear-gradient(to top, color-mix(in srgb, var(--scrim) 70%, transparent), transparent 40%);
+    }
+    .ehero--past::after {
+      background: linear-gradient(100deg, color-mix(in srgb, var(--scrim) 94%, transparent) 0%, color-mix(in srgb, var(--scrim) 76%, transparent) 40%, color-mix(in srgb, var(--scrim) 34%, transparent) 100%);
     }
   }
 </style>

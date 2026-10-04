@@ -1110,34 +1110,14 @@ a.chip:hover {
     color var(--tr);
 }
 
+/* 2026-10-04 (docs/15 §11): the section a visitor is in, and the one under the pointer, are
+   marked by a 2px rule on the header's bottom edge — not by a filled pill */
 .nav__link:hover,
-.nav__item:focus-within .nav__link {
-  background: var(--cream-2);
-}
-
+.nav__item:focus-within .nav__link,
 .nav__link[aria-current="page"] {
-  background: var(--evergreen);
-  color: #ffffff;
+  color: var(--evergreen);
 }
 
-.mega {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: -20px;
-  min-width: 340px;
-  background: var(--paper);
-  border: 1px solid var(--line);
-  border-radius: var(--r-lg);
-  box-shadow: var(--shadow-lift);
-  padding: 0.65rem;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-6px);
-  transition:
-    opacity var(--tr),
-    transform var(--tr),
-    visibility var(--tr);
-}
 
 .nav__item:hover .mega,
 .nav__item:focus-within .mega {
@@ -1146,36 +1126,10 @@ a.chip:hover {
   transform: none;
 }
 
-.mega a {
-  display: grid;
-  gap: 0.15rem;
-  padding: 0.6rem 0.75rem;
-  border-radius: var(--r-sm);
-  text-decoration: none;
-  font-size: 0.93rem;
-  line-height: 1.35;
-}
 
-.mega a b {
-  font-weight: 600;
-  color: var(--ink);
-}
 
-.mega a small {
-  font-size: 0.8rem;
-  line-height: 1.35;
-  color: var(--ink-60);
-}
 
-.mega a:hover b {
-  color: var(--evergreen);
-}
 
-.mega--grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: 0.35rem;
-}
 
 .mnav__ctas {
   display: grid;
@@ -1183,9 +1137,6 @@ a.chip:hover {
   padding-top: 1.2rem;
 }
 
-.mega a:hover {
-  background: var(--cream);
-}
 
 .hdr__tools {
   display: flex;
@@ -1649,10 +1600,10 @@ body.nav-open .mnav {
 }
 
 .socials a {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.24);
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
   display: grid;
   place-items: center;
   transition: background-color var(--tr), border-color var(--tr), transform var(--tr);
@@ -1660,8 +1611,7 @@ body.nav-open .mnav {
 
 .socials a:hover {
   background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.55);
-  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 .socials a:hover {
@@ -2882,4 +2832,172 @@ h2.h3 { font-size: var(--t-h3); line-height: 1.18; letter-spacing: -0.014em; }
   .home-hero__date b {
     font-size: clamp(3rem, 2rem + 4vw, 5.8rem);
   }
+}
+
+
+/* ---------- mega-menu (docs/15 §11) ----------
+   One full-width panel under the header bar, the way large trade-fair sites do it:
+   the section's name and purpose on the left, its pages in two quiet columns, a featured
+   card on the right (the next show, or the people to call). The nav item spans the bar's
+   full height so the pointer never crosses a gap between the link and the panel. */
+.nav {
+  align-self: stretch;
+}
+.nav__item {
+  position: static;
+  display: flex;
+}
+.nav__link {
+  position: relative;
+  height: 100%;
+  border-radius: 0;
+  background: none;
+}
+.nav__link::after {
+  content: "";
+  position: absolute;
+  left: 0.65rem;
+  right: 0.65rem;
+  bottom: 0;
+  height: 2px;
+  background: var(--evergreen);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--tr);
+}
+.nav__item:hover .nav__link::after,
+.nav__item:focus-within .nav__link::after,
+.nav__link[aria-current="page"]::after {
+  transform: scaleX(1);
+}
+.nav__caret {
+  opacity: 0.45;
+  transition: transform var(--tr), opacity var(--tr);
+}
+.nav__item:hover .nav__caret,
+.nav__item:focus-within .nav__caret {
+  transform: rotate(180deg);
+  opacity: 0.85;
+}
+.mega {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+  border-radius: 0 0 var(--r-lg) var(--r-lg);
+  box-shadow: 0 28px 56px -16px rgba(16, 24, 20, 0.2), 0 1px 0 var(--line);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity var(--tr), transform var(--tr), visibility var(--tr);
+}
+.mega__in {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.9fr) minmax(0, 2.4fr) minmax(240px, 1fr);
+  gap: clamp(1.6rem, 1rem + 1.6vw, 3rem);
+  padding: clamp(1.6rem, 1.2rem + 1vw, 2.4rem) clamp(1.4rem, 1rem + 1vw, 2.4rem) clamp(1.8rem, 1.3rem + 1vw, 2.6rem);
+}
+.mega__title {
+  margin: 0 0 0.5rem;
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.mega__lead {
+  margin: 0 0 1.2rem;
+  max-width: 30ch;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--ink-60);
+}
+.mega__all {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding-bottom: 2px;
+  border-bottom: 1px solid currentColor;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--evergreen);
+  text-decoration: none;
+}
+.mega__links {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 clamp(1.6rem, 1rem + 1.6vw, 3rem);
+  border-left: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.2rem 2rem;
+  align-content: start;
+}
+.mega__links a {
+  display: grid;
+  gap: 0.2rem;
+  margin-inline: -0.75rem;
+  padding: 0.7rem 0.75rem;
+  border-radius: var(--r-sm);
+  text-decoration: none;
+  transition: background-color var(--tr);
+}
+.mega__t {
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--ink);
+}
+.mega__d {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--ink-60);
+}
+.mega__links a:hover,
+.mega__links a[aria-current="page"] {
+  background: var(--cream);
+}
+.mega__links a:hover .mega__t,
+.mega__links a[aria-current="page"] .mega__t {
+  color: var(--evergreen);
+}
+.mega__card {
+  display: grid;
+  gap: 0.45rem;
+  align-content: start;
+  justify-items: start;
+  padding: 1.4rem;
+  border-radius: var(--r-lg);
+  background: var(--cream-2);
+  color: var(--ink);
+  text-decoration: none;
+}
+.mega__card-k {
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-60);
+}
+.mega__card b {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+.mega__card > span:not(.mega__card-k):not(.mega__card-cta):not(.slogo) {
+  font-size: 0.88rem;
+  color: var(--ink-60);
+}
+.mega__card--contact a {
+  color: inherit;
+  text-decoration: none;
+}
+.mega__card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--evergreen) !important;
 }

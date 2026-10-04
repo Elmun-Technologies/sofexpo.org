@@ -822,6 +822,7 @@ export const footerColumns = [
         en: "BUILDPRO EXPO",
       },
       { path: "/events/agropro-expo/", ru: "AGROPRO EXPO", en: "AGROPRO EXPO" },
+      { path: "/events/world-edu-expo/", ru: "WORLD EDU EXPO", en: "WORLD EDU EXPO" },
       {
         path: "/events/ecom-retail-expo/",
         ru: "ECOM & RETAIL EXPO",

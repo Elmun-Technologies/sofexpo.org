@@ -6,7 +6,6 @@ import { useUI } from '@/i18n/ui';
 import type { ExpoEvent } from '@/data/events';
 import type { EventPage } from '@/data/pages/event-pages';
 import { abs, breadcrumbJsonLd, eventJsonLd, faqJsonLd, organizationJsonLd } from '@/lib/seo';
-import { pageCrumbs } from '@/lib/nav';
 import Base from '@/layouts/Base.astro';
 import EventHero from '@/components/EventHero.astro';
 import EventNav from '@/components/EventNav.astro';
@@ -31,7 +30,23 @@ const ru = locale === 'ru';
 const L = (p: string) => localize(locale, p);
 const meta = page.meta[locale];
 const blocks = page.blocks[locale];
-const crumbs = pageCrumbs(locale, page.path);
+/* Exhibitions / <show> / <section>: the show's own pages are not in the site menu, so the
+   trail is built from the show itself — never from the URL slug ("program") */
+const showBase = `/events/${event.slug}/`;
+const sectionNames: Record<string, { ru: string; en: string }> = {
+  exhibitors: { ru: 'Экспонентам', en: 'For exhibitors' },
+  visitors: { ru: 'Посетителям', en: 'For visitors' },
+  program: { ru: 'Деловая программа', en: 'Business programme' },
+  buyers: { ru: 'Программа закупщика', en: 'Buyer programme' },
+  award: { ru: 'Конкурс', en: 'Contest' },
+};
+const sectionKey = page.path.slice(showBase.length).replace(/\/$/, '');
+const sectionName = sectionNames[sectionKey]?.[locale] ?? meta.title.split(' — ')[0];
+const crumbs = [
+  { name: t('nav.events'), path: '/events/' },
+  { name: event.brand[locale], path: showBase },
+  ...(page.path === showBase ? [] : [{ name: sectionName, path: page.path }]),
+];
 const heroBlocks = [page.hero];
 const past = event.status === 'past';
 const trail = [
@@ -136,6 +151,7 @@ const after = ((page.after ?? []) as SectionKey[]).filter((s) => s !== 'faq' || 
     {event}
     variant={past ? 'past' : 'open'}
     kicker={page.hero.kicker[locale]}
+    soloKicker
     title={page.hero.title[locale]}
     lead={page.hero.lead[locale]}
     bullets={page.hero.bullets?.map((b) => b[locale])}

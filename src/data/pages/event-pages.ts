@@ -2344,7 +2344,7 @@ eventPages["world-edu-expo"] = {
     },
     hero: {
       kicker: {
-        ru: "Выставка образования · spring",
+        ru: "Выставка образования · весна",
         en: "Education exhibition · spring",
       },
       title: {

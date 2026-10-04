@@ -7,11 +7,9 @@ import BrandMark from '@/components/BrandMark.astro';
 import Ornament from '@/components/Ornament.astro';
 import { localize, type SourceLocale as Locale } from '@/i18n/config';
 import { useUI } from '@/i18n/ui';
-import { upcoming } from '@/data/events';
 import Icon from '@/components/Icon.astro';
-import AskAI from '@/components/AskAI.astro';
 
-const { locale, path = '/' } = Astro.props as { locale: Locale; path?: string };
+const { locale } = Astro.props as { locale: Locale; path?: string };
 const t = useUI(locale);
 const P = (p: string) => localize(locale, p);
 const year = 2026;
@@ -86,22 +84,6 @@ const ru = locale === 'ru';
         ))
       }
     </div>
-
-    <div style="margin-top:clamp(1.4rem,1rem + 2vw,2.4rem)">
-      <h3>{t('footer.events')}</h3>
-      <div class="pill-row">
-        {upcoming.map((e) => (
-          <a class="chip" style="background:rgba(255, 255, 255, .08);border-color:rgba(255, 255, 255, .2);color:#ffffff" href={P(`/events/${e.slug}/`)}>
-            {e.shortName} · {e.dates.display[locale]}
-          </a>
-        ))}
-        <a class="chip" style="background:rgba(255, 255, 255, .08);border-color:var(--gold-soft);color:#ffffff" href={P("/events/")}>
-          {t('cta.all')}
-        </a>
-      </div>
-    </div>
-
-    <AskAI locale={locale} path={path} />
 
     <div class="ftr__bottom">
       <p style="margin:0">

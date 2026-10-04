@@ -82,6 +82,8 @@ export const venuePages: PageDef[] = [
             { src: "/images/outdoor-area.jpg", caption: "Открытая площадка 5 000 м²: крупногабаритная техника" },
             { src: "/images/conference-audience.jpg", caption: "Конференц-зал во время деловой программы" },
             { src: "/images/hall-windows.jpg", caption: "Витражи и ворота для заезда техники" },
+            { src: "/images/venue-aerial.jpg", caption: "Центр сверху: павильон, открытая площадка и парковка" },
+            { src: "/images/cafe-interior.jpg", caption: "Кафе в павильоне" },
           ],
         },
         {
@@ -285,6 +287,8 @@ export const venuePages: PageDef[] = [
             { src: "/images/outdoor-area.jpg", caption: "The 5,000 m² open-air area: large machinery" },
             { src: "/images/conference-audience.jpg", caption: "Conference hall during the business programme" },
             { src: "/images/hall-windows.jpg", caption: "Glazing and the drive-in gates" },
+            { src: "/images/venue-aerial.jpg", caption: "The centre from above: pavilion, open-air area and parking" },
+            { src: "/images/cafe-interior.jpg", caption: "The cafe inside the pavilion" },
           ],
         },
         {

@@ -83,6 +83,8 @@ export const companyPages: PageDef[] = [
             { src: "/images/officials-tour.jpg", caption: "Официальная делегация на обходе экспозиции" },
             { src: "/images/buyers-talk.jpg", caption: "Переговоры закупщика с экспонентом на стенде" },
             { src: "/images/stand-modern.jpg", caption: "Индивидуальная застройка: остров с переговорной зоной" },
+            { src: "/images/visitors-flowers.jpg", caption: "Цветочная экспозиция: посетители на садовом разделе" },
+            { src: "/images/stand-agro-chem.jpg", caption: "Стенд агрохимии: продукция на полках и консультанты" },
           ],
         },
         {
@@ -188,6 +190,8 @@ export const companyPages: PageDef[] = [
             { src: "/images/officials-tour.jpg", caption: "An official delegation touring the exhibition" },
             { src: "/images/buyers-talk.jpg", caption: "A buyer in conversation with an exhibitor" },
             { src: "/images/stand-modern.jpg", caption: "Custom build: an island stand with a meeting area" },
+            { src: "/images/visitors-flowers.jpg", caption: "Horticulture display: visitors in the garden section" },
+            { src: "/images/stand-agro-chem.jpg", caption: "Agrochemistry stand: product on the shelves and consultants on hand" },
           ],
         },
         {

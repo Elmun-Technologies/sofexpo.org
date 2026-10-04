@@ -2076,7 +2076,7 @@ body.nav-open .mnav {
 
 @media (min-width: 1080px) {
   .cal__row {
-    grid-template-columns: 168px 118px minmax(0, 1.25fr) 180px 118px minmax(160px, auto);
+    grid-template-columns: 160px 112px minmax(0, 1.25fr) 150px 142px minmax(150px, auto);
     gap: 1.1rem;
     grid-template-areas: none;
     padding: 1.05rem 1.3rem;

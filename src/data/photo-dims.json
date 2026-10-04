@@ -8,12 +8,12 @@
     750
   ],
   "buyers-talk": [
-    768,
-    432
+    1200,
+    750
   ],
   "cafe-interior": [
-    900,
-    563
+    1200,
+    750
   ],
   "car-road": [
     1200,
@@ -24,8 +24,8 @@
     750
   ],
   "conference-room": [
-    900,
-    563
+    1200,
+    750
   ],
   "documents": [
     1200,
@@ -64,20 +64,20 @@
     849
   ],
   "food-tasting-counter": [
-    768,
-    432
+    1200,
+    750
   ],
   "food-tasting": [
-    768,
-    432
+    1200,
+    750
   ],
   "greenhouse-tomatoes": [
-    768,
-    480
+    1200,
+    750
   ],
   "hall-aisle-red": [
-    900,
-    563
+    1200,
+    750
   ],
   "hall-crowd": [
     1200,
@@ -96,8 +96,8 @@
     750
   ],
   "hall-walk": [
-    768,
-    432
+    1200,
+    750
   ],
   "hall-windows": [
     1200,
@@ -116,24 +116,24 @@
     750
   ],
   "machinery-outdoor": [
-    768,
-    480
+    1200,
+    750
   ],
   "office-people": [
     1200,
     750
   ],
   "officials-tour": [
-    768,
-    480
+    1200,
+    750
   ],
   "opening-ceremony": [
-    768,
-    480
+    1200,
+    750
   ],
   "outdoor-area": [
-    768,
-    432
+    1200,
+    750
   ],
   "plane-window": [
     612,
@@ -156,44 +156,44 @@
     555
   ],
   "stand-agro-chem": [
-    768,
-    480
+    1200,
+    750
   ],
   "stand-agro": [
-    768,
-    480
+    1200,
+    750
   ],
   "stand-equipment": [
-    768,
-    432
+    1200,
+    750
   ],
   "stand-fertilizer": [
-    768,
-    480
+    1200,
+    750
   ],
   "stand-green": [
     1200,
     750
   ],
   "stand-industrial": [
-    768,
-    480
+    1200,
+    750
   ],
   "stand-modern": [
-    1049,
-    656
+    1200,
+    750
   ],
   "students-campus": [
-    768,
-    480
+    1200,
+    750
   ],
   "supermarket-aisle": [
-    768,
-    432
+    1200,
+    750
   ],
   "venue-aerial": [
-    900,
-    563
+    1200,
+    750
   ],
   "venue-conference": [
     1200,
@@ -208,7 +208,7 @@
     750
   ],
   "visitors-flowers": [
-    768,
-    480
+    1200,
+    750
   ]
 }

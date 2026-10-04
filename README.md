@@ -29,8 +29,12 @@ same source tree.
 - **Kontent qayerda.** Matn va faktlar `src/data/**` (TS) va `src/content/**` (markdown);
   qolganini marshrutlar va komponentlar o'zi yig'adi. Sahifa qo'shish uchun shablon
   yozilmaydi — ma'lumot qo'shiladi (`docs/01` §6).
-- **To'liq hujjatlar.** `docs/01` … `docs/08` (arxitektura, SEO-kontrakt, link-map, dizayn
-  tizimi, subdomenlar, deploy, dizayn-revyu, UI-audit). Quyida qisqa yo'naltirgich bor.
+- **To'liq hujjatlar.** `docs/01` … `docs/13` (arxitektura, SEO-kontrakt, link-map, dizayn
+  tizimi, subdomenlar, deploy, dizayn-revyu, UI-audit, lokallar, konversiya, vidjetlar,
+  raqobatchilar tahlili). Quyida qisqa yo'naltirgich bor.
+- **Raqobatchilar tahlili.** `docs/13-food-shows-benchmark.md` — jahon oziq-ovqat
+  ko'rgazmalari (Gulfood, Anuga, SIAL, THAIFEX, FHA, FOODEX, WorldFood, Fancy Food) saytlari
+  tahlili va FOODERA uchun P0/P1/P2 takliflar ro'yxati.
 
 ---
 
@@ -267,6 +271,12 @@ DNS: CNAME per subdomain, A/ALIAS for the apex. Day-X checklist, redirect rules 
 | [docs/06-deploy.md](docs/06-deploy.md)                         | Cloudflare Pages / nginx / DNS, day-X checklist, rollback         |
 | [docs/07-design-review.md](docs/07-design-review.md)           | The 2026-09-18 design review: what was wrong and what changed     |
 | [docs/08-ui-audit-top3.md](docs/08-ui-audit-top3.md)           | The 2026-09-21 UI audit against the "top-3 in the CIS" goal       |
+| [docs/09-premium-ui-and-locales.md](docs/09-premium-ui-and-locales.md) | Premium UI pass, RU/EN/ZH/TR/UZ catalogs, translation QA     |
+| [docs/10-download-readiness.md](docs/10-download-readiness.md) | Download readiness and the final-PDF release gate                |
+| [docs/11-conversion-system.md](docs/11-conversion-system.md)   | Conversion system: CTA, LiveChat, popups, per-intent forms        |
+| [docs/11-lead-quiz.md](docs/11-lead-quiz.md)                   | Lead quiz: anatomy, telemetry, payload, CRM fan-out               |
+| [docs/12-widgets-and-partners.md](docs/12-widgets-and-partners.md) | Widget removal, partner logo wall, colour harmony             |
+| [docs/13-food-shows-benchmark.md](docs/13-food-shows-benchmark.md) | **UZ** · Benchmark of Gulfood, Anuga, SIAL, THAIFEX, FHA, FOODEX, WorldFood, Fancy Food — and what to adopt for FOODERA |
 | [public/files/README.md](public/files/README.md)               | Note on the placeholder PDFs                                      |
 
 Conventions worth keeping: never edit `dist/` by hand (change `src/` and rebuild); never

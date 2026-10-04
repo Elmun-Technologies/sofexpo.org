@@ -18,6 +18,7 @@ import Faq from '@/components/Faq.astro';
 import LeadForm from '@/components/LeadForm.astro';
 import FeatureGrid from '@/components/FeatureGrid.astro';
 import StatBand from '@/components/StatBand.astro';
+import MarketReach from '@/components/MarketReach.astro';
 import PostCard from '@/components/PostCard.astro';
 import Photo from '@/components/Photo.astro';
 import EventCard from '@/components/EventCard.astro';
@@ -320,14 +321,17 @@ const jsonLd = [
           <p class="kicker">{copy.marketKicker}</p>
           <h2 set:html={copy.marketTitle} />
           <p class="lead">{copy.marketText}</p>
+          {/* Uzbekistan itself stays a sentence; the five neighbours around it are
+              numbers with a source (src/data/markets.ts). */}
           <div class="grid g2" style="margin-top:1.4rem">
-            {copy.countries.map(([c, note]) => (
+            {copy.countries.slice(0, 1).map(([c, note]) => (
               <div class="mini">
                 <b>{c}</b>
                 <span>{note}</span>
               </div>
             ))}
           </div>
+          <MarketReach {locale} />
         </div>
         <div>
           <Photo src="/images/samarkand-real.jpg" alt={ru ? 'Регистан в Самарканде' : 'Registan in Samarkand'} ratio="3/2" sizes="(max-width: 1080px) 100vw, 340px" />

@@ -15,6 +15,7 @@ import Countdown from '@/components/Countdown.astro';
 import Icon from '@/components/Icon.astro';
 import Photo from '@/components/Photo.astro';
 import { bigDate, industryLabel } from '@/lib/labels';
+import { eventIcsPath } from '@/lib/ics';
 
 const { locale, event, kicker, title, lead, variant = 'open' } = Astro.props as {
   locale: Locale;
@@ -39,12 +40,18 @@ const days = Math.max(
       864e5,
   ) + 1,
 );
+/* The dates of the one show you are coming to, as a file — next to the show's own page
+   on the host that owns it (src/lib/ics.ts). */
+const ics = eventIcsPath(event.slug, event.dates.start);
 const actions = [
   upcoming
     ? { label: t('cta.stand'), href: L('/request-stand/') + `?event=${event.slug}` }
     : { label: ru ? 'Следующая редакция' : 'Next edition', href: L(`/events/${event.slug}/`) },
   { label: t('cta.ticket'), href: L('/visitors/tickets/') },
   { label: ru ? 'Программа' : 'Programme', href: L(`/events/${event.slug}/program/`) },
+  ...(ics
+    ? [{ label: ru ? 'В календарь' : 'Add to calendar', href: ics, icon: 'calendar', download: true }]
+    : []),
 ];
 ---
 
@@ -79,7 +86,16 @@ const actions = [
         {event.status === 'open' && <li class="chip chip--live"><span class="dot" /> {ru ? 'Идёт набор участников' : 'Exhibitor sales open'}</li>}
       </ul>
       <div class="btn-row">
-        {actions.map((a, i) => <a class:list={['btn', { 'btn--gold': i === 0, 'btn--ghost': i > 0 }]} href={a.href.startsWith('http') ? a.href : a.href}>{a.label}</a>)}
+        {actions.map((a, i) => (
+          <a
+            class:list={['btn', { 'btn--gold': i === 0, 'btn--ghost': i > 0 }]}
+            href={a.href}
+            download={a.download ? `${event.slug}-${event.dates.start.slice(0, 4)}.ics` : undefined}
+          >
+            {a.icon && <Icon name={a.icon} size={15} />}
+            {a.label}
+          </a>
+        ))}
       </div>
       {event.highlight && upcoming && showHighlight && (
         <p class="ehero__note">

@@ -1,0 +1,60 @@
+---
+/**
+ * A show's own logo (docs/15 §10), drawn on the plate colour it was cut from so the raster
+ * edge never shows. Renders nothing for a show whose logo has not been delivered yet
+ * (AGROPRO, WORLD EDU) — callers keep their typeset wordmark in that case.
+ *
+ * Decorative by default (`alt=""`): every place that shows it also prints the show's name
+ * in text next to it. Pass `label` when the logo stands alone (header link).
+ */
+import { logoFor } from '@/lib/showLogos';
+
+interface Props {
+  slug: string | null | undefined;
+  /** drawn height in CSS px; the file is 2× that or more */
+  height?: number;
+  class?: string;
+  label?: string;
+  eager?: boolean;
+}
+const { slug, height = 48, class: cls, label, eager = false } = Astro.props as Props;
+const logo = logoFor(slug);
+const width = logo ? Math.round((logo.width / logo.height) * height) : 0;
+---
+
+{
+  logo && (
+    <span
+      class:list={['slogo', { 'slogo--round': logo.round }, cls]}
+      style={`--slogo-plate:${logo.plate};--slogo-h:${height}px`}
+      role={label ? 'img' : undefined}
+      aria-label={label}
+      aria-hidden={label ? undefined : 'true'}
+    >
+      <picture>
+        <source srcset={logo.webp} type="image/webp" />
+        <img src={logo.png} alt="" aria-hidden="true" width={width} height={height} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+      </picture>
+    </span>
+  )
+}
+
+<style>
+  .slogo {
+    display: inline-flex;
+    flex: none;
+    background: var(--slogo-plate);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 6px 18px rgba(0, 0, 0, 0.18);
+    line-height: 0;
+  }
+  .slogo img {
+    display: block;
+    height: var(--slogo-h);
+    width: auto;
+  }
+  .slogo--round {
+    border-radius: 50%;
+  }
+</style>

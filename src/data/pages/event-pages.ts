@@ -2422,7 +2422,7 @@ eventPages["world-edu-expo"] = {
             "Мы просим вузы приносить не только буклеты, а конкретные цифры: конкурс на направление, стоимость, стипендиальные места и требования к языку. Без этого разговор с абитуриентом не сложится.",
           ],
           image: "/images/students-campus.jpg",
-          imageAlt: "Студенты на кампусе — аудитория WORLD EDU EXPO",
+          imageAlt: "Группа посетителей в зале SOF EXPO — аудитория WORLD EDU EXPO",
         },
         {
           type: "quote",
@@ -2479,7 +2479,7 @@ eventPages["world-edu-expo"] = {
             "We ask universities to bring numbers, not only leaflets: competition per program, tuition, scholarship seats and language requirements. Without that, a conversation with an applicant does not happen.",
           ],
           image: "/images/students-campus.jpg",
-          imageAlt: "Students on campus — the WORLD EDU EXPO audience",
+          imageAlt: "A visitor group in the SOF EXPO hall — the WORLD EDU EXPO audience",
         },
         {
           type: "quote",

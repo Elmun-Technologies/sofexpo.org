@@ -25,7 +25,7 @@
         "en": "EXPO 2026"
       },
       "ornament": "islimi",
-      "contrast": "white/#16405E 10.89 · white/#1E5C88 7.14 · #1E5C88/#F7FAFD 6.82 · #12222E/#F7FAFD 15.49 · #8A6A32/#F7FAFD 4.79 · #C3A06A/#16405E 4.44 · #BBD8EE/#16405E 7.35",
+      "contrast": "checked by scripts/check-brand-contrast.mjs — every text/ground pair ≥ 4.5:1",
       "palette": {
         "evergreen": "#16405e",
         "evergreen2": "#1e5c88",
@@ -37,8 +37,8 @@
         "lineStrong": "#a9c2d6",
         "cream": "#f7fafd",
         "cream2": "#edf3f8",
-        "gold": "#8a6a32",
-        "goldSoft": "#c3a06a",
+        "gold": "#7f6129",
+        "goldSoft": "#c9a874",
         "ornament": "#bbd8ee",
         "mark": "#2c7fbb",
         "_markNote": "graphic only: 4.12 on paper, 2.52 on the host ground -> on dark the square is drawn white and the diamond gold-soft (BrandMark tone rules)"
@@ -58,23 +58,23 @@
       },
       "ornament": null,
       "mark": null,
-      "contrast": "white/#23282e 14.85 · white/#39424c 10.21 · #171b1f/#f7f7f6 16.15 · #4b535b/#f7f7f6 7.29 · #c9973c/#23282e 5.64 · #cf8a2c graphic-only (favicon/OG corner)",
+      "contrast": "checked by scripts/check-brand-contrast.mjs — every text/ground pair ≥ 4.5:1",
       "palette": {
-        "evergreen": "#23282e",
-        "evergreen2": "#39424c",
-        "moss": "#39424c",
-        "ink": "#171b1f",
-        "ink60": "#4b535b",
-        "ink40": "#5a626a",
-        "line": "#d8dbde",
-        "lineStrong": "#b2b8be",
-        "cream": "#f7f7f6",
-        "cream2": "#eef0f1",
-        "gold": "#9a6a1f",
-        "goldSoft": "#c9973c",
-        "ornament": "#c9d0d6",
-        "mark": "#cf8a2c",
-        "_markNote": "graphite ground, steel second tone, construction amber accent; wordmark only until the organiser badge arrives (mark: null)"
+        "evergreen": "#18212a",
+        "evergreen2": "#1f4285",
+        "moss": "#036461",
+        "ink": "#141a21",
+        "ink60": "#46515c",
+        "ink40": "#525d68",
+        "line": "#d7dee5",
+        "lineStrong": "#adbac7",
+        "cream": "#f6f8fa",
+        "cream2": "#ecf1f5",
+        "gold": "#036461",
+        "goldSoft": "#3cc6bd",
+        "ornament": "#c7dbe4",
+        "mark": "#048c88",
+        "_markNote": "taken from the organiser's BUILD PRO EXPO logo (images/brand-masters/buildpro-expo-logo.png): graphite-navy ground #18212a, house gradient teal #048c88 → blue #1f4285; teal darkened to #036461 for text on light (docs/15 §10)"
       }
     },
     "agropro-expo": {
@@ -90,7 +90,7 @@
       },
       "ornament": null,
       "mark": null,
-      "contrast": "white/#2c421f 11.02 · white/#40592a 7.83 · #1d2517/#f8f9f4 14.93 · #4b5842/#f8f9f4 7.16 · #c9ad58/#2c421f 5.04 · #5d7f35/#f8f9f4 4.36",
+      "contrast": "checked by scripts/check-brand-contrast.mjs — every text/ground pair ≥ 4.5:1",
       "palette": {
         "evergreen": "#2c421f",
         "evergreen2": "#40592a",
@@ -102,7 +102,7 @@
         "lineStrong": "#b6c2a4",
         "cream": "#f8f9f4",
         "cream2": "#eff2e8",
-        "gold": "#8a6d1c",
+        "gold": "#7a6018",
         "goldSoft": "#c9ad58",
         "ornament": "#cfdcc0",
         "mark": "#5d7f35",
@@ -122,7 +122,7 @@
       },
       "ornament": null,
       "mark": null,
-      "contrast": "white/#46242e 13.53 · white/#5f3442 10.21 · #2a1a20/#fbf8f9 15.70 · #5d4a52/#fbf8f9 7.75 · #c09a4e/#46242e 5.14 · #7a4456/#fbf8f9 7.13",
+      "contrast": "checked by scripts/check-brand-contrast.mjs — every text/ground pair ≥ 4.5:1",
       "palette": {
         "evergreen": "#46242e",
         "evergreen2": "#5f3442",
@@ -154,23 +154,55 @@
       },
       "ornament": null,
       "mark": null,
-      "contrast": "white/#123c42 11.99 · white/#1d565f 8.24 · #102226/#f7fbfb 15.75 · #43585c/#f7fbfb 7.22 · #e08a58/#123c42 4.54 · #2a7a85/#f7fbfb 4.77",
+      "contrast": "checked by scripts/check-brand-contrast.mjs — every text/ground pair ≥ 4.5:1",
       "palette": {
-        "evergreen": "#123c42",
-        "evergreen2": "#1d565f",
-        "moss": "#1d565f",
-        "ink": "#102226",
-        "ink60": "#43585c",
-        "ink40": "#4a5e62",
-        "line": "#d4e2e3",
-        "lineStrong": "#aac6c8",
-        "cream": "#f7fbfb",
-        "cream2": "#edf4f4",
-        "gold": "#a34a1c",
-        "goldSoft": "#e08a58",
-        "ornament": "#c4dede",
-        "mark": "#2a7a85",
-        "_markNote": "petrol ground, warm coral accent; wordmark only until the organiser badge arrives (mark: null)"
+        "evergreen": "#171717",
+        "evergreen2": "#2b2b2b",
+        "moss": "#00666d",
+        "ink": "#121212",
+        "ink60": "#4a4a4a",
+        "ink40": "#565656",
+        "line": "#dedede",
+        "lineStrong": "#bcbcbc",
+        "cream": "#f7f8f8",
+        "cream2": "#edf0f0",
+        "gold": "#00666d",
+        "goldSoft": "#5abcbc",
+        "ornament": "#cdeaea",
+        "mark": "#008a92",
+        "_markNote": "taken from the organiser's e-com & retail posters (images/1-1-*.png): near-black ground #171717, wordmark teal #5abcbc, band teal #008a92; darkened to #00666d for text on light (docs/15 §10)"
+      }
+    },
+    "promotors-show-samarkand": {
+      "id": "promotors",
+      "host": "sofexpo.org/events/promotors-show-samarkand",
+      "name": {
+        "ru": "PROMOTORS SHOW",
+        "en": "PROMOTORS SHOW"
+      },
+      "sub": {
+        "ru": "SAMARKAND",
+        "en": "SAMARKAND"
+      },
+      "ornament": null,
+      "mark": null,
+      "contrast": "checked by scripts/check-brand-contrast.mjs — every text/ground pair ≥ 4.5:1",
+      "palette": {
+        "evergreen": "#141414",
+        "evergreen2": "#2a2a2a",
+        "moss": "#b3121f",
+        "ink": "#111111",
+        "ink60": "#4a4a4a",
+        "ink40": "#565656",
+        "line": "#e0dede",
+        "lineStrong": "#bdb8b8",
+        "cream": "#f8f7f7",
+        "cream2": "#efecec",
+        "gold": "#b3121f",
+        "goldSoft": "#ff6b74",
+        "ornament": "#f1d3d5",
+        "mark": "#d7192b",
+        "_markNote": "from the organiser's PROMOTORS SHOW Samarkand logo: white italic on black, red script (images/brand-masters/promotors-show-logo.png). No hostname: the archived show lives on the centre (docs/15 §10)"
       }
     }
   }

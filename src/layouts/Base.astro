@@ -7,7 +7,7 @@ import '@/styles/motion.css';
 import { buildMeta, entityNodes, SITE } from '@/lib/seo';
 import { localize, localeMeta, type SourceLocale as Locale } from '@/i18n/config';
 import { CURRENT_BRAND, isRootHost } from '@/data/hosts';
-import { brandCss } from '@/data/brands';
+import { brandCss, type HostBrand } from '@/data/brands';
 import { useUI } from '@/i18n/ui';
 import photos from '@/data/photos.json';
 import photoDims from '@/data/photo-dims.json';
@@ -46,9 +46,13 @@ interface Props {
    * pointed at the real page. A real 301 at the CDN is still preferred; see docs/05.
    */
   redirect?: string;
+  /** a show's own page on the centre's host: wear that show's palette (docs/15 §10) */
+  brand?: HostBrand | null;
 }
 
 const props = Astro.props;
+/* the host's identity wins; otherwise a show page brings its own (alias mode) */
+const PAGE_BRAND = CURRENT_BRAND ?? props.brand ?? null;
 const { locale, path, jsonLd = [], breadcrumbs = [] } = props;
 
 /** icon folder: a branded host keeps its own icons beside the centre's */
@@ -138,7 +142,7 @@ const preload = props.preload
 ---
 
 <!doctype html>
-<html lang={localeMeta[locale].html} data-brand={CURRENT_BRAND?.id}>
+<html lang={localeMeta[locale].html} data-brand={PAGE_BRAND?.id}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -147,7 +151,7 @@ const preload = props.preload
     <title>{meta.title}</title>
     <meta name="description" content={meta.description} />
     <link rel="canonical" href={meta.canonical} />
-    <meta name="theme-color" content={CURRENT_BRAND?.palette.evergreen ?? "#0f2b1c"} />
+    <meta name="theme-color" content={PAGE_BRAND?.palette.evergreen ?? "#0f2b1c"} />
     <meta name="format-detection" content="telephone=no" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="robots" content={meta.noindex ? 'noindex,follow,max-image-preview:large' : 'index,follow,max-image-preview:large,max-snippet:-1'} />
@@ -209,7 +213,7 @@ const preload = props.preload
     <script type="application/ld+json" is:inline set:html={JSON.stringify(graph)} />
     {/* a show host repaints the same token ladder with its own identity (src/data/brands.ts) —
         html[data-brand] is more specific than :root, so order of stylesheets does not matter */}
-    {CURRENT_BRAND && <style is:inline set:html={brandCss(CURRENT_BRAND)} />}
+    {PAGE_BRAND && <style is:inline set:html={brandCss(PAGE_BRAND)} />}
   </head>
   <body>
     <div class="progress" aria-hidden="true"></div>

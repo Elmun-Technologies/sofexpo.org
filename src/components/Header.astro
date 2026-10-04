@@ -1,6 +1,8 @@
 ---
 import { nav, site } from '@/data/site';
-import { CURRENT_BRAND } from '@/data/hosts';
+import { CURRENT_BRAND, CURRENT_EVENT } from '@/data/hosts';
+import ShowLogo from '@/components/ShowLogo.astro';
+import { logoFor } from '@/lib/showLogos';
 import { events } from '@/data/events';
 import BrandMark from '@/components/BrandMark.astro';
 import { localize, localeMeta, supportedLocales, type SourceLocale as Locale } from '@/i18n/config';
@@ -33,7 +35,10 @@ const items = nav.filter((i) => i.key !== 'nav.news');
 <header class="hdr" id="top">
   <div class="wrap hdr__in">
     <a class="logo" href={P('/')} aria-label={`${CURRENT_BRAND ? CURRENT_BRAND.name[locale] + ' ' + CURRENT_BRAND.sub[locale] : site.brand[locale]} — ${t('breadcrumbs.home')}`}>
-      {CURRENT_BRAND?.mark === 'star' ? (
+      {logoFor(CURRENT_EVENT) ? (
+        /* the show's own logo, cut from the organiser's artwork (docs/15 §10) */
+        <ShowLogo slug={CURRENT_EVENT} height={40} eager />
+      ) : CURRENT_BRAND?.mark === 'star' ? (
         <BrandMark brand={CURRENT_BRAND} locale={locale} withWordmark size={32} tone="on-light" />
       ) : CURRENT_BRAND ? (
         /* badge not delivered yet: the wordmark in the host's palette is the identity, no placeholder glyph */

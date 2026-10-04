@@ -109,6 +109,8 @@ node scripts/build-one-host.mjs foodera.sofexpo.org   # exactly what a deploy ta
 | `npm run build:host`           | Build **one** hostname into `dist/` (`node scripts/build-one-host.mjs <host> [--mode …]`)       |
 | `npm run editorial:map`        | Regenerates `src/data/editorial-owners.json` (which host publishes which article)               |
 | `node scripts/build-assets.mjs`| Regenerates OG cards + favicons from the source SVGs/photos (only when those change)            |
+| `npm run logos`                | Show logos: `images/brand-masters/` → `public/brand/<id>/logo.{webp,png}` (docs/15 §10)        |
+| `npm run photos`               | Photo ladders from `images/` (name → source map in `scripts/build-photos.mjs`)                  |
 | `python3 scripts/qa-independent.py` | Independent QA reader over `dist/` + `dist-hosts/*` — deliberately not the project's own audit |
 
 ## 4. Repository layout

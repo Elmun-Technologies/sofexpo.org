@@ -1593,6 +1593,20 @@ body.nav-open .mnav {
   gap: clamp(1.2rem, 0.6rem + 2vw, 2.4rem);
 }
 
+.ftr__mark {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: 10px;
+  background: #fff;
+}
+.ftr__mark img {
+  width: 34px;
+  height: auto;
+}
+
 .ftr h3 {
   font-family: var(--f-mono);
   font-size: 0.7rem;
@@ -2540,6 +2554,14 @@ body.nav-open .mnav {
 .ev__top {
   position: relative;
   display: block;
+}
+
+/* the show's own logo on its card photo (docs/15 §10) */
+.ev__top .ev__logo {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  pointer-events: none;
 }
 
 .ev__date {

@@ -126,6 +126,7 @@ const after = ((page.after ?? []) as SectionKey[]).filter((s) => s !== 'faq' || 
   path={page.path}
   image={page.image ?? (ogCard ? `/brand/${ogCard.id}/og.jpg` : event.heroImage)}
   noindex={page.noindex}
+  brand={brandForEvent(event.slug)}
   breadcrumbs={crumbs}
   jsonLd={ld}
   preload={page.image ?? event.heroImage}

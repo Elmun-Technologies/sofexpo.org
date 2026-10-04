@@ -22,7 +22,8 @@
     "audit:translations": "node scripts/audit-translations.mjs",
     "audit:downloads": "node scripts/audit-downloads.mjs",
     "check:release": "npm run check && npm run audit:downloads -- --require-final",
-    "lead-webhook": "node scripts/lead-webhook.mjs"
+    "lead-webhook": "node scripts/lead-webhook.mjs",
+    "typecheck": "tsc --noEmit -p ."
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",
@@ -32,6 +33,7 @@
     "sharp": "^0.34.5"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.63.0",
     "jsdom": "^30.1.1",
     "typescript": "^5.9.3"

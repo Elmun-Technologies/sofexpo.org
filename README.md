@@ -8,10 +8,12 @@ same source tree.
 
 | Gate                  | Result                                                              |
 | --------------------- | ------------------------------------------------------------------- |
-| `npm run check`       | 647 pages built · `audit:seo` → **0 findings** · 28/28 tests        |
+| `npm run typecheck`   | **0** TypeScript errors                                             |
+| `npm run check`       | 647 pages built · `audit:seo` → **0 findings** · unit tests green   |
+| `npm run test:e2e`    | browser suite + axe WCAG 2.1 AA: 17 pages × 5 locales, **0 violations** |
 | `npm run check:hosts` | 6 hosts built · **✓ hosts agree** (96,955 internal links verified)  |
 | Client JS shipped     | 1 same-origin module (form handler) + inline behaviour              |
-| Third-party requests  | **0** (fonts self-hosted, no analytics, no CDN calls)               |
+| Third-party requests  | **0** (fonts self-hosted, first-party analytics only, no CDN calls) |
 
 ---
 
@@ -246,7 +248,8 @@ DNS: CNAME per subdomain, A/ALIAS for the apex. Day-X checklist, redirect rules 
 | `SITE`              | `https://sofexpo.org/`   | `astro.config.mjs` → canonical, OG, JSON-LD, sitemap, RSS   |
 | `PUBLIC_HOSTS_MODE` | `alias`                  | app + build scripts; `alias` \| `subdomain`                 |
 | `SITE_URL`          | `https://sofexpo.org`    | `scripts/seo-audit.mjs`                                     |
-| `PUBLIC_LEAD_ENDPOINT` | *(empty)*             | every lead form; **without it no lead leaves the browser** — point it at `npm run lead-webhook` (Telegram + JSONL) or a CRM webhook |
+| `PUBLIC_LEAD_ENDPOINT` | *(empty)*             | every lead form; point it at `npm run lead-webhook` (Telegram + JSONL) or a CRM webhook. Without it the visitor is shown the request ready to send by WhatsApp / email — never a false "received" |
+| `PUBLIC_ANALYTICS_ENDPOINT` | *(empty)*        | `Tracking.astro`; first-party analytics — point it at `<lead-webhook>/event`, read daily counts at `<lead-webhook>/stats` (no IPs, no third parties) |
 
 ## 11. Still owed by the client (nothing here blocks a deploy)
 

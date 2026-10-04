@@ -188,6 +188,7 @@ const Hf = level === 2 ? 'h2' : 'h3';
       const payload = Object.fromEntries(data.entries());
       payload.page = location.pathname;
       payload.ts = new Date().toISOString();
+      if (form.dataset.formType) payload.formType = form.dataset.formType;
       msg.hidden = false;
       msg.className = 'form__msg form__ok';
       msg.style = '';
@@ -197,18 +198,22 @@ const Hf = level === 2 ? 'h2' : 'h3';
           if (!res.ok) throw new Error('bad status');
         } catch (err) {
           msg.textContent = form.dataset.fallback || 'Could not send — please email us.';
+          if (window.sofLeadRelay) window.sofLeadRelay(form, payload, msg);
           return;
         }
       } else {
-        // Preview mode: keep the payload locally so the CRM wiring can be tested.
+        // No endpoint: keep a local copy and hand the request over to WhatsApp / email.
         try {
           const key = 'sofexpo.leads';
           const all = JSON.parse(localStorage.getItem(key) || '[]');
           all.push(payload);
           localStorage.setItem(key, JSON.stringify(all));
         } catch (e) {}
+        msg.textContent = form.dataset.fallback;
+        if (window.sofLeadRelay) window.sofLeadRelay(form, payload, msg);
+        return;
       }
-      msg.textContent = endpoint ? form.dataset.ok : form.dataset.fallback;
+      msg.textContent = form.dataset.ok;
       form.querySelectorAll('input:not([type=checkbox]):not([type=radio]):not([readonly]), textarea, select').forEach((el) => (el.value = ''));
     });
   });

@@ -758,7 +758,6 @@ export const companyPages: PageDef[] = [
         {
           type: "form",
           formType: "exhibitor",
-          eventName: "любая выставка",
           title: "Заявка на стенд",
           text: "Ответ в течение рабочего дня.",
           areas: ["9 м²", "12 м²", "18 м²", "36 м²", "от 50 м² / улица"],
@@ -822,7 +821,6 @@ export const companyPages: PageDef[] = [
         {
           type: "form",
           formType: "exhibitor",
-          eventName: "any show",
           title: "Stand booking request",
           text: "We answer within one business day.",
           areas: ["9 m²", "12 m²", "18 m²", "36 m²", "50 m²+ / outdoor"],
@@ -1106,7 +1104,7 @@ export const companyPages: PageDef[] = [
             },
             {
               title: "Cookies и аналитика",
-              text: "Статический сайт использует только технические cookies формы и не подключает рекламные трекеры.",
+              text: "Сайт не ставит рекламных трекеров и не обращается к сторонним сервисам. Обезличенная статистика (просмотры страниц, нажатия кнопок, отправки форм — без имени, телефона и IP-адреса) собирается на собственном сервере центра.",
             },
             {
               title: "Ваши права",
@@ -1151,7 +1149,7 @@ export const companyPages: PageDef[] = [
             },
             {
               title: "Cookies and analytics",
-              text: "The static site uses only form technical cookies and loads no advertising trackers.",
+              text: "The site loads no advertising trackers and calls no third-party services. Anonymous statistics (page views, button clicks, form submissions — without name, phone or IP address) are collected on the centre's own server.",
             },
             {
               title: "Your rights",

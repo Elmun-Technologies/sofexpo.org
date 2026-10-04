@@ -91,7 +91,7 @@ const deviceMatrix=[320,360,390,414,480,560,640,768,834,1024,1180,1280,1440,1600
 const corePaths=['/','events/','events/foodera-expo/','articles/kak-izmerit-effektivnost-vystavki/','exhibitors/','organizers/','visitors/'] as const;
 const tvHeight=(w:number)=>w>=2560?1440:w>=1920?1080:w>=1180?800:w>=768?1024:w>=640?900:850;
 
-test('any gadget or TV: core pages never overflow horizontally (320px–3840px)',{timeout:10*60_000},async({page})=>{
+test('any gadget or TV: core pages never overflow horizontally (320px–3840px)',async({page})=>{
   const failures:string[]=[];
   for(const width of deviceMatrix){
     await page.setViewportSize({width,height:tvHeight(width)});

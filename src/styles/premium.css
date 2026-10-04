@@ -12,7 +12,7 @@
   --evergreen: #102e29;
   --evergreen-2: #1c463c;
   --ink: #172c27;
-  --ink-60: #5d6a64;
+  --ink-60: #525d57; /* ≥5.1:1 on every light ground (docs/15) */
   --line: #dedfd5;
   --accent: #b07a24;
   --gold: #b07a24;

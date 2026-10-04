@@ -17,18 +17,18 @@ const endpoint = (import.meta.env.PUBLIC_LEAD_ENDPOINT ?? '').trim();
 
 const L = {
   title: title || (ru ? 'Заказать звонок' : 'Request callback'),
-  sub: ru ? 'Перезвоним за 15 минут · Пн–Пт 09:00–18:00' : 'Callback in 15 min · Mon–Fri 09:00–18:00',
+  sub: ru ? 'Перезвоним в рабочее время · Пн–Пт 09:00–18:00' : 'We call back during business hours · Mon–Fri 09:00–18:00',
   name: ru ? 'Имя' : 'Name',
   phone: ru ? 'Телефон' : 'Phone',
   time: ru ? 'Удобное время' : 'Best time',
   times: ru ? ['Сейчас', 'Через 15 мин', 'Сегодня', 'Завтра 10:00', 'Завтра 15:00'] : ['Now', 'In 15 min', 'Today', 'Tomorrow 10:00', 'Tomorrow 15:00'],
   submit: ru ? 'Жду звонка' : 'Call me',
-  ok: ru ? 'Принято! Перезвоним за 15 минут.' : 'Got it! We’ll call back in 15 min.',
+  ok: ru ? 'Принято! Перезвоним в рабочее время.' : 'Got it! We will call you back during business hours.',
   err: ru ? 'Укажите имя и телефон' : 'Enter name and phone',
 };
 ---
 
-<form class:list={['form-cb', { 'form-cb--compact': compact }]} id={id} data-lead-form data-form-type="callback" data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} novalidate>
+<form class:list={['form-cb', { 'form-cb--compact': compact }]} id={id} data-lead-form data-fallback={ru ? 'Мы получили ваш контакт только в этом браузере — отправьте заявку также на почту.' : 'Your request was kept in this browser only — please also send it by email.'} data-form-type="callback" data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} novalidate>
   <div class="form-cb__head">
     <div class="form-cb__dot"></div>
     <div>
@@ -37,9 +37,9 @@ const L = {
     </div>
   </div>
   <div class="form-cb__row">
-    <input name="name" required placeholder={L.name} autocomplete="name" />
-    <input name="phone" type="tel" required placeholder={L.phone} autocomplete="tel" />
-    <select name="time">
+    <input name="name" required placeholder={L.name} aria-label={L.name} autocomplete="name" />
+    <input name="phone" type="tel" required placeholder={L.phone} aria-label={L.phone} autocomplete="tel" />
+    <select name="time" aria-label={L.time}>
       {L.times.map(t => <option>{t}</option>)}
     </select>
     <button class="btn btn--gold btn--sm" type="submit">{L.submit}</button>

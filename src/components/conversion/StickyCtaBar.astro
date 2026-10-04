@@ -18,7 +18,7 @@ const ru = locale === 'ru';
 const ctas = {
   exhibitor: {
     label: ru ? 'Забронировать стенд' : 'Book a stand',
-    sub: ru ? 'Ответ за 15 минут · план зала в подарок' : 'Reply in 15 min · floor plan free',
+    sub: ru ? 'Ответ в течение рабочего дня · план зала бесплатно' : 'Reply within one business day · free floor plan',
     href: `/${locale}/request-stand/`,
     action: 'open-exhibitor-form',
   },
@@ -244,11 +244,13 @@ const L = {
     } catch {}
 
     let shown = false;
+    /* forms currently on screen — the bar never sits on top of one */
+    const visibleForms = new Set<Element>();
     const show = () => {
       if (shown) return;
       bar.hidden = false;
       requestAnimationFrame(() => {
-        bar.classList.remove('is-hidden');
+        if (!visibleForms.size) bar.classList.remove('is-hidden');
       });
       shown = true;
       try { (window as any).sofTrack?.('cta_show', { type: 'sticky-bar', pageType: PAGE_TYPE }); } catch {}
@@ -271,14 +273,16 @@ const L = {
       if (window.scrollY > 100) show();
     }, 3000);
 
-    // Hide when form in viewport (avoid double CTA)
-    const forms = document.querySelectorAll('form[data-lead-form], .form-wrap');
+    // Hide while any form or quiz is on screen. A long form on a phone never shows 30% of
+    // itself at once, so any intersection counts, and the state is kept per element
+    // (an observer callback only lists the entries that changed).
+    const forms = document.querySelectorAll('form[data-lead-form], .form-wrap, [data-quiz]');
     if (forms.length) {
       const io = new IntersectionObserver((entries) => {
-        const anyVisible = entries.some(e => e.isIntersecting && e.intersectionRatio > 0.3);
-        if (anyVisible && shown) bar.classList.add('is-hidden');
-        else if (!anyVisible && shown) bar.classList.remove('is-hidden');
-      }, { threshold: [0.3] });
+        entries.forEach((e) => (e.isIntersecting ? visibleForms.add(e.target) : visibleForms.delete(e.target)));
+        if (!shown) return;
+        bar.classList.toggle('is-hidden', visibleForms.size > 0);
+      }, { threshold: 0, rootMargin: '0px 0px -40px 0px' });
       forms.forEach(f => io.observe(f));
     }
 

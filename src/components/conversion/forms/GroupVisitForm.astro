@@ -27,12 +27,12 @@ const L = {
   purposes: ru ? ['Закупки', 'Обучение', 'Партнёрства', 'Экскурсия'] : ['Purchasing', 'Learning', 'Partnerships', 'Tour'],
   comment: ru ? 'Пожелания' : 'Wishes',
   submit: ru ? 'Забронировать групповой визит' : 'Book group visit',
-  ok: ru ? 'Заявка принята! Организуем трансфер и гида. Ответ за 2 часа.' : 'Request received! We’ll arrange transfer and guide. Reply in 2 hours.',
+  ok: ru ? 'Заявка принята! Ответим в течение рабочего дня и согласуем трансфер и гида.' : 'Request received! We will reply within one business day to arrange the transfer and guide.',
   err: ru ? 'Заполните имя, телефон и кол-во' : 'Fill name, phone and size',
 };
 ---
 
-<form class="form-gr" id={id} data-lead-form data-form-type="group" data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} novalidate>
+<form class="form-gr" id={id} data-lead-form data-fallback={ru ? 'Мы получили ваш контакт только в этом браузере — отправьте заявку также на почту.' : 'Your request was kept in this browser only — please also send it by email.'} data-form-type="group" data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} novalidate>
   <div class="form-gr__head">
     <h3>👥 {L.title}</h3>
     <p>{L.sub}</p>

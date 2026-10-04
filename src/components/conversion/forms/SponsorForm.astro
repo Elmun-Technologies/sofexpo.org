@@ -15,7 +15,7 @@ const endpoint = (import.meta.env.PUBLIC_LEAD_ENDPOINT ?? '').trim();
 
 const L = {
   title: ru ? 'Стать спонсором выставки' : 'Become exhibition sponsor',
-  sub: ru ? 'От баннера до генерального спонсора. Презентация и медиа-кит за 10 минут.' : 'From banner to general sponsor. Deck & media kit in 10 min.',
+  sub: ru ? 'От баннера до генерального спонсора. Презентация и медиа-кит — по запросу.' : 'From banner to general sponsor. Deck and media kit on request.',
   packages: ru
     ? ['Генеральный спонсор', 'Официальный спонсор', 'Партнёр деловой программы', 'Спонсор регистрации / бейджей', 'Баннер / брендирование', 'Обсудим']
     : ['General sponsor', 'Official sponsor', 'Business program partner', 'Registration / badge sponsor', 'Banner / branding', "Let's discuss"],
@@ -26,12 +26,12 @@ const L = {
   package: ru ? 'Интересует пакет' : 'Package interest',
   comment: ru ? 'Цели спонсорства' : 'Sponsorship goals',
   submit: ru ? 'Получить презентацию спонсора' : 'Get sponsor deck',
-  ok: ru ? 'Презентация отправлена! Менеджер свяжется за 15 минут.' : 'Deck sent! Manager will contact in 15 min.',
+  ok: ru ? 'Заявка принята! Менеджер пришлёт презентацию в течение рабочего дня.' : 'Request received! A manager will send the deck within one business day.',
   err: ru ? 'Заполните имя, компанию и телефон' : 'Fill name, company and phone',
 };
 ---
 
-<form class="form-sp" id={id} data-lead-form data-form-type="sponsor" data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} novalidate>
+<form class="form-sp" id={id} data-lead-form data-fallback={ru ? 'Мы получили ваш контакт только в этом браузере — отправьте заявку также на почту.' : 'Your request was kept in this browser only — please also send it by email.'} data-form-type="sponsor" data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} novalidate>
   <div class="form-sp__head">
     <div>
       <p class="form-sp__kicker">{ru ? 'Спонсорство · охват 70 000+ посетителей' : 'Sponsorship · 70 000+ reach'}</p>

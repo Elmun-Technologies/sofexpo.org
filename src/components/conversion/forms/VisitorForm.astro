@@ -17,7 +17,7 @@ const endpoint = (import.meta.env.PUBLIC_LEAD_ENDPOINT ?? '').trim();
 
 const L = {
   title: ru ? 'Получить бесплатный билет' : 'Get free ticket',
-  sub: ru ? 'Для профильных специалистов. QR-билет на почту за 2 минуты.' : 'For trade visitors. QR ticket to email in 2 min.',
+  sub: ru ? 'Для профильных специалистов. Билет придёт на почту после подтверждения регистрации.' : 'For trade visitors. Your ticket is emailed once the registration is confirmed.',
   name: ru ? 'Имя и фамилия' : 'Full name',
   company: ru ? 'Компания' : 'Company',
   position: ru ? 'Должность' : 'Position',
@@ -31,12 +31,12 @@ const L = {
   event: ru ? 'Выставка' : 'Exhibition',
   submit: ru ? 'Получить билет' : 'Get ticket',
   consent: ru ? 'Согласен на обработку данных. Билет придёт на email.' : 'I agree to data processing. Ticket to email.',
-  ok: ru ? 'Билет отправлен на почту! Проверьте спам. До встречи в SOF EXPO!' : 'Ticket sent to email! Check spam. See you at SOF EXPO!',
+  ok: ru ? 'Регистрация принята! Билет придёт на почту после подтверждения. До встречи в SOF EXPO!' : 'Registration received! Your ticket is emailed once it is confirmed. See you at SOF EXPO!',
   err: ru ? 'Заполните имя, телефон и email' : 'Please fill name, phone, email',
 };
 ---
 
-<form class="form-vi" id={id} data-lead-form data-form-type="visitor" data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} novalidate>
+<form class="form-vi" id={id} data-lead-form data-fallback={ru ? 'Мы получили ваш контакт только в этом браузере — отправьте заявку также на почту.' : 'Your request was kept in this browser only — please also send it by email.'} data-form-type="visitor" data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} novalidate>
   <div class="form-vi__head">
     <div class="form-vi__icon">🎟️</div>
     <div>
@@ -97,7 +97,7 @@ const L = {
   </label>
 
   <button class="btn btn--gold form-vi__submit" type="submit">{L.submit}</button>
-  <p class="form-vi__note">{ru ? 'Бесплатно · QR на почту · вход без очереди' : 'Free · QR to email · skip the line'}</p>
+  <p class="form-vi__note">{ru ? 'Бесплатно · билет на почту · без очереди на регистрацию' : 'Free · ticket by email · no registration queue'}</p>
   <p class="form__msg" role="status" aria-live="polite" hidden></p>
 </form>
 

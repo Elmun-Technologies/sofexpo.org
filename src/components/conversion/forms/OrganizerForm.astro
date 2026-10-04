@@ -16,7 +16,7 @@ const endpoint = (import.meta.env.PUBLIC_LEAD_ENDPOINT ?? '').trim();
 
 const L = {
   title: ru ? 'Провести событие в SOF EXPO' : 'Host event at SOF EXPO',
-  sub: ru ? '4400 м² зал + 5000 м² улица. Ответ с расчётом за 2 часа.' : '4400 m² hall + 5000 m² outdoor. Quote in 2 hours.',
+  sub: ru ? '4400 м² зал + 5000 м² улица. Ответ с расчётом в течение рабочего дня.' : '4400 m² hall + 5000 m² outdoor. Quote within one business day.',
   name: ru ? 'Имя' : 'Name',
   company: ru ? 'Компания / организатор' : 'Company / organizer',
   phone: ru ? 'Телефон' : 'Phone',
@@ -30,13 +30,13 @@ const L = {
   areas: ['500 m²', '1000 m²', '2000 m²', '4400 m²', '4400+5000 m²', ru ? 'Обсудим' : "Let's discuss"],
   comment: ru ? 'Опишите событие' : 'Describe event',
   submit: ru ? 'Получить расчёт аренды' : 'Get rental quote',
-  consent: ru ? 'Согласен на обработку данных. Коммерческое предложение за 2 часа.' : 'Agree to data processing. Proposal in 2 hours.',
-  ok: ru ? 'Заявка принята! Пришлём тех. спецификацию, фото и расчёт за 2 часа.' : 'Request received! We’ll send tech specs, photos and quote in 2 hours.',
+  consent: ru ? 'Согласен на обработку данных. Коммерческое предложение — в течение рабочего дня.' : 'I agree to data processing. Proposal within one business day.',
+  ok: ru ? 'Заявка принята! Пришлём тех. спецификацию, фото и расчёт в течение рабочего дня.' : 'Request received! We will send tech specs, photos and a quote within one business day.',
   err: ru ? 'Заполните обязательные поля' : 'Please fill required fields',
 };
 ---
 
-<form class="form-org" id={id} data-lead-form data-form-type="organizer" data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} novalidate>
+<form class="form-org" id={id} data-lead-form data-fallback={ru ? 'Мы получили ваш контакт только в этом браузере — отправьте заявку также на почту.' : 'Your request was kept in this browser only — please also send it by email.'} data-form-type="organizer" data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} novalidate>
   <div class="form-org__head">
     <div>
       <p class="form-org__kicker">{ru ? 'Организаторам · 4400 м² + 5000 м²' : 'For organizers · 4400 m² + 5000 m²'}</p>

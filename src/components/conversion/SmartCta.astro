@@ -38,7 +38,7 @@ const ru = locale === 'ru';
 const defaults: Record<string, { title: string; text: string; primary: string; secondary: string; href: string; href2: string }> = {
   exhibitor: {
     title: ru ? 'Забронируйте стенд сегодня' : 'Book your stand today',
-    text: ru ? 'Осталось мало мест у входа. План зала и расчёт за 15 минут.' : 'Few spots left near entrance. Floor plan & quote in 15 min.',
+    text: ru ? 'План зала и расчёт — в течение рабочего дня.' : 'Floor plan and quote within one business day.',
     primary: ru ? 'Забронировать стенд' : 'Book a stand',
     secondary: ru ? 'Скачать каталог' : 'Download catalog',
     href: `/${locale}/request-stand/`,
@@ -46,7 +46,7 @@ const defaults: Record<string, { title: string; text: string; primary: string; s
   },
   visitor: {
     title: ru ? 'Получите бесплатный билет' : 'Get your free ticket',
-    text: ru ? 'QR-билет на почту за 2 минуты. Вход без очереди.' : 'QR ticket to email in 2 min. Skip the line.',
+    text: ru ? 'Бесплатно для специалистов по предварительной регистрации.' : 'Free for trade professionals who pre-register.',
     primary: ru ? 'Получить билет' : 'Get ticket',
     secondary: ru ? 'Как добраться' : 'How to get there',
     href: `/${locale}/visitors/tickets/`,
@@ -62,7 +62,7 @@ const defaults: Record<string, { title: string; text: string; primary: string; s
   },
   sponsor: {
     title: ru ? 'Станьте спонсором' : 'Become a sponsor',
-    text: ru ? 'Охват 70 000+ посетителей. Презентация за 10 минут.' : '70 000+ reach. Deck in 10 min.',
+    text: ru ? 'Охват 70 000+ посетителей в год. Презентация — по запросу.' : '70,000+ visitors a year. Deck on request.',
     primary: ru ? 'Стать спонсором' : 'Become sponsor',
     secondary: ru ? 'Медиа-кит' : 'Media kit',
     href: `/${locale}/exhibitors/sponsorship/`,
@@ -70,7 +70,7 @@ const defaults: Record<string, { title: string; text: string; primary: string; s
   },
   contact: {
     title: ru ? 'Остались вопросы?' : 'Have questions?',
-    text: ru ? 'Менеджер отвечает за 2 минуты в Telegram/WhatsApp.' : 'Manager replies in 2 min on Telegram/WhatsApp.',
+    text: ru ? 'Менеджер отвечает в Telegram и WhatsApp в рабочее время.' : 'A manager replies on Telegram and WhatsApp during business hours.',
     primary: ru ? 'Написать менеджеру' : 'Contact manager',
     secondary: ru ? 'Контакты' : 'Contacts',
     href: conversionConfig.contacts.telegramManager,
@@ -78,7 +78,7 @@ const defaults: Record<string, { title: string; text: string; primary: string; s
   },
   callback: {
     title: ru ? 'Остались вопросы?' : 'Have questions?',
-    text: ru ? 'Менеджер отвечает за 2 минуты в Telegram/WhatsApp.' : 'Manager replies in 2 min on Telegram/WhatsApp.',
+    text: ru ? 'Менеджер отвечает в Telegram и WhatsApp в рабочее время.' : 'A manager replies on Telegram and WhatsApp during business hours.',
     primary: ru ? 'Написать менеджеру' : 'Contact manager',
     secondary: ru ? 'Контакты' : 'Contacts',
     href: conversionConfig.contacts.telegramManager,
@@ -86,7 +86,7 @@ const defaults: Record<string, { title: string; text: string; primary: string; s
   },
   catalog: {
     title: ru ? 'Скачайте каталог и план зала' : 'Download catalog & floor plan',
-    text: ru ? 'PDF с ценами, схемой и кейсами — за 30 секунд.' : 'PDF with pricing, map & cases — in 30 sec.',
+    text: ru ? 'PDF с ценами, схемой зала и кейсами.' : 'A PDF with rates, floor plan and case studies.',
     primary: ru ? 'Скачать каталог' : 'Download catalog',
     secondary: ru ? 'План зала' : 'Floor plan',
     href: `/${locale}/exhibitors/catalogue/`,

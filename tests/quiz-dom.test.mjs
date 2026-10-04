@@ -66,6 +66,7 @@ test('quiz: three tap-only steps auto-advance into the contact step (en build)',
   submit(form);
   const done = quiz.querySelector('[data-quiz-done]');
   assert.equal(done.hidden, false, 'success panel replaces the form');
+  assert.match(done.querySelector('.quiz__done-title').textContent, /browser only/, 'an undelivered request never reads as received');
   assert.match(done.querySelector('[data-quiz-summary=goal]').textContent, /New buyers and sales/);
   assert.match(done.querySelector('[data-quiz-summary=area]').textContent, /18/);
   // funnel telemetry reached the dataLayer

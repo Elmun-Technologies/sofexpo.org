@@ -24,12 +24,12 @@ const L = {
   email: 'Email',
   messenger: ru ? 'Куда отправить?' : 'Where to send?',
   submit: ru ? 'Получить каталог' : 'Get catalog',
-  ok: ru ? 'Каталог отправлен! Проверьте Telegram/WhatsApp/почту.' : 'Catalog sent! Check Telegram/WhatsApp/email.',
+  ok: ru ? 'Заявка принята! Каталог придёт в выбранный мессенджер или на почту в течение рабочего дня.' : 'Request received! The catalogue arrives in your chosen messenger or inbox within one business day.',
   err: ru ? 'Заполните имя и контакт' : 'Fill name and contact',
 };
 ---
 
-<form class="form-cat" id={id} data-lead-form data-form-type="catalog" data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} novalidate>
+<form class="form-cat" id={id} data-lead-form data-fallback={ru ? 'Мы получили ваш контакт только в этом браузере — отправьте заявку также на почту.' : 'Your request was kept in this browser only — please also send it by email.'} data-form-type="catalog" data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} novalidate>
   <div class="form-cat__media">
     <img src="/images/event-ecom-640.webp" alt="" aria-hidden="true" width="320" height="220" loading="lazy" />
     <div class="form-cat__badge">PDF</div>

@@ -27,7 +27,8 @@
   --cream-2: #eceeE8;
   --ink: #101814;
   --ink-60: #505a55;
-  --ink-40: #79837d;
+  /* 2026-10-04 (docs/15): darkened from #79837d — 4.8:1 on the darkest light ground (#dedfd5), WCAG AA */
+  --ink-40: #56615b;
   --line: #e2e6e0;
   --line-strong: #c3cac3;
   --evergreen: #0d2a1b;
@@ -45,6 +46,8 @@
   --ornament: #dfe8e0;
   --brand-mark: var(--evergreen);
   --gold: #b07a24;
+  /* brass for small TEXT on light grounds: --gold itself is 2.8–3.7:1 there, this is ≥4.6:1 */
+  --gold-ink: #835812;
   /* light brass for text/accents ON dark grounds — must stay light (do not darken) */
   --gold-soft: #e7d5ae;
   --danger: #a33518;
@@ -1582,7 +1585,7 @@ body.nav-open .mnav {
   font-size: 0.7rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.72);
   margin: 0 0 1rem;
 }
 
@@ -1603,7 +1606,7 @@ body.nav-open .mnav {
   gap: 0.8rem 1.6rem;
   justify-content: space-between;
   font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.72);
 }
 
 @media (min-width: 1080px) {
@@ -2244,7 +2247,7 @@ body.nav-open .mnav {
 }
 
 .home-hero__venue span {
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.72);
 }
 
 /* calendar rail: next four shows, one line each, scroll on mobile */

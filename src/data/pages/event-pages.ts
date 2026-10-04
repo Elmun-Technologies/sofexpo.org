@@ -1,5 +1,4 @@
-import type { Block, PageMeta } from "./types";
-import type { SectionKey } from "@/components/EventSections.astro";
+import type { Block, PageMeta, SectionKey } from "./types";
 import type { L } from "@/data/events"; /** * Authored copy for the pages of every exhibition cluster. * Each event is written individually: different emphasis, different section * order (`before` / `after` decide which data blocks surround the authored text), * different numbers — never one template filled with names. */
 export interface EventPage {
   path: string;

@@ -124,3 +124,25 @@ test('webhook formats a quiz lead into a readable Telegram message', async () =>
   assert.match(attributed, /utm_source=instagram, utm_campaign=build/);
   assert.match(attributed, /Лендинг: \/en\/request-stand/);
 });
+
+test('analytics sink: daily counts per event and per form, undelivered leads flagged', async () => {
+  const { summarize } = await import('../scripts/lead-webhook.mjs');
+  const days = summarize([
+    { event: 'page_view', ts: '2026-10-04T08:00:00Z', sessionId: 'a' },
+    { event: 'form_submit', form: 'exhibitor', ts: '2026-10-04T09:00:00Z', sessionId: 'a' },
+    { event: 'form_submit', form: 'visitor', fallback: true, ts: '2026-10-04T10:00:00Z', sessionId: 'b' },
+    { event: 'quiz_submit', ts: '2026-10-05T10:00:00Z', sessionId: 'c' },
+    null,
+  ]);
+  assert.deepEqual(Object.keys(days), ['2026-10-05', '2026-10-04'], 'newest day first');
+  assert.equal(days['2026-10-04'].sessions, 2);
+  assert.equal(days['2026-10-04'].events.form_submit, 2);
+  assert.deepEqual(days['2026-10-04'].forms, { exhibitor: 1, 'visitor (not delivered)': 1 });
+  assert.deepEqual(days['2026-10-05'].forms, { quiz: 1 });
+});
+
+test('press accreditation leads are labelled for the manager', async () => {
+  const { formatLead } = await import('../scripts/lead-webhook.mjs');
+  assert.match(formatLead({ name: 'P', phone: '1', formType: 'press' }), /^📰 Аккредитация СМИ/);
+  assert.match(formatLead({ name: 'S', phone: '1', formType: 'sponsor' }), /📝 Форма: sponsor/);
+});

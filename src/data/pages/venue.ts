@@ -69,6 +69,23 @@ export const venuePages: PageDef[] = [
         },
         {
           type: "h2",
+          kicker: "Медиа",
+          title: "Как площадка выглядит в работе",
+        },
+        {
+          /* docs/15 §11: the venue page showed one photograph; the floor itself sells the hall */
+          type: "gallery",
+          items: [
+            { src: "/images/hall-stand.jpg", caption: "Главный зал: экспозиция и переговорные зоны" },
+            { src: "/images/hall-empty.jpg", caption: "Зал 4 400 м² без застройки: шаг колонн и высота потолка" },
+            { src: "/images/hall-walk.jpg", caption: "Проход между стендами в главный зал" },
+            { src: "/images/outdoor-area.jpg", caption: "Открытая площадка 5 000 м²: крупногабаритная техника" },
+            { src: "/images/conference-audience.jpg", caption: "Конференц-зал во время деловой программы" },
+            { src: "/images/hall-windows.jpg", caption: "Витражи и ворота для заезда техники" },
+          ],
+        },
+        {
+          type: "h2",
           kicker: "Планировка",
           title: "Один экран — вся площадка",
           text: "Зоны, площади и точки доступа: где встаёт стенд, где техника, где регистрации и грузовой двор.",
@@ -251,6 +268,23 @@ export const venuePages: PageDef[] = [
               ru: "events a year",
               en: "events a year",
             },
+          ],
+        },
+        {
+          type: "h2",
+          kicker: "Media",
+          title: "What the venue looks like in operation",
+        },
+        {
+          /* docs/15 §11: the venue page showed one photograph; the floor itself sells the hall */
+          type: "gallery",
+          items: [
+            { src: "/images/hall-stand.jpg", caption: "Main hall: expo and meeting zones" },
+            { src: "/images/hall-empty.jpg", caption: "The 4,400 m² hall before build-up: column grid and clear height" },
+            { src: "/images/hall-walk.jpg", caption: "Aisle between stands to the main hall" },
+            { src: "/images/outdoor-area.jpg", caption: "The 5,000 m² open-air area: large machinery" },
+            { src: "/images/conference-audience.jpg", caption: "Conference hall during the business programme" },
+            { src: "/images/hall-windows.jpg", caption: "Glazing and the drive-in gates" },
           ],
         },
         {

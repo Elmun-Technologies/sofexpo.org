@@ -76,16 +76,14 @@ const withNote = list.filter((p) => p.note);
                 height="96"
                 loading="lazy"
               />
-            ) : (
-              /* initials are a graphic mark, never translated */
-              <span class="pwl__tile" aria-hidden="true" translate="no">{name.slice(0, 2)}</span>
-            )}
+            ) : null /* no logo yet: the name is set as a wordmark — two-letter "PE", "TI"
+                        initials read as placeholders, not as partners (docs/15 §11) */}
             <span class="pwl__name">{name}</span>
             {p.note && <span class="pwl__note">{p.note[ru ? 'ru' : 'en']}</span>}
           </>
         );
         return (
-          <li class="pwl__item" data-kind={p.kind} data-note={withNote.includes(p) ? p.note?.[ru ? 'ru' : 'en'] : undefined}>
+          <li class:list={['pwl__item', { 'pwl__item--word': !p.hasLogo }]} data-kind={p.kind} data-note={withNote.includes(p) ? p.note?.[ru ? 'ru' : 'en'] : undefined}>
             {p.url ? (
               <a class="pwl__link" href={p.url} target="_blank" rel="noopener noreferrer">
                 {inner}
@@ -193,6 +191,19 @@ const withNote = list.filter((p) => p.note);
   .pwl__item[data-kind='media'] .pwl__tile { background: var(--accent-soft); }
   .pwl__item[data-kind='hotel'] .pwl__tile { background: #eef1ec; }
   .pwl__item[data-kind='service'] .pwl__tile { color: var(--ink-60); }
+  .pwl__item--word {
+    min-height: 112px;
+    border-top: 3px solid var(--line-strong);
+  }
+  .pwl__item--word[data-kind='state'] { border-top-color: var(--evergreen); }
+  .pwl__item--word[data-kind='media'] { border-top-color: var(--gold); }
+  .pwl__item--word .pwl__name {
+    font-family: var(--f-display);
+    font-size: 1rem;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
   .pwl__name {
     font-size: 0.82rem;
     font-weight: 600;

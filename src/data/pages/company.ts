@@ -74,6 +74,18 @@ export const companyPages: PageDef[] = [
           ],
         },
         {
+          /* docs/15 §11: the about page showed one photograph of the building */
+          type: "gallery",
+          items: [
+            { src: "/images/hall-crowd.jpg", caption: "День выставки: поток посетителей в главном зале" },
+            { src: "/images/opening-ceremony.jpg", caption: "Церемония открытия: официальная часть на красной дорожке" },
+            { src: "/images/food-tasting.jpg", caption: "FOODERA EXPO: дегустационная линия" },
+            { src: "/images/officials-tour.jpg", caption: "Официальная делегация на обходе экспозиции" },
+            { src: "/images/buyers-talk.jpg", caption: "Переговоры закупщика с экспонентом на стенде" },
+            { src: "/images/stand-modern.jpg", caption: "Индивидуальная застройка: остров с переговорной зоной" },
+          ],
+        },
+        {
           type: "quote",
           text: "Мы строим не стенды, а рынок контакта: чтобы закупщик, производитель и поставщик услуги оказались в одном зале в один день.",
           cite: "команда SOF EXPO",
@@ -164,6 +176,18 @@ export const companyPages: PageDef[] = [
               title: "Owning the numbers",
               text: "We publish attendance and event statistics. If a show grows we say so — and the same when it does not.",
             },
+          ],
+        },
+        {
+          /* docs/15 §11: the about page showed one photograph of the building */
+          type: "gallery",
+          items: [
+            { src: "/images/hall-crowd.jpg", caption: "Show day: visitor flow in the main hall" },
+            { src: "/images/opening-ceremony.jpg", caption: "Opening ceremony: the official part on the red carpet" },
+            { src: "/images/food-tasting.jpg", caption: "FOODERA EXPO: tasting line" },
+            { src: "/images/officials-tour.jpg", caption: "An official delegation touring the exhibition" },
+            { src: "/images/buyers-talk.jpg", caption: "A buyer in conversation with an exhibitor" },
+            { src: "/images/stand-modern.jpg", caption: "Custom build: an island stand with a meeting area" },
           ],
         },
         {

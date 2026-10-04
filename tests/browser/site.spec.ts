@@ -3,12 +3,6 @@ import {test,expect} from '@playwright/test';
 /* Generous file ceiling: the on-demand dev server compiles pages on first hit. */
 test.setTimeout(5*60_000);
 
-test.beforeEach(({page})=>{
-  /* See responsive.spec.ts: suppress the timer-triggered marketing popups (welcome at
-     15 s, pricing interest at 45 s, exit intent) so they cannot intercept test clicks. */
-  page.addInitScript(()=>{try{localStorage.setItem('sofexpo.popups',JSON.stringify([{id:'e2e',ts:Date.now(),type:'show'}]))}catch{}});
-});
-
 const cases = [
   {locale:'en',lang:'en',query:'stand',error:'Please complete the required fields.',fallback:'browser only',sample:'Sample document'},
   {locale:'ru',lang:'ru',query:'стенд',error:'Заполните обязательные поля.',fallback:'только в этом браузере',sample:'Образец документа'},

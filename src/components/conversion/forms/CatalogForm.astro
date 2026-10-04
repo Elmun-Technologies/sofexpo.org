@@ -29,7 +29,7 @@ const L = {
 };
 ---
 
-<form translate="no" class="form-cat" id={id} data-lead-form data-form-type="catalog" data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} novalidate>
+<form class="form-cat" id={id} data-lead-form data-form-type="catalog" data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} novalidate>
   <div class="form-cat__media">
     <img src="/images/event-ecom-640.webp" alt="" aria-hidden="true" width="320" height="220" loading="lazy" />
     <div class="form-cat__badge">PDF</div>
@@ -42,13 +42,13 @@ const L = {
     </ul>
 
     <div class="form-cat__grid">
-      <div class="field"><label>{L.name} *</label><input name="name" required autocomplete="name" placeholder={ru ? 'Алишер' : 'John'} /></div>
-      <div class="field"><label>{L.company}</label><input name="company" autocomplete="organization" /></div>
-      <div class="field"><label>{L.phone} *</label><input name="phone" type="tel" required autocomplete="tel" placeholder="+998" /></div>
-      <div class="field"><label>{L.email}</label><input name="email" type="email" autocomplete="email" /></div>
-      {eventName && <div class="field form-cat__full"><label>Exhibition</label><input name="event" value={eventName} readonly /></div>}
-      <div class="field form-cat__full">
-        <label>{L.messenger}</label>
+      <div class="field"><label for={`${id}-name`}>{L.name} *</label><input id={`${id}-name`} name="name" required autocomplete="name" placeholder={ru ? 'Алишер' : 'John'} /></div>
+      <div class="field"><label for={`${id}-company`}>{L.company}</label><input id={`${id}-company`} name="company" autocomplete="organization" /></div>
+      <div class="field"><label for={`${id}-phone`}>{L.phone} *</label><input id={`${id}-phone`} name="phone" type="tel" required autocomplete="tel" placeholder="+998" /></div>
+      <div class="field"><label for={`${id}-email`}>{L.email}</label><input id={`${id}-email`} name="email" type="email" autocomplete="email" /></div>
+      {eventName && <div class="field form-cat__full"><label for={`${id}-event`}>Exhibition</label><input id={`${id}-event`} name="event" value={eventName} readonly /></div>}
+      <div class="field form-cat__full" role="group" aria-labelledby={`${id}-messenger-label`}>
+        <label id={`${id}-messenger-label`}>{L.messenger}</label>
         <div class="form-cat__radios">
           <label><input type="radio" name="messenger" value="telegram" checked /> Telegram</label>
           <label><input type="radio" name="messenger" value="whatsapp" /> WhatsApp</label>

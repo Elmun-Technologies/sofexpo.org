@@ -16,6 +16,10 @@ const load = (path, { scripts = true, query = '' } = {}) => {
   const dom = new JSDOM(html, {
     url: `https://sofexpo.org/${path.replace(/index\.html$/, '')}${query}`,
     runScripts: scripts ? 'dangerously' : undefined,
+    // jsdom has no matchMedia; the header script calls it while the page parses
+    beforeParse(window) {
+      window.matchMedia = (media) => ({ matches: false, media, addEventListener() {}, removeEventListener() {} });
+    },
   });
   // jsdom does not implement scrolling
   dom.window.HTMLElement.prototype.scrollIntoView = function () {};

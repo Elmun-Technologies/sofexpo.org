@@ -16,6 +16,7 @@ const {
   note = '',
   id = 'lead',
   level = 3,
+  intent = '',
 } = Astro.props as {
   locale: 'ru' | 'en';
   title: string;
@@ -27,13 +28,16 @@ const {
   note?: string;
   id?: string;
   level?: 2 | 3;
+  /** `press`: media accreditation — outlet instead of company, press roles, no stand area */
+  intent?: '' | 'press';
 };
 
 const ru = locale === 'ru';
+const press = intent === 'press';
 const endpoint = (import.meta.env.PUBLIC_LEAD_ENDPOINT ?? '').trim();
 const L = {
   name: ru ? 'Имя и фамилия' : 'Full name',
-  company: ru ? 'Компания' : 'Company',
+  company: press ? (ru ? 'Издание / редакция' : 'Media outlet') : ru ? 'Компания' : 'Company',
   position: ru ? 'Должность' : 'Position',
   phone: ru ? 'Телефон' : 'Phone',
   email: 'Email',
@@ -43,7 +47,8 @@ const L = {
   comment: ru ? 'Комментарий' : 'Comment',
   channel: ru ? 'Как с вами связаться' : 'How should we reach you',
   channels: ru ? ['Звонок', 'Telegram', 'WhatsApp'] : ['Phone call', 'Telegram', 'WhatsApp'],
-  submit: ru ? 'Отправить заявку' : 'Send request',
+  submit: press ? (ru ? 'Запросить аккредитацию' : 'Request accreditation') : ru ? 'Отправить заявку' : 'Send request',
+  subject: press ? (ru ? 'Аккредитация СМИ' : 'Press accreditation') : ru ? 'Заявка на участие' : 'Participation request',
   consent: ru
     ? 'Отправляя заявку, вы соглашаетесь с обработкой персональных данных.'
     : 'By submitting, you consent to the processing of your personal data.',
@@ -54,7 +59,11 @@ const L = {
   fallback: ru
     ? 'Мы получили ваш контакт только в этом браузере — отправьте заявку также на почту.'
     : 'Your request was kept in this browser only — please also send it by email.',
-  positions: ru
+  positions: press
+    ? ru
+      ? ['Журналист', 'Редактор', 'Фотограф / видеограф', 'Блогер', 'Другое']
+      : ['Journalist', 'Editor', 'Photographer / videographer', 'Blogger', 'Other']
+    : ru
     ? ['Руководитель', 'Маркетолог', 'PR-менеджер', 'Менеджер по экспорту', 'Закупщик', 'Другое']
     : ['Owner / CEO', 'Marketing', 'PR', 'Export manager', 'Buyer', 'Other'],
   areaOptions: ['9 m²', '18 m²', '27 m²', '36 m²', '50+ m²', ''],
@@ -63,7 +72,7 @@ const areaList = areas.length ? areas : L.areaOptions.filter(Boolean);
 const Hf = level === 2 ? 'h2' : 'h3';
 ---
 
-<form translate="no" class:list={['card', 'form-wrap', { 'form--compact': compact }]} id={id} data-lead-form data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} data-fallback={L.fallback} novalidate>
+<form class:list={['card', 'form-wrap', { 'form--compact': compact }]} id={id} data-lead-form data-form-type={intent || undefined} data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} data-fallback={L.fallback} novalidate>
   <div>
     <Hf class="h3" style="margin-bottom:.25em">{title}</Hf>
     {subtitle && <p class="muted small" style="margin:0">{subtitle}</p>}
@@ -106,7 +115,7 @@ const Hf = level === 2 ? 'h2' : 'h3';
       )
     }
     {
-      !compact && (
+      !compact && !press && (
         <div class="field">
           <label for={`${id}-area`}>{L.area}</label>
           <select id={`${id}-area`} name="area">
@@ -149,7 +158,7 @@ const Hf = level === 2 ? 'h2' : 'h3';
 
   <div style="display:flex;flex-wrap:wrap;gap:.7rem;align-items:center">
     <button class="btn btn--gold" type="submit">{L.submit}</button>
-    <a class="btn btn--ghost btn--sm" href={`mailto:info@sofexpo.uz?subject=${encodeURIComponent(ru ? 'Заявка на участие' : 'Participation request')}`}
+    <a class="btn btn--ghost btn--sm" href={`mailto:info@sofexpo.uz?subject=${encodeURIComponent(L.subject)}`}
       >{ru ? 'Написать на почту' : 'Or write an email'}</a
     >
   </div>

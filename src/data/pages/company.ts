@@ -893,7 +893,7 @@ export const companyPages: PageDef[] = [
           lead: "Логотипы, фотографии зала и событий, проверенные цифры и контакты спикеров. Аккредитация на выставки — по заявке за 2 рабочих дня, съёмка в монтажные дни — по согласованию с техслужбой.",
           image: "/images/venue-exterior.jpg",
           imageAlt: "Экстерьер центра",
-          actions: [{ label: "Запросить аккредитацию", href: "/contacts/" }],
+          actions: [{ label: "Запросить аккредитацию", href: "#accreditation" }],
         },
         {
           type: "files",
@@ -949,12 +949,19 @@ export const companyPages: PageDef[] = [
           ],
         },
         {
+          type: "form",
+          formType: "press",
+          id: "accreditation",
+          title: "Заявка на аккредитацию",
+          text: "Издание, ФИО, а в комментарии — выставка, которую вы освещаете. Подтверждение и пропуск — за 2 рабочих дня; эта же заявка добавляет редакцию в список рассылки релизов.",
+        },
+        {
           type: "callout",
           kicker: "Релизы",
           title: "Анонсы выходят заранее",
           text: "Релиз о старте продаж, о составе участников, о программе и итоговый релиз — по каждому событию. Подпишитесь на рассылку для прессы, чтобы не пропустить.",
           tone: "gold",
-          action: { label: "Подписаться", href: "/contacts/" },
+          action: { label: "Подписаться", href: "#accreditation" },
         },
         {
           type: "links",
@@ -973,7 +980,7 @@ export const companyPages: PageDef[] = [
           lead: "Logos, hall and event photography, verified figures and speaker contacts. Show accreditation on request two business days ahead; filming during build-up goes through the technical service.",
           image: "/images/venue-exterior.jpg",
           imageAlt: "Centre exterior",
-          actions: [{ label: "Request accreditation", href: "/contacts/" }],
+          actions: [{ label: "Request accreditation", href: "#accreditation" }],
         },
         {
           type: "files",
@@ -1029,12 +1036,19 @@ export const companyPages: PageDef[] = [
           ],
         },
         {
+          type: "form",
+          formType: "press",
+          id: "accreditation",
+          title: "Accreditation request",
+          text: "Your outlet and name, and in the comment the show you are covering. Confirmation and pass within two business days; the same request puts your desk on the release list.",
+        },
+        {
           type: "callout",
           kicker: "Releases",
           title: "Announcements come early",
           text: "Sales opening, exhibitor line-up, programme and final results — one release per stage for every event. Join the press mailing list.",
           tone: "gold",
-          action: { label: "Subscribe", href: "/contacts/" },
+          action: { label: "Subscribe", href: "#accreditation" },
         },
         {
           type: "links",

@@ -25,15 +25,17 @@ What stays, deliberately (it is part of the page, not floating chrome):
 
 ### How to re-enable (if the client re-approves the widgets later)
 
-1. `src/data/conversion.ts` — flip `liveChat.enabled` and each `popups.strategies[].enabled`
-   back to `true`. They are now all `false`; the popup screenshots' hardcoded
-   `event-*-640.webp` refs also stay in that file and would need proper `<Photo>` rungs.
-2. `src/layouts/Base.astro` — add `<LiveChat />`, `<PopupSystem … />`, `<FloatingContacts … />`
-   back into the body (imports were removed).
-3. `src/components/conversion/StickyCtaBar.astro` no longer observes the removed `#fc-mob` bar —
-   reconnect that offset if the mobile bar returns.
+The three components and their config were **deleted on 2026-10-04** (docs/15 audit): they
+had been unplugged for ten days and nothing imported them. To bring one back, restore it
+from the last commit that still had it:
 
-The widgets are not deleted, only unplugged, so nothing is lost.
+```sh
+git checkout 0099091 -- src/components/conversion/LiveChat.astro   # or PopupSystem / FloatingContacts
+git show 0099091:src/data/conversion.ts   # the old liveChat / popups / channels config
+```
+
+Then add the component back into `src/layouts/Base.astro`. `StickyCtaBar` no longer observes
+the removed `#fc-mob` bar — reconnect that offset if the mobile bar returns.
 
 ## 2. Partner logos — new `PartnerLogoWall`
 

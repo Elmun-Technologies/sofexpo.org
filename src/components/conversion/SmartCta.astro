@@ -112,10 +112,10 @@ const finalSecondaryHref = secondaryHref || d.href2;
 ---
 
 {variant === 'inline' && (
-  <div class="smart-cta smart-cta--inline" translate="no" data-intent={intent} data-variant="inline">
+  <div class="smart-cta smart-cta--inline" data-intent={intent} data-variant="inline">
     <div class="smart-cta__content">
       <h3 class="smart-cta__title">{finalTitle}</h3>
-      <p class="smart-cta__text">{finalText}</p>
+      <p class="smart-cta__text" data-nosnippet>{finalText}</p>
     </div>
     <div class="smart-cta__actions">
       <a class="btn btn--gold" href={finalPrimaryHref} data-cta={`${intent}-primary`} data-source="inline-cta">{finalPrimary}</a>
@@ -125,10 +125,10 @@ const finalSecondaryHref = secondaryHref || d.href2;
 )}
 
 {variant === 'sidebar' && (
-  <aside class="smart-cta smart-cta--sidebar" translate="no" data-intent={intent} data-variant="sidebar">
+  <aside class="smart-cta smart-cta--sidebar" data-intent={intent} data-variant="sidebar">
     <p class="smart-cta__kicker">{ru ? 'Не откладывайте' : "Don't postpone"}</p>
     <h4 class="smart-cta__title">{finalTitle}</h4>
-    <p class="smart-cta__text">{finalText}</p>
+    <p class="smart-cta__text" data-nosnippet>{finalText}</p>
     <a class="btn btn--gold" href={finalPrimaryHref} data-cta={`${intent}-primary`} data-source="sidebar">{finalPrimary}</a>
     <div class="smart-cta__channels">
       <a href={conversionConfig.contacts.telegramManager} target="_blank" rel="noopener" data-channel="telegram">Telegram</a>
@@ -139,7 +139,7 @@ const finalSecondaryHref = secondaryHref || d.href2;
 )}
 
 {variant === 'card' && (
-  <div class="smart-cta smart-cta--card" translate="no" data-intent={intent}>
+  <div class="smart-cta smart-cta--card" data-intent={intent}>
     <div class="smart-cta__icon">
       {intent === 'exhibitor' && '📐'}
       {intent === 'visitor' && '🎟️'}
@@ -150,16 +150,16 @@ const finalSecondaryHref = secondaryHref || d.href2;
       {intent === 'group' && '👥'}
     </div>
     <h4>{finalTitle}</h4>
-    <p>{finalText}</p>
+    <p data-nosnippet>{finalText}</p>
     <a class="btn btn--sm" href={finalPrimaryHref} data-cta={`${intent}-card`}>{finalPrimary}</a>
   </div>
 )}
 
 {variant === 'hero' && (
-  <div class="smart-cta smart-cta--hero" translate="no" data-intent={intent}>
+  <div class="smart-cta smart-cta--hero" data-intent={intent}>
     <div class="smart-cta__hero-content">
       <h2>{finalTitle}</h2>
-      <p>{finalText}</p>
+      <p data-nosnippet>{finalText}</p>
       <div class="btn-row">
         <a class="btn btn--gold" href={finalPrimaryHref} data-cta={`${intent}-hero-primary`}>{finalPrimary}</a>
         <a class="btn btn--ghost" href={finalSecondaryHref} data-cta={`${intent}-hero-secondary`}>{finalSecondary}</a>
@@ -169,13 +169,13 @@ const finalSecondaryHref = secondaryHref || d.href2;
 )}
 
 {variant === 'footer' && (
-  <section class="sec sec--forest smart-cta--footer" translate="no" data-intent={intent}>
+  <section class="sec sec--forest smart-cta--footer" data-intent={intent}>
     <div class="wrap">
       <div class="smart-cta__footer-in">
         <div>
           <p class="kicker" style="color: var(--gold-soft)">{ru ? 'Готовы к участию?' : 'Ready to exhibit?'}</p>
           <h2 style="color:#fff">{finalTitle}</h2>
-          <p class="lead" style="color: rgba(255,255,255,0.78)">{finalText}</p>
+          <p class="lead" style="color: rgba(255,255,255,0.78)" data-nosnippet>{finalText}</p>
         </div>
         <div class="btn-row">
           <a class="btn btn--light" href={finalPrimaryHref} data-cta={`${intent}-footer-primary`}>{finalPrimary}</a>

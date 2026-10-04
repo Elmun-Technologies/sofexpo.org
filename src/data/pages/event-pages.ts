@@ -1,6 +1,6 @@
 import type { Block, PageMeta } from "./types";
 import type { SectionKey } from "@/components/EventSections.astro";
-import type { L } from "@/data/events"; /** * Authored copy for the four pages of every exhibition cluster. * Each event is written individually: different emphasis, different section * order (`before` / `after` decide which data blocks surround the authored text), * different numbers — never one template filled with names. */
+import type { L } from "@/data/events"; /** * Authored copy for the pages of every exhibition cluster. * Each event is written individually: different emphasis, different section * order (`before` / `after` decide which data blocks surround the authored text), * different numbers — never one template filled with names. */
 export interface EventPage {
   path: string;
   image?: string;
@@ -16,6 +16,10 @@ export type EventPages = {
   exhibitors: EventPage;
   visitors: EventPage;
   program: EventPage;
+  /** Hosted buyer programme (docs/13 §5.1) — present only where the show runs one. */
+  buyers?: EventPage;
+  /** Innovation / best-product contest (docs/13 §5.4) — per show, not per template. */
+  award?: EventPage;
 };
 export const eventPages: Record<string, EventPages> = {
   /* ------------------------------------------------------------------ FOODERA */ "foodera-expo":
@@ -530,7 +534,7 @@ export const eventPages: Record<string, EventPages> = {
             en: "The business part runs in the conference hall and on the stage. The schedule updates a week before, recordings follow afterwards.",
           },
         },
-        before: ["programme"],
+        before: ["programme", "matchmaking"],
         after: ["speakers", "faq"],
         blocks: {
           ru: [
@@ -622,7 +626,180 @@ export const eventPages: Record<string, EventPages> = {
           ],
         },
       },
+    /* -----------------------------------------------------------------------------
+       BUYER PROGRAMME (docs/13 §5.1, the FOODEX JAPAN hosted-buyer pattern).
+       The process, the deadline and the privileges come from `events.ts`; this page
+       only adds the application checklist and the form.
+       ----------------------------------------------------------------------------- */
+    buyers: {
+      path: "/events/foodera-expo/buyers/",
+      image: "/images/buyers-talk.jpg",
+      meta: {
+        ru: {
+          title: "Программа закупщика FOODERA 2026: встречи до открытия",
+          description:
+            "Как закупщику попасть на FOODERA 2026: заявка до 10 октября, список экспонентов по вашим категориям, расписание 15-минутных встреч, лаунж и отдельный вход.",
+        },
+        en: {
+          title: "FOODERA 2026 buyer programme: meetings before opening",
+          description:
+            "How a buyer joins FOODERA 2026: apply by 10 October, get the exhibitor list for your categories, a schedule of 15-minute meetings, a lounge and a separate entrance.",
+        },
+      },
+      hero: {
+        kicker: { ru: "Закупщикам FOODERA 2026", en: "FOODERA 2026 buyers" },
+        title: {
+          ru: "Приезжайте на расписание, а не на прогулку по залу",
+          en: "Arrive for a schedule, not for a walk around the hall",
+        },
+        lead: {
+          ru: "Программа для категорийных менеджеров сетей, оптовых баз и HoReCa: мы собираем расписание встреч до открытия, а вы приезжаете на переговоры с конкретными позициями.",
+          en: "For category managers of chains, wholesale buyers and HoReCa: we build the meeting schedule before opening, and you arrive to negotiate specific lines.",
+        },
+      },
+      before: ["buyers"],
+      after: ["materials"],
+      blocks: {
+        ru: [
+          {
+            type: "checklist",
+            kicker: "Что указать в заявке",
+            title: "Четыре поля, по которым мы отбираем встречи",
+            items: [
+              "Компания, ваша роль и регион закупки",
+              "Категории: до пяти разделов выставки",
+              "Объёмы: сколько и как часто закупаете",
+              "Даты приезда и нужен ли трансфер",
+            ],
+          },
+          {
+            type: "form",
+            title: "Заявка в программу закупщика FOODERA 2026",
+            text: "Ответим в течение двух рабочих дней и пришлём список экспонентов по вашим категориям.",
+            note: "Участие бесплатное; число мест ограничено числом столов в зоне переговоров.",
+            event: "FOODERA EXPO 2026",
+          },
+        ],
+        en: [
+          {
+            type: "checklist",
+            kicker: "What to put in the application",
+            title: "Four fields we match meetings on",
+            items: [
+              "Company, your role and the region you buy for",
+              "Categories: up to five sections of the show",
+              "Volumes: how much and how often you buy",
+              "Travel dates and whether you need a transfer",
+            ],
+          },
+          {
+            type: "form",
+            title: "Application to the FOODERA 2026 buyer programme",
+            text: "We reply within two working days and send the exhibitor list for your categories.",
+            note: "The programme is free; places are limited by the number of tables in the negotiation area.",
+            event: "FOODERA EXPO 2026",
+          },
+        ],
+      },
     },
+    /* -----------------------------------------------------------------------------
+       PRODUCT CONTEST (docs/13 §5.4, the SIAL Innovation pattern).
+       ----------------------------------------------------------------------------- */
+    award: {
+      path: "/events/foodera-expo/award/",
+      image: "/images/food-tasting-counter.jpg",
+      meta: {
+        ru: {
+          title: "Конкурс «Лучший продукт» FOODERA 2026: номинации",
+          description:
+            "Конкурс продуктов FOODERA 2026 в Самарканде: четыре номинации, сроки подачи заявок и образцов, состав жюри, что получает победитель.",
+        },
+        en: {
+          title: "FOODERA 2026 Best Product contest: categories and dates",
+          description:
+            "The FOODERA 2026 product contest in Samarkand: four categories, entry and sample deadlines, the jury and what the winner receives.",
+        },
+      },
+      hero: {
+        kicker: { ru: "Конкурс FOODERA 2026", en: "FOODERA 2026 contest" },
+        title: {
+          ru: "Лучший продукт выставки",
+          en: "Best product of the show",
+        },
+        lead: {
+          ru: "Продукт оценивают закупщики сетей, технологи и профильные журналисты. Заявка бесплатная для экспонентов, образцы сдаются на дегустационную станцию в первый день.",
+          en: "Products are judged by chain buyers, food technologists and trade journalists. Entry is free for exhibitors; samples go to the tasting station on day one.",
+        },
+      },
+      before: ["award"],
+      blocks: {
+        ru: [
+          {
+            type: "grid",
+            cols: 3,
+            kicker: "Как участвовать",
+            title: "Три шага от заявки до знака на стенде",
+            items: [
+              {
+                icon: "check",
+                title: "Подайте заявку",
+                text: "Один продукт — одна номинация. Заявку подаёт экспонент до 10 октября.",
+              },
+              {
+                icon: "cup",
+                title: "Сдайте образцы",
+                text: "К первой половине первого дня: шесть единиц в потребительской упаковке и документы на продукцию.",
+              },
+              {
+                icon: "star",
+                title: "Получите оценку",
+                text: "Слепую дегустацию проводит жюри, награждение — на сцене в первый день выставки.",
+              },
+            ],
+          },
+          {
+            type: "form",
+            title: "Заявка на участие в конкурсе",
+            text: "Укажите номинацию и продукт — менеджер пришлёт чек-лист по образцам и документам.",
+            note: "Участие бесплатное для экспонентов FOODERA EXPO 2026; состав жюри объявляется до 5 октября.",
+            event: "FOODERA EXPO 2026",
+          },
+        ],
+        en: [
+          {
+            type: "grid",
+            cols: 3,
+            kicker: "How to enter",
+            title: "Three steps from entry to the mark on your stand",
+            items: [
+              {
+                icon: "check",
+                title: "Apply",
+                text: "One product, one category. Exhibitors apply until 10 October.",
+              },
+              {
+                icon: "cup",
+                title: "Submit samples",
+                text: "During the first half of day one: six retail-packed units and the product documents.",
+              },
+              {
+                icon: "star",
+                title: "Get judged",
+                text: "The jury runs a blind tasting; the awards happen on stage on the opening day.",
+              },
+            ],
+          },
+          {
+            type: "form",
+            title: "Contest entry",
+            text: "Name the category and the product — the account manager sends the sample and document checklist.",
+            note: "Free for FOODERA EXPO 2026 exhibitors; the jury line-up is announced before 5 October.",
+            event: "FOODERA EXPO 2026",
+          },
+        ],
+      },
+    },
+  },
 };
 
 /* ------------------------------------------------------------------ BUILD PRO */

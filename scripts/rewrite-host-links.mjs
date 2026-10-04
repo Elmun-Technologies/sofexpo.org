@@ -55,7 +55,12 @@ for (const file of files) {
   built.add(`${clean}/`);
 }
 
-const RE = new RegExp(`href="/(${LOCALES.join("|")})(/[^"#{?]*)?"`, "g");
+/* `uz` is a page-by-page edition (docs/09): it is not in LOCALES because it never gets
+   hreflang, sitemap or redirect treatment until a page is fully translated, but its hrefs
+   are real and must be rewritten all the same — otherwise a cross-host link on a translated
+   page points at a path this host does not build. */
+const SCAN = [...LOCALES, "uz"];
+const RE = new RegExp(`href="/(${SCAN.join("|")})(/[^"#{?]*)?"`, "g");
 const knownEvents = new Set(map.hosts.map((h) => h.event));
 
 let changed = 0;

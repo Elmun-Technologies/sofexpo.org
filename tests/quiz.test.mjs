@@ -79,11 +79,25 @@ test('pages ship the quiz block and the global modal trigger', () => {
 
 test('event pages ship a focused quiz before their form', () => {
   const pages = readFileSync(new URL('../src/data/pages/event-pages.ts', import.meta.url), 'utf8');
-  const quizzes = (pages.match(/type: "quiz",/g) || []).length;
-  const forms = (pages.match(/type: "form",/g) || []).length;
+  /* The rule is about the PARTICIPATION form: a stand request is a considered purchase, so
+     it is preceded by the stand quiz. The buyer-programme and contest pages (docs/13) ask for
+     an application instead of a purchase — a stand quiz in front of them would be noise, so
+     they are counted separately below. */
+  const from = pages.indexOf('BUYER PROGRAMME');
+  const to = pages.indexOf('eventPages["buildpro-expo"]');
+  const tail = from >= 0 && to > from ? pages.slice(from, to) : '';
+  const core = from >= 0 && to > from ? pages.slice(0, from) + pages.slice(to) : pages;
+  const quizzes = (core.match(/type: "quiz",/g) || []).length;
+  const forms = (core.match(/type: "form",/g) || []).length;
   assert.ok(quizzes >= 10, `every event form is preceded by a quiz (found ${quizzes})`);
   assert.equal(quizzes, forms, 'quiz/form pairs stay index-aligned per locale');
   assert.ok(/type: "quiz",[\s\S]{0,200}?event: "FOODERA EXPO 2026"/.test(pages), 'focused quiz carries the show');
+  /* both new application pages ask in both source locales */
+  assert.equal(
+    (tail.match(/type: "form",/g) || []).length,
+    4,
+    'the buyer programme and the contest each carry an application form in RU and EN',
+  );
 });
 
 test('webhook formats a quiz lead into a readable Telegram message', async () => {

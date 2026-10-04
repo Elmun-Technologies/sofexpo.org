@@ -62,26 +62,40 @@ const withNote = list.filter((p) => p.note);
 
   <ul class="pwl__grid">
     {
-      list.map((p) => (
-        <li class="pwl__item" data-kind={p.kind} data-note={withNote.includes(p) ? p.note?.[ru ? 'ru' : 'en'] : undefined}>
-          {/* real logo once provided; the build only ships these files when added */}
-          {p.hasLogo ? (
-            <img
-              class="pwl__logo"
-              src={partnerSrc(p.id)}
-              alt={p.name[ru ? 'ru' : 'en']}
-              width="240"
-              height="96"
-              loading="lazy"
-            />
-          ) : (
-            /* initials are a graphic mark, never translated */
-            <span class="pwl__tile" aria-hidden="true" translate="no">{p.name[ru ? 'ru' : 'en'].slice(0, 2)}</span>
-          )}
-          <span class="pwl__name">{p.name[ru ? 'ru' : 'en']}</span>
-          {p.note && <span class="pwl__note">{p.note[ru ? 'ru' : 'en']}</span>}
-        </li>
-      ))
+      list.map((p) => {
+        const name = p.name[ru ? 'ru' : 'en'];
+        const inner = (
+          <>
+            {/* real logo once provided; the build only ships these files when added */}
+            {p.hasLogo ? (
+              <img
+                class="pwl__logo"
+                src={partnerSrc(p.id)}
+                alt={name}
+                width="240"
+                height="96"
+                loading="lazy"
+              />
+            ) : (
+              /* initials are a graphic mark, never translated */
+              <span class="pwl__tile" aria-hidden="true" translate="no">{name.slice(0, 2)}</span>
+            )}
+            <span class="pwl__name">{name}</span>
+            {p.note && <span class="pwl__note">{p.note[ru ? 'ru' : 'en']}</span>}
+          </>
+        );
+        return (
+          <li class="pwl__item" data-kind={p.kind} data-note={withNote.includes(p) ? p.note?.[ru ? 'ru' : 'en'] : undefined}>
+            {p.url ? (
+              <a class="pwl__link" href={p.url} target="_blank" rel="noopener noreferrer">
+                {inner}
+              </a>
+            ) : (
+              inner
+            )}
+          </li>
+        );
+      })
     }
   </ul>
 </div>
@@ -116,6 +130,22 @@ const withNote = list.filter((p) => p.note);
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 0.8rem;
+  }
+  .pwl__link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    flex: 1;
+  }
+  .pwl__link:hover .pwl__name {
+    color: var(--evergreen);
+    text-decoration: underline;
+  }
+  .pwl__link:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
   }
   .pwl__item {
     min-height: 132px;

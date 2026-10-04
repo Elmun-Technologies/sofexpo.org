@@ -1,0 +1,46 @@
+---
+/**
+ * Segment pages of an exhibition: /events/foodera-expo/sections/tea-and-coffee/
+ *
+ * Twelve per show (docs/13 §P1-2, the FHA pattern). They are a directory family:
+ * one renderer, twelve sets of copy — a buyer searching for "tea and coffee exhibition
+ * Samarkand" lands on a page about tea and coffee. The pages stay on the centre's
+ * hostname in every topology: `localize()` turns the links on a show host into absolute
+ * cross-host urls, so the directory is never duplicated and no link is stranded.
+ */
+import type { GetStaticPaths } from 'astro';
+import { sourceLocales as locales } from '@/i18n/config';
+import { isBuiltHere } from '@/data/hosts';
+import { events } from '@/data/events';
+import { sectionPages, type SectionPage } from '@/data/pages/sections';
+import SegmentPage from '@/components/SegmentPage.astro';
+
+export const getStaticPaths = (async () => {
+  const out: {
+    params: { locale: string; slug: string; section: string };
+    props: { event: (typeof events)[number]; section: SectionPage; path: string };
+  }[] = [];
+  for (const locale of locales) {
+    for (const event of events) {
+      for (const section of sectionPages[event.slug] ?? []) {
+        const path = `/events/${event.slug}/sections/${section.slug}/`;
+        if (!isBuiltHere(path)) continue;
+        out.push({
+          params: { locale, slug: event.slug, section: section.slug },
+          props: { event, section, path },
+        });
+      }
+    }
+  }
+  return out;
+}) satisfies GetStaticPaths;
+
+const { locale } = Astro.params as { locale: 'ru' | 'en' };
+const { event, section, path } = Astro.props as {
+  event: (typeof events)[number];
+  section: SectionPage;
+  path: string;
+};
+---
+
+<SegmentPage {locale} {event} {section} {path} />

@@ -19,10 +19,12 @@ import Photo from '@/components/Photo.astro';
 import { bigDate, industryLabel } from '@/lib/labels';
 import { eventIcsPath } from '@/lib/ics';
 
-const { locale, event, kicker, title, lead, variant = 'open' } = Astro.props as {
+const { locale, event, kicker, title, lead, variant = 'open', soloKicker = false } = Astro.props as {
   locale: Locale;
   event: ExpoEvent;
   kicker?: string;
+  /** the page's own kicker is enough — do not append the edition line (show pages) */
+  soloKicker?: boolean;
   title: string;
   lead?: string;
   variant?: 'open' | 'past';
@@ -64,7 +66,9 @@ const words = (v: string) => norm(v).split(' ').filter((w) => w.length > 2);
 const editionWords = new Set(words(edition));
 const shared = words(lead1).filter((w) => editionWords.has(w)).length;
 const heroKicker =
-  shared >= Math.ceil(words(lead1).length * 0.6) ? edition
+  /* a page that names its own kicker ("FOODERA 2026 programme") says enough on its own */
+  kicker && soloKicker ? kicker
+  : shared >= Math.ceil(words(lead1).length * 0.6) ? edition
   : norm(lead1).includes(norm(edition)) ? lead1 /* "Education exhibition · spring" + "SPRING" */
   : `${lead1} · ${edition}`;
 ---

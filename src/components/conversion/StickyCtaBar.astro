@@ -79,13 +79,14 @@ const L = {
 </div>
 
 <style>
-  /* mobile-first: on a phone the bar floats above the contact bar (bottom: 64px)
-     and runs compact; the full-height desktop bar is a ≥901px tier */
+  /* mobile-first: compact bar on the bottom edge (the floating contact bar it once sat
+     above is gone — docs/12, docs/15); the full-height desktop bar is a ≥901px tier */
   .s-cta {
     position: fixed;
     left: 0;
     right: 0;
-    bottom: 64px; /* above mobile contact bar */
+    bottom: 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
     z-index: 38;
     background: rgba(255,255,255,0.96);
     backdrop-filter: blur(18px) saturate(160%);
@@ -198,6 +199,13 @@ const L = {
       display: block;
     }
   }
+  /* from 1281px the full desktop header — with its own «Book a stand» button — stays
+     pinned on screen; a second bar at the bottom only repeats it and hides content */
+  @media (min-width: 1281px) {
+    .s-cta {
+      display: none !important;
+    }
+  }
   @media (min-width: 901px) {
     .s-cta {
       bottom: 0;
@@ -232,6 +240,8 @@ const L = {
   (() => {
     const bar = document.getElementById('sticky-cta');
     if (!bar) return;
+    // an event page carries its own mobile booking bar (.m-cta); never stack a second one
+    if (document.querySelector('.m-cta')) return;
     const closeBtn = bar.querySelector('.s-cta__close') as HTMLButtonElement;
     const SHOW_AFTER = 420;
     const STORAGE_KEY = 'sofexpo.sticky.dismissed';

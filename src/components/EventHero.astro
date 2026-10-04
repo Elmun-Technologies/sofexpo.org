@@ -53,6 +53,18 @@ const actions = [
     ? [{ label: ru ? 'В календарь' : 'Add to calendar', href: ics, icon: 'calendar', download: true }]
     : []),
 ];
+/* "Food and beverage exhibition · Specialised food and beverage exhibition in Uzbekistan"
+   said the same thing twice: drop the industry label when the edition line already names it */
+const lead1 = kicker ?? industryLabel(event.industry, locale);
+const edition = event.edition[locale];
+const norm = (v: string) => v.toLowerCase().replace(/[^\p{L}\p{N} ]/gu, '');
+const words = (v: string) => norm(v).split(' ').filter((w) => w.length > 2);
+const editionWords = new Set(words(edition));
+const shared = words(lead1).filter((w) => editionWords.has(w)).length;
+const heroKicker =
+  shared >= Math.ceil(words(lead1).length * 0.6) ? edition
+  : norm(lead1).includes(norm(edition)) ? lead1 /* "Education exhibition · spring" + "SPRING" */
+  : `${lead1} · ${edition}`;
 ---
 
 <!-- the hero carries a measured hall grid, not a blurred render: on an expo site the first
@@ -70,7 +82,7 @@ const actions = [
   <div class="wrap ehero__in">
     <div class="ehero__text">
       <p class="kicker">
-        {kicker ?? industryLabel(event.industry, locale)} · {event.edition[locale]}
+        {heroKicker}
       </p>
       <h1 set:html={title} />
       <p class="ehero__date">

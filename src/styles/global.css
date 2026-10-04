@@ -108,6 +108,13 @@
   box-sizing: border-box;
 }
 
+/* `hidden` must always win: component rules such as `.quiz__done { display: grid }`
+   otherwise beat the UA stylesheet, and the quiz showed "Request received" (and its
+   Back button) before anyone had filled it in (docs/15 §9). */
+[hidden] {
+  display: none !important;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
@@ -262,6 +269,12 @@ li::marker {
 .sec--forest h2,
 .sec--forest h3, .sec--forest h2.h3 {
   color: #fff;
+}
+/* body copy on a dark band: --ink-60 is a light-ground colour (≈2:1 here) */
+.sec--forest .sec-head p,
+.sec--forest .muted,
+.sec--forest .lead {
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .grid {
@@ -2405,6 +2418,11 @@ body.nav-open .mnav {
 @media (min-width: 780px) {
   .gallery {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  /* four columns: tile 1 (2×2) and tiles 2–5 fill two rows exactly, so the sixth closes
+     the bento as a full-width panorama instead of leaving half a row empty */
+  .gallery > :nth-child(6) {
+    grid-column: 1 / -1;
   }
 }
 

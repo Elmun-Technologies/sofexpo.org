@@ -1,0 +1,7 @@
+{
+  "_comment": "Each show's own logo, cut from the organiser's material in images/brand-masters/ (docs/15 §10). `plate` is the ground the logo was drawn on — the site always shows it on that colour so a raster edge never shows. Built by `npm run logos` into public/brand/<id>/logo.{webp,png}. AGROPRO and WORLD EDU have no logo file yet: they keep the typeset wordmark until the organiser sends one.",
+  "foodera-expo": { "id": "foodera", "master": "foodera-expo-2026-badge.png", "name": "FOODERA EXPO 2026", "plate": "#ffffff", "shape": "round" },
+  "buildpro-expo": { "id": "buildpro", "master": "buildpro-expo-logo.png", "name": "BUILD PRO EXPO", "plate": "#18212a", "shape": "wide" },
+  "ecom-retail-expo": { "id": "ecom-retail", "master": "ecom-retail-expo-logo.png", "name": "e-com & retail EXPO SAMARKAND", "plate": "#171717", "shape": "wide" },
+  "promotors-show-samarkand": { "id": "promotors", "master": "promotors-show-logo.png", "name": "PROMOTORS SHOW Samarkand", "plate": "#111111", "shape": "wide" }
+}

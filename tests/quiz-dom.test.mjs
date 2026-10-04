@@ -16,6 +16,10 @@ const load = (path, { scripts = true, query = '' } = {}) => {
   const dom = new JSDOM(html, {
     url: `https://sofexpo.org/${path.replace(/index\.html$/, '')}${query}`,
     runScripts: scripts ? 'dangerously' : undefined,
+    // jsdom has no matchMedia; the header script calls it while the page parses
+    beforeParse(window) {
+      window.matchMedia = (media) => ({ matches: false, media, addEventListener() {}, removeEventListener() {} });
+    },
   });
   // jsdom does not implement scrolling
   dom.window.HTMLElement.prototype.scrollIntoView = function () {};
@@ -62,6 +66,7 @@ test('quiz: three tap-only steps auto-advance into the contact step (en build)',
   submit(form);
   const done = quiz.querySelector('[data-quiz-done]');
   assert.equal(done.hidden, false, 'success panel replaces the form');
+  assert.match(done.querySelector('.quiz__done-title').textContent, /browser only/, 'an undelivered request never reads as received');
   assert.match(done.querySelector('[data-quiz-summary=goal]').textContent, /New buyers and sales/);
   assert.match(done.querySelector('[data-quiz-summary=area]').textContent, /18/);
   // funnel telemetry reached the dataLayer

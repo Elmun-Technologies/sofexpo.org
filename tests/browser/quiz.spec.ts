@@ -4,8 +4,8 @@ import {test,expect} from '@playwright/test';
  * success state confirms the selection and the payload lands in the preview store.
  */
 const answers = (locale:string) => ({
-  ru: { q1any:'Ещё не выбрал', goal:'Новые клиенты и продажи', area:'18 м²', done:'Заявка принята', event:'Выставка', open:'Забронировать стенд' },
-  en: { q1any:'Not sure yet — help me choose', goal:'New buyers and sales', area:'18 m²', done:'Request received', event:'Exhibition', open:'Book a stand' },
+  ru: { q1any:'Ещё не выбрал', goal:'Новые клиенты и продажи', area:'18 м²', done:'только в этом браузере', event:'Выставка', open:'Забронировать стенд' },
+  en: { q1any:'Not sure yet — help me choose', goal:'New buyers and sales', area:'18 m²', done:'browser only', event:'Exhibition', open:'Book a stand' },
 }[locale]!);
 
 for(const locale of ['en','ru']) {
@@ -36,6 +36,8 @@ for(const locale of ['en','ru']) {
     await quiz.locator('button[type=submit]').click();
     await expect(quiz.locator('[data-quiz-done]')).toBeVisible();
     await expect(quiz.locator('[data-quiz-done]')).toContainText(a.done);
+    // the undelivered request is handed over, never silently kept in the browser
+    await expect(quiz.locator('[data-quiz-done] .lead-relay a[data-channel=whatsapp]')).toHaveAttribute('href',/wa\.me\/998557050705\?text=.*Test%20Exhibitor/);
     const summary = await quiz.evaluate((el)=>{
       const get=(n:string)=>el.querySelector(`[data-quiz-summary=${n}]`)?.textContent?.trim();
       return {event:get('event'),goal:get('goal'),area:get('area')};

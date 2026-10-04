@@ -67,7 +67,7 @@ export interface BlockFile {
   title: string;
   href: string;
   note?: string;
-  kind?: "pdf" | "link" | "video";
+  kind?: "pdf" | "link" | "video" | "svg";
 }
 export interface BlockShot {
   src: string;
@@ -94,6 +94,8 @@ export interface BlockLink {
 }
 
 export type BlockItem =
+  /** `checklist` items are plain sentences */
+  | string
   | BlockCard
   | BlockRow
   | BlockStat
@@ -139,7 +141,7 @@ export interface Block {
   event?: string;
   /** quiz block: stand-show option labels override (defaults to the current line-up) */
   shows?: string[];
-  formType?: 'exhibitor' | 'visitor' | 'organizer' | 'sponsor' | 'callback' | 'catalog' | 'group' | 'ticket' | 'stand';
+  formType?: 'exhibitor' | 'visitor' | 'organizer' | 'sponsor' | 'callback' | 'catalog' | 'group' | 'ticket' | 'stand' | 'press';
   /** quote block */
   author?: string;
   role?: string;
@@ -161,3 +163,23 @@ export interface PageDef {
   /** keep out of the sitemap */
   noindex?: boolean;
 }
+
+/** Data sections an event page can render around its authored blocks (`EventSections.astro`). */
+export type SectionKey =
+  | 'facts'
+  | 'categories'
+  | 'benefits'
+  | 'programme'
+  | 'audience'
+  | 'stands'
+  | 'speakers'
+  | 'materials'
+  | 'faq'
+  | 'related'
+  | 'venue'
+  /* docs/13 — the three patterns every leading food show runs: a hosted buyer
+     programme (FOODEX), pre-arranged meetings (SIAL Match Me) and an innovation
+     contest (SIAL Innovation). Each renders only when the event carries the data. */
+  | 'buyers'
+  | 'matchmaking'
+  | 'award';

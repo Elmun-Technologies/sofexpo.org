@@ -659,3 +659,8 @@ lekin uchta narsasi bizda yo'q edi — uchtasi ham arzon va ma'lumotga asoslanga
 - P1-7 lid magnit (katalog yuklab olish → mailing-list).
 - Post-show reportni to'ldirish: `report.method` (raqamlar manbasi), `report.outcome`,
   tasdiqlangan `report.quotes` — ro'yxat `docs/14-post-show-report.md` da.
+
+---
+
+**Davomi:** 2026-10-04 auditi, yangi patternlar (milliy pavilonlar, VIP buyer, Top-10) va
+loyihaning yakuniy bahosi — [`docs/15-audit-2026-10.md`](15-audit-2026-10.md).

@@ -33,6 +33,12 @@ for (const f of files) {
   }
   if (!/rel="canonical" href="https:\/\/sofexpo\.org\//.test(h)) problems.push(`${url} canonical missing`);
   for (const img of h.match(/<img\b[^>]*>/g) ?? []) if (!/\balt="/.test(img)) problems.push(`${url} <img> without alt`);
+  // a duplicate id breaks label/for pairs, aria references and #anchors
+  const ids = new Set();
+  for (const [, id] of h.matchAll(/<[a-z][^>]*?\sid="([^"]+)"/g)) {
+    if (ids.has(id)) problems.push(`${url} duplicate id="${id}"`);
+    ids.add(id);
+  }
   for (const m of h.matchAll(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)) {
     try { JSON.parse(m[1]); } catch { problems.push(`${url} JSON-LD does not parse`); }
   }

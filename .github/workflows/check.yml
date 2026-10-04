@@ -1,0 +1,62 @@
+name: check
+
+# The merge gate from the README (§8): build, SEO/accessibility audit, translation and
+# download audits, unit tests. Hosts are checked too, since a link that resolves on the
+# single-host build can still break across hostnames.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run check
+
+  hosts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run check:hosts
+
+  # Browser suite against the static build: 5 locales, forms, menus, tables,
+  # responsive layouts and the axe WCAG 2.1 AA audit (tests/browser/a11y.spec.ts).
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - name: Serve dist/
+        run: |
+          npx astro preview --host 127.0.0.1 --port 4321 &
+          npx --yes wait-on@8 http://127.0.0.1:4321/en/ --timeout 60000
+      - run: npx playwright test
+        env:
+          BASE_URL: http://127.0.0.1:4321
+          CI: 'true'

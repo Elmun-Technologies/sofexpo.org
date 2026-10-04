@@ -12,7 +12,7 @@
   --evergreen: #102e29;
   --evergreen-2: #1c463c;
   --ink: #172c27;
-  --ink-60: #5d6a64;
+  --ink-60: #525d57; /* ≥5.1:1 on every light ground (docs/15) */
   --line: #dedfd5;
   --accent: #b07a24;
   --gold: #b07a24;
@@ -230,6 +230,11 @@ html:lang(tr) { --f-body: "TT Norms Pro", Arial, sans-serif; }
 .mnav { position: absolute; inset: 100% 0 auto; height: calc(100dvh - var(--header-h)); border-top: 1px solid var(--line); max-height: calc(100dvh - var(--header-h)); overflow-y: auto; overscroll-behavior: contain; }
 
 .ehero > .ph.ehero__bg, .hero > .ph.hero__media { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* The background photo is a <Photo> component, so EventHero's scoped `.ehero__bg` rules never
+   reach it (scoped CSS stops at a child component's root). Without this z-index the photo paints
+   above the ::after scrim and the white headline sits unreadable on a bright hall photo. */
+.ehero > .ph.ehero__bg { z-index: -2; border-radius: 0; }
+.ehero > .ph.ehero__bg img { object-fit: cover; object-position: center 42%; }
 .ehero > .ph.ehero__bg picture, .ehero > .ph.ehero__bg img,
 .hero > .ph.hero__media picture, .hero > .ph.hero__media img { width: 100%; height: 100%; }
 

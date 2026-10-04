@@ -15,7 +15,7 @@ const endpoint = (import.meta.env.PUBLIC_LEAD_ENDPOINT ?? '').trim();
 
 const L = {
   title: ru ? 'Стать спонсором выставки' : 'Become exhibition sponsor',
-  sub: ru ? 'От баннера до генерального спонсора. Презентация и медиа-кит за 10 минут.' : 'From banner to general sponsor. Deck & media kit in 10 min.',
+  sub: ru ? 'От баннера до генерального спонсора. Презентация и медиа-кит — по запросу.' : 'From banner to general sponsor. Deck and media kit on request.',
   packages: ru
     ? ['Генеральный спонсор', 'Официальный спонсор', 'Партнёр деловой программы', 'Спонсор регистрации / бейджей', 'Баннер / брендирование', 'Обсудим']
     : ['General sponsor', 'Official sponsor', 'Business program partner', 'Registration / badge sponsor', 'Banner / branding', "Let's discuss"],
@@ -26,12 +26,12 @@ const L = {
   package: ru ? 'Интересует пакет' : 'Package interest',
   comment: ru ? 'Цели спонсорства' : 'Sponsorship goals',
   submit: ru ? 'Получить презентацию спонсора' : 'Get sponsor deck',
-  ok: ru ? 'Презентация отправлена! Менеджер свяжется за 15 минут.' : 'Deck sent! Manager will contact in 15 min.',
+  ok: ru ? 'Заявка принята! Менеджер пришлёт презентацию в течение рабочего дня.' : 'Request received! A manager will send the deck within one business day.',
   err: ru ? 'Заполните имя, компанию и телефон' : 'Fill name, company and phone',
 };
 ---
 
-<form translate="no" class="form-sp" id={id} data-lead-form data-form-type="sponsor" data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} novalidate>
+<form class="form-sp" id={id} data-lead-form data-fallback={ru ? 'Мы получили ваш контакт только в этом браузере — отправьте заявку также на почту.' : 'Your request was kept in this browser only — please also send it by email.'} data-form-type="sponsor" data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} novalidate>
   <div class="form-sp__head">
     <div>
       <p class="form-sp__kicker">{ru ? 'Спонсорство · охват 70 000+ посетителей' : 'Sponsorship · 70 000+ reach'}</p>
@@ -42,17 +42,17 @@ const L = {
   </div>
 
   <div class="form-sp__grid">
-    <div class="field"><label>{L.name} *</label><input name="name" required /></div>
-    <div class="field"><label>{L.company} *</label><input name="company" required /></div>
-    <div class="field"><label>{L.phone} *</label><input name="phone" type="tel" required placeholder="+998" /></div>
-    <div class="field"><label>{L.email}</label><input name="email" type="email" /></div>
-    <div class="field form-sp__full">
-      <label>{L.package}</label>
+    <div class="field"><label for={`${id}-name`}>{L.name} *</label><input id={`${id}-name`} name="name" required /></div>
+    <div class="field"><label for={`${id}-company`}>{L.company} *</label><input id={`${id}-company`} name="company" required /></div>
+    <div class="field"><label for={`${id}-phone`}>{L.phone} *</label><input id={`${id}-phone`} name="phone" type="tel" required placeholder="+998" /></div>
+    <div class="field"><label for={`${id}-email`}>{L.email}</label><input id={`${id}-email`} name="email" type="email" /></div>
+    <div class="field form-sp__full" role="group" aria-labelledby={`${id}-package-label`}>
+      <label id={`${id}-package-label`}>{L.package}</label>
       <div class="form-sp__pkgs">
         {L.packages.map(p => <label class="form-sp__pkg"><input type="radio" name="package" value={p} /> <span>{p}</span></label>)}
       </div>
     </div>
-    <div class="field form-sp__full"><label>{L.comment}</label><textarea name="comment" rows="2" placeholder={ru ? 'Бренд, цели, бюджет...' : 'Brand, goals, budget...'}></textarea></div>
+    <div class="field form-sp__full"><label for={`${id}-comment`}>{L.comment}</label><textarea id={`${id}-comment`} name="comment" rows="2" placeholder={ru ? 'Бренд, цели, бюджет...' : 'Brand, goals, budget...'}></textarea></div>
   </div>
 
   <button class="btn btn--gold" type="submit">{L.submit}</button>

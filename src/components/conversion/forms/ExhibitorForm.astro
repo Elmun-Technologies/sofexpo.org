@@ -19,7 +19,7 @@ const endpoint = (import.meta.env.PUBLIC_LEAD_ENDPOINT ?? '').trim();
 
 const L = {
   title: ru ? 'Забронировать стенд' : 'Book a stand',
-  sub: ru ? 'План зала + расчёт за 15 минут. Без оплаты сейчас.' : 'Floor plan + quote in 15 min. No payment now.',
+  sub: ru ? 'План зала и расчёт — в течение рабочего дня. Без оплаты сейчас.' : 'Floor plan and quote within one business day. No payment now.',
   name: ru ? 'Имя и фамилия' : 'Full name',
   company: ru ? 'Компания / бренд' : 'Company / brand',
   phone: ru ? 'Телефон (WhatsApp/Telegram)' : 'Phone (WhatsApp/Telegram)',
@@ -42,8 +42,8 @@ const L = {
   comment: ru ? 'Что покажете на стенде?' : 'What will you showcase?',
   submit: ru ? 'Получить план зала и расчёт' : 'Get floor plan & quote',
   sponsorship: ru ? 'Интересуюсь спонсорством и рекламными носителями' : 'Also interested in sponsorship and advertising',
-  consent: ru ? 'Отправляя, вы соглашаетесь с обработкой данных. Ответим за 15 минут.' : 'By sending you agree to data processing. Reply in 15 min.',
-  ok: ru ? 'Заявка принята! Менеджер пришлёт план зала и расчёт в течение 15 минут в Telegram/WhatsApp.' : 'Request received! Manager will send floor plan and quote within 15 min via Telegram/WhatsApp.',
+  consent: ru ? 'Отправляя, вы соглашаетесь с обработкой данных. Ответим в течение рабочего дня.' : 'By sending you agree to data processing. Reply within one business day.',
+  ok: ru ? 'Заявка принята! Менеджер пришлёт план зала и расчёт в течение рабочего дня.' : 'Request received! A manager will send the floor plan and quote within one business day.',
   err: ru ? 'Заполните обязательные поля' : 'Please fill required fields',
   tg: 'Telegram',
   wa: 'WhatsApp',
@@ -60,7 +60,7 @@ const events = [
 ];
 ---
 
-<form translate="no" class:list={['form-ex', { 'form-ex--compact': compact }]} id={id} data-lead-form data-form-type="exhibitor" data-source={source} data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} novalidate>
+<form class:list={['form-ex', { 'form-ex--compact': compact }]} id={id} data-lead-form data-fallback={ru ? 'Мы получили ваш контакт только в этом браузере — отправьте заявку также на почту.' : 'Your request was kept in this browser only — please also send it by email.'} data-form-type="exhibitor" data-source={source} data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} novalidate>
   <div class="form-ex__head">
     <div>
       <p class="form-ex__kicker">{ru ? 'Экспонентам · от 9 м²' : 'For exhibitors · from 9 m²'}</p>

@@ -44,7 +44,7 @@ const SHARED: Partner[] = [
   { id: 'ticketon', kind: 'service', show: 'site', name: { ru: 'Ticketon.uz', en: 'Ticketon.uz' }, note: { ru: 'билетный оператор', en: 'ticketing' } },
   { id: 'uzexpo', kind: 'org', show: 'site', name: { ru: 'UzExpoCentre', en: 'UzExpoCentre' }, note: { ru: 'отраслевой партнёр', en: 'industry partner' } },
   { id: 'cci-uz', kind: 'state', show: 'site', name: { ru: 'Торгово-промышленная палата', en: 'Chamber of Commerce & Industry' } },
-  { id: 'hotel-partner', kind: 'hotel', show: 'site', name: { ru: 'Hilton Samarkand', en: 'Hilton Samarkand' }, note: { ru: 'рекомендованный отель', en: 'recommended hotel', hasLogo: false } },
+  { id: 'hotel-partner', kind: 'hotel', show: 'site', name: { ru: 'Hilton Samarkand', en: 'Hilton Samarkand' }, note: { ru: 'рекомендованный отель', en: 'recommended hotel' } },
   /* The centre's own partner list, as published by the organiser (sofexpo.uz, 2026).
      Names and links come from there; artwork still arrives per partner, so every tile
      keeps the monogram until the real file is dropped in. */
@@ -75,7 +75,7 @@ const EVENT: Partner[] = [
   { id: 'worldedu-ministry', kind: 'state', show: 'event', event: 'world-edu-expo', name: { ru: 'Министерство высшего образования', en: 'Ministry of Higher Education' }, note: { ru: 'при поддержке', en: 'with support of' } },
   /* ECOM & RETAIL EXPO 2027 */
   { id: 'ecom-organizer', kind: 'org', show: 'event', event: 'ecom-retail-expo', name: { ru: 'RESOF EXPO', en: 'RESOF EXPO' }, note: { ru: 'организатор', en: 'organizer' } },
-  { id: 'ecom-sellers', kind: 'org', show: 'event', event: 'ecom-retail-expo', name: { ru: 'Ассоциация продавцов Узбекистана', en: 'Uzbekistan Sellers Association', hasLogo: true }, note: { ru: 'соорганизатор', en: 'co-organizer' } },
+  { id: 'ecom-sellers', kind: 'org', show: 'event', event: 'ecom-retail-expo', name: { ru: 'Ассоциация продавцов Узбекистана', en: 'Uzbekistan Sellers Association' }, note: { ru: 'соорганизатор', en: 'co-organizer' } },
   /* PROMOTORS SHOW 2026 */
   { id: 'promotors-organizer', kind: 'org', show: 'event', event: 'promotors-show-samarkand', name: { ru: 'RESOF EXPO', en: 'RESOF EXPO' }, note: { ru: 'организатор', en: 'organizer' } },
 ];

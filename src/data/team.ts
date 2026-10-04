@@ -51,7 +51,7 @@ export const team: TeamMember[] = [
   },
   {
     card: `team-urokov-asliadin`,
-    name: { ru: "Уроков Аслиадин", en: "Asliadin Urokov" },
+    name: { ru: "Уроков Аслиддин", en: "Asliddin Urokov" },
     role: { ru: "Коммерческий директор SOF EXPO", en: "Commercial director of SOF EXPO" },
     blurb: {
       ru: "Отвечает за коммерческие условия участия и доходность площадки.",
@@ -73,7 +73,7 @@ export const team: TeamMember[] = [
   },
   {
     card: `team-ziyadullaev-firdaus`,
-    name: { ru: "Зиядуллаев Фируавс", en: "Firdaus Ziyadullaev" },
+    name: { ru: "Зиядуллаев Фирдавс", en: "Firdaus Ziyadullaev" },
     role: { ru: "SMM-менеджер SOF EXPO", en: "SMM manager at SOF EXPO" },
     blurb: {
       ru: "Каналы площадки в соцсетях, анонсы событий и работа с подписчиками.",
@@ -161,7 +161,7 @@ export const team: TeamMember[] = [
   /* ── technical service ──────────────────────────────────────────── */
   {
     card: `team-govur-kulimuradov`,
-    name: { ru: "Говур Кулиуродов", en: "Govur Kulimuradov" },
+    name: { ru: "Говур Кулмуродов", en: "Govur Kulimuradov" },
     role: { ru: "Технический директор SOF EXPO", en: "Technical director of SOF EXPO" },
     blurb: {
       ru: "Утверждает техплан: электричество, высота, кран, звук, свет, пожарная безопасность.",
@@ -199,7 +199,7 @@ export const team: TeamMember[] = [
   },
   {
     card: `team-mahmudjonov-abdulvosit`,
-    name: { ru: "Махмуджонов Абдулвосиит", en: "Abdulvosit Mahmudjonov" },
+    name: { ru: "Махмуджонов Абдулвосит", en: "Abdulvosit Mahmudjonov" },
     role: { ru: "Отдел закупок SOF EXPO", en: "Procurement at SOF EXPO" },
     blurb: {
       ru: "Закупки для собственных событий и хозяйственные закупки площадки.",

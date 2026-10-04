@@ -1,23 +1,26 @@
 # SOF EXPO Samarkand — sofexpo.org
 
 Website of the SOF EXPO Samarkand exhibition & congress centre and its own trade shows:
-one **Astro 7** project, **152 static pages**, two locales (RU/EN), **zero client-side
+one **Astro 7** project, **647 static pages** (129 per locale), five locales
+(RU/EN source, ZH/TR/UZ built from checked-in catalogs), **zero client-side
 framework**, and up to **six hostnames** (centre + five exhibition subdomains) built from the
 same source tree.
 
 | Gate                  | Result                                                              |
 | --------------------- | ------------------------------------------------------------------- |
-| `npm run check`       | 152 pages built · `audit:seo` → **0 findings**                      |
-| `npm run check:hosts` | 6 hosts built · **✓ hosts agree** (25,464 internal links verified)  |
-| Client JS shipped     | 0 external files — inline behaviour only                            |
-| Third-party requests  | **0** (fonts self-hosted, no analytics, no CDN calls)               |
+| `npm run typecheck`   | **0** TypeScript errors                                             |
+| `npm run check`       | 647 pages built · `audit:seo` → **0 findings** · unit tests green   |
+| `npm run test:e2e`    | browser suite + axe WCAG 2.1 AA: 17 pages × 5 locales, **0 violations** |
+| `npm run check:hosts` | 6 hosts built · **✓ hosts agree** (96,955 internal links verified)  |
+| Client JS shipped     | 1 same-origin module (form handler) + inline behaviour              |
+| Third-party requests  | **0** (fonts self-hosted, first-party analytics only, no CDN calls) |
 
 ---
 
 ## Qisqacha (UZ)
 
 - **Nima bu.** SOF EXPO Samarkand ekspomarkazi va uning 6 ta ko'rgazmasining sayti: statik
-  (Astro 7), RU/EN ikki tilda, 152 sahifa, reaktiv freymvorksiz (React/Vue yo'q).
+  (Astro 7), RU/EN asosida 5 tilda (RU/EN/ZH/TR/UZ), 647 sahifa, reaktiv freymvorksiz (React/Vue yo'q).
 - **Ishga tushirish.** `npm ci` → `npm run dev` → `http://localhost:4321/` (`/` avtomatik `/en/`
   ga o'tadi, `/ru/` ham ishlaydi).
 - **Tekshirish.** `npm run check` = build + SEO/accessibility auditi (0 topilma bo'lishi shart).
@@ -84,7 +87,7 @@ npm run dev            # http://localhost:4321/  → 301 to /en/  (/ru/ also liv
 Other useful entry points:
 
 ```bash
-npm run build          # → dist/  (152 pages) + sitemap pruned of noindex URLs
+npm run build          # → dist/  (647 pages) + sitemap pruned of noindex URLs
 npm run preview        # serve dist/ locally on :4321
 npm run check          # build + SEO/accessibility audit — the CI gate
 npm run check:hosts    # build all 6 hostnames into dist-hosts/ and verify cross-host links
@@ -106,6 +109,8 @@ node scripts/build-one-host.mjs foodera.sofexpo.org   # exactly what a deploy ta
 | `npm run build:host`           | Build **one** hostname into `dist/` (`node scripts/build-one-host.mjs <host> [--mode …]`)       |
 | `npm run editorial:map`        | Regenerates `src/data/editorial-owners.json` (which host publishes which article)               |
 | `node scripts/build-assets.mjs`| Regenerates OG cards + favicons from the source SVGs/photos (only when those change)            |
+| `npm run logos`                | Show logos: `images/brand-masters/` → `public/brand/<id>/logo.{webp,png}` (docs/15 §10)        |
+| `npm run photos`               | Photo ladders from `images/` (name → source map in `scripts/build-photos.mjs`)                  |
 | `python3 scripts/qa-independent.py` | Independent QA reader over `dist/` + `dist-hosts/*` — deliberately not the project's own audit |
 
 ## 4. Repository layout
@@ -116,7 +121,7 @@ sofexpo.org/
 ├── tsconfig.json           # strict + paths: @/* → src/*
 ├── scripts/                # build & verification tooling (see §8)
 ├── public/                 # copied verbatim to dist/
-│   ├── images/             # 25 photos used by heroes, venue gallery and event cards
+│   ├── images/             # optimised photo ladders (heroes, gallery, team, speakers)
 │   ├── files/              # 21 PDFs (tech sheet, rate card, catalogues…) — placeholders, same names
 │   ├── brand/<id>/         # per-show favicon/apple-touch-icon/og card
 │   ├── robots.txt          # hand-authored; the build injects per-host Sitemap:/Host: lines
@@ -132,7 +137,7 @@ sofexpo.org/
     │                       # hostRoutes.ts, contentOwnership.ts, content.ts
     ├── styles/global.css   # design tokens + all component CSS (one file)
     ├── layouts/Base.astro  # <head>, OG/Twitter, hreflang, JSON-LD @graph, header/footer
-    ├── components/         # 27 components; Blocks.astro is the content-block renderer
+    ├── components/         # ~50 components; Blocks.astro is the content-block renderer
     └── pages/              # routes: [locale]/… , events, news, articles, search, rss.xml, 404
 ```
 
@@ -245,6 +250,8 @@ DNS: CNAME per subdomain, A/ALIAS for the apex. Day-X checklist, redirect rules 
 | `SITE`              | `https://sofexpo.org/`   | `astro.config.mjs` → canonical, OG, JSON-LD, sitemap, RSS   |
 | `PUBLIC_HOSTS_MODE` | `alias`                  | app + build scripts; `alias` \| `subdomain`                 |
 | `SITE_URL`          | `https://sofexpo.org`    | `scripts/seo-audit.mjs`                                     |
+| `PUBLIC_LEAD_ENDPOINT` | *(empty)*             | every lead form; point it at `npm run lead-webhook` (Telegram + JSONL) or a CRM webhook. Without it the visitor is shown the request ready to send by WhatsApp / email — never a false "received" |
+| `PUBLIC_ANALYTICS_ENDPOINT` | *(empty)*        | `Tracking.astro`; first-party analytics — point it at `<lead-webhook>/event`, read daily counts at `<lead-webhook>/stats` (no IPs, no third parties) |
 
 ## 11. Still owed by the client (nothing here blocks a deploy)
 
@@ -254,8 +261,8 @@ DNS: CNAME per subdomain, A/ALIAS for the apex. Day-X checklist, redirect rules 
   documents in with the same names.
 - **Brand assets.** FOODERA's palette was read off a raster badge; the other four shows need
   their vector logos (`public/brand/<id>/logo.*`) and colours confirmed in `brand-map.json`.
-- **Locale `uz`.** The i18n layer is ready for it; it stays off until Uzbek copy has an editor
-  (`docs/02` §3).
+- **Locale `uz` (and `zh`, `tr`).** All five editions are built, but ZH/TR/UZ come from
+  machine-assisted catalogs; a native editor should review them before launch (`docs/15` §5).
 - **Verification flags.** Anything unconfirmed is marked `needsVerification: true` in
   `src/data/site.ts` (venue coordinates, opening hours) — grep for it before launch.
 
@@ -277,6 +284,8 @@ DNS: CNAME per subdomain, A/ALIAS for the apex. Day-X checklist, redirect rules 
 | [docs/11-lead-quiz.md](docs/11-lead-quiz.md)                   | Lead quiz: anatomy, telemetry, payload, CRM fan-out               |
 | [docs/12-widgets-and-partners.md](docs/12-widgets-and-partners.md) | Widget removal, partner logo wall, colour harmony             |
 | [docs/13-food-shows-benchmark.md](docs/13-food-shows-benchmark.md) | **UZ** · Benchmark of Gulfood, Anuga, SIAL, THAIFEX, FHA, FOODEX, WorldFood, Fancy Food — and what to adopt for FOODERA |
+| [docs/14-post-show-report.md](docs/14-post-show-report.md) | **UZ** · Post-show report template and the on-site data checklist |
+| [docs/15-audit-2026-10.md](docs/15-audit-2026-10.md) | **UZ** · Full project audit (Oct 2026): fixes, removals, benchmark update, A-to-Z scorecard |
 | [public/files/README.md](public/files/README.md)               | Note on the placeholder PDFs                                      |
 
 Conventions worth keeping: never edit `dist/` by hand (change `src/` and rebuild); never

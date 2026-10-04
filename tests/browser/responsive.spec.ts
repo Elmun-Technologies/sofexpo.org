@@ -4,14 +4,6 @@ import {test,expect} from '@playwright/test';
    file a generous ceiling (the other tests here finish in seconds). */
 test.setTimeout(10*60_000);
 
-test.beforeEach(({page})=>{
-  /* Marketing popups (welcome at 15 s, pricing interest at 45 s, exit intent) are timer-
-     triggered and would intercept pointer events mid-test. One recent "show" record trips
-     the 5-minute minimum-interval rule in PopupSystem.canShow(), so the suite can assert
-     page behavior without fighting the modal. */
-  page.addInitScript(()=>{try{localStorage.setItem('sofexpo.popups',JSON.stringify([{id:'e2e',ts:Date.now(),type:'show'}]))}catch{}});
-});
-
 for(const locale of ['en','ru','zh','tr']) {
   test(`${locale}: interior pages fit phones and tablets; tables scroll with a keyboard`,async({page})=>{
     const paths=['articles/gruppovoy-vizit-na-vystavku/','articles/kak-izmerit-effektivnost-vystavki/','articles/rynok-produktov-centralnoy-azii/','exhibitors/','organizers/'];
@@ -99,7 +91,7 @@ const deviceMatrix=[320,360,390,414,480,560,640,768,834,1024,1180,1280,1440,1600
 const corePaths=['/','events/','events/foodera-expo/','articles/kak-izmerit-effektivnost-vystavki/','exhibitors/','organizers/','visitors/'] as const;
 const tvHeight=(w:number)=>w>=2560?1440:w>=1920?1080:w>=1180?800:w>=768?1024:w>=640?900:850;
 
-test('any gadget or TV: core pages never overflow horizontally (320px–3840px)',{timeout:10*60_000},async({page})=>{
+test('any gadget or TV: core pages never overflow horizontally (320px–3840px)',async({page})=>{
   const failures:string[]=[];
   for(const width of deviceMatrix){
     await page.setViewportSize({width,height:tvHeight(width)});

@@ -47,6 +47,11 @@ test('effective catalogs contain no detected corruption or generated repetition'
   assert.deepEqual(auditTranslations().problems, []);
   assert.ok(translationProblems('day 1', '第1天第1天第1天第1天').length);
   assert.ok(translationProblems('Read →', '读 ⁇').length);
+  // proper names must survive machine translation, and a year is never printed twice
+  assert.ok(translationProblems('The centre · Samarkand', 'Merkez · Semaretand', 'tr').length);
+  assert.deepEqual(translationProblems('The centre · Samarkand', 'Merkez · Semerkant', 'tr'), []);
+  assert.deepEqual(translationProblems('Hall in Samarkand', 'Zal Samarqandda', 'uz'), []);
+  assert.ok(translationProblems('FOODERA EXPO 2026: for buyers', 'FOODERA EXPO 2026 2026: alıcılar için', 'tr').length);
   assert.ok(translationProblems('Short', 'x'.repeat(170)).length);
   assert.deepEqual(translationProblems('FOODERA EXPO 2026', 'FOODERA EXPO 2026'), []);
 });

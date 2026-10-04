@@ -1,4 +1,5 @@
 ---
+import { brandForEvent } from '@/data/brands';
 /**
  * One product section of a show — the FHA / SIAL segment landing page (docs/13 §P1-2).
  *
@@ -73,6 +74,7 @@ ld.push(
   {description}
   path={path}
   image={event.heroImage}
+  brand={brandForEvent(event.slug)}
   breadcrumbs={[
     { name: ru ? 'Афиша' : 'Line-up', path: '/events/' },
     { name: event.brand[locale], path: cluster },

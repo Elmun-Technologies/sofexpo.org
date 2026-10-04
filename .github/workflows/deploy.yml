@@ -1,0 +1,64 @@
+name: deploy
+
+# One Cloudflare Pages project per hostname (docs/06 §1). Runs after `check` passes on main,
+# or by hand. Until the repository has the two secrets below, every job stops at the
+# first step with a notice instead of failing — nothing is published by accident.
+#   CLOUDFLARE_API_TOKEN   token with "Cloudflare Pages: Edit"
+#   CLOUDFLARE_ACCOUNT_ID  the account that owns the sofexpo* Pages projects
+# Optional repository variables: PUBLIC_LEAD_ENDPOINT, PUBLIC_ANALYTICS_ENDPOINT.
+on:
+  workflow_run:
+    workflows: [check]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  pages:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { host: sofexpo.org, project: sofexpo }
+          - { host: foodera.sofexpo.org, project: sofexpo-foodera }
+          - { host: buildpro.sofexpo.org, project: sofexpo-buildpro }
+          - { host: agropro.sofexpo.org, project: sofexpo-agropro }
+          - { host: worldedu.sofexpo.org, project: sofexpo-worldedu }
+          - { host: ecomretail.sofexpo.org, project: sofexpo-ecomretail }
+    env:
+      HAS_SECRETS: ${{ secrets.CLOUDFLARE_API_TOKEN != '' && secrets.CLOUDFLARE_ACCOUNT_ID != '' }}
+    steps:
+      - name: Secrets present?
+        if: env.HAS_SECRETS != 'true'
+        run: echo "::notice::CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID not set — skipping ${{ matrix.host }}"
+      - uses: actions/checkout@v4
+        if: env.HAS_SECRETS == 'true'
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - uses: actions/setup-node@v4
+        if: env.HAS_SECRETS == 'true'
+        with:
+          node-version: 22
+          cache: npm
+      - if: env.HAS_SECRETS == 'true'
+        run: npm ci
+      - name: Build ${{ matrix.host }}
+        if: env.HAS_SECRETS == 'true'
+        run: node scripts/build-one-host.mjs ${{ matrix.host }}
+        env:
+          PUBLIC_HOSTS_MODE: subdomain
+          PUBLIC_LEAD_ENDPOINT: ${{ vars.PUBLIC_LEAD_ENDPOINT }}
+          PUBLIC_ANALYTICS_ENDPOINT: ${{ vars.PUBLIC_ANALYTICS_ENDPOINT }}
+      - name: Publish to Cloudflare Pages
+        if: env.HAS_SECRETS == 'true'
+        run: npx --yes wrangler@4 pages deploy dist --project-name=${{ matrix.project }} --branch=main --commit-dirty=true
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

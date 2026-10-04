@@ -1,6 +1,8 @@
 ---
 import { footerColumns, site } from '@/data/site';
-import { CURRENT_BRAND } from '@/data/hosts';
+import { CURRENT_BRAND, CURRENT_EVENT } from '@/data/hosts';
+import ShowLogo from '@/components/ShowLogo.astro';
+import { logoFor } from '@/lib/showLogos';
 import BrandMark from '@/components/BrandMark.astro';
 import Ornament from '@/components/Ornament.astro';
 import { localize, type SourceLocale as Locale } from '@/i18n/config';
@@ -22,7 +24,9 @@ const ru = locale === 'ru';
     <div class="ftr__grid">
       <div>
         <a class="logo" href={P('/')} style="color:#ffffff">
-          {CURRENT_BRAND?.mark === 'star' ? (
+          {logoFor(CURRENT_EVENT) ? (
+            <ShowLogo slug={CURRENT_EVENT} height={40} />
+          ) : CURRENT_BRAND?.mark === 'star' ? (
             <BrandMark brand={CURRENT_BRAND} locale={locale} withWordmark size={30} tone="on-dark" />
           ) : CURRENT_BRAND ? (
             <span class="logo__txt">
@@ -31,7 +35,10 @@ const ru = locale === 'ru';
             </span>
           ) : (
             <>
-              <span class="logo__mark" aria-hidden="true">SE</span>
+              {/* the centre's real mark on a paper plate — it is drawn for a light ground */}
+              <span class="ftr__mark" aria-hidden="true">
+                <img src="/brand/sofexpo-logo.png" srcset="/brand/sofexpo-logo.png 1x, /brand/sofexpo-logo@2x.png 2x" alt="" aria-hidden="true" width="180" height="193" loading="lazy" decoding="async" />
+              </span>
               <span class="logo__txt">
                 <b>{site.brand[locale]}</b>
                 <span style="color:rgba(255, 255, 255, .6)">{ru ? 'Выставочный центр' : 'Exhibition centre'}</span>
@@ -88,7 +95,7 @@ const ru = locale === 'ru';
             {e.shortName} · {e.dates.display[locale]}
           </a>
         ))}
-        <a class="chip" style="background:rgba(255, 255, 255, .08);border-color:rgba(255, 255, 255, .2);color:var(--gold-soft)" href={P('/events/')}>
+        <a class="chip" style="background:rgba(255, 255, 255, .08);border-color:var(--gold-soft);color:#ffffff" href={P("/events/")}>
           {t('cta.all')}
         </a>
       </div>
@@ -107,6 +114,6 @@ const ru = locale === 'ru';
         <Icon name="arrow-up" size={14} /> {t('misc.scrollToTop')}
       </a>
     </div>
-    <p class="small" style="margin:1rem 0 0;color:rgba(255, 255, 255, .4)">{t('footer.made')}</p>
+    <p class="small" style="margin:1rem 0 0;color:rgba(255, 255, 255, .7)">{t('footer.made')}</p>
   </div>
 </footer>

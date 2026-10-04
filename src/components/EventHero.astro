@@ -9,6 +9,8 @@ import { localize } from '@/i18n/config';
 import { useUI } from '@/i18n/ui';
 import { site } from '@/data/site';
 import { CURRENT_BRAND } from '@/data/hosts';
+import ShowLogo from '@/components/ShowLogo.astro';
+import { logoFor } from '@/lib/showLogos';
 import Ornament from '@/components/Ornament.astro';
 import type { ExpoEvent } from '@/data/events';
 import Countdown from '@/components/Countdown.astro';
@@ -53,6 +55,18 @@ const actions = [
     ? [{ label: ru ? 'В календарь' : 'Add to calendar', href: ics, icon: 'calendar', download: true }]
     : []),
 ];
+/* "Food and beverage exhibition · Specialised food and beverage exhibition in Uzbekistan"
+   said the same thing twice: drop the industry label when the edition line already names it */
+const lead1 = kicker ?? industryLabel(event.industry, locale);
+const edition = event.edition[locale];
+const norm = (v: string) => v.toLowerCase().replace(/[^\p{L}\p{N} ]/gu, '');
+const words = (v: string) => norm(v).split(' ').filter((w) => w.length > 2);
+const editionWords = new Set(words(edition));
+const shared = words(lead1).filter((w) => editionWords.has(w)).length;
+const heroKicker =
+  shared >= Math.ceil(words(lead1).length * 0.6) ? edition
+  : norm(lead1).includes(norm(edition)) ? lead1 /* "Education exhibition · spring" + "SPRING" */
+  : `${lead1} · ${edition}`;
 ---
 
 <!-- the hero carries a measured hall grid, not a blurred render: on an expo site the first
@@ -69,8 +83,9 @@ const actions = [
   />
   <div class="wrap ehero__in">
     <div class="ehero__text">
+      <ShowLogo slug={event.slug} height={logoFor(event.slug)?.round ? 96 : 64} class="ehero__logo" eager />
       <p class="kicker">
-        {kicker ?? industryLabel(event.industry, locale)} · {event.edition[locale]}
+        {heroKicker}
       </p>
       <h1 set:html={title} />
       <p class="ehero__date">
@@ -127,6 +142,7 @@ const actions = [
   .ehero {
     position: relative;
     overflow: hidden;
+    --scrim: color-mix(in srgb, var(--evergreen) 70%, #000);
     background: var(--evergreen);
     color: rgba(255,255,255,.86);
     isolation: isolate;
@@ -145,13 +161,16 @@ const actions = [
     content: '';
     position: absolute;
     inset: 0;
+    /* the scrim is the show's own ground, deepened — FOODERA's hero reads blue, BUILD PRO's
+       graphite, e-com & retail's black (docs/15 §10); the centre keeps its evergreen */
+    --scrim: color-mix(in srgb, var(--evergreen) 70%, #000);
     background:
-      linear-gradient(100deg, rgba(8, 22, 14, 0.95) 0%, rgba(8, 22, 14, 0.82) 44%, rgba(8, 22, 14, 0.42) 100%),
-      linear-gradient(to top, rgba(8, 22, 14, 0.85), rgba(8, 22, 14, 0) 55%);
+      linear-gradient(100deg, color-mix(in srgb, var(--scrim) 95%, transparent) 0%, color-mix(in srgb, var(--scrim) 82%, transparent) 44%, color-mix(in srgb, var(--scrim) 42%, transparent) 100%),
+      linear-gradient(to top, color-mix(in srgb, var(--scrim) 85%, transparent), transparent 55%);
     z-index: -1;
   }
   .ehero--past::after {
-    background: linear-gradient(100deg, rgba(10, 26, 17, 0.96) 0%, rgba(10, 26, 17, 0.8) 60%, rgba(10, 26, 17, 0.5) 100%);
+    background: linear-gradient(100deg, color-mix(in srgb, var(--scrim) 96%, transparent) 0%, color-mix(in srgb, var(--scrim) 80%, transparent) 60%, color-mix(in srgb, var(--scrim) 50%, transparent) 100%);
   }
   /* mobile-first: one column on a phone; the ticket panel sits beside the
      headline only from ≥960px (docs/04 §5) */
@@ -190,6 +209,9 @@ const actions = [
     font-size: clamp(0.9rem, 0.8rem + 0.5vw, 1.15rem);
     letter-spacing: 0.08em;
     color: var(--gold-soft);
+  }
+  .ehero :global(.ehero__logo) {
+    margin-bottom: clamp(1rem, 0.6rem + 1vw, 1.5rem);
   }
   .ehero :global(.kicker) {
     color: var(--gold-soft);

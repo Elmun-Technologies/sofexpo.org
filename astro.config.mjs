@@ -15,7 +15,6 @@ export default defineConfig({
   output: 'static',
   trailingSlash: 'ignore',
   compressHTML: true,
-  alias: { '@': 'src' },
   build: { inlineStylesheets: 'auto' },
   image: { responsiveStyles: true },
   devToolbar: { enabled: false },

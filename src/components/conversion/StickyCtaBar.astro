@@ -18,7 +18,7 @@ const ru = locale === 'ru';
 const ctas = {
   exhibitor: {
     label: ru ? 'Забронировать стенд' : 'Book a stand',
-    sub: ru ? 'Ответ за 15 минут · план зала в подарок' : 'Reply in 15 min · floor plan free',
+    sub: ru ? 'Ответ в течение рабочего дня · план зала бесплатно' : 'Reply within one business day · free floor plan',
     href: `/${locale}/request-stand/`,
     action: 'open-exhibitor-form',
   },
@@ -53,7 +53,7 @@ const L = {
 };
 ---
 
-<div id="sticky-cta" class="s-cta" data-page-type={pageType} translate="no" hidden>
+<div id="sticky-cta" class="s-cta" data-page-type={pageType} hidden>
   <div class="s-cta__in wrap">
     <div class="s-cta__txt">
       <b class="s-cta__title">{activeCta.label}</b>
@@ -79,13 +79,14 @@ const L = {
 </div>
 
 <style>
-  /* mobile-first: on a phone the bar floats above the contact bar (bottom: 64px)
-     and runs compact; the full-height desktop bar is a ≥901px tier */
+  /* mobile-first: compact bar on the bottom edge (the floating contact bar it once sat
+     above is gone — docs/12, docs/15); the full-height desktop bar is a ≥901px tier */
   .s-cta {
     position: fixed;
     left: 0;
     right: 0;
-    bottom: 64px; /* above mobile contact bar */
+    bottom: 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
     z-index: 38;
     background: rgba(255,255,255,0.96);
     backdrop-filter: blur(18px) saturate(160%);
@@ -198,6 +199,13 @@ const L = {
       display: block;
     }
   }
+  /* from 1281px the full desktop header — with its own «Book a stand» button — stays
+     pinned on screen; a second bar at the bottom only repeats it and hides content */
+  @media (min-width: 1281px) {
+    .s-cta {
+      display: none !important;
+    }
+  }
   @media (min-width: 901px) {
     .s-cta {
       bottom: 0;
@@ -232,6 +240,8 @@ const L = {
   (() => {
     const bar = document.getElementById('sticky-cta');
     if (!bar) return;
+    // an event page carries its own mobile booking bar (.m-cta); never stack a second one
+    if (document.querySelector('.m-cta')) return;
     const closeBtn = bar.querySelector('.s-cta__close') as HTMLButtonElement;
     const SHOW_AFTER = 420;
     const STORAGE_KEY = 'sofexpo.sticky.dismissed';
@@ -244,11 +254,13 @@ const L = {
     } catch {}
 
     let shown = false;
+    /* forms currently on screen — the bar never sits on top of one */
+    const visibleForms = new Set<Element>();
     const show = () => {
       if (shown) return;
       bar.hidden = false;
       requestAnimationFrame(() => {
-        bar.classList.remove('is-hidden');
+        if (!visibleForms.size) bar.classList.remove('is-hidden');
       });
       shown = true;
       try { (window as any).sofTrack?.('cta_show', { type: 'sticky-bar', pageType: PAGE_TYPE }); } catch {}
@@ -271,14 +283,16 @@ const L = {
       if (window.scrollY > 100) show();
     }, 3000);
 
-    // Hide when form in viewport (avoid double CTA)
-    const forms = document.querySelectorAll('form[data-lead-form], .form-wrap');
+    // Hide while any form or quiz is on screen. A long form on a phone never shows 30% of
+    // itself at once, so any intersection counts, and the state is kept per element
+    // (an observer callback only lists the entries that changed).
+    const forms = document.querySelectorAll('form[data-lead-form], .form-wrap, [data-quiz]');
     if (forms.length) {
       const io = new IntersectionObserver((entries) => {
-        const anyVisible = entries.some(e => e.isIntersecting && e.intersectionRatio > 0.3);
-        if (anyVisible && shown) bar.classList.add('is-hidden');
-        else if (!anyVisible && shown) bar.classList.remove('is-hidden');
-      }, { threshold: [0.3] });
+        entries.forEach((e) => (e.isIntersecting ? visibleForms.add(e.target) : visibleForms.delete(e.target)));
+        if (!shown) return;
+        bar.classList.toggle('is-hidden', visibleForms.size > 0);
+      }, { threshold: 0, rootMargin: '0px 0px -40px 0px' });
       forms.forEach(f => io.observe(f));
     }
 

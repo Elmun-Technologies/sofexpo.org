@@ -440,15 +440,15 @@ const mailto = `mailto:${site.contacts.email}?subject=${encodeURIComponent(ru ? 
           msg.style.borderColor = '';
           msg.style.color = '';
         }
+        var delivered = false;
         if (endpoint) {
           try {
             var res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
             if (!res.ok) throw new Error('bad status');
-          } catch (err) {
-            if (msg) msg.textContent = root.dataset.fallback || '';
-            return;
-          }
-        } else {
+            delivered = true;
+          } catch (err) {}
+        }
+        if (!delivered) {
           try {
             var key = 'sofexpo.leads';
             var all = JSON.parse(localStorage.getItem(key) || '[]');
@@ -467,6 +467,17 @@ const mailto = `mailto:${site.contacts.email}?subject=${encodeURIComponent(ru ? 
         var head = root.querySelector('.quiz__progress');
         if (head) head.hidden = true;
         if (done) done.hidden = false;
+        /* not delivered: the panel must not say "received" — it says where the request
+           is and offers it ready to send (FormHandler's relay, when it has loaded) */
+        if (done && !delivered) {
+          var title = done.querySelector('.quiz__done-title');
+          if (title) {
+            title.textContent = root.dataset.fallback || '';
+            title.classList.add('quiz__done-title--warn');
+          }
+          done.dataset.fallback = root.dataset.fallback || '';
+          if (window.sofLeadRelay) window.sofLeadRelay(done, payload, null);
+        }
         if (done) done.scrollIntoView({ block: 'nearest' });
       });
 
@@ -741,6 +752,7 @@ const mailto = `mailto:${site.contacts.email}?subject=${encodeURIComponent(ru ? 
   }
 
   /* success state */
+  .quiz__done-title--warn { color: #92400e; }
   .quiz__done {
     display: grid;
     gap: 1rem;

@@ -24,24 +24,9 @@ import { useUI } from '@/i18n/ui';
 import SpeakerWall from '@/components/SpeakerWall.astro';
 import { speakers as posterSpeakers } from '@/data/speakers';
 
-export type SectionKey =
-  | 'facts'
-  | 'categories'
-  | 'benefits'
-  | 'programme'
-  | 'audience'
-  | 'stands'
-  | 'speakers'
-  | 'materials'
-  | 'faq'
-  | 'related'
-  | 'venue'
-  /* docs/13 — the three patterns every leading food show runs: a hosted buyer
-     programme (FOODEX), pre-arranged meetings (SIAL Match Me) and an innovation
-     contest (SIAL Innovation). Each renders only when the event carries the data. */
-  | 'buyers'
-  | 'matchmaking'
-  | 'award';
+/* the union lives in a .ts module so plain TypeScript files can import it too */
+import type { SectionKey } from '@/data/pages/types';
+export type { SectionKey };
 
 const { locale, event, section, tone = 'paper' } = Astro.props as {
   locale: Locale;
@@ -701,10 +686,12 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
   .prog__i:last-child {
     border-bottom: 1px solid var(--line);
   }
-  .prog__n {
+  /* `.prog li span` (muted body copy) is more specific than a bare class: say li here too */
+  .prog__n,
+  .prog li .prog__n {
     font-family: var(--f-mono);
     font-size: 0.95rem;
-    color: var(--moss);
+    color: var(--gold-soft);
     padding-top: 0.15rem;
   }
   .prog__when {
@@ -712,7 +699,7 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
     font-size: 0.72rem;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--gold);
+    color: var(--gold-ink);
     margin-bottom: 0.2rem;
   }
   .prog__i h3 {

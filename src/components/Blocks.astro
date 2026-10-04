@@ -337,28 +337,40 @@ const galleryGroups = (b: Block): BlockAlbum[] =>
             </nav>
           )}
 
+          {/* the section already carries b.id, so the form inside gets a derived id */}
           {b.type === 'form' && (
             <>
               {(b as any).formType === 'exhibitor' && (
-                <ExhibitorForm locale={locale} eventName={b.event} id={b.id ?? 'exhibitor-form'} />
+                <ExhibitorForm locale={locale} eventName={b.event} id={b.id ? `${b.id}-form` : 'exhibitor-form'} />
               )}
               {(b as any).formType === 'visitor' && (
-                <VisitorForm locale={locale} eventName={b.event} id={b.id ?? 'visitor-form'} />
+                <VisitorForm locale={locale} eventName={b.event} id={b.id ? `${b.id}-form` : 'visitor-form'} />
               )}
               {(b as any).formType === 'organizer' && (
-                <OrganizerForm locale={locale} id={b.id ?? 'organizer-form'} />
+                <OrganizerForm locale={locale} id={b.id ? `${b.id}-form` : 'organizer-form'} />
               )}
               {(b as any).formType === 'sponsor' && (
-                <SponsorForm locale={locale} id={b.id ?? 'sponsor-form'} />
+                <SponsorForm locale={locale} id={b.id ? `${b.id}-form` : 'sponsor-form'} />
               )}
               {(b as any).formType === 'callback' && (
-                <CallbackForm locale={locale} id={b.id ?? 'callback-form'} title={b.title} />
+                <CallbackForm locale={locale} id={b.id ? `${b.id}-form` : 'callback-form'} title={b.title} />
               )}
               {(b as any).formType === 'catalog' && (
-                <CatalogForm locale={locale} eventName={b.event} id={b.id ?? 'catalog-form'} />
+                <CatalogForm locale={locale} eventName={b.event} id={b.id ? `${b.id}-form` : 'catalog-form'} />
               )}
               {(b as any).formType === 'group' && (
-                <GroupVisitForm locale={locale} id={b.id ?? 'group-form'} />
+                <GroupVisitForm locale={locale} id={b.id ? `${b.id}-form` : 'group-form'} />
+              )}
+              {(b as any).formType === 'press' && (
+                <LeadForm
+                  level={H3 === 'h2' ? 2 : 3}
+                  locale={locale}
+                  title={b.title}
+                  subtitle={b.text}
+                  note={b.note}
+                  id={b.id ? `${b.id}-form` : 'press-form'}
+                  intent="press"
+                />
               )}
               {!(b as any).formType && (
                 <LeadForm
@@ -370,7 +382,7 @@ const galleryGroups = (b: Block): BlockAlbum[] =>
                   areas={b.areas?.map((a) => fig(a, locale))}
                   eventName={b.event}
                   note={b.note}
-                  id={b.id ?? 'lead-form'}
+                  id={b.id ? `${b.id}-form` : 'lead-form'}
                 />
               )}
             </>
@@ -386,7 +398,7 @@ const galleryGroups = (b: Block): BlockAlbum[] =>
                 areas={b.areas}
                 event={b.event}
                 note={b.note}
-                id={b.id ?? 'quiz'}
+                id={b.id ? `${b.id}-quiz` : 'quiz'}
               />
             </div>
           )}

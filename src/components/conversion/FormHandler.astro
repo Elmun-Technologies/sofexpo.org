@@ -10,12 +10,68 @@
      transpiles this TypeScript and bundles it as a deferred module. Extra attributes
      make Astro emit it raw, which breaks in every browser. It skips forms already
      bound by LeadForm's inline handler (dataset.handlerBound). */
+  import { conversionConfig } from '@/data/conversion';
+  const CONTACTS = conversionConfig.contacts;
+
   (() => {
     const ENDPOINT = (import.meta.env.PUBLIC_LEAD_ENDPOINT || '').trim();
     const LEADS_KEY = 'sofexpo.leads';
     const FORMS_SELECTOR = 'form[data-lead-form]';
 
     const getForms = () => Array.from(document.querySelectorAll(FORMS_SELECTOR));
+
+    /* The manager reads the relayed message, so its labels are Russian whatever the
+       page language; unknown keys pass through as they are. */
+    const RELAY_LABELS = {
+      formType: 'Форма', event: 'Выставка', name: 'Имя', company: 'Компания', position: 'Должность',
+      phone: 'Телефон', email: 'Email', direction: 'Направление', area: 'Площадь', goal: 'Цель',
+      purpose: 'Цель', industry: 'Отрасль', package: 'Пакет', eventType: 'Формат', attendees: 'Гостей',
+      count: 'Человек', date: 'Дата', time: 'Время', channel: 'Связь', messenger: 'Мессенджер',
+      comment: 'Комментарий', page: 'Страница',
+    };
+    const RELAY_SKIP = new Set(['consent', 'ts', 'locale', 'url', 'referrer', 'source', '_error', 'utm_source', 'utm_medium', 'utm_campaign']);
+    const relayText = (payload) => {
+      const lines = ['Заявка с сайта SOF EXPO'];
+      for (const [k, v] of Object.entries(payload)) {
+        if (RELAY_SKIP.has(k) || v == null || String(v).trim() === '') continue;
+        lines.push(`${RELAY_LABELS[k] || k}: ${String(v).trim()}`);
+      }
+      return lines.join('\n');
+    };
+    /** Show the fallback notice plus WhatsApp / email links carrying the whole request.
+     *  Shared with LeadForm and the quiz (window.sofLeadRelay). */
+    const relay = (root, payload, msg) => {
+      if (msg) {
+        msg.hidden = false;
+        msg.textContent = root.dataset.fallback || 'Your request was kept in this browser only — please also send it by email.';
+        msg.className = 'form__msg form__ok';
+        msg.style.background = '#fef3c7';
+        msg.style.borderColor = '#fcd34d';
+        msg.style.color = '#92400e';
+        msg.style.display = 'block';
+      }
+      const text = relayText(payload);
+      let box = root.querySelector('.lead-relay');
+      if (!box) {
+        box = document.createElement('div');
+        box.className = 'lead-relay btn-row';
+        (msg && msg.parentNode === root ? msg : root.lastElementChild)?.after(box);
+      }
+      box.replaceChildren();
+      const link = (href, label, channel) => {
+        const a = document.createElement('a');
+        a.className = 'btn btn--sm';
+        a.href = href;
+        a.textContent = label;
+        a.dataset.channel = channel;
+        if (channel !== 'email') { a.target = '_blank'; a.rel = 'noopener'; }
+        box.append(a);
+      };
+      link(`${CONTACTS.whatsapp}?text=${encodeURIComponent(text)}`, 'WhatsApp', 'whatsapp');
+      link(`mailto:${CONTACTS.email}?subject=${encodeURIComponent('Заявка с сайта SOF EXPO')}&body=${encodeURIComponent(text)}`, 'Email', 'email');
+      link(CONTACTS.telegramManager, 'Telegram', 'telegram');
+    };
+    window.sofLeadRelay = relay;
 
     const initForm = (form) => {
       if (form.dataset.handlerBound === '1') return;
@@ -73,25 +129,18 @@
           payload.utm_campaign = params.get('utm_campaign') || '';
         } catch {}
 
-        if (msg) {
-          msg.hidden = false;
-          msg.textContent = form.dataset.loading || (form.dataset.locale === 'en' ? 'Sending...' : 'Отправка...');
-          msg.className = 'form__msg form__ok';
-          msg.style.background = '#e7efe8';
-          msg.style.borderColor = 'var(--sage, #dfe8e0)';
-          msg.style.color = 'var(--evergreen-2, #14402a)';
-          msg.style.display = 'block';
-        }
+        if (msg) { msg.hidden = true; msg.textContent = ''; }
+        form.querySelector('.lead-relay')?.remove();
 
         const submitBtn = form.querySelector('button[type="submit"]');
         const origBtnText = submitBtn ? submitBtn.textContent : '';
         if (submitBtn) {
           submitBtn.disabled = true;
           submitBtn.dataset.origText = origBtnText;
-          submitBtn.textContent = form.dataset.locale === 'en' ? 'Sending...' : 'Отправка...';
+          submitBtn.textContent = `${origBtnText} …`;
         }
 
-        let success = false;
+        let delivered = false;
         if (endpoint) {
           try {
             const res = await fetch(endpoint, {
@@ -100,35 +149,31 @@
               body: JSON.stringify(payload),
             });
             if (!res.ok) throw new Error('bad status ' + res.status);
-            success = true;
+            delivered = true;
           } catch (err) {
             console.warn('[Form] endpoint failed', err);
-            // store locally as fallback
-            try {
-              const all = JSON.parse(localStorage.getItem(LEADS_KEY) || '[]');
-              all.push({ ...payload, _fallback: true, _error: String(err) });
-              localStorage.setItem(LEADS_KEY, JSON.stringify(all));
-            } catch {}
-            if (msg) {
-              msg.textContent = form.dataset.fallback || (form.dataset.locale === 'en' ? 'Saved locally — please also email us.' : 'Сохранено локально — продублируйте на почту.');
-              msg.style.background = '#fef3c7';
-              msg.style.borderColor = '#fcd34d';
-              msg.style.color = '#92400e';
-            }
-            // still consider success for UX if fallback saved
-            success = true;
-          }
-        } else {
-          // Preview mode: store locally
-          try {
-            const all = JSON.parse(localStorage.getItem(LEADS_KEY) || '[]');
-            all.push(payload);
-            localStorage.setItem(LEADS_KEY, JSON.stringify(all));
-            success = true;
-          } catch (e) {
-            console.warn('[Form] localStorage failed', e);
+            payload._error = String(err);
           }
         }
+
+        /* Not delivered (no endpoint configured, or it failed): never say "received".
+           Keep the fields, keep a local copy, and hand the visitor the same request
+           ready to send by WhatsApp or email — the lead still reaches a manager. */
+        if (!delivered) {
+          try {
+            const all = JSON.parse(localStorage.getItem(LEADS_KEY) || '[]');
+            all.push({ ...payload, _fallback: true });
+            localStorage.setItem(LEADS_KEY, JSON.stringify(all));
+          } catch {}
+          relay(form, payload, msg);
+          try { window.sofTrack?.('form_submit', { form: formType, source, id: form.id, success: false, fallback: true }); } catch {}
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = origBtnText;
+          }
+          return;
+        }
+        const success = true;
 
         if (success) {
           if (msg) {
@@ -163,14 +208,6 @@
             }, 800);
           }
 
-          // Close popup if inside popup
-          const popup = form.closest('.popup');
-          if (popup) {
-            setTimeout(() => {
-              try { window.sofPopups?.closeAll(); } catch {}
-              popup.hidden = true;
-            }, 2200);
-          }
         }
 
         if (submitBtn) {

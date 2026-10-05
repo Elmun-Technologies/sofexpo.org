@@ -6,12 +6,12 @@ export const companyPages: PageDef[] = [
     meta: {
       ru: {
         title:
-          "О SOF EXPO Samarkand — выставочно-конгрессный центр в Самарканде",
+          "О компании SOF EXPO Samarkand: оператор центра, команда, стандарты",
         description:
           "Оператор центра в Самарканде: 4 400 м² зала и 5 000 м² улицы, 20+ событий и 70 000+ посетителей в год, собственные выставки, стандарты сервиса и команда.",
       },
       en: {
-        title: "About SOF EXPO Samarkand — exhibition and congress centre",
+        title: "About SOF EXPO Samarkand: the venue operator, team and standards",
         description:
           "The operating company of the centre in Samarkand: 4,400 m² hall, 5,000 m² outdoors, 20+ events and 70,000+ visitors a year, our own shows, service standards and team.",
       },
@@ -20,7 +20,7 @@ export const companyPages: PageDef[] = [
       ru: [
         {
           type: "hero",
-          kicker: "О компании",
+          kicker: "О компании SOF EXPO",
           title: "Центр, который сам стоит в зале",
           lead: "SOF EXPO — не аренда метров, а оператор событий: мы сами придумываем, собираем и ведём выставки FOODERA, BUILD PRO, AGROPRO, WORLD EDU и ECOM & RETAIL. Поэтому техтребования, регламенты и сервис написаны с точки зрения того, что реально происходит в дни монтажа и работы.",
           bullets: [
@@ -125,7 +125,7 @@ export const companyPages: PageDef[] = [
       en: [
         {
           type: "hero",
-          kicker: "About",
+          kicker: "About SOF EXPO",
           title: "A centre that stands in the hall itself",
           lead: "SOF EXPO is not a meter rental company but an event operator: we design, assemble and run FOODERA, BUILD PRO, AGROPRO, WORLD EDU and ECOM & RETAIL ourselves. That is why the technical rules, regulations and service standards are written from what actually happens during build-up and show days.",
           bullets: [
@@ -565,7 +565,7 @@ export const companyPages: PageDef[] = [
         {
           /* a contacts page is map + phone + form — the render does not belong here (docs/08 §4.11) */
           type: "hero",
-          kicker: "Контакты",
+          kicker: "Контакты SOF EXPO",
           title: "Напишите — ответим в тот же день",
           lead: "Этот адрес принимает всё: заявки на участие, запросы прайсов, техническую документацию, прессу и партнёрства. Если вопрос срочный во время выставки — звоните.",
           actions: [
@@ -657,7 +657,7 @@ export const companyPages: PageDef[] = [
       en: [
         {
           type: "hero",
-          kicker: "Contacts",
+          kicker: "SOF EXPO contacts",
           title: "Write and we reply the same day",
           lead: "This address takes everything: participation requests, price enquiries, technical documents, press and partnerships. If it is urgent during a show, call.",
           actions: [
@@ -754,19 +754,19 @@ export const companyPages: PageDef[] = [
       ru: {
         title: "Забронировать стенд на выставке в Самарканде",
         description:
-          "Заявка на участие в FOODERA, BUILD PRO, AGROPRO, WORLD EDU или ECOM & RETAIL EXPO: выберите выставку, площадь и тип стенда — пришлём план, пакет и счёт в течение рабочего дня.",
+          "Забронировать стенд на выставке в Самарканде — FOODERA, BUILD PRO, AGROPRO, WORLD EDU или ECOM & RETAIL EXPO: площадь и тип стенда, план и счёт за рабочий день.",
       },
       en: {
         title: "Book a stand at an exhibition in Samarkand",
         description:
-          "Apply for FOODERA, BUILD PRO, AGROPRO, WORLD EDU or ECOM & RETAIL EXPO: pick the show, area and stand type — we send the plan, package and invoice within a business day.",
+          "Book a stand at a Samarkand exhibition — FOODERA, BUILD PRO, AGROPRO, WORLD EDU or ECOM & RETAIL EXPO: pick the area and stand type, get the plan and invoice in a business day.",
       },
     },
     blocks: {
       ru: [
         {
           type: "hero",
-          kicker: "Бронирование",
+          kicker: "Бронирование стенда · Самарканд",
           title: "Заявка вместо переписки",
           lead: "Опишите участие в одной форме — вы получите план зала со свободными метрами, расчёт пакета и проект договора. Не нужно гадать, какое событие вам подходит: если сомневаетесь, напишите в комментарии.",
           image: "/images/event-buildpro.jpg",
@@ -829,7 +829,7 @@ export const companyPages: PageDef[] = [
       en: [
         {
           type: "hero",
-          kicker: "Booking",
+          kicker: "Book a stand · Samarkand",
           title: "One form instead of an email chain",
           lead: "Describe your participation once — you get the hall plan with free space, the package quote and a draft contract. Unsure which show fits? Write it in the comment and we will route you.",
           image: "/images/event-buildpro.jpg",

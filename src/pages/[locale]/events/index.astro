@@ -33,8 +33,8 @@ const filters = [...new Set(events.map((e) => e.industry))];
 
 const copy = {
   ru: {
-    title: 'Афиша выставок 2026–2027 в Самарканде',
-    desc: 'Шесть отраслевых выставок в Самарканде: FOODERA, BUILD PRO, AGROPRO, PROMOTORS SHOW, WORLD EDU, ECOM & RETAIL. Даты, разделы, регистрация участников и посетителей.',
+    title: 'Выставки в Самарканде 2026–2027: календарь выставок',
+    desc: 'Календарь выставок в Самарканде на 2026–2027 годы: FOODERA, BUILD PRO, AGROPRO, PROMOTORS SHOW, WORLD EDU, ECOM & RETAIL. Даты, разделы, регистрация участников и посетителей.',
     h1: 'Шесть отраслей, один адрес',
     lead: 'Центр проводит собственную линейку событий: от продуктов и строительства до агропрома и электронной коммерции. Даты, разделы и статус брони — в календаре ниже.',
     all: 'Все отрасли',
@@ -53,8 +53,8 @@ const copy = {
     ],
   },
   en: {
-    title: 'Exhibition line-up 2026–2027 in Samarkand',
-    desc: 'Six trade shows in Samarkand: FOODERA, BUILD PRO, AGROPRO, PROMOTORS SHOW, WORLD EDU and ECOM & RETAIL. Dates, sections and registration for exhibitors and visitors.',
+    title: 'Exhibitions in Samarkand 2026–2027: trade show calendar',
+    desc: 'Trade show calendar for Samarkand, 2026–2027: FOODERA, BUILD PRO, AGROPRO, PROMOTORS SHOW, WORLD EDU and ECOM & RETAIL. Dates, sections and registration for exhibitors and visitors.',
     h1: 'Six industries, one address',
     lead: 'The centre runs its own portfolio: from food and construction to agriculture and e-commerce. Dates, sections and booking status — in the calendar below.',
     all: 'All industries',
@@ -94,7 +94,7 @@ const copy = {
 >
   <section class="sec">
     <div class="wrap">
-      <SectionHead level={1} locale={locale} kicker={ru ? 'Афиша 2026–2027' : 'Line-up 2026–2027'} title={copy.h1} text={copy.lead} />
+      <SectionHead level={1} locale={locale} kicker={ru ? 'Выставки в Самарканде 2026–2027' : 'Exhibitions in Samarkand 2026–2027'} title={copy.h1} text={copy.lead} />
 
       <div class="cal-wrap">
         <div class="cal__filter" role="group" aria-label={ru ? 'Фильтр по отрасли' : 'Industry filter'}>

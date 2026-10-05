@@ -23,10 +23,11 @@ export function fitDescription(d, max = 160) {
 export function fitTitle(t, max = 70) {
   if (cjk(t)) max = 36;
   if (t.length <= max) return t;
-  for (const sep of [' — ', ': ', ' | ', '：', '——']) {
-    const i = t.lastIndexOf(sep, max);
-    if (i >= max * 0.4) return t.slice(0, i);
-  }
+  /* cut at the separator nearest the limit, whichever it is: trying ' — ' first used to turn
+     "Выставочный центр в Самарканде — выставки и экспо Узбекистана | SOF EXPO" into its first
+     30 characters and drop every secondary keyword after the dash (docs/16 §2.1) */
+  const cut = Math.max(...[' — ', ': ', ' | ', '：', '——'].map((sep) => t.lastIndexOf(sep, max)));
+  if (cut >= max * 0.4) return t.slice(0, cut);
   /* No separator inside the window — a long composed title (a segment page whose category
      name is three words long) used to survive untouched and fail the SEO audit. Cut on a
      word boundary instead. CJK is left alone: 36 ideographs already read short, and a

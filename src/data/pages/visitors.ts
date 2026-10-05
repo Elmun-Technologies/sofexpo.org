@@ -6,7 +6,7 @@ export const visitorPages: PageDef[] = [
     meta: {
       ru: {
         title:
-          "Посетителям выставок SOF EXPO Samarkand — билеты, программа, что смотреть",
+          "Посетителям выставок в Самарканде: вход, программа, маршрут",
         description:
           "Как посетить выставку в Самарканде: регистрация для специалистов, электронные билеты, программа, маршруты по разделам и где поесть.",
       },
@@ -21,7 +21,7 @@ export const visitorPages: PageDef[] = [
       ru: [
         {
           type: "hero",
-          kicker: "Посетителям",
+          kicker: "Посетителям выставок · Самарканд",
           title: "Прийти на три часа и уйти с решениями",
           lead: "Отраслевые выставки в центре бесплатны для профильных специалистов по предварительной регистрации: вы получаете электронный билет и сразу — маршрут по нужным разделам. Фестивальные форматы (авто, образование) работают по билету.",
           bullets: [
@@ -151,7 +151,7 @@ export const visitorPages: PageDef[] = [
       en: [
         {
           type: "hero",
-          kicker: "For visitors",
+          kicker: "Visitors · Samarkand trade shows",
           title: "Come for three hours, leave with decisions",
           lead: "Trade shows at the centre are free for professionals with pre-registration: you get an e-ticket and, right away, a route through the sections you need. Festival formats (automotive, education) are ticketed.",
           bullets: [
@@ -286,19 +286,19 @@ export const visitorPages: PageDef[] = [
       ru: {
         title: "Билеты и регистрация на выставки в Самарканде",
         description:
-          "Как получить электронный билет: онлайн-регистрация для специалистов, продажа билетов на фестивальные форматы через Ticketon.uz, вход для групп, льготы и правила посещения.",
+          "Билеты на выставку в Самарканде: онлайн-регистрация для специалистов, электронный билет, фестивальные форматы через Ticketon.uz, групповой вход и льготы.",
       },
       en: {
         title: "Tickets and registration for exhibitions in Samarkand",
         description:
-          "How to get an e-ticket: online registration for trade visitors, Ticketon.uz sales for festival formats, group entry, benefits and visiting rules.",
+          "Exhibition tickets in Samarkand: online registration for trade visitors, e-tickets, Ticketon.uz sales for festival formats, group entry and benefits.",
       },
     },
     blocks: {
       ru: [
         {
           type: "hero",
-          kicker: "Билеты",
+          kicker: "Билеты на выставки · Самарканд",
           title: "Регистрация вместо очереди на входе",
           lead: "Для отраслевых выставок вход бесплатный по предварительной регистрации — она же даёт доступ к программе и списку участников. Потребительские и фестивальные форматы продаются по билету.",
           actions: [
@@ -392,7 +392,7 @@ export const visitorPages: PageDef[] = [
       en: [
         {
           type: "hero",
-          kicker: "Tickets",
+          kicker: "Exhibition tickets · Samarkand",
           title: "Registration instead of a queue at the door",
           lead: "Trade shows are free for professionals with pre-registration, which also unlocks the programme and the exhibitor list. Consumer and festival formats are ticketed.",
           actions: [
@@ -503,7 +503,7 @@ export const visitorPages: PageDef[] = [
       ru: [
         {
           type: "hero",
-          kicker: "Поездка",
+          kicker: "Проезд и отели · выставка в Самарканде",
           title: "Самарканд — 1 час 40 минут от Ташкента",
           lead: "Города-миллионники Центральной Азии и крупные хабы России и Турции соединены прямыми рейсами и поездами. Экспоцентр находится в 16 км от аэропорта — это 20 минут на машине без транзита через город.",
           image: "/images/samarkand-real.jpg",
@@ -604,7 +604,7 @@ export const visitorPages: PageDef[] = [
       en: [
         {
           type: "hero",
-          kicker: "Travel",
+          kicker: "Hotels and visas · Samarkand",
           title: "Samarkand is 1 h 40 min from Tashkent",
           lead: "Central Asian cities and major Russian and Turkish hubs connect by direct flights and trains. The centre is 16 km from the airport — 20 minutes by car without crossing the city.",
           image: "/images/samarkand-real.jpg",
@@ -716,7 +716,7 @@ export const visitorPages: PageDef[] = [
       ru: [
         {
           type: "hero",
-          kicker: "Программа",
+          kicker: "Деловая программа выставок",
           title: "Сессии, которые экономят месяц переписки",
           lead: "Деловая программа идёт параллельно с экспозицией: сцена в зале и конференц-зал. Вход на доклады включён в билет посетителя, на закрытые сессии — по списку.",
           image: "/images/conference-audience.jpg",
@@ -831,7 +831,7 @@ export const visitorPages: PageDef[] = [
       en: [
         {
           type: "hero",
-          kicker: "Programme",
+          kicker: "Business programme · forums and sessions",
           title: "Sessions that save you a month of email",
           lead: "The business programme runs alongside the expo: a stage in the hall and a conference hall. Talks are included in the visitor ticket; closed sessions are on a list.",
           image: "/images/conference-audience.jpg",
@@ -960,7 +960,7 @@ export const visitorPages: PageDef[] = [
       ru: [
         {
           type: "hero",
-          kicker: "Доступность",
+          kicker: "Доступная среда на выставке",
           title: "В зал заходит каждый",
           lead: "Площадка одноуровневая: вход без ступеней, широкие проходы между стендами, места для отдыха и доступный санитарный блок. Сообщите о визите заранее — подготовим сопровождение.",
           actions: [{ label: "Запросить помощь", href: "/contacts/" }],
@@ -1010,7 +1010,7 @@ export const visitorPages: PageDef[] = [
       en: [
         {
           type: "hero",
-          kicker: "Access",
+          kicker: "Accessibility · group visits",
           title: "Everyone gets into the hall",
           lead: "The venue is single-level: step-free entrance, wide aisles between stands, seating areas and an accessible sanitary block. Tell us before you come and we prepare assistance.",
           actions: [{ label: "Request assistance", href: "/contacts/" }],

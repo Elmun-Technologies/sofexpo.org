@@ -8,22 +8,22 @@ export const exhibitorPages: PageDef[] = [
     meta: {
       ru: {
         title:
-          "Экспонентам SOF EXPO Samarkand: участие, пакеты, подготовка, аудитория",
+          "Участие в выставках в Самарканде — экспонентам SOF EXPO",
         description:
-          "Зачем участвовать в выставках в Узбекистане: профиль аудитории, форматы стендов, что входит в ставку, сроки подачи заявок, помощь с логистикой, сертификацией и персоналом.",
+          "Участие в выставке в Самарканде: профиль аудитории, форматы стендов, что входит в ставку, сроки заявок, помощь с логистикой, сертификацией и персоналом.",
       },
       en: {
         title:
-          "For exhibitors at SOF EXPO Samarkand: participation, packages, audience",
+          "Exhibit at trade shows in Uzbekistan — SOF EXPO Samarkand",
         description:
-          "Why exhibit in Uzbekistan: audience profile, stand formats, what the rate includes, application deadlines, help with logistics, certification and staff.",
+          "Exhibit at a trade show in Uzbekistan: audience profile, stand formats, what the rate includes, deadlines, help with logistics, certification and staff.",
       },
     },
     blocks: {
       ru: [
         {
           type: "hero",
-          kicker: "Экспонентам",
+          kicker: "Участие в выставках · Самарканд",
           title: "Три дня, которые закрывают квартальный план по контактам",
           lead: "Выставка у нас — это не аренда метров, а собранный рынок: закупщики сетей, дистрибьюторы, подрядчики, архитекторы, агрономы и селлеры, которым нужен поставщик. Мы отвечаем за аудиторию и сервис, вы — за переговоры.",
           bullets: [
@@ -283,7 +283,7 @@ export const exhibitorPages: PageDef[] = [
       en: [
         {
           type: "hero",
-          kicker: "For exhibitors",
+          kicker: "Exhibiting in Uzbekistan · Samarkand",
           title: "Three days that close a quarterly contact plan",
           lead: "Exhibiting here is not renting metres — it is a market assembled in one hall: chain buyers, distributors, contractors, architects, agronomists and marketplace sellers who need a supplier. We own the audience and the service; you own the negotiation.",
           bullets: [
@@ -543,12 +543,12 @@ export const exhibitorPages: PageDef[] = [
     path: "/exhibitors/packages/",
     meta: {
       ru: {
-        title: "Пакеты участия и ставки на выставках SOF EXPO Samarkand",
+        title: "Стоимость участия в выставке: пакеты и ставки — SOF EXPO",
         description:
-          "Что входит в стандартный стенд 9 м², премиум 18 м², свободную площадь и спонсорский пакет. Сроки раннего бронирования, что оплачивается отдельно, как считается итоговая смета.",
+          "Стоимость участия в выставке: что входит в стенд 9 м², премиум 18 м², свободную площадь и спонсорский пакет, что оплачивается отдельно и как считается смета.",
       },
       en: {
-        title: "Participation packages and rates at SOF EXPO Samarkand",
+        title: "Exhibition participation packages and rates — SOF EXPO Samarkand",
         description:
           "What a 9 m² standard stand, 18 m² premium, raw space and sponsorship packages include. Early-booking deadlines, separately charged items, how the final quote is built.",
       },
@@ -557,7 +557,7 @@ export const exhibitorPages: PageDef[] = [
       ru: [
         {
           type: "hero",
-          kicker: "Деньги",
+          kicker: "Стоимость участия в выставке",
           title: "Четыре пакета и полная прозрачность сметы",
           lead: "Ставки зависят от выставки и сезона, поэтому точный прайс присылает менеджер вместе с планом зала. Ниже — состав пакетов, чтобы вы заранее понимали, за что платите.",
           image: "/images/event-buildpro.jpg",
@@ -698,7 +698,7 @@ export const exhibitorPages: PageDef[] = [
       en: [
         {
           type: "hero",
-          kicker: "Money",
+          kicker: "Participation packages and rates",
           title: "Four packages and a fully transparent quote",
           lead: "Rates depend on the show and the season, so the exact price list comes from the account manager with the floor plan. Below is what each package contains, so you know what you are paying for.",
           image: "/images/event-buildpro.jpg",
@@ -841,7 +841,7 @@ export const exhibitorPages: PageDef[] = [
       ru: [
         {
           type: "hero",
-          kicker: "План зала",
+          kicker: "План зала и место под стенд",
           title: "Локация стенда — это половина результата",
           lead: "Мы отправляем актуальный план зала с сеткой, размерами проходов и свободными местами. Ниже — правила, по которым стоит выбирать точку, если вы бронируете сами.",
           image: "/images/event-agropro.jpg",
@@ -950,7 +950,7 @@ export const exhibitorPages: PageDef[] = [
       en: [
         {
           type: "hero",
-          kicker: "Floor plan",
+          kicker: "Floor plan · stand location",
           title: "Location is half of the result",
           lead: "We send the live floor plan with the grid, aisle widths and free spots. Below are the rules to choose by when you book yourself.",
           image: "/images/event-agropro.jpg",
@@ -1065,20 +1065,20 @@ export const exhibitorPages: PageDef[] = [
         title:
           "Строительство выставочных стендов в Самарканде: виды, сроки, согласование",
         description:
-          "Готовая застройка, сборно-разборный стенд по брендбуку и капитальная экспозиция: что выбрать, сроки заказа, требования к материалам и высоте, хранение до следующего сезона.",
+          "Застройка выставочных стендов в Самарканде: готовый стенд, сборный по брендбуку или капитальная экспозиция — сроки заказа, требования к материалам, хранение.",
       },
       en: {
         title:
           "Exhibition stand construction in Samarkand: types, deadlines, approval",
         description:
-          "Shell scheme, modular custom stand and full bespoke build: what to choose, ordering deadlines, material and height rules, storage until the next season.",
+          "Exhibition stand construction in Samarkand: shell scheme, modular custom stand or full bespoke build — ordering deadlines, material and height rules, storage.",
       },
     },
     blocks: {
       ru: [
         {
           type: "hero",
-          kicker: "Застройка",
+          kicker: "Строительство стендов · Самарканд",
           title: "Три уровня стенда и один вопрос: что вы показываете",
           lead: "Если продукт нужно взять в руки — хватает готовой застройки. Если продукт нужно включить — планируйте собственную застройку. Если продукт едет на фурах — вам на открытую площадку.",
           image: "/images/hall-stand.jpg",
@@ -1160,7 +1160,7 @@ export const exhibitorPages: PageDef[] = [
       en: [
         {
           type: "hero",
-          kicker: "Build",
+          kicker: "Stand construction · Samarkand",
           title: "Three stand levels and one question: what do you show",
           lead: "If the product is picked up, a shell scheme is enough. If it must be switched on, plan a custom build. If it arrives by truck, you belong on the open area.",
           image: "/images/hall-stand.jpg",
@@ -1265,7 +1265,7 @@ export const exhibitorPages: PageDef[] = [
       ru: [
         {
           type: "hero",
-          kicker: "Сервис",
+          kicker: "Сервисы для экспонентов",
           title: "Соберите участие как конструктор — один бланк, один счёт",
           lead: "Все позиции подтверждаются до монтажа, поэтому в день заезда ничего «вдруг» не появляется. Ниже — то, что чаще всего заказывают.",
           image: "/images/hall-crowd.jpg",
@@ -1371,7 +1371,7 @@ export const exhibitorPages: PageDef[] = [
       en: [
         {
           type: "hero",
-          kicker: "Service",
+          kicker: "Exhibitor services",
           title:
             "Assemble participation like a constructor — one form, one invoice",
           lead: 'Everything is confirmed before build-up, so nothing appears "suddenly" on arrival day. Below is what is ordered most often.',
@@ -1493,7 +1493,7 @@ export const exhibitorPages: PageDef[] = [
       ru: [
         {
           type: "hero",
-          kicker: "Спонсорство",
+          kicker: "Спонсорство выставок",
           title: "Контент, который видит вся аудитория, а не только ваш проход",
           lead: "Спонсорский пакет — самый быстрый способ занять место в сценарии выставки: доклады, приветствие, награды, материалы в сумке участника.",
           image: "/images/hall-stand.jpg",
@@ -1591,7 +1591,7 @@ export const exhibitorPages: PageDef[] = [
       en: [
         {
           type: "hero",
-          kicker: "Sponsorship",
+          kicker: "Exhibition sponsorship",
           title: "Content the whole audience sees, not only your aisle",
           lead: "A sponsorship package is the fastest way to enter the script of the exhibition: talks, welcome word, awards, material in the participant bag.",
           image: "/images/hall-stand.jpg",
@@ -1706,7 +1706,7 @@ export const exhibitorPages: PageDef[] = [
       ru: [
         {
           type: "hero",
-          kicker: "Бюрократия",
+          kicker: "Документы экспонента",
           title: "Список документов, который экономит нервы на монтаже",
           lead: "Ниже — календарь paperwork для участника. Все бланки присылает менеджер; если чего-то не хватает, мы предупредим заранее, а не в день заезда.",
           image: "/images/documents.jpg",
@@ -1806,7 +1806,7 @@ export const exhibitorPages: PageDef[] = [
       en: [
         {
           type: "hero",
-          kicker: "Paperwork",
+          kicker: "Exhibitor documents",
           title: "The document list that saves your nerves at build-up",
           lead: "Below is the participant calendar. All forms come from the account manager; if something is missing you hear it in advance, not on arrival day.",
           image: "/images/documents.jpg",
@@ -1923,7 +1923,7 @@ export const exhibitorPages: PageDef[] = [
       ru: [
         {
           type: "hero",
-          kicker: "Каталог",
+          kicker: "Каталог участников выставок",
           title: "Кто выставляет и что искать",
           lead: "Каталог выходит в PDF перед каждой выставкой и обновляется на сайте после: с контактными данными, разделом и стендом участника. Для закупщиков — доступ открыт бесплатно.",
           image: "/images/hall-crowd.jpg",
@@ -2002,7 +2002,7 @@ export const exhibitorPages: PageDef[] = [
       en: [
         {
           type: "hero",
-          kicker: "Catalogue",
+          kicker: "Exhibitor catalogue",
           title: "Who exhibits and what to look for",
           lead: "The catalogue is published in PDF before every show and updated on the site afterwards: contacts, section and stand number. Free access for buyers.",
           image: "/images/hall-crowd.jpg",
@@ -2098,7 +2098,7 @@ export const exhibitorPages: PageDef[] = [
       ru: [
         {
           type: "hero",
-          kicker: "FAQ",
+          kicker: "FAQ экспонента",
           title: "Вопросы, которые задают до подписания договора",
           lead: "Если ответа нет — напишите менеджеру, отвечает в рабочее время в течение 15 минут.",
           image: "/images/hall-walk.jpg",
@@ -2162,7 +2162,7 @@ export const exhibitorPages: PageDef[] = [
       en: [
         {
           type: "hero",
-          kicker: "FAQ",
+          kicker: "Exhibitor FAQ",
           title: "Questions asked before signing the contract",
           lead: "If an answer is missing, write to the account manager — replies within 15 minutes during office hours.",
           image: "/images/hall-walk.jpg",

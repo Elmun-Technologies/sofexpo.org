@@ -89,8 +89,8 @@ const galleryGroups = (b: Block): BlockAlbum[] =>
           {b.type === 'hero' && (
             <div class="block__head">
               <div>
-                {b.kicker && <p class="kicker">{b.kicker}</p>}
-                <h1 set:html={b.title ?? ''} />
+                {/* kicker inside the h1: it carries the page's query (docs/16 §2.2) */}
+                <h1>{b.kicker && <span class="kicker">{b.kicker}</span>}{b.kicker && ' '}<Fragment set:html={b.title ?? ''} /></h1>
                 {b.lead && <p class="lead">{b.lead}</p>}
                 {b.bullets?.length ? (
                   <ul class="pill-row" style="list-style:none;padding:0;margin:1.1rem 0 0;display:flex;flex-wrap:wrap;gap:.5rem">

@@ -102,6 +102,7 @@ node scripts/build-one-host.mjs foodera.sofexpo.org   # exactly what a deploy ta
 | `npm run build`                | Regenerates the editorial ownership map, builds `dist/`, prunes `noindex` URLs from the sitemap |
 | `npm run preview`              | Serves `dist/` (host allow-list open, for sandbox/preview proxies)                              |
 | `npm run audit:seo`            | SEO + accessibility gate over `dist/` — exits non-zero on any finding                           |
+| `npm run audit:keywords`       | Keyword gate: every page's target query in title/h1/description/body; money pages ≥ 70 (docs/16) |
 | `npm run check`                | `build` + `audit:seo`; **this is the merge gate**                                               |
 | `npm run build:hosts`          | Builds all 6 hostnames → `dist-hosts/<host>/`, each with its own robots/sitemap/_redirects      |
 | `npm run build:alias`          | Same matrix in single-host (`alias`) mode                                                       |
@@ -286,6 +287,7 @@ DNS: CNAME per subdomain, A/ALIAS for the apex. Day-X checklist, redirect rules 
 | [docs/13-food-shows-benchmark.md](docs/13-food-shows-benchmark.md) | **UZ** · Benchmark of Gulfood, Anuga, SIAL, THAIFEX, FHA, FOODEX, WorldFood, Fancy Food — and what to adopt for FOODERA |
 | [docs/14-post-show-report.md](docs/14-post-show-report.md) | **UZ** · Post-show report template and the on-site data checklist |
 | [docs/15-audit-2026-10.md](docs/15-audit-2026-10.md) | **UZ** · Full project audit (Oct 2026): fixes, removals, benchmark update, A-to-Z scorecard |
+| [docs/16-keyword-audit.md](docs/16-keyword-audit.md) | **UZ** · Keyword audit: semantic core per page, before/after scores, `audit:keywords` gate |
 | [public/files/README.md](public/files/README.md)               | Note on the placeholder PDFs                                      |
 
 Conventions worth keeping: never edit `dist/` by hand (change `src/` and rebuild); never

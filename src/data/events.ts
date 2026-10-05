@@ -344,8 +344,9 @@ export const events: ExpoEvent[] = [
   },
   {
     slug: 'buildpro-expo',
-    brand: { ru: 'BUILDPRO EXPO 2026', en: 'BUILDPRO EXPO 2026' },
-    shortName: 'BUILDPRO',
+    /* the logo reads BUILD PRO EXPO: one spelling for the entity everywhere (docs/16 §2.5) */
+    brand: { ru: 'BUILD PRO EXPO 2026', en: 'BUILD PRO EXPO 2026' },
+    shortName: 'BUILD PRO',
     industry: 'construction',
     dates: { start: '2026-11-09', end: '2026-11-11', display: { ru: '9–11 ноября 2026', en: '9–11 November 2026' } },
     edition: { ru: 'Пятая международная строительная выставка', en: 'The fifth international construction exhibition' },
@@ -356,8 +357,8 @@ export const events: ExpoEvent[] = [
       en: 'Materials, equipment and technologies for construction, architecture and development.',
     },
     intro: {
-      ru: 'BUILDPRO EXPO собирает производителей материалов и оборудования, поставщиков технологий, архитекторов, дизайнеров, девелоперов и строительные компании. Три дня переговоров, презентаций и живых демонстраций.',
-      en: 'BUILDPRO EXPO gathers material and equipment manufacturers, technology suppliers, architects, designers, developers and construction companies. Three days of negotiations, presentations and live demonstrations.',
+      ru: 'BUILD PRO EXPO собирает производителей материалов и оборудования, поставщиков технологий, архитекторов, дизайнеров, девелоперов и строительные компании. Три дня переговоров, презентаций и живых демонстраций.',
+      en: 'BUILD PRO EXPO gathers material and equipment manufacturers, technology suppliers, architects, designers, developers and construction companies. Three days of negotiations, presentations and live demonstrations.',
     },
     pitch: {
       ru: 'Это не только выставка, а инструмент роста продаж: прямой контакт с теми, кто выбирает материалы, проектирует объекты и принимает решения о закупке. География участников — Узбекистан, Россия, Турция, Китай.',

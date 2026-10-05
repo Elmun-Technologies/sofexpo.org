@@ -7,22 +7,22 @@ export const venuePages: PageDef[] = [
     meta: {
       ru: {
         title:
-          "Выставочный центр SOF EXPO Samarkand: залы, услуги, адрес",
+          "Выставочная площадка в Самарканде: залы, услуги, адрес — SOF EXPO",
         description:
-          "SOF EXPO Samarkand: зал 4 400 м², улица 5 000 м², конференц-зал на 350 мест, 700 кВт, парковка и кафе. Планировка, техспецификация, как добраться.",
+          "Выставочная площадка SOF EXPO в Самарканде: зал 4 400 м², улица 5 000 м², конференц-зал на 350 мест, 700 кВт, парковка и кафе. Планировка и как добраться.",
       },
       en: {
         title:
-          "SOF EXPO Samarkand exhibition centre — halls, areas and services",
+          "Exhibition venue in Samarkand: halls, areas, services — SOF EXPO",
         description:
-          "SOF EXPO Samarkand: 4,400 m² indoor hall, 5,000 m² open ground, a 350-seat conference hall, 700 kW power, parking and cafés. Floor plan, technical sheet and directions from the airport.",
+          "The SOF EXPO exhibition venue in Samarkand: 4,400 m² indoor hall, 5,000 m² open ground, a 350-seat conference hall, 700 kW power, parking and cafés.",
       },
     },
     blocks: {
       ru: [
         {
           type: "hero",
-          kicker: "Экспоцентр · Самарканд",
+          kicker: "Выставочная площадка · Самарканд",
           title: "Площадка, рассчитанная на монтаж, показ и переговоры",
           lead: "Центр построен как единый выставочный корпус: крытый зал со свободной планировкой, уличная экспозиция для техники, конференц-зал, два кафе и парковка при въезде. Расстояние до аэропорта — 16 км, до вокзала — 23 км.",
           bullets: [
@@ -225,7 +225,7 @@ export const venuePages: PageDef[] = [
       en: [
         {
           type: "hero",
-          kicker: "The centre · Samarkand",
+          kicker: "Exhibition venue · Samarkand",
           title: "A venue built for build-up, demonstration and negotiation",
           lead: "SOF EXPO Samarkand is a single exhibition shell: an indoor hall with an open plan, an outdoor area for machinery, a conference hall, two cafés and parking at the gate. The airport is 16 km away, the railway station 23 km.",
           bullets: [
@@ -441,7 +441,7 @@ export const venuePages: PageDef[] = [
       ru: [
         {
           type: "hero",
-          kicker: "Залы",
+          kicker: "Залы выставочного центра · Самарканд",
           title: "Планировки, которые выдерживают и выставку, и фестиваль",
           lead: "Ниже — базовые конфигурации, которые мы используем в своих выставках. Они же служат отправной точкой для сторонних организаторов: меняются только плотность стендов и место сцены.",
           image: "/images/hall-stand.jpg",
@@ -547,7 +547,7 @@ export const venuePages: PageDef[] = [
       en: [
         {
           type: "hero",
-          kicker: "Halls",
+          kicker: "Exhibition halls · Samarkand",
           title: "Layouts that carry both a trade show and a festival",
           lead: "Below are the baseline configurations we run for our own shows. They are also the starting point for external organizers: only stand density and stage position change.",
           image: "/images/hall-stand.jpg",
@@ -667,7 +667,7 @@ export const venuePages: PageDef[] = [
       ru: [
         {
           type: "hero",
-          kicker: "Сервис",
+          kicker: "Услуги и аренда оборудования",
           title: "Всё, что делает стенд рабочим, заказывается одним бланком",
           lead: "Мы не делим услуги на «обязательные у партнёров» и «только свои». Форма подается до монтажа, позиции подтверждаются вместе со сметой — так на площадке не появляется ситуация «а этого у нас нет».",
           image: "/images/hall-walk.jpg",
@@ -817,7 +817,7 @@ export const venuePages: PageDef[] = [
       en: [
         {
           type: "hero",
-          kicker: "Services",
+          kicker: "Exhibition equipment rental",
           title: "Everything that makes a stand work is ordered on one form",
           lead: 'We do not split services into "mandatory via partners" and "ours only". The order form goes in before build-up and every line is confirmed with the quote — so nothing is missing on site.',
           image: "/images/hall-walk.jpg",
@@ -1195,7 +1195,7 @@ export const venuePages: PageDef[] = [
       ru: [
         {
           type: "hero",
-          kicker: "Логистика",
+          kicker: "Как добраться · адрес",
           title: "16 км от аэропорта, 23 км от вокзала",
           lead: "Центр стоит на выезде из Самарканда, поэтому до нас одинаково удобно ехать и из города, и напрямую из аэропорта — без транзита через центр. Парковка при въезде, свободная, без оплаты.",
           image: "/images/samarkand-real.jpg",
@@ -1309,7 +1309,7 @@ export const venuePages: PageDef[] = [
       en: [
         {
           type: "hero",
-          kicker: "Logistics",
+          kicker: "Getting to SOF EXPO Samarkand",
           title: "16 km from the airport, 23 km from the station",
           lead: "The centre sits on the outbound side of Samarkand, so it is equally easy to reach from the city and straight from the airport without crossing the centre. Parking is at the gate, free and open.",
           image: "/images/samarkand-real.jpg",
@@ -1432,7 +1432,7 @@ export const venuePages: PageDef[] = [
       ru: [
         {
           type: "hero",
-          kicker: "Медиа",
+          kicker: "Фото выставочного центра",
           title: "Как площадка выглядит в работе",
           lead: "Съёмка делается в реальные дни монтажа и работы выставок: без рендеров и постановочных интерьеров. Материалы в высоком разрешении — по запросу для прессы и партнёров.",
         },
@@ -1583,7 +1583,7 @@ export const venuePages: PageDef[] = [
       en: [
         {
           type: "hero",
-          kicker: "Media",
+          kicker: "Photos · SOF EXPO Samarkand",
           title: "What the venue looks like in operation",
           lead: "The photos are taken on real build and show days — no renders, no staged interiors. High-resolution files are available for press and partners on request.",
         },

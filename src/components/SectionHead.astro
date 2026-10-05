@@ -12,8 +12,9 @@ const { locale, kicker, title, text, align = 'left', level = 2 } = Astro.props a
 ---
 <div class:list={['sec-head', { 'sec-head--center': align === 'center' }]}>
   <div>
-    {kicker && <p class="kicker">{kicker}</p>}
-    {level === 1 ? <h1 class="h1" set:html={title} /> : <h2 set:html={title} />}
+    {/* on an index page the kicker is part of the h1 — it names the query (docs/16 §2.2) */}
+    {kicker && level !== 1 && <p class="kicker">{kicker}</p>}
+    {level === 1 ? <h1 class="h1">{kicker && <span class="kicker">{kicker}</span>}{kicker && ' '}<Fragment set:html={title} /></h1> : <h2 set:html={title} />}
   </div>
   {text && <p>{text}</p>}
   <slot name="aside" />

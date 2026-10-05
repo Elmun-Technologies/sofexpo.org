@@ -88,10 +88,9 @@ const heroKicker =
   <div class="wrap ehero__in">
     <div class="ehero__text">
       <ShowLogo slug={event.slug} height={logoFor(event.slug)?.round ? 96 : 64} class="ehero__logo" eager />
-      <p class="kicker">
-        {heroKicker}
-      </p>
-      <h1 set:html={title} />
+      {/* the kicker names the industry ("Food and beverage exhibition"), the query a show page
+          ranks for, so it sits inside the h1 (docs/16 §2.2) */}
+      <h1><span class="kicker">{heroKicker}</span> <Fragment set:html={title} /></h1>
       <p class="ehero__date">
         <b>{d.days}</b>
         <span>{d.month} {d.year}</span>

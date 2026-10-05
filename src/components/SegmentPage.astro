@@ -39,9 +39,11 @@ const past = event.status === 'past';
    (education: applicants and parents) overrides it in sectionLabels */
 const labels = sectionLabels[event.slug];
 
+/* the query a section page answers is "<segment> exhibition" + the city (docs/16 §2.4): keyword
+   first, so even when fit-meta cuts the show name off the tail the query survives */
 const title = ru
-  ? `«${name}» на ${event.brand[locale]}: участники, закупщики, образцы`
-  : `${name} at ${event.brand[locale]}: exhibitors, buyers, samples`;
+  ? `«${name}» на выставке в Самарканде — ${event.brand[locale]}`
+  : `${name} exhibition in Samarkand — ${event.brand[locale]}`;
 const description = ru
   ? `Раздел «${name}» на ${event.brand[locale]} в Самарканде: что ищут закупщики, кто выставляется в разделе и как забронировать стенд.`
   : `${name} at ${event.brand[locale]} in Samarkand: what buyers ask for, who exhibits in the section and how to book a stand.`;
@@ -87,7 +89,8 @@ ld.push(
     {locale}
     {event}
     variant={past ? 'past' : 'open'}
-    kicker={ru ? `Раздел «${name}»` : `${name} section`}
+    kicker={ru ? `Раздел выставки ${event.shortName}` : `${event.shortName} exhibition section`}
+    soloKicker
     title={name}
     lead={section.lead[locale]}
     showHighlight={false}

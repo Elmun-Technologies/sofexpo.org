@@ -351,6 +351,15 @@ li::marker {
   border-radius: 2px;
 }
 
+/* a hero kicker lives inside its h1 (docs/16 §2.2): it keeps the label look, on its own line */
+h1 > .kicker {
+  display: flex;
+  width: fit-content;
+  max-width: 100%;
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
 .sec--forest .kicker::before {
   background: var(--gold-soft);
 }

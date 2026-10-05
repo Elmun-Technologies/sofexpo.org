@@ -134,9 +134,12 @@ function dynamicText(text, locale, translate) {
   tpl.push([/^What else is on show at (.+)$/, (m) => locale === 'zh' ? `${m[1]} 还展出什么` : `${m[1]} fuarında başka neler sergileniyor`]);
   /* 2026-09-28 section pages (docs/13 §P1-2): the segment name is translated through the
      catalog, the frame is fixed — twelve pages, three strings each instead of thirty-six. */
-  tpl.push([/^(.+) at (.+): exhibitors, buyers, samples$/, (m) => locale === 'zh'
-    ? `${translate(m[1])}在 ${m[2]}:参展商、买家与样品`
-    : `${translate(m[1])} · ${m[2]}: katılımcılar, alıcılar, numuneler`]);
+  /* 2026-10-05 section hero kicker, part of the h1 (docs/16 §2.2): the show name is protected */
+  tpl.push([/^(.+) exhibition section$/, (m) => locale === 'zh' ? `${m[1]} 展区` : `${m[1]} fuar bölümü`]);
+  /* 2026-10-05 section titles (docs/16 §2.4): "<segment> exhibition in Samarkand — <show>" */
+  tpl.push([/^(.+) exhibition in Samarkand — (.+)$/, (m) => locale === 'zh'
+    ? `${translate(m[1])}展 · 撒马尔罕 — ${m[2]}`
+    : `${translate(m[1])} fuarı, Semerkant — ${m[2]}`]);
   tpl.push([/^(.+) at (.+) in Samarkand: what buyers ask for, who exhibits in the section and how to book a stand\.$/, (m) => locale === 'zh'
     ? `${translate(m[1])}在撒马尔罕 ${m[2]}:买家关注什么、该展区有哪些参展商,以及如何预订展位。`
     : `${translate(m[1])} · Semerkant ${m[2]}: alıcıların sordukları, bölümde kimlerin yer aldığı ve stant nasıl rezerve edilir.`]);
@@ -363,7 +366,8 @@ function dynamicUz(text, translate) {
     [/^A stand in the (.+) section$/, m => `${translate(m[1])} bo'limidagi stend`],
     /* 2026-09-28 section pages (docs/13 §P1-2): the show name stays as it is, the tail is translated */
     [/^What else is on show at (.+)$/, m => `${m[1]}da yana nimalar namoyish etiladi`],
-    [/^(.+) at (.+): exhibitors, buyers, samples$/, m => `${translate(m[1])} · ${m[2]}: ishtirokchilar, xaridorlar, namunalar`],
+    [/^(.+) exhibition in Samarkand — (.+)$/, m => `${translate(m[1])} ko‘rgazmasi, Samarqand — ${m[2]}`],
+    [/^(.+) exhibition section$/, m => `${m[1]} ko‘rgazmasi bo‘limi`],
     [/^(.+) at (.+) in Samarkand: what buyers ask for, who exhibits in the section and how to book a stand\.$/, m => `${translate(m[1])} · Samarqand ${m[2]}: xaridorlar nima so'raydi, bo'limda kimlar ishtirok etadi va stendni qanday band qilish mumkin.`],
   ];
   for (const [re, fn] of tpl) { const x = re.exec(text); if (x) return fn(x); }

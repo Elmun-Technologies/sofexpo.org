@@ -55,6 +55,12 @@
 .js .home-hero h1 {
   animation-delay: 80ms;
 }
+/* the kicker rides inside the h1 now; one rise, not two stacked */
+.js h1 > .kicker,
+.js .ehero h1 > .kicker,
+.js .phero h1 > .kicker {
+  animation: none;
+}
 .js .home-hero__lead,
 .js .ehero h1,
 .js .phero h1 {

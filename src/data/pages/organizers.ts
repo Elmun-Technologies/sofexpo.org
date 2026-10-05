@@ -30,21 +30,21 @@ export const organizerPages: PageDef[] = [
     path: "/organizers/",
     meta: {
       ru: {
-        title: "Организаторам событий: аренда экспоцентра SOF EXPO Samarkand",
+        title: "Аренда выставочного зала в Самарканде — организаторам событий",
         description:
-          "Ваша выставка, форум или фестиваль в SOF EXPO: зал 4 400 м², улица 5 000 м², конференц-зал, техника и сервисы. Расчёт — за один рабочий день.",
+          "Аренда выставочного зала в Самарканде для выставки, форума или фестиваля: зал 4 400 м², улица 5 000 м², конференц-зал, техника и сервисы. Расчёт за день.",
       },
       en: {
-        title: "Event organizers: rent SOF EXPO Samarkand as a venue",
+        title: "Exhibition hall rental in Samarkand for event organizers",
         description:
-          "Your exhibition, forum or festival at SOF EXPO: 4,400 m² hall, 5,000 m² outdoors, conference room, tech and services. Quote in one business day.",
+          "Exhibition hall rental in Samarkand for your show, forum or festival: 4,400 m² hall, 5,000 m² outdoors, conference room, tech and services. Quote in a day.",
       },
     },
     blocks: {
       ru: [
         {
           type: "hero",
-          kicker: "Площадка для вашего события",
+          kicker: "Аренда выставочного зала · Самарканд",
           title: "Вы — организатор. Мы — зал, техника и сервис",
           lead: "Центр работает с внешними организаторами: федеральные и региональные выставки, форумы, конференции, корпоративные мероприятия и фестивали. Берём на себя инфраструктуру, монтаж, безопасность и сервис для экспонентов, чтобы ваша команда занималась содержанием.",
           bullets: [
@@ -213,7 +213,7 @@ export const organizerPages: PageDef[] = [
       en: [
         {
           type: "hero",
-          kicker: "A venue for your event",
+          kicker: "Exhibition hall rental · Samarkand",
           title: "You organize. We run the hall, the tech and the service",
           lead: "The centre works with external organizers: national and regional trade shows, forums, conferences, corporate events and festivals. We take infrastructure, build-up, security and exhibitor service so your team focuses on content.",
           bullets: [
@@ -388,21 +388,21 @@ export const organizerPages: PageDef[] = [
     path: "/organizers/rates/",
     meta: {
       ru: {
-        title: "Ставки аренды зала и услуг — SOF EXPO Samarkand",
+        title: "Стоимость аренды выставочного зала — SOF EXPO Samarkand",
         description:
-          "Из чего считается стоимость проведения события: ставка за м², дни монтажа, пакет услуг, conference-зал, питание, охрана, уборка. Как получить точный расчёт.",
+          "Стоимость аренды выставочного зала: ставка за м², дни монтажа, пакет услуг, конференц-зал, питание, охрана, уборка — и как получить точный расчёт.",
       },
       en: {
-        title: "Hall rental and service rates — SOF EXPO Samarkand",
+        title: "Exhibition hall rental rates and services — SOF EXPO Samarkand",
         description:
-          "How event cost is calculated: rate per m², build-up days, service package, conference hall, catering, security, cleaning. How to get an exact quote.",
+          "Exhibition hall rental rates: how event cost is built — rate per m², build-up days, service package, conference hall, catering, security, cleaning.",
       },
     },
     blocks: {
       ru: [
         {
           type: "hero",
-          kicker: "Ставки",
+          kicker: "Стоимость аренды зала",
           title: "Прозрачная экономика события",
           lead: "Мы не публикуем «цены от» без контекста: ставка зависит от сезона, формата и загрузки даты. Ниже — структура расчёта, чтобы вы могли заранее спланировать бюджет.",
           image: "/images/event-foodera.jpg",
@@ -497,7 +497,7 @@ export const organizerPages: PageDef[] = [
       en: [
         {
           type: "hero",
-          kicker: "Rates",
+          kicker: "Hall rental rates",
           title: "Transparent event economics",
           lead: 'We do not publish "from" prices without context: the rate depends on season, format and calendar load. Below is the structure so you can plan the budget.',
           image: "/images/event-foodera.jpg",
@@ -588,21 +588,21 @@ export const organizerPages: PageDef[] = [
     path: "/organizers/conferences/",
     meta: {
       ru: {
-        title: "Конференции и форумы: зал, техника, модератор, трансляция",
+        title: "Конференц-зал в Самарканде: форумы, техника, модератор, трансляция",
         description:
-          "Организация деловой программы в SOF EXPO Samarkand: зал на 350 мест, звук и свет, проекция, синхронный перевод, режиссёр трансляции, регистрация делегатов, кофе-брейки.",
+          "Конференц-зал в Самарканде на 350 мест: звук и свет, проекция, синхронный перевод, трансляция, регистрация делегатов и кофе-брейки в SOF EXPO.",
       },
       en: {
-        title: "Conferences and forums: hall, AV, moderator, streaming",
+        title: "Conference venue in Samarkand: hall, AV, moderator, streaming",
         description:
-          "Business programme delivery at SOF EXPO Samarkand: a 350-seat hall, sound and light, projection, simultaneous interpreting, a stream director, delegate registration, coffee breaks.",
+          "A 350-seat conference venue in Samarkand: sound and light, projection, simultaneous interpreting, streaming, delegate registration and coffee breaks at SOF EXPO.",
       },
     },
     blocks: {
       ru: [
         {
           type: "hero",
-          kicker: "Конгресс-сервис",
+          kicker: "Конференц-зал в Самарканде",
           title: "Программа, которую слышно и видно",
           lead: "Собираем деловую часть под ключ: от сцены и звука до регистрации делегатов и записи выступлений. Можно заказать как весь контур, так и отдельные позиции.",
           image: "/images/conference-audience.jpg",
@@ -673,7 +673,7 @@ export const organizerPages: PageDef[] = [
       en: [
         {
           type: "hero",
-          kicker: "Congress service",
+          kicker: "Conference venue · Samarkand",
           title: "A programme you can hear and see",
           lead: "We build the business side turnkey: from stage and sound to delegate registration and session recording. Order the whole contour or single items.",
           image: "/images/conference-audience.jpg",
@@ -758,7 +758,7 @@ export const organizerPages: PageDef[] = [
       ru: [
         {
           type: "hero",
-          kicker: "Чек-лист",
+          kicker: "Чек-лист организатора мероприятия",
           title: "Календарь организатора: 90 дней до входа посетителя",
           lead: "Этот список мы используем сами на своих выставках. Скачайте и адаптируйте под своё событие — он снимает 90% вопросов на монтаже.",
           image: "/images/conference-audience.jpg",
@@ -838,7 +838,7 @@ export const organizerPages: PageDef[] = [
       en: [
         {
           type: "hero",
-          kicker: "Checklist",
+          kicker: "Event organizer checklist",
           title: "The organizer calendar: 90 days before the doors open",
           lead: "We use this list for our own shows. Download it and adapt it to your event — it removes 90% of the questions at build-up.",
           image: "/images/conference-audience.jpg",

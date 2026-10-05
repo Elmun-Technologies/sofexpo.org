@@ -184,6 +184,15 @@ What it flags and the project accepts **on purpose** (do not "fix" these without
 | moved-path stub titles are 23–24 chars                      | they exist to hand equity over, not to rank                                                                                               |
 | 2 pages ship ~22 KB of inline JS                            | the search page inlines its index so lookups need no request; every other page stays under 1 KB and loads no external script              |
 
+### Keyword layer
+
+The tags above say *how* a page is described; `docs/16-keyword-audit.md` says *for which query*.
+The semantic core lives in `scripts/keyword-map.mjs` (one primary query per page and locale) and
+`npm run audit:keywords` scores where it appears — title, h1, description, the first 100 words,
+h2, body — failing the build when a money query drops below 70. A hero kicker is part of the
+`<h1>` for that reason, and long titles put the query before the first separator so that
+`fit-meta.mjs` never cuts it off.
+
 ## 7. Feeds and discovery
 
 - `sitemap-index.xml` → `sitemap-0.xml`, one `<url>` per indexable page with `<xhtml:link>`

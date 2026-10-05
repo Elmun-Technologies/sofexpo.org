@@ -40,8 +40,9 @@ const {
   )}
   <div class="wrap hero__in">
     <div>
-      {kicker && <p class="kicker">{kicker}</p>}
-      <h1 set:html={title} />
+      {/* the kicker names the page's query ("Exhibition hall rental · Samarkand"), so it is part
+          of the headline, not a paragraph above it (docs/16 §2.2) */}
+      <h1>{kicker && <span class="kicker">{kicker}</span>}{kicker && ' '}<Fragment set:html={title} /></h1>
       {lead && <p class="hero__lead">{lead}</p>}
       {bullets.length > 0 && (
         <ul class="pill-row" style="list-style:none;padding:0;margin:1.2rem 0 0">

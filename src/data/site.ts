@@ -409,8 +409,8 @@ export const nav: NavItem[] = [
       },
       {
         path: "/events/buildpro-expo/",
-        ru: "BUILDPRO EXPO — строительство",
-        en: "BUILDPRO EXPO — construction",
+        ru: "BUILD PRO EXPO — строительство",
+        en: "BUILD PRO EXPO — construction",
         note: {
           ru: "9–11 ноября 2026 · 5-я редакция, 10 тем",
           en: "9–11 Nov 2026 · 5th edition, 10 topics",
@@ -818,8 +818,8 @@ export const footerColumns = [
       { path: "/events/foodera-expo/", ru: "FOODERA EXPO", en: "FOODERA EXPO" },
       {
         path: "/events/buildpro-expo/",
-        ru: "BUILDPRO EXPO",
-        en: "BUILDPRO EXPO",
+        ru: "BUILD PRO EXPO",
+        en: "BUILD PRO EXPO",
       },
       { path: "/events/agropro-expo/", ru: "AGROPRO EXPO", en: "AGROPRO EXPO" },
       { path: "/events/world-edu-expo/", ru: "WORLD EDU EXPO", en: "WORLD EDU EXPO" },

@@ -31,18 +31,18 @@ export const eventPages: Record<string, EventPages> = {
             title:
               "FOODERA EXPO 2026 — выставка продуктов и напитков, Самарканд",
             description:
-              "20–22 октября 2026, SOF EXPO Samarkand: 12 разделов food & beverage, дегустации, закупочная биржа с сетями, форум Food Retail. Бронирование стендов и регистрация посетителей.",
+              "Выставка продуктов питания и напитков в Самарканде, 20–22 октября 2026: 12 разделов, дегустации, закупочная биржа с сетями, форум Food Retail. Бронирование стендов.",
           },
           en: {
             title: "FOODERA EXPO 2026 — food and drink exhibition, Samarkand",
             description:
-              "20–22 October 2026 at SOF EXPO Samarkand: 12 food and beverage sections, tastings, a buying marketplace with retail chains, Food Retail forum. Stand booking and visitor registration.",
+              "Food and beverage exhibition in Samarkand, 20–22 October 2026: 12 sections, tastings, a buying marketplace with retail chains, Food Retail forum. Stand booking open.",
           },
         },
         hero: {
           kicker: {
-            ru: "Выставка продуктов и напитков",
-            en: "Food and beverage exhibition",
+            ru: "Выставка продуктов и напитков в Самарканде",
+            en: "Food and beverage exhibition in Samarkand",
           },
           title: {
             ru: "FOODERA EXPO: три дня, за которые полки меняются",
@@ -810,18 +810,18 @@ eventPages["buildpro-expo"] = {
       ru: {
         title: "BUILD PRO EXPO 2026 — строительная выставка в Самарканде",
         description:
-          "9–11 ноября 2026, пятая редакция: материалы, оборудование, форум архитекторов, демо монтажа, 1 600+ посетителей и 80+ экспонентов в 2025 году. Заявки на стенды открыты.",
+          "Строительная выставка в Самарканде, 9–11 ноября 2026: стройматериалы, оборудование, форум архитекторов, демо монтажа; 1 600+ посетителей и 80+ экспонентов в 2025 году.",
       },
       en: {
         title: "BUILD PRO EXPO 2026 — construction exhibition in Samarkand",
         description:
-          "9–11 November 2026, fifth edition: materials, equipment, architects forum, live installation demos, 1,600+ visitors and 80+ exhibitors in 2025. Stand applications are open.",
+          "Construction exhibition in Samarkand, 9–11 November 2026: building materials, equipment, architects forum, live installation demos; 1,600+ visitors and 80+ exhibitors in 2025.",
       },
     },
     hero: {
       kicker: {
-        ru: "Пятая международная выставка",
-        en: "Fifth international exhibition",
+        ru: "Пятая международная строительная выставка · Самарканд",
+        en: "Fifth international construction exhibition · Samarkand",
       },
       title: {
         ru: "BUILD PRO EXPO: материалы, проекты и те, кто закупает",
@@ -1389,19 +1389,19 @@ eventPages["agropro-expo"] = {
       ru: {
         title: "AGROPRO EXPO 2027 — агровыставка в Самарканде, 2–4 марта",
         description:
-          "Техника, орошение, семена, агрохимия, теплицы, хранение и животноводство. 100+ компаний и 4 500+ специалистов в 2026 году. Заявки на площадь и уличные демо-позиции.",
+          "Сельскохозяйственная выставка в Самарканде, 2–4 марта 2027: сельхозтехника, орошение, семена, агрохимия, теплицы, хранение. 100+ компаний и 4 500+ специалистов в 2026 году.",
       },
       en: {
         title:
           "AGROPRO EXPO 2027 — agriculture exhibition in Samarkand, 2–4 March",
         description:
-          "Machinery, irrigation, seeds, agrochemistry, greenhouses, storage and livestock. 100+ companies and 4,500+ specialists in 2026. Space and outdoor demo applications open.",
+          "Agriculture exhibition in Samarkand, 2–4 March 2027: farm machinery, irrigation, seeds, agrochemistry, greenhouses, storage. 100+ companies and 4,500+ specialists in 2026.",
       },
     },
     hero: {
       kicker: {
-        ru: "Международная агровыставка",
-        en: "International agriculture exhibition",
+        ru: "Международная агровыставка · Самарканд",
+        en: "International agriculture exhibition · Samarkand",
       },
       title: {
         ru: "AGROPRO EXPO: закупка перед сезоном, а не после",
@@ -2334,18 +2334,18 @@ eventPages["world-edu-expo"] = {
       ru: {
         title: "WORLD EDU EXPO 2027 — выставка образования в Самарканде",
         description:
-          "9–10 апреля 2027: вузы Узбекистана, России, Беларуси, Казахстана, Европы и Турции, стипендии, консультации по IELTS, GMAT и SAT, профориентация и розыгрыш призов.",
+          "Выставка образования в Самарканде, 9–10 апреля 2027: вузы Узбекистана, России, Беларуси, Казахстана, Европы и Турции, обучение за рубежом, стипендии, IELTS, GMAT и SAT.",
       },
       en: {
         title: "WORLD EDU EXPO 2027 — education exhibition in Samarkand",
         description:
-          "9–10 April 2027: universities from Uzbekistan, Russia, Belarus, Kazakhstan, Europe and Turkey, scholarships, IELTS, GMAT and SAT consultations, guidance and a prize draw.",
+          "Education fair in Samarkand, 9–10 April 2027: universities from Uzbekistan, Russia, Belarus, Kazakhstan, Europe and Turkey, study abroad, scholarships, IELTS, GMAT and SAT.",
       },
     },
     hero: {
       kicker: {
-        ru: "Выставка образования · весна",
-        en: "Education exhibition · spring",
+        ru: "Выставка образования в Самарканде · весна",
+        en: "Education exhibition in Samarkand · spring",
       },
       title: {
         ru: "WORLD EDU: кем учиться, где и за чей счёт",
@@ -2506,8 +2506,8 @@ eventPages["world-edu-expo"] = {
     },
     hero: {
       kicker: {
-        ru: "Вузам и консультантам",
-        en: "For universities and agencies",
+        ru: "Участие в WORLD EDU 2027 · вузам и консультантам",
+        en: "Exhibiting at WORLD EDU 2027 · universities and agencies",
       },
       title: {
         ru: "Стенд, презентация, поток абитуриентов",
@@ -2847,16 +2847,16 @@ eventPages["ecom-retail-expo"] = {
       ru: {
         title: "ECOM & RETAIL EXPO 2027 — форум e-commerce в Самарканде",
         description:
-          "16–17 июня 2027, White Label Edition: производители, селлеры, маркетплейсы, логистика и финтех. Биржа контактов, фото-зона и тематические треки программы.",
+          "Выставка-форум e-commerce и ритейла в Самарканде, 16–17 июня 2027: производители, селлеры, маркетплейсы, логистика и финтех. Биржа контактов и треки программы.",
       },
       en: {
         title: "ECOM & RETAIL EXPO 2027 — e-commerce forum in Samarkand",
         description:
-          "16–17 June 2027, White Label Edition: manufacturers, sellers, marketplaces, logistics and fintech. Contact exchange, photo zone and programme tracks.",
+          "E-commerce and retail expo in Samarkand, 16–17 June 2027: manufacturers, sellers, marketplaces, logistics and fintech. Contact exchange and programme tracks.",
       },
     },
     hero: {
-      kicker: { ru: "White Label Edition", en: "White Label Edition" },
+      kicker: { ru: "Выставка e-commerce и ритейла · White Label Edition", en: "E-commerce and retail expo · White Label Edition" },
       title: {
         ru: "ECOM & RETAIL: полка, которая живёт в приложении",
         en: "ECOM & RETAIL: the shelf that lives inside an app",

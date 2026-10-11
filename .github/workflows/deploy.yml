@@ -5,7 +5,9 @@ name: deploy
 # first step with a notice instead of failing — nothing is published by accident.
 #   CLOUDFLARE_API_TOKEN   token with "Cloudflare Pages: Edit"
 #   CLOUDFLARE_ACCOUNT_ID  the account that owns the sofexpo* Pages projects
-# Optional repository variables: PUBLIC_LEAD_ENDPOINT, PUBLIC_ANALYTICS_ENDPOINT.
+# Optional repository variables override the production API defaults:
+#   PUBLIC_LEAD_ENDPOINT, PUBLIC_ANALYTICS_ENDPOINT, PUBLIC_PORTAL_URL.
+# The defaults assume the API runs at https://api.sofexpo.org.
 on:
   workflow_run:
     workflows: [check]
@@ -49,13 +51,59 @@ jobs:
           cache: npm
       - if: env.HAS_SECRETS == 'true'
         run: npm ci
+      - name: Verify API and cabinet before publishing links
+        if: env.HAS_SECRETS == 'true'
+        run: |
+          node --input-type=module <<'NODE'
+          const base = new URL(process.env.PUBLIC_PORTAL_URL);
+          const healthResponse = await fetch(new URL('/health', base));
+          const health = await healthResponse.json().catch(() => ({}));
+          if (!healthResponse.ok || health.ok !== true || health.service !== 'sofexpo-lead-backend') {
+            throw new Error(`SOF EXPO API health check failed: HTTP ${healthResponse.status}`);
+          }
+          const optionsResponse = await fetch(new URL('/api/portal/options', base));
+          const options = await optionsResponse.json().catch(() => ({}));
+          if (!optionsResponse.ok || options.ok !== true || !Array.isArray(options.events)) {
+            throw new Error(`Portal options check failed: HTTP ${optionsResponse.status}`);
+          }
+          const origins = [
+            'https://sofexpo.org', 'https://foodera.sofexpo.org', 'https://buildpro.sofexpo.org',
+            'https://agropro.sofexpo.org', 'https://worldedu.sofexpo.org', 'https://ecomretail.sofexpo.org',
+          ];
+          for (const endpoint of [process.env.PUBLIC_LEAD_ENDPOINT, process.env.PUBLIC_ANALYTICS_ENDPOINT]) {
+            for (const origin of origins) {
+              const response = await fetch(new URL(endpoint), {
+                method: 'OPTIONS',
+                headers: {
+                  Origin: origin,
+                  'Access-Control-Request-Method': 'POST',
+                  'Access-Control-Request-Headers': 'content-type',
+                },
+              });
+              if (response.status !== 204 || response.headers.get('access-control-allow-origin') !== origin || response.headers.get('access-control-allow-credentials') !== 'true') {
+                throw new Error(`CORS preflight failed for ${origin} → ${endpoint}: HTTP ${response.status}`);
+              }
+            }
+          }
+          const cabinetResponse = await fetch(new URL('/cabinet', base));
+          const cabinet = await cabinetResponse.text();
+          if (!cabinetResponse.ok || !cabinet.includes('register-form')) {
+            throw new Error(`Cabinet page check failed: HTTP ${cabinetResponse.status}`);
+          }
+          console.log(`API healthy; ${options.events.length} portal event(s); six host CORS origins and cabinet form verified.`);
+          NODE
+        env:
+          PUBLIC_PORTAL_URL: ${{ vars.PUBLIC_PORTAL_URL || 'https://api.sofexpo.org' }}
+          PUBLIC_LEAD_ENDPOINT: ${{ vars.PUBLIC_LEAD_ENDPOINT || 'https://api.sofexpo.org/lead' }}
+          PUBLIC_ANALYTICS_ENDPOINT: ${{ vars.PUBLIC_ANALYTICS_ENDPOINT || 'https://api.sofexpo.org/event' }}
       - name: Build ${{ matrix.host }}
         if: env.HAS_SECRETS == 'true'
         run: node scripts/build-one-host.mjs ${{ matrix.host }}
         env:
           PUBLIC_HOSTS_MODE: subdomain
-          PUBLIC_LEAD_ENDPOINT: ${{ vars.PUBLIC_LEAD_ENDPOINT }}
-          PUBLIC_ANALYTICS_ENDPOINT: ${{ vars.PUBLIC_ANALYTICS_ENDPOINT }}
+          PUBLIC_LEAD_ENDPOINT: ${{ vars.PUBLIC_LEAD_ENDPOINT || 'https://api.sofexpo.org/lead' }}
+          PUBLIC_ANALYTICS_ENDPOINT: ${{ vars.PUBLIC_ANALYTICS_ENDPOINT || 'https://api.sofexpo.org/event' }}
+          PUBLIC_PORTAL_URL: ${{ vars.PUBLIC_PORTAL_URL || 'https://api.sofexpo.org' }}
       - name: Publish to Cloudflare Pages
         if: env.HAS_SECRETS == 'true'
         run: npx --yes wrangler@4 pages deploy dist --project-name=${{ matrix.project }} --branch=main --commit-dirty=true

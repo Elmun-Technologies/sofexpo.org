@@ -1,4 +1,92 @@
 {
+  "Account": [
+    "账户",
+    "Hesap"
+  ],
+  "Visitor account": [
+    "访客账户",
+    "Ziyaretçi hesabı"
+  ],
+  "Plan your visit": [
+    "规划您的参观",
+    "Ziyaretinizi planlayın"
+  ],
+  "Exhibitor account": [
+    "参展商账户",
+    "Katılımcı hesabı"
+  ],
+  "Apply to exhibit": [
+    "申请参展",
+    "Katılımcı olarak başvurun"
+  ],
+  "Личный кабинет": [
+    "个人账户",
+    "Kişisel hesap"
+  ],
+  "Кабинет посетителя": [
+    "访客账户",
+    "Ziyaretçi hesabı"
+  ],
+  "Планируйте посещение": [
+    "规划您的参观",
+    "Ziyaretinizi planlayın"
+  ],
+  "Кабинет экспонента": [
+    "参展商账户",
+    "Katılımcı hesabı"
+  ],
+  "Заявка на участие": [
+    "参展申请",
+    "Katılım başvurusu"
+  ],
+  "В формах и кабинетах — имя, email, телефон, компания, страна, отрасль, сайт, интересы и текст заявки. Пароль хранится только в виде криптографического хеша; технические данные обращения используются для защиты от спама.": [
+    "表单和账户会收集姓名、电子邮件、电话、公司、国家、行业、网站、兴趣和申请详情。密码仅以加密哈希形式存储；技术请求数据用于防止垃圾信息。",
+    "Formlar ve hesaplarda ad, e-posta, telefon, şirket, ülke, sektör, web sitesi, ilgi alanları ve talep ayrıntıları toplanır. Parolalar yalnızca kriptografik hash olarak saklanır; teknik talep verileri istenmeyen iletileri önlemeye yardımcı olur."
+  ],
+  "Forms and accounts collect name, email, phone, company, country, industry, website, interests and request details. Passwords are stored only as cryptographic hashes; technical request data helps prevent spam.": [
+    "表单和账户会收集姓名、电子邮件、电话、公司、国家、行业、网站、兴趣和申请详情。密码仅以加密哈希形式存储；技术请求数据用于防止垃圾信息。",
+    "Formlar ve hesaplarda ad, e-posta, telefon, şirket, ülke, sektör, web sitesi, ilgi alanları ve talep ayrıntıları toplanır. Parolalar yalnızca kriptografik hash olarak saklanır; teknik talep verileri istenmeyen iletileri önlemeye yardımcı olur."
+  ],
+  "Учётная запись посетителя и отправленная через неё заявка фиксируют интерес, но сами по себе не являются билетом или подтверждением допуска. Подтверждение оформляется отдельно; вход может быть ограничен для лиц младше 14 лет без сопровождения.": [
+    "访客账户及通过账户提交的申请仅用于记录意向，本身不构成门票或入场确认。入场确认另行办理；未满14岁者可能须由成人陪同方可入场。",
+    "Ziyaretçi hesabı ve bu hesap üzerinden gönderilen talep yalnızca ilginizi kaydeder; tek başına bilet veya giriş onayı değildir. Giriş ayrıca onaylanır; 14 yaşından küçükler refakatçi olmadan kabul edilmeyebilir."
+  ],
+  "A visitor account and a request submitted from it record interest, but are not a ticket or admission confirmation. Admission is confirmed separately. Entry may be restricted for under-14s without an adult.": [
+    "访客账户及通过账户提交的申请仅用于记录意向，本身不构成门票或入场确认。入场确认另行办理；未满14岁者可能须由成人陪同方可入场。",
+    "Ziyaretçi hesabı ve bu hesap üzerinden gönderilen talep yalnızca ilginizi kaydeder; tek başına bilet veya giriş onayı değildir. Giriş ayrıca onaylanır; 14 yaşından küçükler refakatçi olmadan kabul edilmeyebilir."
+  ],
+  "Даты, площади, пакеты и цены на сайте — справочные. Заявка из кабинета экспонента не резервирует стенд и не является офертой; обязательства возникают только в документах, подписанных сторонами.": [
+    "网站上的日期、面积、套餐和价格仅供参考。通过参展商账户提交申请不会预留展位，也不构成要约；只有双方签署文件后才产生约束力。",
+    "Web sitesindeki tarih, alan, paket ve fiyatlar bilgilendirme amaçlıdır. Katılımcı hesabından gönderilen talep standı rezerve etmez ve teklif niteliği taşımaz; yükümlülükler yalnızca tarafların imzaladığı belgelerle doğar."
+  ],
+  "Dates, areas, packages and prices are for reference. An exhibitor cabinet request does not reserve a stand or make an offer; obligations arise only from documents signed by both parties.": [
+    "网站上的日期、面积、套餐和价格仅供参考。通过参展商账户提交申请不会预留展位，也不构成要约；只有双方签署文件后才产生约束力。",
+    "Tarih, alan, paket ve fiyatlar bilgilendirme amaçlıdır. Katılımcı hesabından gönderilen talep standı rezerve etmez ve teklif niteliği taşımaz; yükümlülükler yalnızca tarafların imzaladığı belgelerle doğar."
+  ],
+  "Какие данные собирают сайт SOF EXPO и кабинеты посетителя/экспонента, зачем и как долго они хранятся, права субъекта данных и контакты.": [
+    "SOF EXPO网站及访客/参展商账户收集哪些数据、用途、保存期限、数据主体权利和联系方式。",
+    "SOF EXPO sitesi ve ziyaretçi/katılımcı hesaplarının hangi verileri topladığı, amaç, saklama süresi, veri sahibi hakları ve iletişim bilgileri."
+  ],
+  "What the SOF EXPO site and visitor/exhibitor accounts collect, why, how long data is retained, data subject rights and contact details.": [
+    "SOF EXPO网站及访客/参展商账户收集哪些数据、用途、保存期限、数据主体权利和联系方式。",
+    "SOF EXPO sitesi ve ziyaretçi/katılımcı hesaplarının hangi verileri topladığı, amaç, saklama süresi, veri sahibi hakları ve iletişim bilgileri."
+  ],
+  "Публичный сайт не использует рекламных трекеров. Кабинет устанавливает необходимую first-party cookie для входа и защиты сессии. Обезличенная статистика (просмотры страниц, нажатия кнопок, отправки форм — без имени, телефона и IP-адреса) собирается на собственном сервере центра.": [
+    "公开网站不使用广告跟踪器。账户系统设置必要的第一方会话 Cookie，用于登录和保护会话。匿名统计（页面浏览、按钮点击、表单提交，不含姓名、电话或 IP 地址）由中心自有服务器收集。",
+    "Herkese açık site reklam izleyicileri kullanmaz. Kabinet, oturum açma ve güvenlik için gerekli bir birinci taraf oturum çerezi kullanır. Anonim istatistikler (sayfa görüntülemeleri, düğme tıklamaları ve form gönderimleri — ad, telefon veya IP adresi olmadan) merkezin kendi sunucusunda toplanır."
+  ],
+  "The public site uses no advertising trackers. The cabinet sets an essential first-party session cookie for login and security. Anonymous statistics (page views, button clicks, form submissions — without name, phone or IP address) are collected on the centre's own server.": [
+    "公开网站不使用广告跟踪器。账户系统设置必要的第一方会话 Cookie，用于登录和保护会话。匿名统计（页面浏览、按钮点击、表单提交，不含姓名、电话或 IP 地址）由中心自有服务器收集。",
+    "Herkese açık site reklam izleyicileri kullanmaz. Kabinet, oturum açma ve güvenlik için gerekli bir birinci taraf oturum çerezi kullanır. Anonim istatistikler (sayfa görüntülemeleri, düğme tıklamaları ve form gönderimleri — ad, telefon veya IP adresi olmadan) merkezin kendi sunucusunda toplanır."
+  ],
+  "Заявки — 12 месяцев; профиль кабинета — пока аккаунт активен или до обработки запроса на удаление. Договоры и бухгалтерские документы хранятся по установленным срокам.": [
+    "申请数据保存12个月；账户资料在账户有效期间或删除请求处理完成前保存。合同和会计记录按规定期限保存。",
+    "Talepler 12 ay saklanır; hesap profili hesap aktif olduğu sürece veya silme talebi işlenene kadar saklanır. Sözleşme ve muhasebe kayıtları belirlenen saklama sürelerine tabidir."
+  ],
+  "Requests — 12 months; cabinet profile data while the account is active or until a deletion request is processed. Contracts and accounting records follow statutory retention periods.": [
+    "申请数据保存12个月；账户资料在账户有效期间或删除请求处理完成前保存。合同和会计记录按规定期限保存。",
+    "Talepler 12 ay saklanır; hesap profili hesap aktif olduğu sürece veya silme talebi işlenene kadar saklanır. Sözleşme ve muhasebe kayıtları yasal saklama sürelerine tabidir."
+  ],
   "Where business": [
     "让商业",
     "İş dünyası"
@@ -3270,5 +3358,25 @@
   "BUILD PRO EXPO — construction": [
     "BUILD PRO EXPO — 建筑行业",
     "BUILD PRO EXPO — inşaat"
+  ],
+  "To create and maintain an account, handle a visitor or exhibitor request, follow up on participation terms and perform a contract. Tickets/admission are handled separately. Required consent on the press accreditation form covers processing that request only; it does not subscribe you to marketing emails.": [
+    "用于创建和维护账户、处理观众或参展商申请、跟进参展条件并履行合同。门票/入场资格另行办理。媒体证申请表中的必需同意仅用于处理该申请，不会让您订阅营销邮件。",
+    "Hesap oluşturmak ve yönetmek, ziyaretçi veya katılımcı talebini işleme almak, katılım koşullarını takip etmek ve sözleşmeyi yerine getirmek için kullanılır. Bilet/giriş ayrıca düzenlenir. Basın akreditasyonu formundaki zorunlu onay yalnızca bu başvurunun işlenmesi içindir; sizi tanıtım e-postalarına abone yapmaz."
+  ],
+  "Include your outlet, name and the show you cover. Accreditation confirmation and pass usually take two business days. This request is only for accreditation and does not subscribe you to email updates.": [
+    "请填写媒体机构、姓名以及您报道的展会。媒体证确认和通行证通常需两个工作日。此申请仅用于媒体证办理，不会让您订阅电子邮件资讯。",
+    "Medya kuruluşunuzu, adınızı ve haber yapacağınız fuarı belirtin. Akreditasyon onayı ve giriş kartı genellikle iki iş günü içinde hazırlanır. Bu başvuru yalnızca akreditasyon içindir ve sizi e-posta güncellemelerine abone yapmaz."
+  ],
+  "Press releases about sales openings, exhibitors, programme changes and event results are published in SOF EXPO news. An accreditation request does not subscribe you to email updates.": [
+    "有关开售、参展商、日程变更和展会结果的新闻稿会发布在 SOF EXPO 新闻栏目。媒体证申请不会让您订阅电子邮件资讯。",
+    "Satış başlangıçları, katılımcılar, program değişiklikleri ve etkinlik sonuçlarıyla ilgili basın bültenleri SOF EXPO haberlerinde yayımlanır. Akreditasyon başvurusu sizi e-posta güncellemelerine abone yapmaz."
+  ],
+  "Free · one-time catalog request · no mailing-list subscription": [
+    "免费 · 单次目录申请 · 不订阅邮件列表",
+    "Ücretsiz · tek seferlik katalog talebi · e-posta listesine abonelik yok"
+  ],
+  "View, correct or delete data by writing to info@sofexpo.uz with the subject \"Data request\".": [
+    "如需查看、更正或删除数据，请发送邮件至 info@sofexpo.uz，主题注明“Data request”。",
+    "Verilerinizi görmek, düzeltmek veya silmek için konuya “Data request” yazarak info@sofexpo.uz adresine e-posta gönderin."
   ]
 }

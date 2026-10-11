@@ -40,6 +40,12 @@ const put = (node, name, value) => {
 };
 const strip = (node, name) => { node.attrs = node.attrs?.filter(a => a.name !== name); };
 export function localizedURL(value, locale) {
+  // The hosted SOF EXPO tour has EN/RU/UZ editions; Chinese and Turkish visitors use EN.
+  const hostedTour = /^(https:\/\/my\.cybermuseum\.art)\/(?:en|ru|uz)\/(tour\/sofexpo|pano\/x36rtq6ggm)([?#].*)?$/i.exec(value);
+  if (hostedTour) {
+    const tourLocale = locale === 'ru' || locale === 'uz' ? locale : 'en';
+    value = `${hostedTour[1]}/${tourLocale}/${hostedTour[2]}${hostedTour[3] ?? ''}`;
+  }
   // Only owned locale-prefixed URLs; external assets, downloads and query values stay intact.
   return value.replace(/(^|https?:\/\/(?:[a-z0-9-]+\.)?sofexpo\.org)\/en(?=\/|$|[?#])/g, `$1/${locale}`);
 }
@@ -263,7 +269,7 @@ export function localizeHTML(html, locale, options = {}) {
     if (node.attrs) {
       for (const a of node.attrs) {
         if (!noTranslate && textualAttrs.has(a.name)) a.value = text(a.value);
-        if (['href','action','data-url'].includes(a.name) && !languageLink) a.value = localizedURL(a.value,locale);
+        if ((['href','action','data-url'].includes(a.name) && !languageLink) || (tag === 'iframe' && a.name === 'src')) a.value = localizedURL(a.value,locale);
       }
       if (tag === 'a' && languageLink) {
         if (attr(node,'hreflang') === languageTags[locale]) put(node,'aria-current','true');

@@ -25,6 +25,19 @@ const active = (base: string) => (base === '/' ? current === '/' : path.startsWi
 const pageEvent = events.find((e) => path.startsWith(`/events/${e.slug}/`));
 const quizEvent = pageEvent ? pageEvent.brand[locale] : undefined;
 const ru = locale === 'ru';
+const portalBase = (() => {
+  const raw = String(import.meta.env.PUBLIC_PORTAL_URL ?? '').trim().replace(/\/+$/, '');
+  if (!raw) return '';
+  if (raw.startsWith('/') && !raw.startsWith('//')) return raw;
+  try {
+    const url = new URL(raw);
+    return ['http:', 'https:'].includes(url.protocol) && !url.username && !url.password && url.pathname === '/' && !url.search && !url.hash
+      ? url.origin
+      : '';
+  } catch { return ''; }
+})();
+const visitorPortalHref = portalBase ? `${portalBase}/cabinet?type=visitor&lang=${locale}` : '';
+const exhibitorPortalHref = portalBase ? `${portalBase}/cabinet?type=exhibitor&lang=${locale}` : '';
 /* the mega-menu's featured card: the next show that is still open */
 const nextShow = events
   .filter((e) => e.status !== 'past')
@@ -142,6 +155,15 @@ const items = nav.filter((i) => i.key !== 'nav.news');
           ))}
         </div>
       </details>
+      {portalBase && (
+        <details class="account-picker">
+          <summary aria-label={ru ? 'Личный кабинет' : 'Account'} title={ru ? 'Личный кабинет' : 'Account'}><span aria-hidden="true">◎</span><svg aria-hidden="true" width="9" height="6" viewBox="0 0 10 7"><path d="m1 1 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.4" /></svg></summary>
+          <div class="account-picker__menu">
+            <a href={visitorPortalHref} data-portal-language>{ru ? 'Кабинет посетителя' : 'Visitor account'}<small>{ru ? 'Планируйте посещение' : 'Plan your visit'}</small></a>
+            <a href={exhibitorPortalHref} data-portal-language>{ru ? 'Кабинет экспонента' : 'Exhibitor account'}<small>{ru ? 'Заявка на участие' : 'Apply to exhibit'}</small></a>
+          </div>
+        </details>
+      )}
       <a class="header-search" href={P('/search/')} aria-label={t('cta.search')}><Icon name="search" size={19} /></a>
       <a class="btn btn--sm btn--desk" href={P('/request-stand/')} data-quiz-open data-quiz-event={quizEvent} data-quiz-source="header">
         <Icon name="sparkle" size={16} /> {t('cta.stand')}
@@ -173,6 +195,12 @@ const items = nav.filter((i) => i.key !== 'nav.news');
         <a class="btn btn--ghost" href={P('/search/')}>{t('cta.search')}</a>
         <a class="btn" href={P('/request-stand/')} data-quiz-open data-quiz-event={quizEvent} data-quiz-source="menu">{t('cta.stand')}</a>
         <a class="btn btn--ghost" href={P('/visitors/tickets/')}>{t('cta.ticket')}</a>
+        {portalBase && (
+          <>
+            <a class="btn btn--ghost" href={visitorPortalHref} data-portal-language>{ru ? 'Кабинет посетителя' : 'Visitor account'}</a>
+            <a class="btn btn--ghost" href={exhibitorPortalHref} data-portal-language>{ru ? 'Кабинет экспонента' : 'Exhibitor account'}</a>
+          </>
+        )}
         <a class="btn btn--ghost" href={P('/events/')}>{t('nav.lineup')}</a>
         <a class="btn btn--ghost" href={`tel:${site.contacts.phoneMain.replace(/\s/g, '')}`}>
           {t('topbar.phone')}
@@ -184,7 +212,7 @@ const items = nav.filter((i) => i.key !== 'nav.news');
   </div>
 </header>
 
-<script is:inline>
+<script is:inline translate="no">
   (() => {
     const burger = document.querySelector('.burger');
     const mnav = document.getElementById('mnav');
@@ -206,9 +234,26 @@ const items = nav.filter((i) => i.key !== 'nav.news');
       target.hash = location.hash;
       link.href = target.href;
     });
+    const pageLocale = document.documentElement.lang.toLowerCase().split('-')[0];
+    const portalLocale = ['uz', 'ru', 'en', 'tr', 'zh'].includes(pageLocale) ? pageLocale : 'en';
+    document.querySelectorAll('[data-portal-language]').forEach(link => {
+      try {
+        const target = new URL(link.href, location.href);
+        target.searchParams.set('lang', portalLocale);
+        link.href = target.href;
+      } catch { /* invalid portal URL remains hidden by the build configuration */ }
+    });
     const picker = document.querySelector('.language-picker');
-    document.addEventListener('click', (e) => { if (picker && !picker.contains(e.target)) picker.open = false; });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && picker?.open) { picker.open = false; picker.querySelector('summary').focus(); } });
+    const accountPicker = document.querySelector('.account-picker');
+    document.addEventListener('click', (e) => {
+      if (picker && !picker.contains(e.target)) picker.open = false;
+      if (accountPicker && !accountPicker.contains(e.target)) accountPicker.open = false;
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      if (picker?.open) { picker.open = false; picker.querySelector('summary').focus(); }
+      if (accountPicker?.open) { accountPicker.open = false; accountPicker.querySelector('summary').focus(); }
+    });
     const desktop = matchMedia('(min-width: 1281px)');
     desktop.addEventListener('change', (e) => { if (e.matches) set(false); });
     window.addEventListener('resize', () => { if (document.body.classList.contains('nav-open')) set(true); });

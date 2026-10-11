@@ -975,15 +975,15 @@ export const companyPages: PageDef[] = [
           formType: "press",
           id: "accreditation",
           title: "Заявка на аккредитацию",
-          text: "Издание, ФИО, а в комментарии — выставка, которую вы освещаете. Подтверждение и пропуск — за 2 рабочих дня; эта же заявка добавляет редакцию в список рассылки релизов.",
+          text: "Укажите издание, ФИО и выставку, которую вы освещаете. Подтверждение и пропуск обычно оформляются за 2 рабочих дня. Заявка предназначена только для аккредитации и не подписывает вас на email-рассылку.",
         },
         {
           type: "callout",
           kicker: "Релизы",
           title: "Анонсы выходят заранее",
-          text: "Релиз о старте продаж, о составе участников, о программе и итоговый релиз — по каждому событию. Подпишитесь на рассылку для прессы, чтобы не пропустить.",
+          text: "Пресс-релизы о старте продаж, составе участников, программе и итогах публикуются в новостях SOF EXPO. Заявка на аккредитацию не подписывает вас на email-рассылку.",
           tone: "gold",
-          action: { label: "Подписаться", href: "#accreditation" },
+          action: { label: "Все новости", href: "/news/" },
         },
         {
           type: "links",
@@ -1062,15 +1062,15 @@ export const companyPages: PageDef[] = [
           formType: "press",
           id: "accreditation",
           title: "Accreditation request",
-          text: "Your outlet and name, and in the comment the show you are covering. Confirmation and pass within two business days; the same request puts your desk on the release list.",
+          text: "Include your outlet, name and the show you cover. Accreditation confirmation and pass usually take two business days. This request is only for accreditation and does not subscribe you to email updates.",
         },
         {
           type: "callout",
           kicker: "Releases",
           title: "Announcements come early",
-          text: "Sales opening, exhibitor line-up, programme and final results — one release per stage for every event. Join the press mailing list.",
+          text: "Press releases about sales openings, exhibitors, programme changes and event results are published in SOF EXPO news. An accreditation request does not subscribe you to email updates.",
           tone: "gold",
-          action: { label: "Subscribe", href: "#accreditation" },
+          action: { label: "All news", href: "/news/" },
         },
         {
           type: "links",
@@ -1089,12 +1089,12 @@ export const companyPages: PageDef[] = [
       ru: {
         title: "Политика конфиденциальности",
         description:
-          "Какие данные собирает сайт SOF EXPO, с какой целью, как долго хранятся заявки на участие и регистрация посетителей, права субъекта данных и контакты.",
+          "Какие данные собирают сайт SOF EXPO и кабинеты посетителя/экспонента, зачем и как долго они хранятся, права субъекта данных и контакты.",
       },
       en: {
         title: "Privacy policy — SOF EXPO Samarkand",
         description:
-          "What data the SOF EXPO website collects, for what purpose, how long stand bookings and visitor registrations are kept, data subject rights and contacts.",
+          "What the SOF EXPO site and visitor/exhibitor accounts collect, why, how long data is retained, data subject rights and contact details.",
       },
     },
     blocks: {
@@ -1112,15 +1112,15 @@ export const companyPages: PageDef[] = [
           items: [
             {
               title: "Какие данные мы собираем",
-              text: "Имя, компания, должность, телефон, e-mail и текст сообщения из форм заявок и регистрации; технические данные обращения — для защиты от спама.",
+              text: "В формах и кабинетах — имя, email, телефон, компания, страна, отрасль, сайт, интересы и текст заявки. Пароль хранится только в виде криптографического хеша; технические данные обращения используются для защиты от спама.",
             },
             {
               title: "Зачем",
-              text: "Обработать заявку, заключить и исполнить договор участия, выдать билет и бейдж, рассказать о следующей дате, если вы согласились на рассылку.",
+              text: "Создать и обслуживать учётную запись, обработать заявку на посещение или участие, связаться по дальнейшим условиям и исполнить договор. Билет/допуск оформляется отдельно. Обязательное согласие в форме аккредитации относится только к обработке этой заявки и не подписывает вас на маркетинговую рассылку.",
             },
             {
               title: "Сколько храним",
-              text: "Заявки — 12 месяцев, договоры и акты — по срокам бухгалтерского учёта, списки посетителей события — до закрытия отчёта.",
+              text: "Заявки — 12 месяцев; профиль кабинета — пока аккаунт активен или до обработки запроса на удаление. Договоры и бухгалтерские документы хранятся по установленным срокам.",
             },
             {
               title: "Кому передаём",
@@ -1128,11 +1128,11 @@ export const companyPages: PageDef[] = [
             },
             {
               title: "Cookies и аналитика",
-              text: "Сайт не ставит рекламных трекеров и не обращается к сторонним сервисам. Обезличенная статистика (просмотры страниц, нажатия кнопок, отправки форм — без имени, телефона и IP-адреса) собирается на собственном сервере центра.",
+              text: "Публичный сайт не использует рекламных трекеров. Кабинет устанавливает необходимую first-party cookie для входа и защиты сессии. Обезличенная статистика (просмотры страниц, нажатия кнопок, отправки форм — без имени, телефона и IP-адреса) собирается на собственном сервере центра.",
             },
             {
               title: "Ваши права",
-              text: "Просмотреть, исправить или удалить данные, отозвать согласие на рассылку — письмом на info@sofexpo.uz с темой «Data request».",
+              text: "Просмотреть, исправить или удалить данные — письмом на info@sofexpo.uz с темой «Data request».",
             },
           ],
         },
@@ -1157,15 +1157,15 @@ export const companyPages: PageDef[] = [
           items: [
             {
               title: "What we collect",
-              text: "Name, company, role, phone, e-mail and the message from booking and registration forms; technical request data for spam protection.",
+              text: "Forms and accounts collect name, email, phone, company, country, industry, website, interests and request details. Passwords are stored only as cryptographic hashes; technical request data helps prevent spam.",
             },
             {
               title: "Why",
-              text: "To process the request, conclude and perform a participation contract, issue a ticket and badge, and inform you about the next date if you opted in.",
+              text: "To create and maintain an account, handle a visitor or exhibitor request, follow up on participation terms and perform a contract. Tickets/admission are handled separately. Required consent on the press accreditation form covers processing that request only; it does not subscribe you to marketing emails.",
             },
             {
               title: "Retention",
-              text: "Requests — 12 months; contracts and acts — accounting retention; event visitor lists until the report is closed.",
+              text: "Requests — 12 months; cabinet profile data while the account is active or until a deletion request is processed. Contracts and accounting records follow statutory retention periods.",
             },
             {
               title: "Who sees it",
@@ -1173,11 +1173,11 @@ export const companyPages: PageDef[] = [
             },
             {
               title: "Cookies and analytics",
-              text: "The site loads no advertising trackers and calls no third-party services. Anonymous statistics (page views, button clicks, form submissions — without name, phone or IP address) are collected on the centre's own server.",
+              text: "The public site uses no advertising trackers. The cabinet sets an essential first-party session cookie for login and security. Anonymous statistics (page views, button clicks, form submissions — without name, phone or IP address) are collected on the centre's own server.",
             },
             {
               title: "Your rights",
-              text: 'View, correct or delete data and withdraw marketing consent by writing to info@sofexpo.uz with the subject "Data request".',
+              text: 'View, correct or delete data by writing to info@sofexpo.uz with the subject "Data request".',
             },
           ],
         },
@@ -1218,7 +1218,7 @@ export const companyPages: PageDef[] = [
           items: [
             {
               title: "Статус информации",
-              text: "Даты, площади, пакеты и цены на сайте — справочные. Обязывающими становятся документы, подписанные сторонами: заявка, договор, приложение, спецификация.",
+              text: "Даты, площади, пакеты и цены на сайте — справочные. Заявка из кабинета экспонента не резервирует стенд и не является офертой; обязательства возникают только в документах, подписанных сторонами.",
             },
             {
               title: "Интеллектуальные права",
@@ -1234,7 +1234,7 @@ export const companyPages: PageDef[] = [
             },
             {
               title: "Регистрация посетителей",
-              text: "Данные, указанные при регистрации, проверяются на принадлежность к отрасли. Вход может быть ограничен для лиц младше 14 лет без сопровождения.",
+              text: "Учётная запись посетителя и отправленная через неё заявка фиксируют интерес, но сами по себе не являются билетом или подтверждением допуска. Подтверждение оформляется отдельно; вход может быть ограничен для лиц младше 14 лет без сопровождения.",
             },
           ],
         },
@@ -1258,7 +1258,7 @@ export const companyPages: PageDef[] = [
           items: [
             {
               title: "Status of information",
-              text: "Dates, areas, packages and prices here are for reference. Binding documents are what the parties sign: request, contract, appendix, specification.",
+              text: "Dates, areas, packages and prices are for reference. An exhibitor cabinet request does not reserve a stand or make an offer; obligations arise only from documents signed by both parties.",
             },
             {
               title: "Intellectual property",
@@ -1274,7 +1274,7 @@ export const companyPages: PageDef[] = [
             },
             {
               title: "Visitor registration",
-              text: "Registration data is checked for trade eligibility. Entry may be restricted for under-14s without an adult.",
+              text: "A visitor account and a request submitted from it record interest, but are not a ticket or admission confirmation. Admission is confirmed separately. Entry may be restricted for under-14s without an adult.",
             },
           ],
         },

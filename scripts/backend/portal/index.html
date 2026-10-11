@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="uz">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="color-scheme" content="light" />
+    <title id="document-title" data-i18n="documentTitle">SOF EXPO · Shaxsiy kabinet</title>
+    <link rel="stylesheet" href="/cabinet/app.css" />
+    <script src="/cabinet/i18n.js" defer></script>
+    <script src="/cabinet/app.js" defer></script>
+  </head>
+  <body>
+    <div class="page-grain" aria-hidden="true"></div>
+    <main id="auth-view" class="auth-layout">
+      <section class="auth-story">
+        <a class="brand" href="https://sofexpo.org/uz/" aria-label="SOF EXPO bosh sahifa" data-i18n-aria-label="siteHome" data-public-link="home"><span class="brand-mark">S</span><span>SOF EXPO<small>SAMARKAND · BUSINESS EVENTS</small></span></a>
+        <div class="story-copy">
+          <p class="eyebrow" data-i18n="storyKicker">BIZNES UCHRASHUVLARI UCHUN</p>
+          <h1><span data-i18n="storyTitle">Ko‘rgazmadagi</span><br /><em data-i18n="storyTitleAccent">keyingi qadamingiz.</em></h1>
+          <p data-i18n="storyDescription">Eksponent sifatida ishtirok so‘rovini yuboring yoki mehmon sifatida tashrif rejangizni saqlang. Murojaatlar holatini shu yerdan kuzating.</p>
+        </div>
+        <div class="story-foot"><span class="status-pulse"></span> <span data-i18n="secureBadge">Himoyalangan shaxsiy kabinet</span></div>
+        <div class="story-number">SOF EXPO <span>· 01</span></div>
+      </section>
+
+      <section class="auth-panel">
+        <div class="auth-locale-control"><label class="sr-only" for="auth-locale" data-i18n="languageLabel">Til</label><select class="locale-select" id="auth-locale" aria-label="Til" data-i18n-aria-label="languageLabel"><option value="uz">O‘zbekcha</option><option value="ru">Русский</option><option value="en">English</option><option value="tr">Türkçe</option><option value="zh">中文</option></select></div>
+        <div class="auth-brand-mobile"><span class="brand-mark">S</span><span>SOF EXPO <small data-i18n="mobileCabinet">SHAXSIY KABINET</small></span></div>
+        <div class="auth-card">
+          <p class="eyebrow" data-i18n="audienceLabel">MEHMONLAR VA EKSPONENTLAR UCHUN</p>
+          <h2 id="auth-title">Kabinetga kirish</h2>
+          <p class="muted" id="auth-description">Murojaatlaringizni davom ettirish uchun emailingiz bilan kiring.</p>
+          <div class="auth-tabs" id="auth-tabs" role="tablist" aria-label="Kirish yoki hisob yaratish" data-i18n-aria-label="authTabsLabel">
+            <button class="auth-tab active" type="button" id="login-tab" data-auth-tab="login" role="tab" aria-controls="login-form" aria-selected="true" tabindex="0" data-i18n="loginTab">Kirish</button>
+            <button class="auth-tab" type="button" id="register-tab" data-auth-tab="register" role="tab" aria-controls="register-form" aria-selected="false" tabindex="-1" data-i18n="registerTab">Hisob yaratish</button>
+          </div>
+
+          <form id="login-form" class="form-stack" role="tabpanel" aria-labelledby="login-tab" tabindex="-1" autocomplete="on">
+            <label for="login-email" data-i18n="fieldEmail">Email manzil</label>
+            <input id="login-email" name="email" type="email" autocomplete="username" required placeholder="name@company.com" />
+            <label for="login-password" data-i18n="fieldPassword">Parol</label>
+            <input id="login-password" name="password" type="password" autocomplete="current-password" required placeholder="Parolingiz" data-i18n-placeholder="loginPasswordPlaceholder" />
+            <button class="button button-dark" type="submit"><span data-i18n="loginSubmit">Kabinetga kirish</span> <span aria-hidden="true">→</span></button>
+            <p id="login-error" class="form-error" role="alert" hidden></p>
+          </form>
+
+          <form id="register-form" class="form-stack" role="tabpanel" aria-labelledby="register-tab" tabindex="-1" autocomplete="on" hidden>
+            <label for="register-type" data-i18n="fieldAccountType">Kabinet turi</label>
+            <select id="register-type" name="accountType" required>
+              <option value="visitor" data-i18n="visitor">Mehmon / tashrifchi</option>
+              <option value="exhibitor" data-i18n="exhibitor">Eksponent kompaniya</option>
+            </select>
+            <div class="form-two">
+              <div><label for="register-name" data-i18n="fieldName">Ism-familiya</label><input id="register-name" name="name" autocomplete="name" minlength="2" maxlength="120" required placeholder="Ism Familiya" data-i18n-placeholder="namePlaceholder" /></div>
+              <div><label for="register-phone" data-i18n="fieldPhone">Telefon</label><input id="register-phone" name="phone" type="tel" autocomplete="tel" required placeholder="+998 90 123 45 67" /></div>
+            </div>
+            <label for="register-email" data-i18n="fieldEmail">Email manzil</label>
+            <input id="register-email" name="email" type="email" autocomplete="email" required placeholder="name@company.com" />
+            <div class="form-two">
+              <div><label for="register-country" data-i18n="fieldCountry">Mamlakat</label><input id="register-country" name="country" autocomplete="country-name" maxlength="100" placeholder="O‘zbekiston" data-i18n-placeholder="countryPlaceholder" /></div>
+              <div><label for="register-industry" data-i18n="fieldIndustry">Faoliyat sohasi</label><input id="register-industry" name="industry" maxlength="160" placeholder="Oziq-ovqat, qurilish…" data-i18n-placeholder="industryPlaceholder" /></div>
+            </div>
+            <div class="role-fields" data-role-fields="exhibitor" hidden>
+              <label for="register-company" data-i18n="fieldCompany">Kompaniya nomi</label>
+              <input id="register-company" name="company" autocomplete="organization" maxlength="200" placeholder="Kompaniya nomi" data-i18n-placeholder="companyPlaceholder" />
+              <label for="register-website"><span data-i18n="fieldWebsite">Kompaniya sayti</span> <span class="optional" data-i18n="optional">ixtiyoriy</span></label>
+              <input id="register-website" name="website" type="url" maxlength="300" placeholder="https://example.com" />
+            </div>
+            <div class="role-fields" data-role-fields="visitor">
+              <label for="register-interests"><span data-i18n="fieldInterests">Qiziqish yo‘nalishlari</span> <span class="optional" data-i18n="optional">ixtiyoriy</span></label>
+              <input id="register-interests" name="interests" maxlength="500" placeholder="Masalan: oziq-ovqat, import, uskunalar" data-i18n-placeholder="interestsPlaceholder" />
+            </div>
+            <label for="register-password"><span data-i18n="fieldPassword">Parol</span> <span class="optional" data-i18n="passwordMin">kamida 12 belgi</span></label>
+            <input id="register-password" name="password" type="password" minlength="12" maxlength="128" autocomplete="new-password" required placeholder="Uzun va noyob parol" data-i18n-placeholder="newPasswordPlaceholder" />
+            <label class="check-row register-consent"><input name="consent" type="checkbox" value="yes" required /><span><span data-i18n="registrationConsent">Shaxsiy ma’lumotlarim murojaatni ko‘rib chiqish uchun qayta ishlanishiga roziman.</span> <a href="https://sofexpo.org/uz/legal/privacy/" data-public-link="privacy" target="_blank" rel="noopener noreferrer" data-i18n="privacyPolicy">Maxfiylik siyosati</a><span data-i18n="registrationConsentEnd">.</span></span></label>
+            <button class="button button-dark" type="submit"><span data-i18n="registerSubmit">Xavfsiz hisob yaratish</span> <span aria-hidden="true">→</span></button>
+            <p id="register-error" class="form-error" role="alert" hidden></p>
+          </form>
+          <p class="auth-note" data-i18n="authNote">Emailni tasdiqlash va parolni o‘zi tiklash hozircha mavjud emas — parolingizni xavfsiz saqlang. Hech qachon bir martalik kod yoki karta ma’lumotlarini so‘ramaymiz.</p>
+        </div>
+        <a class="back-link" href="https://sofexpo.org/uz/" data-public-link="home" data-i18n="backToSite">← SOF EXPO saytiga qaytish</a>
+      </section>
+    </main>
+
+    <main id="portal-view" class="portal-layout" hidden>
+      <header class="portal-topbar">
+        <a class="brand brand-dark" href="https://sofexpo.org/uz/" aria-label="SOF EXPO saytiga qaytish" data-i18n-aria-label="siteHome" data-public-link="home"><span class="brand-mark">S</span><span>SOF EXPO<small data-i18n="mobileCabinet">SHAXSIY KABINET</small></span></a>
+        <div class="account-controls"><label class="sr-only" for="portal-locale" data-i18n="languageLabel">Til</label><select class="locale-select locale-select-portal" id="portal-locale" aria-label="Til" data-i18n-aria-label="languageLabel"><option value="uz">O‘zbekcha</option><option value="ru">Русский</option><option value="en">English</option><option value="tr">Türkçe</option><option value="zh">中文</option></select><span class="account-email" id="account-email">—</span><span class="role-pill" id="account-role">—</span><button class="button button-quiet" id="logout-button" type="button" data-i18n="logout">Chiqish</button></div>
+      </header>
+      <div class="portal-content">
+        <section class="portal-welcome">
+          <div><p class="eyebrow" id="welcome-kicker">SHAXSIY KABINET</p><h1 id="welcome-title">Xush kelibsiz</h1><p id="welcome-copy">Profilingizni yangilang va murojaatlaringizni kuzating.</p></div>
+          <span class="portal-stamp">SOF<br />EXPO</span>
+        </section>
+        <div class="portal-grid">
+          <section class="portal-card profile-card">
+            <div class="card-heading"><div><p class="eyebrow" data-i18n="profileKicker">KABINET</p><h2 data-i18n="profileTitle">Profil ma’lumotlari</h2></div><span class="heading-icon">✳</span></div>
+            <form id="profile-form" class="form-stack compact-form">
+              <label for="profile-name" data-i18n="fieldName">Ism-familiya</label><input id="profile-name" name="name" required maxlength="120" />
+              <label for="profile-phone" data-i18n="fieldPhone">Telefon</label><input id="profile-phone" name="phone" type="tel" required maxlength="60" />
+              <label for="profile-country" data-i18n="fieldCountry">Mamlakat</label><input id="profile-country" name="country" maxlength="100" />
+              <div class="exhibitor-profile-fields" hidden>
+                <label for="profile-company" data-i18n="fieldCompany">Kompaniya nomi</label><input id="profile-company" name="company" maxlength="200" />
+                <label for="profile-industry" data-i18n="fieldIndustry">Faoliyat sohasi</label><input id="profile-industry" name="industry" maxlength="160" />
+                <label for="profile-website" data-i18n="profileWebsite">Sayt</label><input id="profile-website" name="website" type="url" maxlength="300" placeholder="https://" />
+              </div>
+              <div class="visitor-profile-fields">
+                <label for="profile-interests" data-i18n="profileInterests">Qiziqishlaringiz</label><textarea id="profile-interests" name="interests" maxlength="500" rows="3" placeholder="Siz uchun qiziq bo‘lgan yo‘nalishlar" data-i18n-placeholder="profileInterestsPlaceholder"></textarea>
+              </div>
+              <button class="button button-outline" type="submit" data-i18n="saveProfile">Profilni saqlash</button>
+              <p id="profile-feedback" class="inline-feedback" role="status" aria-live="polite"></p>
+            </form>
+            <p class="privacy-note" data-i18n="profilePrivacy">Profil ma’lumotlari faqat SOF EXPO murojaatlaringizni ko‘rib chiqish uchun ishlatiladi.</p>
+          </section>
+
+          <section class="portal-main-column">
+            <section class="portal-card request-card">
+              <div class="card-heading"><div><p class="eyebrow" id="request-kicker">YANGI MUROJAAT</p><h2 id="request-title">Tashrif rejasini yuborish</h2></div><span class="heading-icon">↗</span></div>
+              <p class="card-lead" id="request-card-lead">Tadbirni tanlang va tashkilotchilarga qiziqishingiz haqida xabar yuboring.</p>
+              <form id="request-form" class="form-stack">
+                <label for="request-event" data-i18n="fieldEvent">Tadbir</label><select id="request-event" name="event" required><option value="" data-i18n="chooseEvent">Tadbirni tanlang</option></select>
+                <div class="visitor-request-fields">
+                  <label for="request-interest" data-i18n="fieldVisitorInterest">Tashrif maqsadi / qiziqish</label>
+                  <select id="request-interest" name="interest" required>
+                    <option value="" data-i18n="chooseInterest">Yo‘nalishni tanlang</option>
+                    <option value="business-visit" data-i18n="businessVisit">Biznes tashrif</option>
+                    <option value="buyer-program" data-i18n="buyerProgram">Xaridorlar dasturi</option>
+                    <option value="conference" data-i18n="conference">Konferensiya / dastur</option>
+                    <option value="group-visit" data-i18n="groupVisit">Guruh bo‘lib tashrif</option>
+                    <option value="other" data-i18n="other">Boshqa</option>
+                  </select>
+                </div>
+                <div class="exhibitor-request-fields" hidden>
+                  <div class="form-two">
+                    <div><label for="request-area" data-i18n="fieldArea">Taxminiy maydon (m²)</label><input id="request-area" name="area" type="number" min="1" max="10000" step="1" placeholder="18" /></div>
+                    <div><label for="request-package" data-i18n="fieldPackage">Ishtirok formati</label><select id="request-package" name="package"><option value="" data-i18n="choosePackage">Tanlang</option><option data-i18n="packageStand">Stend / pavilyon</option><option data-i18n="packageOpenArea">Ochiq maydon</option><option data-i18n="packageSponsor">Homiylik</option><option data-i18n="packageUndecided">Hali aniqlanmagan</option></select></div>
+                  </div>
+                </div>
+                <label for="request-message"><span data-i18n="fieldMessage">Qo‘shimcha ma’lumot</span> <span class="optional" data-i18n="optional">ixtiyoriy</span></label>
+                <textarea id="request-message" name="message" rows="4" maxlength="2000" placeholder="Qisqacha yozing…" data-i18n-placeholder="messagePlaceholder"></textarea>
+                <label class="check-row"><input name="consent" type="checkbox" value="yes" required /><span data-i18n="requestConsent">Ushbu murojaatni tashkilotchilarga yuborishga roziman.</span></label>
+                <button class="button button-dark" id="request-submit" type="submit"><span data-i18n="sendRequest">Murojaat yuborish</span> <span aria-hidden="true">→</span></button>
+                <p id="request-error" class="form-error" role="alert" hidden></p>
+              </form>
+              <p class="notice-note" id="request-notice" data-i18n="requestNotice">Bu dastlabki murojaat: u chipta, joy bandi yoki shartnoma hisoblanmaydi. Tashkilotchi holatni yangilaydi va keyingi qadam bo‘yicha siz bilan bog‘lanadi.</p>
+            </section>
+
+            <section class="portal-card requests-card">
+              <div class="card-heading"><div><p class="eyebrow" data-i18n="historyKicker">TARIX</p><h2 id="requests-title">Mening murojaatlarim</h2></div><button class="button button-quiet" id="refresh-requests" type="button" aria-label="Murojaatlarni yangilash" data-i18n-aria-label="refreshAria"><span data-i18n="refresh">Yangilash</span></button></div>
+              <div id="requests-list" class="request-list"><div class="loading-state" data-i18n="loading">Yuklanmoqda…</div></div>
+            </section>
+          </section>
+        </div>
+        <footer class="portal-footer"><a href="https://sofexpo.org/uz/" data-public-link="home">sofexpo.org</a><span>·</span><a href="https://sofexpo.org/uz/legal/privacy/" data-public-link="privacy" data-i18n="privacyPolicy">Maxfiylik siyosati</a><span>·</span><span>SOF EXPO Samarkand</span></footer>
+      </div>
+    </main>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>

@@ -269,20 +269,20 @@ formType yo'q → eski LeadForm (backward compat)
 
 ### 7.3 Endpointlar
 
-- `PUBLIC_LEAD_ENDPOINT` — form leadlari (Telegram bot proxy, CRM webhook)
-- `PUBLIC_ANALYTICS_ENDPOINT` — analitika (optional)
-- `PUBLIC_LIVECHAT_PROVIDER` — Crisp/Tawk (kelajak)
+- `PUBLIC_LEAD_ENDPOINT` — backend’ga forma leadlari (`POST /lead`), masalan `https://api.sofexpo.org/lead`
+- `PUBLIC_ANALYTICS_ENDPOINT` — birinchi tomon analitikasi (`POST /event`)
+- `npm run lead-webhook` — Node + SQLite backend, API va `/admin` paneli (`docs/17`)
+- `PUBLIC_LIVECHAT_PROVIDER` — Crisp/Tawk (kelajak; uchinchi tomon chat hozir yoqilmagan)
 
-### 7.4 Ish plan
+### 7.4 Holat
 
-1. `Tracking.astro` ✅
-2. `FormHandler.astro` ✅
+1. `Tracking.astro` ✅ — queue va server endpoint
+2. `FormHandler.astro` ✅ — validatsiya, API qabulini tekshirish, rost fallback
 3. Barcha komponentlarda `sofTrack` chaqiriqlari ✅
-4. Keyingi:
-   - GA4 / Yandex Metrica ulash
-   - Facebook Pixel / LinkedIn Insight
-   - Server-side tracking (Cloudflare Worker)
-   - Dashboard: leadlar soni, kanal, sahifa
+4. Lead inbox, statuslar, menejer/izohlar, CSV eksport ✅
+5. Birinchi tomon dashboard: leadlar, sessiyalar, portal akkaunt/so‘rovlari, funnel, sahifa/CTA/UTM kesimi ✅
+6. Telegram/CRM outbox algoritmi ✅; prod’da ishlashi uchun bot/CRM credential’lari sozlanadi
+7. GA4 / Yandex / Meta integratsiyasi — ataylab ulanmagan; maxfiylikka mos server statistikasi bor
 
 ---
 

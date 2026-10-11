@@ -8,8 +8,9 @@
  *
  *   1. regenerate the editorial ownership map (which show publishes which text)
  *   2. astro build with SITE=<host> and PUBLIC_HOSTS_MODE=<mode>
- *   3. drop noindex URLs from the sitemap
- *   4. absolutize hand-written links that point at another host
+ *   3. generate per-page OG cards, trim SERP metadata, and add image sitemap entries
+ *   4. drop noindex URLs, rewrite cross-host links, and write per-host robots/redirect rules
+ *   5. run the host-aware SEO audit before the output can be published
  *
  * usage:
  *   node scripts/build-one-host.mjs sofexpo.org              # the centre
@@ -17,7 +18,8 @@
  *   node scripts/build-one-host.mjs foodera.sofexpo.org --mode alias   # single-host build
  */
 import { execFileSync } from "node:child_process";
-import { allHosts, map } from "./host-rules.mjs";
+import { readFileSync, writeFileSync } from "node:fs";
+import { allHosts, map, movedRedirectsAsync } from "./host-rules.mjs";
 
 const argv = process.argv.slice(2);
 const positional = argv.filter((a) => !a.startsWith("--"));
@@ -51,7 +53,10 @@ const run = (cmd, args) => execFileSync(cmd, args, { env, stdio: "inherit" });
 console.log(`build-one-host: ${host} (mode ${mode})`);
 run("node", ["scripts/gen-editorial-map.mjs"]);
 run("npx", ["astro", "build"]);
+run("node", ["scripts/build-og.mjs", "dist"]);
+run("node", ["scripts/fit-meta.mjs", "dist"]);
 run("node", ["scripts/prune-sitemap.mjs", "dist"]);
+run("node", ["scripts/sitemap-images.mjs", "dist"]);
 run("node", [
   "scripts/rewrite-host-links.mjs",
   "--dist",
@@ -61,20 +66,19 @@ run("node", [
   "--mode",
   mode,
 ]);
-if (mode === "subdomain" && host === map.root) {
+
+const robots = readFileSync("public/robots.txt", "utf8")
+  .replace(/^Sitemap:.*$/m, `Sitemap: https://${host}/sitemap-index.xml`)
+  .trimEnd();
+writeFileSync("dist/robots.txt", `${robots}\nHost: ${host}\n`);
+
+const redirects = ["/ /en/ 301"];
+if (host === map.root) {
   // the centre hands the moved cluster paths over at the CDN level too
-  const { writeFileSync } = await import("node:fs");
-  const rules = await (
-    await import("./host-rules.mjs")
-  ).movedRedirectsAsync("subdomain");
-  writeFileSync(
-    "dist/_redirects",
-    rules.map((r) => `${r.from} ${r.to} 301`).join("\n") + "\n",
-  );
-  console.log(
-    `build-one-host: wrote ${rules.length} redirect rules to dist/_redirects`,
-  );
+  redirects.push(...(await movedRedirectsAsync(mode)).map((rule) => `${rule.from} ${rule.to} 301`));
 }
+writeFileSync("dist/_redirects", `${redirects.join("\n")}\n`);
+console.log(`build-one-host: wrote ${redirects.length} redirect rules and per-host robots.txt`);
 if (arg("audit", "1") !== "0")
   run("node", [
     "scripts/seo-audit.mjs",

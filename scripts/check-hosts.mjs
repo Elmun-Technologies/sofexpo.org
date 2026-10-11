@@ -80,7 +80,11 @@ for (const host of hosts) {
   builtBy.set(host, paths);
 }
 
-const known = new Set([...REGISTRY, `www.${map.root}`, map.root]);
+const configuredPortalHost = (() => {
+  try { return new URL(process.env.PUBLIC_PORTAL_URL || '').hostname.toLowerCase(); }
+  catch { return ''; }
+})();
+const known = new Set([...REGISTRY, `www.${map.root}`, map.root, configuredPortalHost].filter(Boolean));
 let checkedAbsolute = 0;
 let checkedRelative = 0;
 const ownerConflicts = new Map();

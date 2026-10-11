@@ -34,6 +34,7 @@ export const venuePages: PageDef[] = [
           actions: [
             { label: "Забронировать дату", href: "/organizers/" },
             { label: "Техспецификация (PDF)", href: "/venue/tech-specs/" },
+            { label: "Виртуальный тур", href: "/venue/virtual-tour/" },
           ],
           image: "/images/venue-exterior.jpg",
           imageAlt: "Экстерьер выставочного центра SOF EXPO Samarkand",
@@ -201,6 +202,7 @@ export const venuePages: PageDef[] = [
               href: "/organizers/",
               note: "аренда, ставки, регламент",
             },
+            { label: "Виртуальный тур", href: "/venue/virtual-tour/" },
           ],
         },
         {
@@ -237,6 +239,7 @@ export const venuePages: PageDef[] = [
           actions: [
             { label: "Request dates", href: "/organizers/" },
             { label: "Technical data sheet", href: "/venue/tech-specs/" },
+            { label: "Virtual tour", href: "/venue/virtual-tour/" },
           ],
           image: "/images/venue-exterior.jpg",
           imageAlt: "Exterior of SOF EXPO Samarkand",
@@ -399,6 +402,7 @@ export const venuePages: PageDef[] = [
               href: "/organizers/",
               note: "rental, rates, regulations",
             },
+            { label: "Virtual tour", href: "/venue/virtual-tour/" },
           ],
         },
         {

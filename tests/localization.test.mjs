@@ -22,6 +22,8 @@ test('public and host routing support four locales', () => {
   assert.equal(stripLocale('/zh/events/foodera-expo/'),'/events/foodera-expo/');
   assert.equal(joinLocale('tr','/zh/events/foodera-expo/'),'/tr/events/foodera-expo/');
   assert.equal(localizedURL('https://foodera.sofexpo.org/en/visitors/?a=1#faq','zh'),'https://foodera.sofexpo.org/zh/visitors/?a=1#faq');
+  assert.equal(localizedURL('https://my.cybermuseum.art/en/tour/sofexpo','uz'),'https://my.cybermuseum.art/uz/tour/sofexpo');
+  assert.equal(localizedURL('https://my.cybermuseum.art/ru/pano/x36rtq6ggm','tr'),'https://my.cybermuseum.art/en/pano/x36rtq6ggm');
   assert.equal(localizedURL('https://example.org/en/file.pdf','tr'),'https://example.org/en/file.pdf');
 });
 
@@ -54,6 +56,13 @@ test('translate semantics, not selectors, classes, markup or language switches',
   assert.match(out,/Lütfen zorunlu alanları doldurun/);
   assert.match(out,/title:"İletişim"/);
   assert.match(out,/kind:'page'/);
+});
+
+test('embedded virtual-tour URLs follow the best available provider language', () => {
+  const html = '<!doctype html><html lang="en"><body><iframe src="https://my.cybermuseum.art/en/tour/sofexpo" title="SOF EXPO Samarkand virtual tour"></iframe><a href="https://my.cybermuseum.art/en/pano/x36rtq6ggm">Open the interactive plan</a></body></html>';
+  const out = localizeHTML(html, 'uz', { strict: true });
+  assert.match(out, /<iframe src="https:\/\/my\.cybermuseum\.art\/uz\/tour\/sofexpo"/);
+  assert.match(out, /href="https:\/\/my\.cybermuseum\.art\/uz\/pano\/x36rtq6ggm"/);
 });
 
 test('structured data, RSS and the JSON search endpoint carry the target language', () => {

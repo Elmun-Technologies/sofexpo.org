@@ -111,10 +111,12 @@ for (const { host } of ordered) {
     PUBLIC_HOSTS_MODE: mode,
   };
   execFileSync("npx", ["astro", "build"], { env, stdio: "inherit" });
+  execFileSync("node", ["scripts/build-og.mjs", "dist"], { env, stdio: "inherit" });
   execFileSync("node", ["scripts/prune-sitemap.mjs", "dist"], {
     env,
     stdio: "inherit",
   });
+  execFileSync("node", ["scripts/sitemap-images.mjs", "dist"], { env, stdio: "inherit" });
   execFileSync(
     "node",
     [
@@ -186,17 +188,16 @@ if (mode !== "alias") {
     "\n=== restoring a single-host build in dist/ for `npm run preview` ===",
   );
   rmSync("dist", { recursive: true, force: true });
-  execFileSync("npx", ["astro", "build"], {
-    env: {
-      ...process.env,
-      SITE: `https://${map.root}/`,
-      PUBLIC_HOSTS_MODE: "alias",
-    },
-    stdio: "inherit",
-  });
-  execFileSync("node", ["scripts/prune-sitemap.mjs", "dist"], {
-    stdio: "inherit",
-  });
+  const previewEnv = {
+    ...process.env,
+    SITE: `https://${map.root}/`,
+    PUBLIC_HOSTS_MODE: "alias",
+  };
+  execFileSync("npx", ["astro", "build"], { env: previewEnv, stdio: "inherit" });
+  execFileSync("node", ["scripts/build-og.mjs", "dist"], { env: previewEnv, stdio: "inherit" });
+  execFileSync("node", ["scripts/fit-meta.mjs", "dist"], { env: previewEnv, stdio: "inherit" });
+  execFileSync("node", ["scripts/prune-sitemap.mjs", "dist"], { env: previewEnv, stdio: "inherit" });
+  execFileSync("node", ["scripts/sitemap-images.mjs", "dist"], { env: previewEnv, stdio: "inherit" });
 } else {
   const centre = join(out, map.root);
   if (existsSync(centre)) {

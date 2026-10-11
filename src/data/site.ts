@@ -522,6 +522,11 @@ export const nav: NavItem[] = [
           en: "Expos, build days, the forum",
         },
       },
+      {
+        path: "/venue/virtual-tour/",
+        ru: "Виртуальный тур",
+        en: "Virtual tour",
+      },
     ],
   },
   {

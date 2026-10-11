@@ -1,5 +1,6 @@
 import type { PageDef } from "./types";
 import { venuePages } from "./venue";
+import { virtualTourPages } from "./virtual-tour";
 import { exhibitorPages } from "./exhibitors";
 import { visitorPages } from "./visitors";
 import { organizerPages } from "./organizers";
@@ -8,6 +9,7 @@ import { companyPages } from "./company";
 /** Every authored page of the site, keyed by its locale-free path. */
 export const pages: PageDef[] = [
   ...venuePages,
+  ...virtualTourPages,
   ...exhibitorPages,
   ...visitorPages,
   ...organizerPages,

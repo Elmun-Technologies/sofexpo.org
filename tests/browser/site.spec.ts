@@ -9,6 +9,23 @@ const cases = [
   {locale:'zh',lang:'zh-CN',query:'展位',error:'请填写所有必填项。',fallback:'申请尚未发送',sample:'文件样本'},
   {locale:'tr',lang:'tr',query:'fuar',error:'Lütfen zorunlu alanları doldurun.',fallback:'henüz gönderilmedi',sample:'Örnek belge'},
 ];
+test('visitor and exhibitor header links reach the configured portal in the current site language', async ({ page }) => {
+  test.skip(!process.env.PUBLIC_PORTAL_URL, 'set PUBLIC_PORTAL_URL to exercise production account links');
+  const portal = new URL(process.env.PUBLIC_PORTAL_URL!);
+  for (const locale of ['uz', 'ru', 'en', 'zh', 'tr']) {
+    await page.goto(`/${locale}/`);
+    const links = page.locator('.account-picker__menu a[data-portal-language]');
+    await expect(links).toHaveCount(2);
+    for (const [index, type] of ['visitor', 'exhibitor'].entries()) {
+      const target = new URL((await links.nth(index).getAttribute('href'))!);
+      expect(target.origin).toBe(portal.origin);
+      expect(target.pathname).toBe('/cabinet');
+      expect(target.searchParams.get('type')).toBe(type);
+      expect(target.searchParams.get('lang')).toBe(locale);
+    }
+  }
+});
+
 for(const c of cases) {
   test(`${c.locale}: responsive home, native language picker and mobile keyboard navigation`,async({page})=>{
     const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));

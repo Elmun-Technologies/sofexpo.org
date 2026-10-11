@@ -34,7 +34,7 @@ import SmartCta from '@/components/conversion/SmartCta.astro';
 const { blocks, locale, path = '' } = Astro.props as { blocks: Block[]; locale: Locale; path?: string };
 
 function resolveAuto(p: string): { cta: 'exhibitor'|'visitor'|'organizer'|'sponsor'|'callback'|'catalog'|'group'; form: 'exhibitor'|'visitor'|'organizer'|'sponsor'|'callback'|'catalog'|'group' } | null {
-  if (!p) return null;
+  if (!p || p.includes('/venue/virtual-tour')) return null;
   if (p.includes('/exhibitors/sponsorship')) return { cta: 'sponsor', form: 'sponsor' };
   if (p.includes('/exhibitors/catalogue') || p.includes('/exhibitors/floor-plan')) return { cta: 'catalog', form: 'catalog' };
   if (p.includes('/exhibitors/packages') || p.includes('/exhibitors/stand-construction')) return { cta: 'exhibitor', form: 'exhibitor' };
@@ -114,6 +114,45 @@ const galleryGroups = (b: Block): BlockAlbum[] =>
               {b.image && (
                 <Photo class="block__media" src={b.image} alt={b.imageAlt ?? ''} ratio={b.mediaRatio ?? '4/3'} priority sizes="(max-width: 1080px) 100vw, 45vw" />
               )}
+            </div>
+          )}
+
+          {b.type === 'tour' && b.tour && (
+            <div class="tour">
+              <div class="tour__head">
+                <div class="tour__intro">
+                  {b.kicker && <p class="kicker">{b.kicker}</p>}
+                  {b.title && <h2>{b.title}</h2>}
+                  {b.text && <p class="lead">{b.text}</p>}
+                </div>
+                <div class="tour__actions">
+                  <a class="btn btn--gold" href={b.tour.href} target="_blank" rel="noopener noreferrer">
+                    {b.tour.launchLabel}
+                  </a>
+                  <a class="btn btn--ghost" href={b.tour.planHref} target="_blank" rel="noopener noreferrer">
+                    {b.tour.planLabel}
+                  </a>
+                </div>
+              </div>
+              <div class="tour__frame">
+                {/* The provider's viewer needs its own scripts and fullscreen support, so it is
+                    intentionally not sandboxed. The direct link remains available if embedding is blocked. */}
+                <iframe
+                  src={b.tour.src}
+                  title={b.tour.frameTitle}
+                  loading="lazy"
+                  referrerpolicy="strict-origin-when-cross-origin"
+                  allow="accelerometer; autoplay; clipboard-write; gyroscope; picture-in-picture; web-share; fullscreen"
+                  allowfullscreen
+                  width="1440"
+                  height="900"
+                ></iframe>
+                <p class="tour__fallback">
+                  {b.tour.fallback}{' '}
+                  <a href={b.tour.href} target="_blank" rel="noopener noreferrer">{b.tour.launchLabel}</a>
+                </p>
+              </div>
+              <p class="tour__note">{b.tour.notice}</p>
             </div>
           )}
 
@@ -463,6 +502,19 @@ const galleryGroups = (b: Block): BlockAlbum[] =>
   /* the quiz reads best as a focused column, never stretched over a wide grid */
   .quiz-block { max-width: 760px; }
   .block--hero { background: var(--cream); padding-block: clamp(2rem, 1rem + 3vw, 4rem); }
+  .block--tour .tour__head { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.2rem 2rem; align-items: end; margin-bottom: 1.25rem; }
+  .block--tour .tour__intro h2 { margin: .2rem 0 .5rem; color: #fff; }
+  .block--tour .tour__intro .lead { max-width: 68ch; margin: 0; color: rgba(255,255,255,.78); font-size: 1rem; }
+  .block--tour .tour__actions { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
+  .block--tour .tour__actions .btn--ghost { color: #fff; border-color: rgba(255,255,255,.4); }
+  .block--tour .tour__actions .btn--ghost:hover { border-color: var(--gold-soft); }
+  .block--tour .tour__frame { overflow: hidden; border: 1px solid rgba(255,255,255,.18); border-radius: var(--r-lg); background: #08160e; box-shadow: var(--shadow); }
+  .block--tour .tour__frame iframe { display: block; width: 100%; height: clamp(30rem, 78vh, 56rem); min-height: 30rem; border: 0; background: #08160e; }
+  .block--tour .tour__fallback { max-width: 36rem; margin: 0 auto; padding: 2rem; color: #fff; text-align: center; }
+  .block--tour .tour__fallback a { color: var(--gold-soft); }
+  .block--tour .tour__note { margin: .75rem 0 0; color: rgba(255,255,255,.68); font-size: .82rem; line-height: 1.5; }
+  @media (min-width: 940px) { .block--tour .tour__head { grid-template-columns: minmax(0, 1fr) auto; } }
+  @media (max-width: 680px) { .block--tour .tour__frame iframe { height: 72svh; min-height: 29rem; } }
   .block--faq { padding-block: 0; }
   .block--faq :global(.sec) { padding-block: clamp(3rem, 2rem + 3vw, 5rem); background: var(--paper); }
   .block__head { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(1.4rem, .8rem + 2.4vw, 3rem); align-items: center; }

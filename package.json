@@ -23,7 +23,9 @@
     "audit:translations": "node scripts/audit-translations.mjs",
     "audit:downloads": "node scripts/audit-downloads.mjs",
     "check:release": "npm run check && npm run audit:downloads -- --require-final",
-    "lead-webhook": "node scripts/lead-webhook.mjs",
+    "lead-webhook": "node --env-file-if-exists=.env scripts/lead-webhook.mjs",
+    "admin:reset-password": "node --env-file-if-exists=.env scripts/backend/admin-cli.mjs reset-password",
+    "test:backend": "node --test tests/backend.test.mjs",
     "typecheck": "astro sync && tsc --noEmit -p .",
     "logos": "node scripts/build-logos.mjs"
   },
@@ -32,7 +34,7 @@
     "@astrojs/sitemap": "^3.7.3",
     "astro": "^7.3.3",
     "parse5": "^7.3.0",
-    "sharp": "^0.34.5"
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",

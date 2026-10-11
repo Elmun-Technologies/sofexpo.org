@@ -85,17 +85,24 @@ page, ts, src?, landing?, referrer?, utm_*?}`; without an endpoint the lead land
 
 ## CRM fan-out: `scripts/lead-webhook.mjs`
 
-A zero-dependency Node process that is `PUBLIC_LEAD_ENDPOINT`. It validates,
-rate-limits (10/min/IP), appends to `.cache/leads.jsonl` (durable first), then sends a
-readable message to Telegram:
+The zero-dependency Node process is both `PUBLIC_LEAD_ENDPOINT` and the first-party
+analytics receiver. It validates/rate-limits (10 leads/min/IP), writes a SQLite
+transaction (`.data/sofexpo.sqlite`), inserts one durable outbox item per configured
+provider, then returns `202` only after the lead is saved. Telegram/CRM delivery retries
+with exponential backoff; provider downtime never loses the lead. The admin inbox at
+`/admin` can search, assign, change status, add internal notes and export CSV.
 
-```
-TELEGRAM_BOT_TOKEN=… TELEGRAM_CHAT_ID=… npm run lead-webhook   # :8787
-LEAD_WEBHOOK_ORIGIN=https://sofexpo.org LEAD_WEBHOOK_SECRET=…   # optional hardening
+```bash
+cp .env.example .env            # set ADMIN_EMAIL + a unique ADMIN_PASSWORD (12+ chars)
+npm run lead-webhook            # API/admin on :8787
+npm run dev                     # public site on :4321, second terminal
 ```
 
-Telegram down ⇒ `502` ⇒ the form shows its email fallback; the JSONL store still has
-the lead. `formatLead()` is exported and unit-tested.
+Configure `PUBLIC_LEAD_ENDPOINT=http://localhost:8787/lead` and
+`PUBLIC_ANALYTICS_ENDPOINT=http://localhost:8787/event` for local use. In production,
+point them at the API host and allow-list every public site origin in
+`LEAD_WEBHOOK_ORIGINS`. Details, table schema, retry algorithm, roles and deploy steps:
+[docs/17-backend-admin.md](17-backend-admin.md). `formatLead()` remains exported and tested.
 
 ## Localization rules
 

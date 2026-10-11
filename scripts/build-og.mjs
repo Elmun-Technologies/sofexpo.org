@@ -15,6 +15,7 @@ import { join, dirname } from 'node:path';
 import sharp from 'sharp';
 
 const DIST = process.argv[2] || 'dist';
+const SITE = new URL(process.env.SITE || 'https://sofexpo.org/').origin;
 const W = 1200;
 const H = 630;
 
@@ -31,10 +32,10 @@ const meta = (html, key) =>
   unent((html.match(new RegExp(`(?:property|name)="${key}" content="([^"]*)"`)) ?? [])[1] ?? '');
 
 const SECTION = {
-  en: { events: 'Exhibitions', venue: 'The venue', exhibitors: 'For exhibitors', visitors: 'For visitors', organizers: 'For organizers', about: 'About us', news: 'News', articles: 'Insights', contacts: 'Contacts', legal: 'Legal', 'request-stand': 'Book a stand', search: 'Search' },
-  ru: { events: 'Выставки', venue: 'Экспоцентр', exhibitors: 'Экспонентам', visitors: 'Посетителям', organizers: 'Организаторам', about: 'О нас', news: 'Новости', articles: 'Аналитика', contacts: 'Контакты', legal: 'Правовая информация', 'request-stand': 'Заявка на стенд', search: 'Поиск' },
-  tr: { events: 'Fuarlar', venue: 'Fuar merkezi', exhibitors: 'Katılımcılar için', visitors: 'Ziyaretçiler için', organizers: 'Organizatörler için', about: 'Hakkımızda', news: 'Haberler', articles: 'Analizler', contacts: 'İletişim', legal: 'Yasal', 'request-stand': 'Stant başvurusu', search: 'Arama' },
-  uz: { events: 'Ko‘rgazmalar', venue: 'Ko‘rgazma markazi', exhibitors: 'Ishtirokchilar uchun', visitors: 'Tashrif buyuruvchilar uchun', organizers: 'Tashkilotchilar uchun', about: 'Biz haqimizda', news: 'Yangiliklar', articles: 'Tahlillar', contacts: 'Aloqa', legal: 'Huquqiy', 'request-stand': 'Stend uchun ariza', search: 'Qidiruv' },
+  en: { events: 'Exhibitions', venue: 'The venue', exhibitors: 'For exhibitors', visitors: 'For visitors', organizers: 'For organizers', about: 'About us', news: 'News', articles: 'Insights', contacts: 'Contacts', legal: 'Legal', program: 'Programme', buyers: 'Buyer programme', award: 'Product contest', 'request-stand': 'Book a stand', search: 'Search' },
+  ru: { events: 'Выставки', venue: 'Экспоцентр', exhibitors: 'Экспонентам', visitors: 'Посетителям', organizers: 'Организаторам', about: 'О нас', news: 'Новости', articles: 'Аналитика', contacts: 'Контакты', legal: 'Правовая информация', program: 'Программа', buyers: 'Программа закупщика', award: 'Конкурс продуктов', 'request-stand': 'Заявка на стенд', search: 'Поиск' },
+  tr: { events: 'Fuarlar', venue: 'Fuar merkezi', exhibitors: 'Katılımcılar için', visitors: 'Ziyaretçiler için', organizers: 'Organizatörler için', about: 'Hakkımızda', news: 'Haberler', articles: 'Analizler', contacts: 'İletişim', legal: 'Yasal', program: 'Program', buyers: 'Alıcı programı', award: 'Ürün yarışması', 'request-stand': 'Stant başvurusu', search: 'Arama' },
+  uz: { events: 'Ko‘rgazmalar', venue: 'Ko‘rgazma markazi', exhibitors: 'Ishtirokchilar uchun', visitors: 'Tashrif buyuruvchilar uchun', organizers: 'Tashkilotchilar uchun', about: 'Biz haqimizda', news: 'Yangiliklar', articles: 'Tahlillar', contacts: 'Aloqa', legal: 'Huquqiy', program: 'Dastur', buyers: 'Xaridor dasturi', award: 'Mahsulotlar tanlovi', 'request-stand': 'Stend uchun ariza', search: 'Qidiruv' },
 };
 const HOME = { en: 'Exhibition centre · Samarkand, Uzbekistan', ru: 'Выставочный центр · Самарканд, Узбекистан', tr: 'Fuar merkezi · Semerkant, Özbekistan', uz: 'Ko‘rgazma markazi · Samarqand, O‘zbekiston' };
 
@@ -87,7 +88,7 @@ for (const file of files) {
   title = title.replace(/\s*\|\s*SOF EXPO.*$/, '').replace(/\s+—\s+SOF EXPO Samarkand$/, '');
   const lang = locale === 'zh' ? 'en' : locale;
   const SHOWS = { 'foodera-expo': 'FOODERA EXPO', 'buildpro-expo': 'BUILD PRO EXPO', 'agropro-expo': 'AGROPRO EXPO', 'world-edu-expo': 'WORLD EDU EXPO', 'ecom-retail-expo': 'ECOM & RETAIL EXPO', 'promotors-show-samarkand': 'PROMOTORS SHOW' };
-  const kicker = !parts.length ? HOME[lang] : parts[0] === 'events' && SHOWS[parts[1]] ? `${SECTION[lang].events} · ${SHOWS[parts[1]]}` : (SECTION[lang]?.[parts[0]] ?? '');
+  const kicker = !parts.length ? HOME[lang] : parts[0] === 'events' && SHOWS[parts[1]] ? `${SECTION[lang].events} · ${SHOWS[parts[1]]}` : (SECTION[lang]?.[parts[0]] ?? SECTION[lang]?.events ?? 'Exhibitions');
   let photo = meta(html, 'og:image');
   /* pages without a photo of their own inherited the old text-heavy default card; pick a
      real photograph by section instead (rotated by path so neighbours differ) */
@@ -127,7 +128,7 @@ for (const file of files) {
     .jpeg({ quality: 78, mozjpeg: true })
     .toFile(out);
 
-  const url = `https://sofexpo.org/${out.slice(DIST.length + 1)}`;
+  const url = `${SITE}/${out.slice(DIST.length + 1)}`;
   html = html
     .replace(/(property="og:image" content=")[^"]*/, `$1${url}`)
     .replace(/(name="twitter:image" content=")[^"]*/, `$1${url}`)
@@ -135,7 +136,7 @@ for (const file of files) {
     .replace(/(property="og:image:height" content=")[^"]*/, `$1${H}`)
     .split(`"primaryImageOfPage":{"@type":"ImageObject","url":"${photo}"}`)
     .join(`"primaryImageOfPage":{"@type":"ImageObject","url":"${url}","width":${W},"height":${H}}`);
-  pages.push({ locale, url: `https://sofexpo.org/${rel}`, title: meta(html, 'og:title'), desc: meta(html, 'description') });
+  pages.push({ locale, url: `${SITE}/${rel}`, title: meta(html, 'og:title'), desc: meta(html, 'description') });
   writeFileSync(file, html);
   made++;
 }

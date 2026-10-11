@@ -14,6 +14,10 @@ image-search/
 
 # Local QA and translation tooling (never shipped)
 .cache/
+.data/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
 .venv/
 test-results/
 playwright-report/

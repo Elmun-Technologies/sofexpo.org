@@ -11,7 +11,7 @@ same source tree.
 | `npm run typecheck`   | **0** TypeScript errors                                             |
 | `npm run check`       | 647 pages built · `audit:seo` → **0 findings** · unit tests green   |
 | `npm run test:e2e`    | browser suite + axe WCAG 2.1 AA: 17 pages × 5 locales, **0 violations** |
-| `npm run check:hosts` | 6 hosts built · **✓ hosts agree** (96,955 internal links verified)  |
+| `npm run check:hosts` | 6 hosts built · **✓ hosts agree** (97,361 internal links verified)  |
 | Client JS shipped     | 1 same-origin module (form handler) + inline behaviour              |
 | Third-party requests  | **0** (fonts self-hosted, first-party analytics only, no CDN calls) |
 
@@ -21,6 +21,7 @@ same source tree.
 
 - **Nima bu.** SOF EXPO Samarkand ekspomarkazi va uning 6 ta ko'rgazmasining sayti: statik
   (Astro 7), RU/EN asosida 5 tilda (RU/EN/ZH/TR/UZ), 647 sahifa, reaktiv freymvorksiz (React/Vue yo'q).
+  Alohida Node.js backend ariza/analitikani SQLite’da saqlaydi; admin panel `/admin` da.
 - **Ishga tushirish.** `npm ci` → `npm run dev` → `http://localhost:4321/` (`/` avtomatik `/en/`
   ga o'tadi, `/ru/` ham ishlaydi).
 - **Tekshirish.** `npm run check` = build + SEO/accessibility auditi (0 topilma bo'lishi shart).
@@ -43,13 +44,14 @@ same source tree.
 
 ## 1. What the project is
 
-The centre runs its own portfolio of six exhibitions plus third-party events. The site has to
-serve two audiences at once — international exhibitors/buyers in English and the regional
-(UZ/RU-speaking) market in Russian — without a CMS, without a backend, and without a client
-framework that would hurt Core Web Vitals.
+The centre runs its own portfolio of six exhibitions plus third-party events. The public site
+serves international exhibitors/buyers and the regional market as **static authored data + one
+renderer per page family**, prerendered to plain HTML — no public-site server rendering and no
+client framework. A separate, optional Node.js service receives form leads, stores them in SQLite,
+collects first-party analytics, and hosts a secured admin/CRM panel; see
+[docs/17-backend-admin.md](docs/17-backend-admin.md).
 
-So the whole thing is **authored data + one renderer per page family**, prerendered to plain
-HTML:
+So the public website remains:
 
 - **Content** lives in typed TypeScript (`src/data/**`) and Markdown (`src/content/**`), both
   locales side by side, so structure and copy can differ per page instead of being templated.
@@ -74,14 +76,23 @@ Source of truth: `src/data/events.ts`; past results in `src/data/archive.ts`.
 
 ## 2. Quick start
 
-Requirements: **Node ≥ 22.18** (the build scripts import `.ts` data files and rely on Node's
-native type stripping) and npm ≥ 10. No database, no API keys, no services to start.
+Requirements: **Node ≥ 22.18** and npm ≥ 10. The static website alone still needs no database or
+service. To exercise the complete lead/admin stack, the backend uses Node’s built-in `node:sqlite`
+(no additional npm runtime package) and a local `.data/` directory.
 
 ```bash
 git clone https://github.com/Elmun-Technologies/sofexpo.org.git
 cd sofexpo.org
 npm ci
 npm run dev            # http://localhost:4321/  → 301 to /en/  (/ru/ also live)
+```
+
+Full local stack (second terminal for each process):
+
+```bash
+cp .env.example .env   # change ADMIN_PASSWORD before first run
+npm run lead-webhook   # API + admin at :8787/admin; visitor/exhibitor cabinets at :8787/cabinet
+npm run dev            # public site at http://localhost:4321/
 ```
 
 Other useful entry points:
@@ -99,6 +110,9 @@ node scripts/build-one-host.mjs foodera.sofexpo.org   # exactly what a deploy ta
 | Command                        | What it does                                                                                   |
 | ------------------------------ | ---------------------------------------------------------------------------------------------- |
 | `npm run dev`                  | Astro dev server on `0.0.0.0:4321`; `/` 301s to `/en/`, both locales live                      |
+| `npm run lead-webhook`         | SQLite backend + API + admin (`/admin`) + visitor/exhibitor cabinets (`/cabinet`) at `:8787`     |
+| `npm run admin:reset-password` | Resets an account using `ADMIN_RESET_EMAIL` + `ADMIN_RESET_PASSWORD` in `.env`                   |
+| `npm run test:backend`         | Backend API/auth/CSRF/analytics regression tests                                                  |
 | `npm run build`                | Regenerates the editorial ownership map, builds `dist/`, prunes `noindex` URLs from the sitemap |
 | `npm run preview`              | Serves `dist/` (host allow-list open, for sandbox/preview proxies)                              |
 | `npm run audit:seo`            | SEO + accessibility gate over `dist/` — exits non-zero on any finding                           |
@@ -120,7 +134,9 @@ node scripts/build-one-host.mjs foodera.sofexpo.org   # exactly what a deploy ta
 sofexpo.org/
 ├── astro.config.mjs        # static output, site URL from SITE, i18n, sitemap, @ alias, ICS integration
 ├── tsconfig.json           # strict + paths: @/* → src/*
-├── scripts/                # build & verification tooling (see §8)
+├── scripts/                # build & verification tooling + lead-webhook backend entry point
+│   └── backend/            # SQLite store, auth/API, admin + visitor/exhibitor portal UIs (docs/17)
+├── .env.example            # local/backend configuration template (no real secrets)
 ├── public/                 # copied verbatim to dist/
 │   ├── images/             # optimised photo ladders (heroes, gallery, team, speakers)
 │   ├── files/              # 21 PDFs (tech sheet, rate card, catalogues…) — placeholders, same names
@@ -230,9 +246,9 @@ Two supported shapes, both static:
 
 **A. Cloudflare Pages (recommended) — one project per hostname.** Build command
 `node scripts/build-one-host.mjs <hostname>`, output directory `dist`, variable
-`PUBLIC_HOSTS_MODE=subdomain`. The centre's project also emits `dist/_redirects` with 41 rules —
-the root rule (`/ → /en/ 301`) plus 40 legacy-cluster 301s. `/` keeps an HTML meta-refresh
-fallback for hosts that ignore `_redirects`.
+`PUBLIC_HOSTS_MODE=subdomain`. Each host build writes its own robots/sitemap files and a root
+`/ → /en/ 301`; the centre also emits the current legacy-cluster redirects from the host map.
+`/` keeps an HTML meta-refresh fallback for hosts that ignore `_redirects`.
 
 ```
 node scripts/build-one-host.mjs sofexpo.org
@@ -251,8 +267,18 @@ DNS: CNAME per subdomain, A/ALIAS for the apex. Day-X checklist, redirect rules 
 | `SITE`              | `https://sofexpo.org/`   | `astro.config.mjs` → canonical, OG, JSON-LD, sitemap, RSS   |
 | `PUBLIC_HOSTS_MODE` | `alias`                  | app + build scripts; `alias` \| `subdomain`                 |
 | `SITE_URL`          | `https://sofexpo.org`    | `scripts/seo-audit.mjs`                                     |
-| `PUBLIC_LEAD_ENDPOINT` | *(empty)*             | every lead form; point it at `npm run lead-webhook` (Telegram + JSONL) or a CRM webhook. Without it the visitor is shown the request ready to send by WhatsApp / email — never a false "received" |
-| `PUBLIC_ANALYTICS_ENDPOINT` | *(empty)*        | `Tracking.astro`; first-party analytics — point it at `<lead-webhook>/event`, read daily counts at `<lead-webhook>/stats` (no IPs, no third parties) |
+| `PUBLIC_LEAD_ENDPOINT` | *(empty)*             | Every form; production example `https://api.sofexpo.org/lead`. Without it, forms preserve the honest WhatsApp/email fallback. |
+| `PUBLIC_ANALYTICS_ENDPOINT` | *(empty)*        | First-party tracking; production example `https://api.sofexpo.org/event`. No IP or full URL is stored. |
+| `PUBLIC_PORTAL_URL` | *(empty)*             | Static-site account-menu target; e.g. `https://api.sofexpo.org`. Set at build time; blank hides cabinet links. The Cloudflare deploy workflow defaults to `https://api.sofexpo.org` (override with a repository variable). |
+| `ADMIN_EMAIL` / `ADMIN_PASSWORD` | *(unset)*     | First-start admin bootstrap; use a unique 12+ character password. Never put credentials in `PUBLIC_*`. |
+| `PORTAL_SESSION_DAYS` | `14`              | Visitor/exhibitor session duration (1–30 days). |
+| `LEAD_WEBHOOK_DB` | `./.data/sofexpo.sqlite` | Persistent SQLite database for leads, portal profiles/requests, admin sessions, analytics, notes and delivery queue. |
+| `LEAD_WEBHOOK_ORIGINS` | `https://sofexpo.org` | Comma-separated exact site/API origins allowed by CORS. Include the five show hosts when used. |
+| `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` | *(unset)* | Optional backend-only lead notifications; errors retry from the durable outbox. |
+| `CRM_WEBHOOK_URL` / `CRM_WEBHOOK_TOKEN` | *(unset)* | Optional server-to-server CRM delivery. |
+| `LEAD_WEBHOOK_TRUST_PROXY` | `0` | Set `1` only behind a trusted proxy that overwrites forwarded headers. |
+
+See [.env.example](.env.example), `npm run lead-webhook`, and [docs/17-backend-admin.md](docs/17-backend-admin.md) for complete setup.
 
 ## 11. Still owed by the client (nothing here blocks a deploy)
 
@@ -288,6 +314,7 @@ DNS: CNAME per subdomain, A/ALIAS for the apex. Day-X checklist, redirect rules 
 | [docs/14-post-show-report.md](docs/14-post-show-report.md) | **UZ** · Post-show report template and the on-site data checklist |
 | [docs/15-audit-2026-10.md](docs/15-audit-2026-10.md) | **UZ** · Full project audit (Oct 2026): fixes, removals, benchmark update, A-to-Z scorecard |
 | [docs/16-keyword-audit.md](docs/16-keyword-audit.md) | **UZ** · Keyword audit: semantic core per page, before/after scores, `audit:keywords` gate |
+| [docs/17-backend-admin.md](docs/17-backend-admin.md) | **UZ** · Backend architecture, API, SQLite/CRM algorithm, admin panels and production setup |
 | [public/files/README.md](public/files/README.md)               | Note on the placeholder PDFs                                      |
 
 Conventions worth keeping: never edit `dist/` by hand (change `src/` and rebuild); never

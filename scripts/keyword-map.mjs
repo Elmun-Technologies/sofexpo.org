@@ -45,6 +45,11 @@ export const keywordMap = {
     ru: [k('фото выставочного центра', ['фото', 'выставочн'], 'C')],
     en: [k('exhibition centre photos', ['photo', 'samarkand|sof expo'], 'C')],
   },
+  '/venue/virtual-tour/': {
+    ru: [k('виртуальный тур SOF EXPO Самарканд', ['виртуальн', 'тур', 'samarkand|самарканд'], 'C')],
+    en: [k('SOF EXPO Samarkand virtual tour', ['sof expo', 'samarkand', 'virtual', 'tour'], 'C')],
+    uz: [k('SOF EXPO Samarqand virtual sayohat', ['sof expo', 'samarqand', 'virtual|360', 'sayohat|tur'], 'C')],
+  },
   '/events/': {
     ru: [k('выставки в Самарканде 2026', ['выстав', 'самарканд', '2026'], 'A'), k('календарь выставок Узбекистан', ['календар|афиш', 'выстав'], 'A')],
     en: [k('exhibitions in Samarkand 2026', ['exhibition|trade show', 'samarkand', '2026'], 'A'), k('trade show calendar Uzbekistan', ['calendar|line-up', 'uzbekistan|samarkand'], 'A')],

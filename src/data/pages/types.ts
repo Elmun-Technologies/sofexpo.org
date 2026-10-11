@@ -32,6 +32,8 @@ export type BlockType =
   /* The partner logo wall: reads src/data/partners.ts (logos drop in 1:1 by
      filename from public/images/partners/). `event` narrows it to one show. */
   | "partners"
+  /* A hosted, interactive 360° venue walkthrough with a local fallback link. */
+  | "tour"
   /* The team wall: 17 finished 1:1 poster artboards grouped by role, rendered by
      `src/components/TeamWall.astro`. The block carries no items of its own — the wall
      reads `src/data/team.ts` so a hire or a departure is a one-line edit. */
@@ -68,6 +70,18 @@ export interface BlockFile {
   href: string;
   note?: string;
   kind?: "pdf" | "link" | "video" | "svg";
+}
+export interface BlockTour {
+  /** The provider's localized tour page, embedded in the page and available as a fallback. */
+  src: string;
+  /** Full-page tour and interactive floor-plan URLs, opened in a new tab. */
+  href: string;
+  planHref: string;
+  frameTitle: string;
+  launchLabel: string;
+  planLabel: string;
+  fallback: string;
+  notice: string;
 }
 export interface BlockShot {
   src: string;
@@ -115,6 +129,8 @@ export interface Block {
   bullets?: string[];
   actions?: BlockAction[];
   action?: BlockAction;
+  /** the embedded external 360° virtual tour */
+  tour?: BlockTour;
   /** media */
   image?: string;
   imageAlt?: string;

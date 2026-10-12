@@ -16,7 +16,7 @@ const { locale, event, priority = false, variant = 'default' } = Astro.props;
 const href = localize(locale, `/events/${event.slug}/`);
 const ru = locale === 'ru';
 const d = bigDate(event.dates.start, event.dates.end, locale);
-/** the show's own colour (from its logo) only paints the 4px line — nothing else (docs/08 §3.4) */
+/** the show's own colour (from its logo): the dot in the date pill — nothing else (docs/08 §3.4) */
 const ic = showColor(event.slug, industryColor(event.industry));
 const n = event.categories.length;
 const ruPlural = (k: number, one: string, few: string, many: string) =>
@@ -28,9 +28,9 @@ import ShowLogo from '@/components/ShowLogo.astro';
 import { logoFor } from '@/lib/showLogos';
 ---
 
-<article class:list={['ev', { 'ev--wide': variant === 'wide' }]}>
+<article class:list={['ev', { 'ev--wide': variant === 'wide' }]} style={`--ic:${ic}`}>
   <div class="ev__top">
-    <a class="ev__date" href={href} aria-label={event.dates.display[locale]} style={`border-bottom:3px solid ${ic}`}>
+    <a class="ev__date" href={href} aria-label={event.dates.display[locale]}>
       <b>{d.days}</b>
       <span>{d.month} {d.year}</span>
     </a>
@@ -59,21 +59,3 @@ import { logoFor } from '@/lib/showLogos';
     </div>
   </div>
 </article>
-
-<style>
-  .ev__more {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    color: var(--ink);
-    font-weight: 600;
-    font-size: 0.85rem;
-    text-decoration: none;
-    white-space: nowrap;
-    border-bottom: 1px solid var(--line-strong);
-    padding-bottom: 1px;
-  }
-  .ev__more:hover {
-    border-color: var(--ink);
-  }
-</style>

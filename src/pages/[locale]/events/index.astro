@@ -1,21 +1,22 @@
 ---
 /**
- * The line-up as a table calendar (docs/08 §4.3): date block, the show's own colour line,
- * one row per show, industry filter without JS (CSS :has()), .ics export generated
- * at build time from events.ts. The old card grid (5+1 orphan cards) is gone —
- * a calendar is what top-3 CIS expo sites put on this page.
+ * The line-up (docs/18 §8): one wide card per upcoming show — photo, logo, sector and
+ * status pills, two actions, a big date tile — and an industry filter without JS
+ * (radio inputs + CSS :has() on main). Finished editions live in /events/past/.
+ * The .ics export is generated at build time from events.ts.
  */
 import type { SourceLocale as Locale } from '@/i18n/config';
 import { localize } from '@/i18n/config';
 import { events, upcoming } from '@/data/events';
 import { archive } from '@/data/archive';
 import { rootOnlyPaths } from '@/lib/hostRoutes';
-import { abs, itemListJsonLd, breadcrumbJsonLd, organizationJsonLd } from '@/lib/seo';
+import { site } from '@/data/site';
+import { abs, itemListJsonLd, breadcrumbJsonLd, organizationJsonLd, faqJsonLd } from '@/lib/seo';
 import Base from '@/layouts/Base.astro';
-import SectionHead from '@/components/SectionHead.astro';
 import Icon from '@/components/Icon.astro';
 import ShowLogo from '@/components/ShowLogo.astro';
-import CtaBand from '@/components/CtaBand.astro';
+import { logoFor } from '@/lib/showLogos';
+import Photo from '@/components/Photo.astro';
 import { bigDate, daysUntil, industryColor, industryLabel } from '@/lib/labels';
 import { showColor } from '@/data/brands';
 
@@ -27,50 +28,59 @@ const locale = Astro.params.locale as Locale;
 const ru = locale === 'ru';
 const L = (p: string) => localize(locale, p);
 const next = upcoming[0];
-/** upcoming shows by date, then the finished editions — the archive row keeps its report link */
-const rows = [...events].sort((a, b) => Number(a.status === 'past') - Number(b.status === 'past') || a.dates.start.localeCompare(b.dates.start));
-/** filter chips: only industries that actually have a show */
-const filters = [...new Set(events.map((e) => e.industry))];
+const rows = [...upcoming].sort((a, b) => a.dates.start.localeCompare(b.dates.start));
+/** filter chips: only industries that actually have an upcoming show */
+const filters = [...new Set(rows.map((e) => e.industry))];
 
 const copy = {
   ru: {
     title: 'Выставки в Самарканде 2026–2027: календарь выставок',
     desc: 'Календарь выставок в Самарканде на 2026–2027 годы: FOODERA, BUILD PRO, AGROPRO, PROMOTORS SHOW, WORLD EDU, ECOM & RETAIL. Даты, разделы, регистрация участников и посетителей.',
-    h1: 'Шесть отраслей, один адрес',
-    lead: 'Центр проводит собственную линейку событий: от продуктов и строительства до агропрома и электронной коммерции. Даты, разделы и статус брони — в календаре ниже.',
+    h1: 'Календарь выставок в Самарканде 2026–2027',
+    lead: 'Отраслевые выставки в центре SOF EXPO: продукты, строительство, агропром, образование, e-commerce и авто. Даты, разделы и статус брони — ниже.',
     all: 'Все отрасли',
-    ics: 'Скачать календарь (.ics)',
-    statusOpen: 'идёт набор',
-    statusReg: 'приём заявок',
-    statusPast: 'архив',
-    stand: 'Стенд',
-    ticket: 'Билет',
-    report: 'Итоги',
-    tipsTitle: 'Практика',
-    tips: [
-      'Продажа площади открывается за 4–6 месяцев до даты: лучшие локации разбирают в первый месяц.',
-      'Отраслевые выставки бесплатны для специалистов — регистрируйтесь заранее, чтобы не стоять на кассе.',
-      'Деловая программа идёт параллельно: планируйте два дня, а не один.',
+    subTitle: 'Узнавайте о новых датах первыми',
+    subText: 'Добавьте календарь в телефон',
+    ics: 'Google / iCal (.ics)',
+    channel: 'Telegram-канал',
+    filterLabel: 'Фильтр по отрасли',
+    archive: 'Архив прошедших выставок',
+    statusOpen: 'Идёт набор',
+    statusReg: 'Приём заявок',
+    book: 'Забронировать стенд',
+    more: 'Подробнее',
+    sections: (n: number) => `${n} ${n % 10 === 1 && n % 100 !== 11 ? 'раздел' : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 'раздела' : 'разделов'}`,
+    inDays: (n: number) => `через ${n} дн.`,
+    faqTitle: 'Вопросы по календарю',
+    faq: [
+      { q: 'Могут ли даты измениться?', a: 'Даты подтверждены организатором. Если что-то изменится, мы сообщим зарегистрированным участникам и посетителям и обновим эту страницу.' },
+      { q: 'Есть ли скидка за участие в нескольких выставках?', a: 'Да: при бронировании нескольких выставок серии сразу предлагаем индивидуальные условия — спросите менеджера.' },
+      { q: 'Можно ли добавить нашу выставку в календарь?', a: 'Да. Арендуйте центр — ваше событие будет анонсировано в календаре SOF EXPO.' },
     ],
   },
   en: {
     title: 'Exhibitions in Samarkand 2026–2027: trade show calendar',
     desc: 'Trade show calendar for Samarkand, 2026–2027: FOODERA, BUILD PRO, AGROPRO, PROMOTORS SHOW, WORLD EDU and ECOM & RETAIL. Dates, sections and registration for exhibitors and visitors.',
-    h1: 'Six industries, one address',
-    lead: 'The centre runs its own portfolio: from food and construction to agriculture and e-commerce. Dates, sections and booking status — in the calendar below.',
+    h1: 'Exhibition calendar in Samarkand 2026–2027',
+    lead: 'Trade shows at the SOF EXPO centre: food, construction, agriculture, education, e-commerce and automotive. Dates, sections and booking status below.',
     all: 'All industries',
-    ics: 'Download the calendar (.ics)',
-    statusOpen: 'sales open',
-    statusReg: 'applications open',
-    statusPast: 'archive',
-    stand: 'Stand',
-    ticket: 'Pass',
-    report: 'Report',
-    tipsTitle: 'Practice',
-    tips: [
-      'Floor sales open 4–6 months before the date; the best positions go in the first month.',
-      'Trade shows are free for professionals — register early to skip the desk.',
-      'The business programme runs in parallel: plan two days, not one.',
+    subTitle: 'Be the first to hear about new dates',
+    subText: 'Add the calendar to your phone',
+    ics: 'Google / iCal (.ics)',
+    channel: 'Telegram channel',
+    filterLabel: 'Industry filter',
+    archive: 'Past exhibitions archive',
+    statusOpen: 'Sales open',
+    statusReg: 'Applications open',
+    book: 'Book a stand',
+    more: 'Details',
+    sections: (n: number) => `${n} ${n === 1 ? 'section' : 'sections'}`,
+    inDays: (n: number) => `in ${n} days`,
+    faqTitle: 'Calendar questions',
+    faq: [
+      { q: 'Can the dates change?', a: 'The dates are confirmed by the organiser. If anything changes, we notify registered exhibitors and visitors and update this page.' },
+      { q: 'Is there a discount for taking part in several shows?', a: 'Yes: book several shows of the series at once and we offer individual terms — ask the sales manager.' },
+      { q: 'Can we add our own show to the calendar?', a: 'Yes. Rent the centre and your event is announced in the SOF EXPO calendar.' },
     ],
   },
 }[locale];
@@ -91,114 +101,87 @@ const copy = {
       ru ? 'Афиша выставок' : 'Exhibition line-up',
     ),
     breadcrumbJsonLd([{ name: 'SOF EXPO Samarkand', url: abs(`/${locale}/`) }, { name: ru ? 'Афиша выставок' : 'Line-up', url: abs(L('/events/')) }]),
+    faqJsonLd(copy.faq, abs(L('/events/'))),
   ]}
 >
-  <section class="sec">
-    <div class="wrap">
-      <SectionHead level={1} locale={locale} kicker={ru ? 'Выставки в Самарканде 2026–2027' : 'Exhibitions in Samarkand 2026–2027'} title={copy.h1} text={copy.lead} />
-
-      <div class="cal-wrap">
-        <div class="cal__filter" role="group" aria-label={ru ? 'Фильтр по отрасли' : 'Industry filter'}>
-          <input type="radio" name="ind-filter" id="f-all" checked />
-          <label for="f-all">{copy.all}</label>
-          {filters.map((f) => (
-            <Fragment>
-              <input type="radio" name="ind-filter" id={`f-${f}`} />
-              <label for={`f-${f}`}>{industryLabel(f, locale)}</label>
-            </Fragment>
-          ))}
-          <a class="cal__ics" href="/sofexpo-calendar.ics" download>
-            <Icon name="doc" size={14} /> {copy.ics}
-          </a>
-        </div>
-
-        <div class="cal">
-          {rows.map((e) => {
-            const d = bigDate(e.dates.start, e.dates.end, locale);
-            const past = e.status === 'past';
-            const days = daysUntil(e.dates.start);
-            const status = past ? copy.statusPast : e.status === 'open' ? copy.statusOpen : copy.statusReg;
-            return (
-              <a class="cal__row" href={L(`/events/${e.slug}/`)} data-ind={e.industry} style={{ '--ic': showColor(e.slug, industryColor(e.industry)) } as Record<string, string>} aria-label={`${e.brand[locale]} — ${e.dates.display[locale]}`}>
-                <span class="cal__img" aria-hidden="true">
-                  <img src={e.heroImage.replace(/\.jpg$/, '-640.webp')} alt="" aria-hidden="true" width="640" height="400" loading="lazy" decoding="async" />
-                  <ShowLogo slug={e.slug} height={30} class="cal__logo" />
-                </span>
-                <span class="cal__date">
-                  <b>{d.days}</b>
-                  <span>{d.month} {d.year}</span>
-                </span>
-                <span class="cal__name">
-                  <b>{e.brand[locale]}</b>
-                  <small>
-                    {e.edition[locale]}
-                    {!past && days > 0 && (ru ? ` · через ${days} дн.` : ` · in ${days} d`)}
-                  </small>
-                </span>
-                <span class="cal__ind">{industryLabel(e.industry, locale)}</span>
-                <span class="cal__status">
-                  <span class:list={['chip', { 'chip--live': !past }]}>
-                    {!past && <span class="dot"></span>}
-                    {status}
-                  </span>
-                </span>
-                <span class="cal__act">
-                  {!past ? (
-                    <>
-                      <span class="txt">
-                        {copy.stand} <Icon name="arrow" size={13} />
-                      </span>
-                      <span class="txt">
-                        {copy.ticket} <Icon name="arrow" size={13} />
-                      </span>
-                    </>
-                  ) : (
-                    <span class="txt">
-                      {copy.report} <Icon name="arrow" size={13} />
-                    </span>
-                  )}
-                </span>
-              </a>
-            );
-          })}
-        </div>
-        <p class="small muted" style="margin-top:1rem">
-          <a href={L('/events/past/')}>{ru ? `Архив всех редакций (${archive.length})` : `Full edition archive (${archive.length})`} →</a>
-        </p>
-      </div>
-
-      <div class="tips" style="margin-top:2.4rem">
-        <p class="kicker">{copy.tipsTitle}</p>
-        <ol>
-          {copy.tips.map((tip) => <li>{tip}</li>)}
-        </ol>
-      </div>
+  <section class="calh block--after-head">
+    <div class="calh__main">
+      <h1>
+        <span class="kicker">{ru ? 'Выставки в Самарканде 2026' : 'Exhibitions in Samarkand 2026'}</span>
+        {copy.h1}
+      </h1>
+      <p class="lead">{copy.lead}</p>
+    </div>
+    <div class="calh__sub">
+      <p class="calh__sub-t">{copy.subTitle}</p>
+      <p class="calh__sub-x">{copy.subText}</p>
+      <p class="calh__sub-a">
+        <a class="pill pill--w" href="/sofexpo-calendar.ics" download><Icon name="doc" size={14} /> {copy.ics}</a>
+        <a class="pill pill--w" href={site.contacts.telegramChannel} rel="noopener" target="_blank">{copy.channel}</a>
+      </p>
     </div>
   </section>
 
-  <CtaBand
-    locale={locale}
-    title={ru ? 'Хотите своё событие в этом календаре?' : 'Want your own event in this calendar?'}
-    text={ru ? 'Мы принимаем сторонние выставки, форумы и фестивали: зал, техника, сервис для участников.' : 'We take third-party shows, forums and festivals: hall, tech and exhibitor service.'}
-    primary={{ label: ru ? 'Забронировать зал' : 'Book the hall', href: L('/organizers/') }}
-    secondary={{ label: ru ? 'О площадке' : 'About the venue', href: L('/venue/') }}
-  />
-</Base>
+  <section class="calf">
+    <div class="calf__chips" role="group" aria-label={copy.filterLabel}>
+      <input type="radio" name="ind-filter" id="f-all" checked />
+      <label for="f-all">{copy.all}</label>
+      {filters.map((f) => (
+        <Fragment>
+          <input type="radio" name="ind-filter" id={`f-${f}`} />
+          <label for={`f-${f}`}>{industryLabel(f, locale)}</label>
+        </Fragment>
+      ))}
+    </div>
+    <a class="pill" href={L('/events/past/')}>{copy.archive} <span>({archive.length})</span></a>
+  </section>
 
-<style>
-  .tips {
-    padding: 1.2rem 1.3rem;
-    background: var(--cream-2);
-    border-radius: var(--r);
-  }
-  .tips ol {
-    margin: 0.4rem 0 0;
-    padding-left: 1.2rem;
-    display: grid;
-    gap: 0.4rem;
-    color: var(--ink-60);
-  }
-  .cal__status .chip {
-    white-space: nowrap;
-  }
-</style>
+  {rows.map((e, i) => {
+    const d = bigDate(e.dates.start, e.dates.end, locale);
+    const days = daysUntil(e.dates.start);
+    const href = L(`/events/${e.slug}/`);
+    return (
+      <article class="calc" data-ind={e.industry} style={`--ic:${showColor(e.slug, industryColor(e.industry))}`}>
+        <a class="calc__img" href={href} tabindex="-1" aria-hidden="true">
+          <Photo src={e.heroImage} alt={e.tagline[locale]} ratio="4/3" rounded={false} priority={i === 0} sizes="(max-width: 900px) 100vw, 380px" />
+        </a>
+        <div class="calc__body">
+          <div class="calc__top">
+            <ShowLogo slug={e.slug} height={logoFor(e.slug)?.round ? 56 : 40} class="calc__logo" />
+            <span class="calc__pills">
+              <span class="calc__pill">{industryLabel(e.industry, locale)}</span>
+              <span class:list={['calc__pill', { 'calc__pill--open': e.status === 'open' }]}>{e.status === 'open' ? copy.statusOpen : copy.statusReg}</span>
+            </span>
+          </div>
+          <h2><a href={href}>{e.brand[locale]}</a></h2>
+          <p class="calc__desc">{e.tagline[locale]}</p>
+          <div class="calc__act">
+            <a class="btn btn--sm" href={L(`/request-stand/?event=${e.slug}`)}>{copy.book}</a>
+            <a class="btn btn--sm btn--ghost" href={href}>{copy.more}</a>
+            <span class="calc__meta">
+              <span>{copy.sections(e.categories.length)}</span>
+              {days > 0 && <span>{copy.inDays(days)}</span>}
+            </span>
+          </div>
+        </div>
+        <a class="calc__date" href={href} aria-label={`${e.brand[locale]} — ${e.dates.display[locale]}`}>
+          <span class="calc__y">{d.year}</span>
+          <b>{d.days}</b>
+          <span class="calc__m">{d.month}</span>
+        </a>
+      </article>
+    );
+  })}
+
+  <section class="calq">
+    <h2>{copy.faqTitle}</h2>
+    <div class="calq__list">
+      {copy.faq.map((f) => (
+        <div class="calq__item">
+          <h3>{f.q}</h3>
+          <p>{f.a}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+</Base>

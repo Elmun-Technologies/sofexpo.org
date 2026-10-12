@@ -172,9 +172,13 @@
     if (state.events.some((event) => event.slug === previousValue)) select.value = previousValue;
   }
 
+  const UZ_MONTHS = ['yanvar', 'fevral', 'mart', 'aprel', 'may', 'iyun', 'iyul', 'avgust', 'sentabr', 'oktabr', 'noyabr', 'dekabr'];
+
   function dateLabel(value) {
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return t('dateUnknown');
+    /* browsers ship no Uzbek month names (Intl printed "M10"): spell them out for uz */
+    if (state.locale === 'uz') return `${date.getDate()} ${UZ_MONTHS[date.getMonth()]} ${date.getFullYear()}`;
     return new Intl.DateTimeFormat(i18n.publicLocales[state.locale], { day: 'numeric', month: 'short', year: 'numeric' }).format(date);
   }
 

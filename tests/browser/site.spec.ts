@@ -40,7 +40,7 @@ for(const c of cases) {
     await page.keyboard.press('Escape');await expect(page.locator('.burger')).toBeFocused();
     await expect(page.locator('.burger')).toHaveAttribute('aria-expanded','false');
     await page.goto(`/${c.locale}/events/foodera-expo/visitors/?source=test#tickets`);
-    await expect(page.locator('.ehero__bg')).toHaveCSS('position','absolute');
+    await expect(page.locator('.ehero__photo .ph').first()).toHaveCSS('position','absolute');
     await page.locator('.language-picker summary').click();
     for(const target of cases) await expect(page.locator(`.language-picker__menu a[hreflang="${target.lang}"]`)).toHaveAttribute('href',new RegExp(`/${target.locale}/events/foodera-expo/visitors/\\?source=test#tickets$`));
     expect(errors).toEqual([]);

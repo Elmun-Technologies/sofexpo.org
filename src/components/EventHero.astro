@@ -79,178 +79,189 @@ const heroKicker =
   : `${lead1} · ${edition}`;
 ---
 
-<!-- the hero carries a measured hall grid, not a blurred render: on an expo site the first
-     screen owes the visitor facts (dates, venue, countdown), not an impression of a crowd -->
+<!-- 2026-10 design (docs/18 §8): two panels — the show's own ground with the logo, the H1, the
+     date as the loudest figure and the booking action; beside it the hall photo carrying the
+     countdown. A visitor's first screen owes them facts (dates, venue, days left). -->
 <section class:list={['ehero', { 'ehero--past': !upcoming }]}>
-  <Photo
-    class="ehero__bg"
-    src={event.heroImage}
-    alt={event.tagline[locale]}
-    ratio="16/9"
-    rounded={false}
-    priority
-    sizes="100vw"
-  />
-  <div class="wrap ehero__in">
-    <div class="ehero__text">
-      <ShowLogo slug={event.slug} height={logoFor(event.slug)?.round ? 96 : 64} class="ehero__logo" eager />
-      {/* the kicker names the industry ("Food and beverage exhibition"), the query a show page
-          ranks for, so it sits inside the h1 (docs/16 §2.2) */}
-      <h1><span class="kicker">{heroKicker}</span> <Fragment set:html={title} /></h1>
-      <p class="ehero__date">
-        <b>{d.days}</b>
-        <span>{d.month} {d.year}</span>
-      </p>
-      {lead && <p class="hero__lead">{lead}</p>}
-      <ul class="ehero__facts">
-        <li><Icon name="pin" size={17} /> {site.brand[locale]}</li>
-        <li>
-          <Icon name="clock" size={17} /> {days} {ru ? (days === 1 ? 'день' : days < 5 ? 'дня' : 'дней') : days === 1 ? 'day' : 'days'} · {ru ? 'Самарканд, Джамбайский район' : 'Samarkand, Dzhambay district'}
-        </li>
-        {event.status === 'open' && <li class="chip chip--live"><span class="dot" /> {ru ? 'Идёт набор участников' : 'Exhibitor sales open'}</li>}
-      </ul>
-      <div class="btn-row">
-        {actions.map((a, i) => (
-          <a
-            class:list={['btn', { 'btn--gold': i === 0, 'btn--ghost': i > 0 }]}
-            href={a.href}
-            download={a.download ? `${event.slug}-${event.dates.start.slice(0, 4)}.ics` : undefined}
-          >
-            {a.icon && <Icon name={a.icon} size={15} />}
-            {a.label}
-          </a>
-        ))}
-      </div>
-      {event.highlight && upcoming && showHighlight && (
-        <p class="ehero__note">
-          <Icon name="sparkle" size={15} /> <b>{event.highlight.label[locale]}</b> —{' '}
-          {event.highlight.text[locale]}
-        </p>
-      )}
+  <div class="ehero__main">
+    <ShowLogo slug={event.slug} height={logoFor(event.slug)?.round ? 88 : 56} class="ehero__logo" eager />
+    {/* the kicker names the industry ("Food and beverage exhibition"), the query a show page
+        ranks for, so it sits inside the h1 (docs/16 §2.2) */}
+    <h1><span class="kicker">{heroKicker}</span> <Fragment set:html={title} /></h1>
+    <p class="ehero__date">
+      <b>{d.days}</b>
+      <span>{d.month} {d.year}</span>
+    </p>
+    {lead && <p class="hero__lead">{lead}</p>}
+    <ul class="ehero__facts">
+      <li><Icon name="pin" size={17} /> {site.brand[locale]}</li>
+      <li>
+        <Icon name="clock" size={17} /> {days} {ru ? (days === 1 ? 'день' : days < 5 ? 'дня' : 'дней') : days === 1 ? 'day' : 'days'} · {ru ? 'Самарканд, Джамбайский район' : 'Samarkand, Dzhambay district'}
+      </li>
+      {event.status === 'open' && <li class="chip chip--live"><span class="dot" /> {ru ? 'Идёт набор участников' : 'Exhibitor sales open'}</li>}
+    </ul>
+    <div class="btn-row">
+      {actions.map((a, i) => (
+        <a
+          class:list={['btn', { 'btn--show': i === 0 && upcoming, 'btn--light': i === 0 && !upcoming, 'btn--ghost': i > 0 }]}
+          href={a.href}
+          download={a.download ? `${event.slug}-${event.dates.start.slice(0, 4)}.ics` : undefined}
+        >
+          {a.icon && <Icon name={a.icon} size={15} />}
+          {a.label}
+        </a>
+      ))}
     </div>
-    <aside class="ehero__side">
-      {upcoming ? <Countdown locale={locale} target={event.dates.start} label={ru ? 'До открытия' : 'Opening in'} /> : (
-        <div class="ehero__archive">
-          <p class="mono-label">{ru ? 'Прошедшая редакция' : 'Past edition'}</p>
-          <ul>
-            {event.facts.slice(0, 4).map((f) => <li><b class="num">{fig(f.value, locale)}</b> {f.label[locale]}</li>)}
-          </ul>
-        </div>
-      )}
-      <dl class="ehero__key">
-        <div><dt>{ru ? 'Площадка' : 'Venue'}</dt><dd>{site.brand[locale]}</dd></div>
-        <div><dt>{ru ? 'Город' : 'City'}</dt><dd>{site.location.region[locale]}</dd></div>
-        <div><dt>{ru ? 'Организатор' : 'Organizer'}</dt><dd>{ru ? site.brand.legal : site.brand.legalEn}</dd></div>
-      </dl>
-    </aside>
+    {event.highlight && upcoming && showHighlight && (
+      <p class="ehero__note">
+        <Icon name="sparkle" size={15} /> <b>{event.highlight.label[locale]}</b> —{' '}
+        {event.highlight.text[locale]}
+      </p>
+    )}
+    {CURRENT_BRAND?.ornament && <Ornament variant="band" height={26} />}
   </div>
-  {CURRENT_BRAND?.ornament && <Ornament variant="band" height={26} />}
+  <div class="ehero__media">
+    <div class="ehero__photo">
+      <Photo
+        src={event.heroImage}
+        alt={event.tagline[locale]}
+        ratio="4/5"
+        rounded={false}
+        priority
+        sizes="(max-width: 900px) 100vw, 42vw"
+      />
+      <div class="ehero__count">
+        {upcoming ? <Countdown locale={locale} target={event.dates.start} label={ru ? 'До открытия' : 'Opening in'} /> : (
+          <div class="ehero__archive">
+            <p class="mono-label">{ru ? 'Прошедшая редакция' : 'Past edition'}</p>
+            <ul>
+              {event.facts.slice(0, 4).map((f) => <li><b class="num">{fig(f.value, locale)}</b> {f.label[locale]}</li>)}
+            </ul>
+          </div>
+        )}
+      </div>
+    </div>
+    <dl class="ehero__key">
+      <div><dt>{ru ? 'Площадка' : 'Venue'}</dt><dd>{site.brand[locale]}</dd></div>
+      <div><dt>{ru ? 'Город' : 'City'}</dt><dd>{site.location.region[locale]}</dd></div>
+      <div><dt>{ru ? 'Организатор' : 'Organizer'}</dt><dd>{ru ? site.brand.legal : site.brand.legalEn}</dd></div>
+    </dl>
+  </div>
 </section>
 
 <style>
+  /* a bare row: the two children are the panels (main > section is a panel elsewhere) */
   .ehero {
-    position: relative;
-    overflow: hidden;
-    --scrim: color-mix(in srgb, var(--evergreen) 88%, #000);
-    background: var(--evergreen);
-    color: rgba(255,255,255,.86);
-    isolation: isolate;
-  }
-  .ehero__bg {
-    position: absolute;
-    inset: 0;
-    z-index: -2;
-    aspect-ratio: auto !important;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gap);
+    background: none;
     border-radius: 0;
+    overflow: visible;
+    padding: 0;
   }
-  .ehero__bg img {
-    object-position: center 42%;
+  .ehero__main {
+    position: relative;
+    flex: 1.15 1 560px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: clamp(24px, 4vw, 56px);
+    border-radius: var(--r-panel);
+    background: var(--evergreen);
+    color: rgba(255, 255, 255, 0.86);
+    overflow: hidden;
   }
-  /* the show's logo colours as a band across the top of the hero (--brand-stripe) */
-  .ehero::before {
+  /* the show's logo colours as a band across the top of its panel (--brand-stripe, brands.ts) */
+  .ehero__main::before {
     content: '';
     position: absolute;
     inset: 0 0 auto;
     height: 6px;
     background: var(--brand-stripe);
-    z-index: 1;
   }
-  .ehero::after {
+  /* the show's motif from its logo (--brand-pattern, brands.ts), fading in towards the right so
+     it never sits under the headline */
+  .ehero__main::after {
     content: '';
     position: absolute;
     inset: 0;
-    /* the scrim is the show's own ground, only slightly deepened — FOODERA's hero reads blue,
-       AGROPRO's field green, WORLD EDU's petrol, BUILD PRO's graphite (docs/15 §10). At 70%
-       black every show looked the same near-black */
-    --scrim: color-mix(in srgb, var(--evergreen) 88%, #000);
-    background:
-      linear-gradient(100deg, color-mix(in srgb, var(--scrim) 95%, transparent) 0%, color-mix(in srgb, var(--scrim) 82%, transparent) 44%, color-mix(in srgb, var(--scrim) 42%, transparent) 100%),
-      linear-gradient(to top, color-mix(in srgb, var(--scrim) 85%, transparent), transparent 55%);
-    z-index: -1;
+    background: var(--brand-pattern, none) 0 0 / var(--brand-pattern-size, 120px) repeat;
+    -webkit-mask-image: linear-gradient(105deg, transparent 38%, #000 88%);
+    mask-image: linear-gradient(105deg, transparent 38%, #000 88%);
+    pointer-events: none;
   }
-  .ehero--past::after {
-    background: linear-gradient(100deg, color-mix(in srgb, var(--scrim) 96%, transparent) 0%, color-mix(in srgb, var(--scrim) 80%, transparent) 60%, color-mix(in srgb, var(--scrim) 50%, transparent) 100%);
+  /* one column on a phone: the buttons span the full width, so the motif stays in the top
+     corner next to the logo plate instead of running behind the actions */
+  @media (max-width: 900px) {
+    .ehero__main::after {
+      -webkit-mask-image: radial-gradient(90% 260px at 100% 0, #000, transparent);
+      mask-image: radial-gradient(90% 260px at 100% 0, #000, transparent);
+    }
   }
-  /* mobile-first: one column on a phone; the ticket panel sits beside the
-     headline only from ≥960px (docs/04 §5) */
-  .ehero__in {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: clamp(1.6rem, 1rem + 3vw, 3.4rem);
-    padding-block: clamp(2.6rem, 1.4rem + 5vw, 5.4rem);
-    align-items: start;
+  .ehero__main > :global(*) {
+    position: relative;
+    z-index: 1;
+  }
+  /* the main action wears the show's accent (FOODERA gold, AGROPRO sun yellow, WORLD EDU
+     cyan …); gold-soft on evergreen is ≥ 4.5:1 for every show (check-brand-contrast) */
+  .ehero :global(.btn--show) {
+    --btn-bg: var(--gold-soft);
+    --btn-fg: var(--evergreen);
+    background: var(--gold-soft);
+    border-color: var(--gold-soft);
+    color: var(--evergreen);
+  }
+  .ehero :global(.btn--show:hover) {
+    background: #fff;
+    border-color: #fff;
+    color: var(--evergreen);
+  }
+  .ehero__main :global(.ehero__logo) {
+    margin-bottom: clamp(1.2rem, 0.6rem + 2vw, 2.4rem);
+    padding: 10px 16px;
+    border-radius: 16px;
+    background: #fff;
   }
   .ehero h1 {
     color: #fff;
-    font-size: clamp(2.1rem, 1.4rem + 3vw, 3.6rem);
-    letter-spacing: -0.032em;
-    line-height: 1.04;
-    max-width: 18ch;
-    margin: 0.3rem 0 0;
+    font-size: clamp(2.125rem, 1rem + 3.6vw, 4.5rem);
+    letter-spacing: -0.04em;
+    line-height: 0.98;
+    max-width: 16ch;
+    margin: 0;
+  }
+  .ehero :global(h1 > .kicker) {
+    color: rgba(255, 255, 255, 0.72);
+    margin-bottom: 1rem;
   }
   /* the date is the loudest figure in the hero, like on the home */
   .ehero__date {
     display: flex;
     align-items: baseline;
-    gap: 0.7rem;
-    margin: 0.7rem 0 0;
+    flex-wrap: wrap;
+    gap: 0.2rem 0.8rem;
+    margin: clamp(1.2rem, 0.8rem + 1.5vw, 2rem) 0 0;
   }
   .ehero__date b {
     font-family: var(--f-display);
-    font-size: clamp(2.2rem, 1.7rem + 2.8vw, 3.6rem);
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    line-height: 1;
+    font-size: clamp(3.5rem, 2rem + 5vw, 6.5rem);
+    font-weight: 500;
+    letter-spacing: -0.05em;
+    line-height: 0.9;
     color: #fff;
   }
   .ehero__date span {
-    font-family: var(--f-mono);
-    font-size: clamp(0.9rem, 0.8rem + 0.5vw, 1.15rem);
-    letter-spacing: 0.08em;
-    color: var(--gold-soft);
-  }
-  .ehero :global(.ehero__logo) {
-    margin-bottom: clamp(1rem, 0.6rem + 1vw, 1.5rem);
-  }
-  .ehero :global(.kicker) {
-    color: var(--gold-soft);
-  }
-  /* the main action wears the show's accent from its logo (FOODERA gold, AGROPRO sun yellow,
-     WORLD EDU cyan …) — the ground-coloured button vanished into the hero.
-     gold-soft on evergreen is ≥ 4.5:1 for every show (check-brand-contrast) */
-  .ehero :global(.btn--gold) {
-    --btn-bg: var(--gold-soft);
-    --btn-fg: var(--evergreen);
-    background: var(--gold-soft);
-    color: var(--evergreen);
-  }
-  .ehero :global(.btn--gold:hover) {
-    background: #fff;
-    color: var(--evergreen);
+    font-family: var(--f-display);
+    font-size: clamp(1.1rem, 0.9rem + 0.8vw, 1.6rem);
+    letter-spacing: -0.01em;
+    color: rgba(255, 255, 255, 0.6);
   }
   .hero__lead {
     color: rgba(255, 255, 255, 0.86);
-    max-width: 62ch;
+    max-width: 58ch;
+    margin: 1.2rem 0 0;
   }
   .ehero__facts {
     display: flex;
@@ -267,20 +278,59 @@ const heroKicker =
     gap: 0.45rem;
     color: rgba(255, 255, 255, 0.9);
   }
-  .ehero__note {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    margin: 1rem 0 0;
-    padding: 0.45rem 0.7rem;
-    border-radius: var(--r);
-    background: rgba(255, 255, 255, 0.07);
-    border: 1px solid rgba(255, 255, 255, 0.26);
-    font-size: 0.84rem;
+  .ehero__main .btn-row {
+    margin-top: auto;
   }
-  .ehero__side {
-    display: grid;
-    gap: 1rem;
+  .ehero__note {
+    display: block;
+    margin: 1rem 0 0;
+    padding: 10px 16px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    font-size: 0.875rem;
+  }
+  .ehero__media {
+    flex: 1 1 420px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+  }
+  .ehero__photo {
+    position: relative;
+    flex: 1;
+    min-height: 320px;
+    border-radius: var(--r-panel);
+    overflow: hidden;
+    background: var(--evergreen);
+  }
+  .ehero__photo :global(.ph) {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    aspect-ratio: auto;
+  }
+  .ehero__count {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+  }
+  .ehero__count :global(.cd-wrap),
+  .ehero__archive {
+    padding: 14px 16px 6px;
+    border-radius: var(--r-lg);
+    background: color-mix(in srgb, var(--evergreen) 82%, transparent);
+    backdrop-filter: blur(14px);
+    color: #fff;
+  }
+  .ehero__count :global(.mono-label),
+  .ehero__archive :global(.mono-label) {
+    color: rgba(255, 255, 255, 0.8);
+  }
+  .ehero__archive {
+    padding-bottom: 14px;
   }
   .ehero__archive ul {
     list-style: none;
@@ -289,7 +339,7 @@ const heroKicker =
     display: grid;
     gap: 0.4rem;
     font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.82);
+    color: rgba(255, 255, 255, 0.86);
   }
   .ehero__archive b {
     font-family: var(--f-display);
@@ -300,51 +350,29 @@ const heroKicker =
   .ehero__key {
     margin: 0;
     display: grid;
-    gap: 0.6rem;
-    padding: 1.2rem 1.3rem;
-    border-radius: var(--r-lg);
-    background: color-mix(in srgb, var(--scrim, #0a1a11) 72%, transparent);
-    backdrop-filter: blur(14px);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    font-size: 0.85rem;
+    gap: 10px;
+    padding: 20px 24px;
+    border-radius: var(--r-panel);
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 0.9rem;
   }
-  /* the countdown sits on the lighter right side of the photo: same glass as the facts */
-  .ehero__side :global(.cd-wrap),
-  .ehero__archive {
-    padding: 1rem 1.1rem 0.2rem;
-    border-radius: var(--r-lg);
-    background: color-mix(in srgb, var(--scrim, #0a1a11) 72%, transparent);
-    backdrop-filter: blur(14px);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-  }
-  .ehero__archive { padding-bottom: 1rem; }
   .ehero__key div {
     display: flex;
     justify-content: space-between;
     gap: 1rem;
   }
   .ehero__key dt {
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--ink-60);
   }
   .ehero__key dd {
     margin: 0;
     text-align: right;
+    font-weight: 600;
   }
-  @media (min-width: 960px) {
-    .ehero__in {
-      grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
-      align-items: end;
-    }
-    /* two columns: the wash only has to carry the headline column, so the photograph stays
-       a photograph on the right instead of a navy sheet (docs/15 §11); the side panels carry
-       their own glass ground */
-    .ehero::after {
-      background:
-        linear-gradient(100deg, color-mix(in srgb, var(--scrim) 93%, transparent) 0%, color-mix(in srgb, var(--scrim) 74%, transparent) 36%, color-mix(in srgb, var(--scrim) 22%, transparent) 68%, color-mix(in srgb, var(--scrim) 30%, transparent) 100%),
-        linear-gradient(to top, color-mix(in srgb, var(--scrim) 70%, transparent), transparent 40%);
-    }
-    .ehero--past::after {
-      background: linear-gradient(100deg, color-mix(in srgb, var(--scrim) 94%, transparent) 0%, color-mix(in srgb, var(--scrim) 76%, transparent) 40%, color-mix(in srgb, var(--scrim) 34%, transparent) 100%);
+  @media (min-width: 901px) {
+    .ehero__main {
+      min-height: 640px;
     }
   }
 </style>

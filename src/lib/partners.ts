@@ -40,7 +40,7 @@ export interface Partner {
 
 const SHARED: Partner[] = [
   /* Real artwork pending — the client provides the logos (docs/08 §7 Q4). */
-  { id: 'reikartz', kind: 'hotel', show: 'site', name: { ru: 'Рекарц (Reikartz)', en: 'Reikartz' }, note: { ru: 'отель-партнёр · −15%', en: 'partner hotel · −15%' } },
+  { id: 'reikartz', kind: 'hotel', show: 'site', hasLogo: true, name: { ru: 'Рекарц (Reikartz)', en: 'Reikartz' }, note: { ru: 'отель-партнёр · −15%', en: 'partner hotel · −15%' } },
   { id: 'ticketon', kind: 'service', show: 'site', name: { ru: 'Ticketon.uz', en: 'Ticketon.uz' }, note: { ru: 'билетный оператор', en: 'ticketing' } },
   { id: 'uzexpo', kind: 'org', show: 'site', name: { ru: 'UzExpoCentre', en: 'UzExpoCentre' }, note: { ru: 'отраслевой партнёр', en: 'industry partner' } },
   { id: 'cci-uz', kind: 'state', show: 'site', name: { ru: 'Торгово-промышленная палата', en: 'Chamber of Commerce & Industry' } },
@@ -48,15 +48,15 @@ const SHARED: Partner[] = [
   /* The centre's own partner list, as published by the organiser (sofexpo.uz, 2026).
      Names and links come from there; artwork still arrives per partner, so every tile
      keeps the monogram until the real file is dropped in. */
-  { id: 'samarkand-region', kind: 'state', show: 'site', name: { ru: 'Хокимият Самаркандской области', en: 'Samarkand Regional Administration' }, note: { ru: 'при поддержке', en: 'with support of' }, url: 'https://samarkand.uz/' },
-  { id: 'uza', kind: 'media', show: 'site', name: { ru: 'UzA — Национальное информационное агентство Узбекистана', en: 'UzA — National News Agency of Uzbekistan' }, note: { ru: 'информационный партнёр', en: 'media partner' }, url: 'https://uza.uz/' },
-  { id: 'tashkent-times', kind: 'media', show: 'site', name: { ru: 'The Tashkent Times', en: 'The Tashkent Times' }, note: { ru: 'информационный партнёр', en: 'media partner' }, url: 'https://tashkenttimes.uz/' },
+  { id: 'samarkand-region', kind: 'state', show: 'site', hasLogo: true, name: { ru: 'Хокимият Самаркандской области', en: 'Samarkand Regional Administration' }, note: { ru: 'при поддержке', en: 'with support of' }, url: 'https://samarkand.uz/' },
+  { id: 'uza', kind: 'media', show: 'site', hasLogo: true, name: { ru: 'UzA — Национальное информационное агентство Узбекистана', en: 'UzA — National News Agency of Uzbekistan' }, note: { ru: 'информационный партнёр', en: 'media partner' }, url: 'https://uza.uz/' },
+  { id: 'tashkent-times', kind: 'media', show: 'site', hasLogo: true, name: { ru: 'The Tashkent Times', en: 'The Tashkent Times' }, note: { ru: 'информационный партнёр', en: 'media partner' }, url: 'https://tashkenttimes.uz/' },
   { id: 'expomap', kind: 'org', show: 'site', name: { ru: 'Expomap', en: 'Expomap' }, note: { ru: 'отраслевой каталог', en: 'industry directory' }, url: 'https://expomap.ru/' },
   { id: 'exposale', kind: 'service', show: 'site', name: { ru: 'Exposale', en: 'Exposale' }, note: { ru: 'отраслевой каталог', en: 'industry directory' }, url: 'https://exposale.net/en' },
   { id: 'totalexpo', kind: 'org', show: 'site', name: { ru: 'TotalExpo', en: 'TotalExpo' }, note: { ru: 'отраслевой каталог', en: 'industry directory' }, url: 'https://totalexpo.ru/' },
   { id: 'worldexpo', kind: 'org', show: 'site', name: { ru: 'WorldExpo', en: 'WorldExpo' }, note: { ru: 'отраслевой каталог', en: 'industry directory' }, url: 'https://worldexpo.pro/' },
   { id: 'advantour', kind: 'service', show: 'site', name: { ru: 'Advantour', en: 'Advantour' }, url: 'https://www.advantour.com/' },
-  { id: 'led-master', kind: 'service', show: 'site', name: { ru: 'LED Master', en: 'LED Master' }, url: 'https://www.instagram.com/ledmasteruz/' },
+  { id: 'led-master', kind: 'service', show: 'site', hasLogo: true, name: { ru: 'LED Master', en: 'LED Master' }, url: 'https://www.instagram.com/ledmasteruz/' },
   { id: 'iimps', kind: 'org', show: 'site', name: { ru: 'International Institute of Meta Professional', en: 'International Institute of Meta Professional' }, url: 'https://iimps.org/' },
 ];
 
@@ -92,5 +92,27 @@ export function partnersForEvent(slug?: string | null): Partner[] {
 }
 
 export function partnerSrc(id: string): string {
-  return `/images/partners/${id}.svg`;
+  /* 2026-10 (docs/18): the logos arrived as raster files; they are trimmed and stored as
+     112px-high WebP (2x of the 56px they are shown at), 1–17 KB each */
+  return `/images/partners/${id}.webp`;
 }
+
+/**
+ * The home page's logo wall (docs/18 §4): exhibitors and partners together, as the 2026-10
+ * design lays it out. Exhibiting brands are not partners, so they are listed here and not in
+ * SHARED — no partner page claims them. Confirm each one is current before an edition.
+ */
+export const homeLogos: { id: string; name: string }[] = [
+  { id: 'samarkand-region', name: 'Samarkand Regional Administration' },
+  { id: 'uzauto-motors', name: 'UzAuto Motors' },
+  { id: 'artel', name: 'Artel' },
+  { id: 'agromir', name: 'Agromir' },
+  { id: 'sag', name: 'SAG' },
+  { id: 'sibeco', name: 'Sibeco' },
+  { id: 'uza', name: 'UzA' },
+  { id: 'tashkent-times', name: 'The Tashkent Times' },
+  { id: 'reikartz', name: 'Amar Reikartz Hotel' },
+  { id: 'grand-plaza', name: 'Grand Plaza Hotel' },
+  { id: 'sellers-association', name: 'Sellers Association' },
+  { id: 'led-master', name: 'LED Master' },
+];

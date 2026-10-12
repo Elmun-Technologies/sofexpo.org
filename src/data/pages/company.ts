@@ -572,6 +572,8 @@ export const companyPages: PageDef[] = [
             { label: "Забронировать стенд", href: "/request-stand/" },
             { label: "Telegram", href: "https://t.me/sofexpo" },
           ],
+          image: "/images/venue-facade.jpg",
+          imageAlt: "Выставочный центр SOF EXPO",
         },
         {
           type: "grid",
@@ -664,6 +666,8 @@ export const companyPages: PageDef[] = [
             { label: "Book a stand", href: "/request-stand/" },
             { label: "Telegram", href: "https://t.me/sofexpo" },
           ],
+          image: "/images/venue-facade.jpg",
+          imageAlt: "SOF EXPO exhibition centre",
         },
         {
           type: "grid",

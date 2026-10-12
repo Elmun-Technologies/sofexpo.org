@@ -108,6 +108,16 @@ const MAP = {
   'conference-stage': ['sofexpo-uz/conf-stage.jpg', 'centre'],
   'conference-rows': ['sofexpo-uz/conf-rows.jpg', 'centre'],
   'meeting-room': ['sofexpo-uz/meeting-room.jpg', 'centre'],
+
+  /* ── 2026-10 redesign (docs/18): real photos from the new site package (sofexpo.uz) ── */
+  'hall-panorama': ['site-2026-10/hall-panorama.jpg', 'centre'],
+  'venue-flags': ['site-2026-10/exterior-1.jpg', 'centre'],
+  'outdoor-tractors': ['site-2026-10/outdoor-tractors-building.jpg', 'centre'],
+  'registan-night': ['site-2026-10/registan-night.jpg', 'centre'],
+  'stand-dark': ['site-2026-10/stand-dark-art.jpg', 'centre'],
+  'b2b-meeting': ['site-2026-10/b2b-meeting-2.jpg', 'centre'],
+  'stand-exhibitor': ['site-2026-10/stand-1.jpg', 'centre'],
+  'opening-crowd': ['site-2026-10/opening-crowd.jpg', 'centre'],
 };
 
 /* `node scripts/build-photos.mjs <name> …` rebuilds only those names (and the manifests),

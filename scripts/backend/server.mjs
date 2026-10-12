@@ -8,7 +8,18 @@ import { createSecret, hashToken, normalizeEmail, validEmail, validPassword, ver
 
 const ADMIN_DIR = fileURLToPath(new URL('./admin/', import.meta.url));
 const PORTAL_DIR = fileURLToPath(new URL('./portal/', import.meta.url));
-const CONTENT_TYPES = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.svg': 'image/svg+xml' };
+/* the 2026-10 design layer shared by /admin and /cabinet, and the site's own fonts and mark,
+   served from an allow-list (never a path taken from the request) */
+const SHARED_FILES = {
+  '/admin/theme.css': fileURLToPath(new URL('./shared/theme.css', import.meta.url)),
+  '/cabinet/theme.css': fileURLToPath(new URL('./shared/theme.css', import.meta.url)),
+  '/brand-assets/sofexpo-logo.png': fileURLToPath(new URL('../../public/brand/sofexpo-logo.png', import.meta.url)),
+  ...Object.fromEntries(['manrope', 'onest'].flatMap((face) => ['latin', 'latin-ext', 'cyrillic'].map((subset) => [
+    `/brand-fonts/${face}-${subset}.woff2`,
+    fileURLToPath(new URL(`../../public/fonts/${face}-${subset}.woff2`, import.meta.url)),
+  ]))),
+};
+const CONTENT_TYPES = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.png': 'image/png' };
 const PORTAL_EVENTS = [
   { slug: 'foodera-expo', name: 'FOODERA EXPO 2026', dates: '27–29 oktabr 2026' },
   { slug: 'buildpro-expo', name: 'BUILD PRO EXPO 2026', dates: '9–11 noyabr 2026' },
@@ -537,6 +548,19 @@ export function createLeadServer(options = {}) {
 
     if (req.method === 'GET' && (path === '/health' || path === '/healthz')) {
       return sendJson(res, 200, { ok: true, service: 'sofexpo-lead-backend', time: new Date().toISOString() });
+    }
+
+    if (req.method === 'GET' && SHARED_FILES[path]) {
+      const file = SHARED_FILES[path];
+      const body = readFileSync(file);
+      res.writeHead(200, {
+        'Content-Type': CONTENT_TYPES[extname(file)] || 'application/octet-stream',
+        'Content-Length': body.length,
+        'Cache-Control': extname(file) === '.css' ? 'public, max-age=300' : 'public, max-age=604800',
+        'X-Robots-Tag': 'noindex, nofollow',
+        'X-Content-Type-Options': 'nosniff',
+      });
+      return res.end(body);
     }
 
     const adminFiles = {

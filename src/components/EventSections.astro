@@ -479,10 +479,12 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
     border: 1px solid var(--line);
     border-radius: var(--r-lg);
     background: var(--paper);
+    color: var(--ink);
+    text-decoration: none;
     transition: border-color 0.15s ease, transform 0.15s ease;
   }
   .cats__seg:hover {
-    border-color: var(--gold);
+    border-color: var(--accent, var(--gold));
     transform: translateY(-2px);
   }
   .cats__h {

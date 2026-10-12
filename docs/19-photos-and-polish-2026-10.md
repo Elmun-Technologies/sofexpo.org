@@ -1,5 +1,8 @@
 # 19 · Haqiqiy suratlar va eski dizaynni tozalash (2026-10-12)
 
+> **Yangilanish (2026-10-12, keyinroq):** buyurtmachi redizaynni davom ettirishni so'radi —
+> 1–2-fazalar qayta tiklandi va shu hujjatdagi ish bilan birlashtirildi (docs/18 §9–12).
+
 Qaror (buyurtmachi, 2026-10-12): yangi redizayn (docs/18, 1–2-fazalar) **qabul qilinmadi** va
 `git revert` bilan qaytarildi — sayt eski dizaynida qoladi. FOODERA EXPO 2026 sanasi
 (27–29 oktabr) saqlandi. Vazifa: sofexpo.uz suratlari bilan saytni boyitish va eski

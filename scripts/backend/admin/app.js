@@ -41,13 +41,16 @@
     return String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
   }
 
+  const UZ_MONTHS = ['yan', 'fev', 'mar', 'apr', 'may', 'iyn', 'iyl', 'avg', 'sen', 'okt', 'noy', 'dek'];
+
   function formatDate(value, withTime = true) {
     if (!value) return '—';
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return escapeHtml(value);
-    return new Intl.DateTimeFormat('uz-UZ', withTime
-      ? { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }
-      : { day: '2-digit', month: 'short' }).format(date);
+    /* browsers ship no Uzbek month names (Intl printed "M10 12"): spell them out */
+    const pad = (n) => String(n).padStart(2, '0');
+    const day = `${pad(date.getDate())} ${UZ_MONTHS[date.getMonth()]}`;
+    return withTime ? `${day} ${pad(date.getHours())}:${pad(date.getMinutes())}` : day;
   }
 
   function number(value) {
@@ -95,7 +98,9 @@
     const data = contentType.includes('application/json') ? await response.json() : null;
     if (!response.ok) {
       if (response.status === 401 && path !== '/api/admin/login') setAuthVisible(true);
-      throw new Error(data?.error || `Server xatosi (${response.status})`);
+      const error = new Error(data?.error || `Server xatosi (${response.status})`);
+      error.status = response.status;
+      throw error;
     }
     return data || {};
   }
@@ -128,7 +133,7 @@
       return `<line class="chart-grid" x1="${inset.left}" y1="${y.toFixed(1)}" x2="${width - inset.right}" y2="${y.toFixed(1)}"/>`;
     }).join('');
     const dots = points.length <= 20 ? points.map(([x, y]) => `<circle class="chart-dot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3"/>`).join('') : '';
-    return `<svg class="trend-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="Kunlik arizalar grafigi"><defs><linearGradient id="chart-fill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#286540" stop-opacity=".15"/><stop offset="100%" stop-color="#286540" stop-opacity="0"/></linearGradient></defs>${grid}<polygon class="chart-area" points="${area}"/><polyline class="chart-line" points="${line}"/>${dots}</svg>`;
+    return `<svg class="trend-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="Kunlik arizalar grafigi"><defs><linearGradient id="chart-fill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#0063e4" stop-opacity=".16"/><stop offset="100%" stop-color="#0063e4" stop-opacity="0"/></linearGradient></defs>${grid}<polygon class="chart-area" points="${area}"/><polyline class="chart-line" points="${line}"/>${dots}</svg>`;
   }
 
   function statusBadge(status) {
@@ -528,25 +533,31 @@
       if (!status.setupRequired) await loadSession();
       else setAuthVisible(true);
     } catch (error) {
-      $('#login-error').hidden = false;
-      $('#login-error').textContent = error.message;
+      /* no session yet is the normal first visit: show the form, not "session expired" */
+      if (error.status !== 401) {
+        $('#login-error').hidden = false;
+        $('#login-error').textContent = error.message;
+      }
       setAuthVisible(true);
     }
   }
 
   $('#login-form').addEventListener('submit', async (event) => {
     event.preventDefault();
-    const button = $('button[type="submit"]', event.currentTarget);
+    /* event.currentTarget is null once the handler awaits: keep the form itself. Calling
+       .reset() on null threw after a successful login, so the dashboard never rendered */
+    const formElement = event.currentTarget;
+    const button = $('button[type="submit"]', formElement);
     const errorNode = $('#login-error');
     errorNode.hidden = true;
     button.disabled = true;
     try {
-      const form = new FormData(event.currentTarget);
+      const form = new FormData(formElement);
       const response = await api('/api/admin/login', { method: 'POST', body: { email: form.get('email'), password: form.get('password') } });
       state.csrf = response.csrfToken;
       setUser(response.user);
       setAuthVisible(false);
-      event.currentTarget.reset();
+      formElement.reset();
       navigate('dashboard');
     } catch (error) {
       errorNode.textContent = error.message;

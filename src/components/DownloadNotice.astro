@@ -20,8 +20,10 @@ const hasSamples = hrefs.some(isSampleDownload);
   </aside>
 )}
 <style>
-  .download-notice { display: flex; align-items: flex-start; gap: .85rem; padding: 1.15rem 1.25rem; margin-bottom: 1rem; border: 1px solid #b78b4655; border-radius: .5rem; background: #f6f0e4; color: #173e35; }
-  .download-notice__icon { flex: 0 0 auto; padding-top: .15rem; }
+  /* the page's own card ground with an accent rule — a fixed beige/green sheet clashed with
+     every show palette */
+  .download-notice { display: flex; align-items: flex-start; gap: .85rem; padding: 1.15rem 1.25rem; margin-bottom: 1rem; border: 0; border-left: 4px solid var(--accent, var(--gold)); border-radius: var(--r, .5rem); background: var(--cream-2); color: var(--ink); }
+  .download-notice__icon { flex: 0 0 auto; padding-top: .15rem; color: var(--evergreen); }
   .download-notice strong { font-weight: 650; font-size: .95rem; }
   .download-notice p { margin: .35rem 0 .5rem; max-width: 78ch; font-size: .9rem; line-height: 1.6; }
   .download-notice a { font-weight: 600; font-size: .9rem; text-decoration: underline; text-underline-offset: .2em; }

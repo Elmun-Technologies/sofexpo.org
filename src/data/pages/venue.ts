@@ -36,7 +36,7 @@ export const venuePages: PageDef[] = [
             { label: "Техспецификация (PDF)", href: "/venue/tech-specs/" },
             { label: "Виртуальный тур", href: "/venue/virtual-tour/" },
           ],
-          image: "/images/venue-exterior.jpg",
+          image: "/images/venue-facade.jpg",
           imageAlt: "Экстерьер выставочного центра SOF EXPO Samarkand",
         },
         {
@@ -241,7 +241,7 @@ export const venuePages: PageDef[] = [
             { label: "Technical data sheet", href: "/venue/tech-specs/" },
             { label: "Virtual tour", href: "/venue/virtual-tour/" },
           ],
-          image: "/images/venue-exterior.jpg",
+          image: "/images/venue-facade.jpg",
           imageAlt: "Exterior of SOF EXPO Samarkand",
         },
         {
@@ -993,6 +993,7 @@ export const venuePages: PageDef[] = [
       ru: [
         {
           type: "hero",
+          tone: "forest",
           kicker: "Для инженеров и застройщиков",
           title: "Техническая спецификация площадки",
           lead: "Полный datasheet высылаем по запросу в PDF с чертежами; здесь — основные параметры, которых хватает для предварительного расчёта застройки.",
@@ -1088,6 +1089,7 @@ export const venuePages: PageDef[] = [
       en: [
         {
           type: "hero",
+          tone: "forest",
           kicker: "For engineers and contractors",
           title: "Venue technical data sheet",
           lead: "The full datasheet with drawings goes out as a PDF on request; below are the parameters enough for a preliminary stand calculation.",

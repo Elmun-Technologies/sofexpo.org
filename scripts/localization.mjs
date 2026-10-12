@@ -74,6 +74,13 @@ function dynamicText(text, locale, translate) {
     const m = monthIndex(monthYear[1]);
     return locale === 'zh' ? `${monthYear[2]}年${m+1}月` : new Intl.DateTimeFormat('tr-TR',{month:'short',year:'numeric',timeZone:'UTC'}).format(new Date(Date.UTC(+monthYear[2],m,1)));
   }
+  /* the calendar's date tile prints the month alone: OCT */
+  if (/^[A-Z]{3}$/.test(text) && monthIndex(text) >= 0) {
+    const m = monthIndex(text);
+    return locale === 'zh' ? `${m+1}月` : new Intl.DateTimeFormat('tr-TR',{month:'short',timeZone:'UTC'}).format(new Date(Date.UTC(2026,m,1))).toLocaleUpperCase('tr-TR');
+  }
+  const sections = /^(\d+) sections?$/.exec(text);
+  if (sections) return locale === 'zh' ? `${sections[1]}个展区` : `${sections[1]} bölüm`;
   const countdown = /^(.*?)in (\d+) d$/.exec(text);
   if (countdown) {
     // Localize the whole descriptor too, not just the changing number. Unknown
@@ -342,6 +349,9 @@ function dynamicUz(text, translate) {
   if (range && mi(range[2]) >= 0 && mi(range[4]) >= 0) return `${+range[1]} ${uzMonths[mi(range[2])]} — ${+range[3]} ${uzMonths[mi(range[4])]}`;
   const my = /^([A-Za-z]+) (\d{4})$/.exec(text);
   if (my && mi(my[1]) >= 0) return `${uzMonths[mi(my[1])]} ${my[2]}`;
+  if (/^[A-Z]{3}$/.test(text) && mi(text) >= 0) return uzMonths[mi(text)].toUpperCase();
+  const sections = /^(\d+) sections?$/.exec(text);
+  if (sections) return `${sections[1]} ta bo‘lim`;
   const cd = /^(.*?)in (\d+) d$/.exec(text);
   if (cd) { const d = cd[1].replace(/\s*[·—]\s*$/, '').trim(); return (d ? `${translate(d)} · ` : '') + `${cd[2]} kundan keyin`; }
   let m;

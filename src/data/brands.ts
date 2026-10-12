@@ -47,6 +47,11 @@ export type HostBrand = {
   /** the logo's colours as one band (CSS gradient): the 6px stripe on the hero, the show's
      sub-navigation and the footer, so FOODERA reads blue/gold, AGROPRO green/yellow/red */
   stripe: string;
+  /** a tile drawn from a shape in the logo (FOODERA's star, BUILD PRO's roof, AGROPRO's leaves,
+     WORLD EDU's globe …): the motif behind the show's dark panels, so the shows differ in form,
+     not only in colour */
+  pattern: string;
+  patternSize: number;
   palette: BrandPalette;
 };
 
@@ -75,7 +80,10 @@ export function brandCss(brand: HostBrand | null): string {
     `--line:${p.line};--line-strong:${p.lineStrong};`,
     `--cream:${p.cream};--cream-2:${p.cream2};`,
     `--gold:${p.gold};--gold-soft:${p.goldSoft};--ornament:${p.ornament};--brand-mark:${p.mark};`,
+    /* the 2026-10 design's yellow accent (booking CTA, call-outs) becomes the show's own accent */
+    `--accent:${p.goldSoft};`,
     `--brand-stripe:${brand.stripe};`,
+    `--brand-pattern:url("data:image/svg+xml,${encodeURIComponent(brand.pattern)}");--brand-pattern-size:${brand.patternSize}px;`,
     "}",
   ].join("");
 }

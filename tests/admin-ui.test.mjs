@@ -28,7 +28,7 @@ const account = (active = 1) => ({
   }],
 });
 
-function createAdminPage() {
+function createAdminPage({ signedIn = true } = {}) {
   const dom = new JSDOM(html, { runScripts: 'outside-only', url: 'https://api.sofexpo.test/admin' });
   const { window } = dom;
   const calls = [];
@@ -41,6 +41,11 @@ function createAdminPage() {
     };
     calls.push(call);
     if (call.path === '/api/admin/status') return jsonResponse({ ok: true, setupRequired: false });
+    if (call.path === '/api/admin/me' && !signedIn) return jsonResponse({ ok: false, error: 'Sessiya tugagan. Qayta kiring.' }, 401);
+    if (call.path === '/api/admin/login' && call.method === 'POST') {
+      signedIn = true;
+      return jsonResponse({ ok: true, user: { id: 'admin-1', email: 'admin@example.test', role: 'admin' }, csrfToken: 'csrf-admin' });
+    }
     if (call.path === '/api/admin/me') return jsonResponse({ ok: true, user: { id: 'admin-1', email: 'admin@example.test', role: 'admin' }, csrfToken: 'csrf-admin' });
     if (call.path === '/api/admin/dashboard?days=30') return jsonResponse({
       ok: true, days: 30, totalLeads: 1, newLeads: 1, sessions: 5, conversionRate: 20,
@@ -134,6 +139,24 @@ test('admin workspace follows a portal account through profile, CRM request, mod
     assert.match(document.querySelector('#content').textContent, /Kabinet bloklandi/);
     assert.match(document.querySelector('#content').textContent, /admin@example.test/);
     assert.ok(calls.some((call) => call.path.startsWith('/api/admin/audit?page=1&limit=25')));
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('signing in renders the dashboard (the form is kept across the await)', async () => {
+  const { dom, window, calls } = createAdminPage({ signedIn: false });
+  try {
+    const document = window.document;
+    await waitFor(window, () => !document.querySelector('#auth').hidden, 'login screen did not show');
+    assert.ok(document.querySelector('#login-error').hidden, 'a first visit is not told its session expired');
+    document.querySelector('#login-email').value = 'admin@example.test';
+    document.querySelector('#login-password').value = 'correct horse battery';
+    document.querySelector('#login-form').dispatchEvent(new window.Event('submit', { bubbles: true, cancelable: true }));
+    await waitFor(window, () => document.querySelector('#content .metrics-grid'), 'dashboard did not render after login');
+    assert.ok(calls.some((call) => call.path === '/api/admin/login' && call.method === 'POST'));
+    assert.equal(document.querySelector('#login-email').value, '', 'the login form is reset');
+    assert.ok(document.querySelector('#login-error').hidden, 'no error after a successful login');
   } finally {
     dom.window.close();
   }

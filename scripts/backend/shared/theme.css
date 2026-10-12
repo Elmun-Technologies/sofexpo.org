@@ -1,0 +1,624 @@
+/*
+ * 2026-10 design layer for /admin (CRM) and /cabinet (visitor & exhibitor portal).
+ *
+ * Loaded after each app's own app.css, so it only has to restate tokens and the handful of
+ * components the site redesign changed (docs/18): Manrope for headings and figures, Onest for
+ * text, the grey #E4E4E4 canvas with white 28px panels, black + blue #0063E4 + yellow #F4FD10,
+ * pill buttons, 16px-radius inputs with a blue focus ring. Status colours stay semantic.
+ * The fonts and the mark are the site's own files, served by the backend (server.mjs).
+ */
+
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('/brand-fonts/manrope-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('/brand-fonts/manrope-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('/brand-fonts/manrope-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Onest';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/brand-fonts/onest-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Onest';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/brand-fonts/onest-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Onest';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/brand-fonts/onest-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+/* ---------- tokens: both apps read these names ---------- */
+:root {
+  --sx-canvas: #e4e4e4;
+  --sx-paper: #ffffff;
+  --sx-card: #f2f2f2;
+  --sx-ink: #0a0a0a;
+  --sx-ink-2: #2a2a2a;
+  --sx-muted: #5e5e5e;
+  --sx-line: #e4e4e4;
+  --sx-blue: #0063e4;
+  --sx-yellow: #f4fd10;
+  --sx-r: 16px;
+  --sx-r-lg: 28px;
+  --sx-r-panel: 36px;
+  --sx-display: 'Manrope', 'Onest', system-ui, sans-serif;
+  --sx-body: 'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* admin (app.css) */
+  --ink: var(--sx-ink);
+  --muted: var(--sx-muted);
+  --soft: var(--sx-card);
+  --line: var(--sx-line);
+  --green: var(--sx-ink);
+  --green-2: var(--sx-ink-2);
+  --gold: var(--sx-blue);
+  --sidebar: var(--sx-ink);
+  --shadow: none;
+  /* portal (app.css) */
+  --paper: var(--sx-paper);
+  --sage: var(--sx-card);
+
+  font-family: var(--sx-body);
+  color: var(--sx-ink);
+  background: var(--sx-canvas);
+}
+html,
+body {
+  background: var(--sx-canvas);
+  font-family: var(--sx-body);
+}
+/* every heading the two apps drew in Georgia / DM Sans, at their own specificity or higher */
+h1,
+h2,
+h3,
+.metric-value,
+.art-number,
+.portal-stamp,
+.auth-card h2,
+.auth-art-copy h1,
+.topbar h1,
+.page-intro h2,
+.drawer-head h2,
+.story-copy h1,
+.portal-welcome h1,
+.card-heading h2,
+#page-title {
+  font-family: var(--sx-display);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+:is(button, a, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--sx-blue);
+  outline-offset: 2px;
+}
+.eyebrow,
+.nav-label,
+.topbar-kicker {
+  font-family: var(--sx-body);
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 13px;
+  color: var(--sx-muted);
+}
+
+/* ---------- mark: the centre's logo instead of a serif "S" ---------- */
+.brand-symbol,
+.brand-mark {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #fff url('/brand-assets/sofexpo-logo.png') center / 36px auto no-repeat;
+  color: transparent;
+  font-size: 0;
+  flex: none;
+}
+
+/* ---------- buttons: pills ---------- */
+.button,
+.button-dark,
+.button-outline,
+.button-quiet,
+.icon-button {
+  border-radius: 999px;
+  font-family: var(--sx-body);
+  font-weight: 600;
+}
+.button {
+  min-height: 48px;
+  padding: 12px 22px;
+}
+.button:hover {
+  transform: none;
+}
+.button-primary,
+.button-dark {
+  background: var(--sx-ink);
+  color: #fff;
+  border: 1px solid var(--sx-ink);
+}
+.button-primary:hover,
+.button-dark:hover {
+  background: var(--sx-yellow);
+  border-color: var(--sx-yellow);
+  color: var(--sx-ink);
+}
+.button-secondary,
+.button-outline {
+  background: transparent;
+  color: var(--sx-ink);
+  border: 1px solid var(--sx-ink);
+}
+.button-secondary:hover,
+.button-outline:hover {
+  background: var(--sx-ink);
+  color: #fff;
+}
+.button-quiet {
+  background: var(--sx-card);
+  color: var(--sx-ink);
+}
+.button-danger {
+  border-radius: 999px;
+}
+.icon-button {
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--sx-line);
+  background: var(--sx-paper);
+  color: var(--sx-ink);
+}
+.icon-button:hover {
+  border-color: var(--sx-ink);
+}
+
+/* ---------- inputs (FormKit) ---------- */
+:is(.field, .stack-form, .form-stack, .compact-form, .form-two, .filters, .lead-toolbar, .drawer-note-form, .user-create)
+  :is(input:not([type='checkbox']):not([type='radio']), select, textarea),
+.filter-input,
+.filter-select,
+.locale-select {
+  min-height: 48px;
+  border: 1px solid transparent;
+  border-radius: var(--sx-r);
+  background: #f5f5f5;
+  color: var(--sx-ink);
+  font-family: var(--sx-body);
+  box-shadow: none;
+}
+:is(.field, .stack-form, .form-stack, .compact-form, .form-two, .filters, .lead-toolbar, .drawer-note-form, .user-create)
+  :is(input:not([type='checkbox']):not([type='radio']), select, textarea):focus,
+.filter-input:focus,
+.filter-select:focus,
+.locale-select:focus {
+  outline: none;
+  border-color: var(--sx-blue);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(0, 99, 228, 0.18);
+}
+input[type='checkbox'],
+input[type='radio'] {
+  accent-color: var(--sx-ink);
+}
+
+/* ===================== ADMIN (CRM) ===================== */
+
+/* login */
+.auth-shell {
+  background: var(--sx-canvas);
+  gap: 10px;
+  padding: 10px;
+  min-height: 100vh;
+}
+.auth-art {
+  border-radius: var(--sx-r-panel);
+  background: var(--sx-ink);
+}
+.auth-art::before,
+.auth-art::after {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+.auth-art::after {
+  border-color: rgba(244, 253, 16, 0.35);
+}
+.auth-art .eyebrow,
+.auth-art-meta {
+  color: #bdbdbd;
+}
+.auth-art-copy h1 {
+  font-size: clamp(40px, 5vw, 72px);
+  line-height: 0.98;
+}
+.auth-main {
+  border-radius: var(--sx-r-panel);
+  background: var(--sx-paper);
+}
+.auth-card h2 {
+  font-size: 40px;
+}
+.setup-note,
+.notice-box {
+  border-radius: var(--sx-r);
+  background: var(--sx-card);
+  border: 0;
+}
+.pulse {
+  background: var(--sx-yellow);
+  box-shadow: 0 0 0 4px rgba(244, 253, 16, 0.2);
+}
+
+/* shell */
+.app-shell,
+.main-area {
+  background: var(--sx-canvas);
+}
+.sidebar {
+  inset: 10px auto 10px 10px;
+  width: 248px;
+  border-radius: 28px;
+  background: var(--sx-ink);
+}
+.main-area {
+  margin-left: 268px;
+}
+.nav-item {
+  border-radius: 999px;
+  padding: 11px 14px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.72);
+}
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+.nav-item.active {
+  background: #fff;
+  color: var(--sx-ink);
+  box-shadow: none;
+}
+.nav-count {
+  background: var(--sx-yellow);
+  color: var(--sx-ink);
+  font-weight: 700;
+}
+.nav-item.active .nav-count {
+  background: var(--sx-ink);
+  color: #fff;
+}
+.security-card {
+  border-radius: var(--sx-r);
+  background: rgba(255, 255, 255, 0.06);
+  border: 0;
+}
+.security-mark {
+  background: var(--sx-yellow);
+  color: var(--sx-ink);
+}
+.avatar {
+  background: var(--sx-blue);
+  color: #fff;
+  border-radius: 50%;
+}
+.topbar {
+  top: 10px;
+  margin: 10px 10px 0;
+  height: 76px;
+  padding: 0 24px;
+  border: 0;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.96);
+}
+.topbar h1,
+#page-title {
+  font-size: 28px;
+  margin: 0;
+}
+.live-indicator i {
+  background: #1db954;
+}
+.range-control {
+  border-radius: 999px;
+  background: var(--sx-card);
+  border: 0;
+}
+.content-area {
+  padding: 10px;
+}
+
+/* panels and cards */
+.panel,
+.metric-card,
+.table-panel,
+.integration-card,
+.recent-panel,
+.system-stat {
+  border: 0;
+  border-radius: var(--sx-r-lg);
+  background: var(--sx-paper);
+  box-shadow: none;
+}
+.page-intro {
+  padding: 22px 24px;
+  border-radius: var(--sx-r-lg);
+  background: var(--sx-paper);
+  margin-bottom: 10px;
+}
+.dashboard-grid,
+.metrics-grid,
+.analytics-grid,
+.integration-grid,
+.system-grid {
+  gap: 10px;
+}
+.metric-card {
+  min-height: 140px;
+  padding: 22px;
+}
+.metric-head {
+  font-size: 13px;
+  color: var(--sx-muted);
+}
+.metric-icon {
+  border-radius: 50%;
+  background: var(--sx-card);
+  color: var(--sx-ink);
+}
+.metric-value {
+  font-size: 44px;
+  letter-spacing: -0.05em;
+}
+.metric-foot {
+  font-size: 12px;
+  color: var(--sx-muted);
+}
+.panel-head {
+  border-bottom-color: var(--sx-line);
+}
+.bar-track {
+  background: var(--sx-card);
+  border-radius: 999px;
+}
+.bar-track > * ,
+.chart-line {
+  border-radius: 999px;
+}
+
+/* charts and bars in the brand blue */
+.chart-line,
+.chart-dot {
+  stroke: var(--sx-blue);
+}
+.legend-dot,
+.status-bar i,
+.bar-track i {
+  background: var(--sx-blue);
+}
+.status-bar {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--sx-card);
+}
+.status-dot.new {
+  background: #c9cf00;
+}
+.panel-head .button {
+  min-height: 40px;
+  padding: 8px 16px;
+  font-size: 14px;
+}
+@media (min-width: 1200px) {
+  .metrics-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* table */
+.data-table th {
+  font-size: 12px;
+  letter-spacing: 0;
+  text-transform: none;
+  font-weight: 600;
+  color: var(--sx-muted);
+  background: transparent;
+  border-top: 0;
+  border-bottom: 2px solid var(--sx-ink);
+}
+.data-table td {
+  border-bottom-color: var(--sx-line);
+  color: var(--sx-ink-2);
+}
+.data-table tbody tr:hover td {
+  background: #fafafa;
+}
+.person-mark {
+  border-radius: 50%;
+  background: var(--sx-card);
+  color: var(--sx-ink);
+}
+
+/* badges: pills, semantic colours kept */
+.status-badge,
+.priority-badge,
+.eyebrow-chip,
+.contact-chip,
+.role-pill,
+.request-status {
+  border-radius: 999px;
+  font-size: 12px;
+  padding: 5px 11px;
+}
+.status-new,
+.status-badge.status-new {
+  background: var(--sx-yellow);
+  color: var(--sx-ink);
+}
+
+/* drawer */
+.drawer-panel {
+  inset: 10px 10px 10px auto;
+  height: auto;
+  border-radius: 28px;
+  background: var(--sx-canvas);
+  box-shadow: -12px 0 50px rgba(0, 0, 0, 0.18);
+}
+.drawer-head,
+.drawer-section,
+.drawer-summary,
+.drawer-person {
+  border-radius: var(--sx-r-lg);
+  background: var(--sx-paper);
+  border: 0;
+}
+.toast {
+  border-radius: 999px;
+  background: var(--sx-ink);
+  color: #fff;
+}
+
+@media (max-width: 600px) {
+  .topbar {
+    height: auto;
+    min-height: 64px;
+    padding: 10px 12px;
+  }
+  .topbar-kicker {
+    display: none;
+  }
+  .topbar h1,
+  #page-title {
+    font-size: 22px;
+    line-height: 1.1;
+  }
+  .panel-head .button {
+    white-space: nowrap;
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+}
+@media (max-width: 960px) {
+  .sidebar {
+    inset: 0 auto 0 0;
+    border-radius: 0 28px 28px 0;
+  }
+  .main-area {
+    margin-left: 0;
+  }
+  .topbar {
+    margin: 10px 10px 0;
+  }
+}
+
+/* ===================== PORTAL (cabinet) ===================== */
+
+.page-grain {
+  display: none;
+}
+.auth-layout {
+  background: var(--sx-canvas);
+  gap: 10px;
+  padding: 10px;
+}
+.auth-story {
+  border-radius: var(--sx-r-panel);
+  background: var(--sx-ink);
+  color: #fff;
+}
+.story-copy h1 {
+  font-size: clamp(40px, 5vw, 72px);
+  line-height: 0.98;
+}
+.story-copy h1 em {
+  font-style: normal;
+  color: var(--sx-yellow);
+}
+.status-pulse {
+  background: var(--sx-yellow);
+}
+.auth-panel {
+  border-radius: var(--sx-r-panel);
+  background: var(--sx-paper);
+}
+.auth-tabs {
+  border-radius: 999px;
+  background: var(--sx-card);
+  padding: 4px;
+  border: 0;
+}
+.auth-tab {
+  border-radius: 999px;
+  border: 0;
+  font-weight: 600;
+}
+.auth-tab.active {
+  background: var(--sx-ink);
+  color: #fff;
+}
+.portal-layout,
+.portal-content {
+  background: var(--sx-canvas);
+}
+.portal-topbar {
+  margin: 10px;
+  border-radius: 28px;
+  border: 0;
+  background: var(--sx-paper);
+}
+.portal-card,
+.profile-card,
+.request-card,
+.portal-welcome,
+.request-item {
+  border: 0;
+  border-radius: var(--sx-r-lg);
+  background: var(--sx-paper);
+  box-shadow: none;
+}
+.request-item {
+  background: var(--sx-card);
+}
+.portal-welcome {
+  background: var(--sx-blue);
+  color: #fff;
+}
+.portal-welcome :is(p, .muted, .eyebrow) {
+  color: rgba(255, 255, 255, 0.86);
+}
+.portal-grid {
+  gap: 10px;
+}
+.notice-note,
+.privacy-note,
+.auth-note {
+  border-radius: var(--sx-r);
+  background: var(--sx-card);
+  border: 0;
+}

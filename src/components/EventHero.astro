@@ -18,6 +18,7 @@ import Icon from '@/components/Icon.astro';
 import Photo from '@/components/Photo.astro';
 import { bigDate, industryLabel } from '@/lib/labels';
 import { eventIcsPath } from '@/lib/ics';
+import { archive } from '@/data/archive';
 
 const { locale, event, kicker, title, lead, variant = 'open', soloKicker = false } = Astro.props as {
   locale: Locale;
@@ -47,16 +48,21 @@ const days = Math.max(
 /* The dates of the one show you are coming to, as a file — next to the show's own page
    on the host that owns it (src/lib/ics.ts). */
 const ics = eventIcsPath(event.slug, event.dates.start);
-const actions = [
-  upcoming
-    ? { label: t('cta.stand'), href: L('/request-stand/') + `?event=${event.slug}` }
-    : { label: ru ? 'Следующая редакция' : 'Next edition', href: L(`/events/${event.slug}/`) },
-  { label: t('cta.ticket'), href: L('/visitors/tickets/') },
-  { label: ru ? 'Программа' : 'Programme', href: L(`/events/${event.slug}/program/`) },
-  ...(ics
-    ? [{ label: ru ? 'В календарь' : 'Add to calendar', href: ics, icon: 'calendar', download: true }]
-    : []),
-];
+/* a finished edition offers its report and the coming shows — not a ticket, a calendar file
+   or a "next edition" link that pointed back at this very page */
+const report = upcoming ? undefined : archive.find((x) => x.eventSlug === event.slug);
+const actions: { label: string; href: string; icon?: string; download?: boolean }[] = upcoming
+  ? [
+      { label: t('cta.stand'), href: L('/request-stand/') + `?event=${event.slug}` },
+      { label: t('cta.ticket'), href: L('/visitors/tickets/') },
+      { label: ru ? 'Программа' : 'Programme', href: L(`/events/${event.slug}/program/`) },
+      ...(ics ? [{ label: ru ? 'В календарь' : 'Add to calendar', href: ics, icon: 'calendar', download: true }] : []),
+    ]
+  : [
+      { label: ru ? 'Отчёт по итогам' : 'Post-show report', href: L(report ? `/events/past/${report.id}/` : '/events/past/') },
+      { label: ru ? 'Все выставки' : 'All exhibitions', href: L('/events/') },
+      { label: ru ? 'Программа' : 'Programme', href: L(`/events/${event.slug}/program/`) },
+    ];
 /* "Food and beverage exhibition · Specialised food and beverage exhibition in Uzbekistan"
    said the same thing twice: drop the industry label when the edition line already names it */
 const lead1 = kicker ?? industryLabel(event.industry, locale);
@@ -145,7 +151,7 @@ const heroKicker =
   .ehero {
     position: relative;
     overflow: hidden;
-    --scrim: color-mix(in srgb, var(--evergreen) 70%, #000);
+    --scrim: color-mix(in srgb, var(--evergreen) 88%, #000);
     background: var(--evergreen);
     color: rgba(255,255,255,.86);
     isolation: isolate;
@@ -160,13 +166,23 @@ const heroKicker =
   .ehero__bg img {
     object-position: center 42%;
   }
+  /* the show's logo colours as a band across the top of the hero (--brand-stripe) */
+  .ehero::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 6px;
+    background: var(--brand-stripe);
+    z-index: 1;
+  }
   .ehero::after {
     content: '';
     position: absolute;
     inset: 0;
-    /* the scrim is the show's own ground, deepened — FOODERA's hero reads blue, BUILD PRO's
-       graphite, e-com & retail's black (docs/15 §10); the centre keeps its evergreen */
-    --scrim: color-mix(in srgb, var(--evergreen) 70%, #000);
+    /* the scrim is the show's own ground, only slightly deepened — FOODERA's hero reads blue,
+       AGROPRO's field green, WORLD EDU's petrol, BUILD PRO's graphite (docs/15 §10). At 70%
+       black every show looked the same near-black */
+    --scrim: color-mix(in srgb, var(--evergreen) 88%, #000);
     background:
       linear-gradient(100deg, color-mix(in srgb, var(--scrim) 95%, transparent) 0%, color-mix(in srgb, var(--scrim) 82%, transparent) 44%, color-mix(in srgb, var(--scrim) 42%, transparent) 100%),
       linear-gradient(to top, color-mix(in srgb, var(--scrim) 85%, transparent), transparent 55%);
@@ -218,6 +234,19 @@ const heroKicker =
   }
   .ehero :global(.kicker) {
     color: var(--gold-soft);
+  }
+  /* the main action wears the show's accent from its logo (FOODERA gold, AGROPRO sun yellow,
+     WORLD EDU cyan …) — the ground-coloured button vanished into the hero.
+     gold-soft on evergreen is ≥ 4.5:1 for every show (check-brand-contrast) */
+  .ehero :global(.btn--gold) {
+    --btn-bg: var(--gold-soft);
+    --btn-fg: var(--evergreen);
+    background: var(--gold-soft);
+    color: var(--evergreen);
+  }
+  .ehero :global(.btn--gold:hover) {
+    background: #fff;
+    color: var(--evergreen);
   }
   .hero__lead {
     color: rgba(255, 255, 255, 0.86);

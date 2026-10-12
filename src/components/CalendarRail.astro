@@ -1,6 +1,6 @@
 ---
 /**
- * The calendar rail: upcoming shows, one line each — industry colour line, big date, name
+ * The calendar rail: upcoming shows, one line each — the show's own colour line, big date, name
  * (docs/08 §4.2). Horizontal on phones. The "calendar first" mechanic every CIS top-3
  * expo site runs. `tone="dark"` for the home hero, `tone="light"` for bright sections
  * (/visitors/, /exhibitors/).
@@ -8,6 +8,7 @@
 import { localize, type SourceLocale as Locale } from '@/i18n/config';
 import { upcoming, type ExpoEvent } from '@/data/events';
 import { bigDate, industryColor, industryLabel } from '@/lib/labels';
+import { showColor } from '@/data/brands';
 
 const { locale, tone = 'dark', count = 4 } = Astro.props as {
   locale: Locale;
@@ -27,7 +28,7 @@ const shows = upcoming.slice(0, count);
   {shows.map((e: ExpoEvent) => {
     const d = bigDate(e.dates.start, e.dates.end, locale);
     return (
-      <a href={L(`/events/${e.slug}/`)} style={{ '--ic': industryColor(e.industry) } as Record<string, string>}>
+      <a href={L(`/events/${e.slug}/`)} style={{ '--ic': showColor(e.slug, industryColor(e.industry)) } as Record<string, string>}>
         <span class="rail__date">
           {d.days} {d.month} {d.year}
         </span>

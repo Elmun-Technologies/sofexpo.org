@@ -42,12 +42,45 @@ dizayndagi g'alati joylarni tuzatish.
   chiziqli ikonka, matn, tugma.
 - **Mobil footer:** kompaniya matni tor ustunda so'zma-so'z uzilardi — endi to'liq kenglikda.
 
-## 3. Tekshiruvlar
+## 3. Har bir ko'rgazmaning o'z uslubi (logotip ranglaridan)
+
+Umumiy karkas — SOF EXPO; har bir ko'rgazma sahifasi o'z logotipi ranglarini oladi
+(`src/data/brand-map.json`, hammasi `scripts/check-brand-contrast.mjs` bo'yicha WCAG AA):
+
+| Ko'rgazma | Logotip ranglari | Hero foni | Asosiy tugma | Imzo chizig'i |
+| --- | --- | --- | --- | --- |
+| FOODERA | ko'k #2490CC, oltin #CCA878 | ko'k | oltin | ko'k / oltin |
+| BUILD PRO | grafit, teal #0C8484 → ko'k #244884 | grafit | teal | teal → ko'k |
+| AGROPRO | yashil #90C048, sariq #FCD83C, qizil #CC3024 | dala yashili | quyosh sarig'i | yashil / sariq / qizil |
+| WORLD EDU | to'q moviy #246078, havorang #00B4E4 | to'q moviy | havorang | moviy / havorang |
+| ECOM & RETAIL | qora, teal #60C0C0 | qora | teal | teal |
+| PROMOTORS | qora, qizil #E43018 | qora | qizil | qizil |
+
+- AGROPRO va WORLD EDU palitralari logotip kelguncha taxminiy edi (WORLD EDU — bordo);
+  endi haqiqiy logotipdan. Ikkala logotip ham saytga qo'shildi (`npm run logos`) — hero,
+  kalendar va kartalarda harf o'rniga logotip.
+- Hero: parda brend rangida (oldin 70% qora — hamma ko'rgazma deyarli qora edi), tepada
+  6 px logotip ranglaridagi chiziq, asosiy tugma ko'rgazma aksentida (oldin fon rangida —
+  ko'rinmasdi).
+- Imzo chizig'i (`--brand-stripe`) yana tablar ostida va footer tepasida; markaz
+  sahifalarida SOF EXPO logotipining yashil / moviy / qizil ranglari.
+- Markaz sahifalarida (kalendar, bosh sahifa tasmasi, kartalar) har bir qatorning chizig'i
+  soha emas, ko'rgazmaning o'z rangi (`showColor()`).
+- Qattiq kodlangan markaz yashili (`rgba(29,122,72)`) va bronza (CTA, formalar, karta hover)
+  tokenlarga bog'landi — ko'rgazma sahifalarida yashil dog' qolmadi.
+- O'tgan nashr heroida "Chipta olish", "Kalendarga qo'shish" va o'ziga ishora qiluvchi
+  "Keyingi nashr" o'rniga — "Ko'rgazmadan keyingi hisobot" va "Barcha ko'rgazmalar".
+- Ko'rgazma sahifasidagi "Materiallar" ro'yxati uslubsiz bir qator havola edi (uslub faqat
+  Blocks ichida edi) — endi kartalar.
+
+## 4. Tekshiruvlar
 
 `npm run check` (SEO, kalit so'zlar, tarjima, 54/54 unit), typecheck 0, Playwright 30/30
 (axe 5 tilda, 320–3840 px), `check:hosts` 6 host.
 
-## 4. Ochiq
+## 5. Ochiq
 
-- sofexpo.uz va astro-sof-expo.vercel.app muhit tarmog'ida bloklangan; ularni ruxsat
-  berilgan domenlarga qo'shilsa, qolgan suratlarni bevosita saytdan olish mumkin.
+- sofexpo.uz va astro-sof-expo.vercel.app muhit tarmog'ida bloklangan (DNS ham). Ma'lumotlar
+  mijoz paketidagi `content/` (sofexpo.uz'dan yig'ilgan) bilan solishtirildi: sanalar,
+  bo'limlar soni, kontaktlar, jamoa va paketlar sayt bilan mos. PROMOTORS SHOW 2027
+  (12–13 sentabr 2027) paketda ham tasdiqlanmagan — qo'shilmadi.

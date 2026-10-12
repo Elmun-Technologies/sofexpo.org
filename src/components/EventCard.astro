@@ -2,6 +2,7 @@
 import { localize, type SourceLocale as Locale } from '@/i18n/config';
 import type { ExpoEvent } from '@/data/events';
 import { bigDate, industryColor, industryLabel } from '@/lib/labels';
+import { showColor } from '@/data/brands';
 import Icon from '@/components/Icon.astro';
 import Photo from '@/components/Photo.astro';
 
@@ -15,8 +16,8 @@ const { locale, event, priority = false, variant = 'default' } = Astro.props;
 const href = localize(locale, `/events/${event.slug}/`);
 const ru = locale === 'ru';
 const d = bigDate(event.dates.start, event.dates.end, locale);
-/** the industry colour only paints the 4px line — nothing else (docs/08 §3.4) */
-const ic = industryColor(event.industry);
+/** the show's own colour (from its logo) only paints the 4px line — nothing else (docs/08 §3.4) */
+const ic = showColor(event.slug, industryColor(event.industry));
 const n = event.categories.length;
 const ruPlural = (k: number, one: string, few: string, many: string) =>
   k % 10 === 1 && k % 100 !== 11 ? one : k % 10 >= 2 && k % 10 <= 4 && (k % 100 < 10 || k % 100 >= 20) ? few : many;

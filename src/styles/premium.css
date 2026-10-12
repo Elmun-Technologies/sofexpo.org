@@ -120,7 +120,7 @@ a, button, summary { -webkit-tap-highlight-color: transparent; }
 .venue-strip__txt p { font-size: .84rem; }
 .venue-strip__img { display: none; border-radius: 8px; }
 .card, .ev { box-shadow: none; border: 1px solid var(--line); }
-a.card:hover, .ev:hover { border-color: #a4afa0; box-shadow: 0 15px 35px -20px #183e3640; }
+a.card:hover, .ev:hover { border-color: var(--line-strong); box-shadow: 0 15px 35px -20px color-mix(in srgb, var(--evergreen) 25%, transparent); }
 .ev { overflow: hidden; background: #fff; border-radius: 12px; }
 .ev__top { display: block; position: relative; }
 .ev__date { position: absolute; z-index: 2; top: 1rem; left: 1rem; width: auto; min-width: 76px; padding: .65rem .8rem; border-radius: 7px; background: #fbfaf3f5; color: #153b2f; border-bottom: none !important; }

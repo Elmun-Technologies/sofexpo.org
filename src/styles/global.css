@@ -15,6 +15,9 @@
    ============================================================ */
 
 :root {
+  /* the centre's own logo colours (green, blue, red) as one band; a show page swaps it for its
+     logo's colours via brandCss() */
+  --brand-stripe: linear-gradient(90deg, #60a854 0 33.4%, #489cb4 33.4% 66.7%, #c03030 66.7% 100%);
   /* the only easing curve in the product: a state change, not a performance. Displacement
      (translate/scale) and reveal-on-hover are gone — see docs/07 §8 */
   --tr: 180ms cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -837,6 +840,11 @@ a.chip:hover {
 .evnav {
   background: var(--paper);
   border-bottom: 1px solid var(--line);
+  /* the show's colours under its tabs (--brand-stripe, brands.ts) */
+  background-image: var(--brand-stripe);
+  background-size: 100% 3px;
+  background-position: bottom;
+  background-repeat: no-repeat;
   position: sticky;
   top: var(--header-h);
   z-index: 30;
@@ -1501,7 +1509,7 @@ body.nav-open .mnav {
 .field textarea:focus {
   border-color: var(--moss);
   outline: none;
-  box-shadow: 0 0 0 4px rgba(29, 122, 72, 0.14);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--moss) 14%, transparent);
 }
 
 .form__note {
@@ -1530,6 +1538,8 @@ body.nav-open .mnav {
 /* ---------- footer ---------- */
 .ftr {
   background: var(--evergreen);
+  border-top: 6px solid transparent;
+  border-image: var(--brand-stripe) 1;
   color: rgba(255, 255, 255, 0.78);
   padding-block: clamp(2.4rem, 1.4rem + 4vw, 4.4rem) 1.4rem;
   font-size: 0.94rem;
@@ -2331,7 +2341,7 @@ body.nav-open .mnav {
 }
 
 .rail a:hover {
-  background: rgba(29, 122, 72, 0.5);
+  background: color-mix(in srgb, var(--moss) 50%, transparent);
 }
 
 .rail b {
@@ -2782,7 +2792,7 @@ body.nav-open .mnav {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(60% 120% at 85% 0%, rgba(29, 122, 72, 0.35), transparent 62%);
+  background: radial-gradient(60% 120% at 85% 0%, color-mix(in srgb, var(--moss) 35%, transparent), transparent 62%);
 }
 
 .sec--forest > .wrap {
@@ -3059,4 +3069,53 @@ h2.h3 { font-size: var(--t-h3); line-height: 1.18; letter-spacing: -0.014em; }
   font-size: 0.86rem;
   font-weight: 600;
   color: var(--evergreen) !important;
+}
+
+/* ------- download list (.files) -------
+   Shared by Blocks (inner pages) and EventSections (a show's "materials"): it used to be
+   scoped to Blocks, so on show pages the same markup printed as a run-on line of links */
+.files {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 0.8rem;
+}
+.files a {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  gap: 0.9rem;
+  align-items: center;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background: var(--paper);
+  color: var(--ink);
+  text-decoration: none;
+  transition: border-color var(--tr), background-color var(--tr);
+}
+.files a:hover {
+  border-color: var(--ink);
+}
+.files__ico {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r);
+  background: var(--cream-2);
+  color: var(--evergreen);
+  display: grid;
+  place-items: center;
+}
+.files b {
+  display: block;
+  font-size: 0.98rem;
+  font-weight: 600;
+}
+.files small {
+  color: var(--ink-40);
+  font-size: 0.8rem;
+}
+.files__go {
+  color: var(--moss);
+  font-weight: 700;
+  font-size: 0.85rem;
+  white-space: nowrap;
 }

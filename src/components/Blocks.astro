@@ -528,6 +528,13 @@ const galleryGroups = (b: Block): BlockAlbum[] =>
   .block__head :global(.block__media img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 0; }
 
   @media (min-width: 900px) { .block__head > div, .block__head :global(.block__media) { min-height: 560px; } }
+  /* a dark hero (tone: forest — the tech data sheet, as in the design): the text panel takes the
+     ground colour, the main action turns white so it does not vanish into it */
+  .sec--forest.block--hero .block__head > div { background: var(--evergreen); color: rgba(255, 255, 255, .86); }
+  .sec--forest.block--hero .block__head h1 { color: #fff; }
+  .sec--forest.block--hero .block__head :global(.kicker), .sec--forest.block--hero .block__head .lead { color: #bdbdbd; }
+  .sec--forest.block--hero .block__head :global(.btn--gold) { background: #fff; border-color: #fff; color: var(--ink); }
+  .sec--forest.block--hero .block__head :global(.btn--gold:hover) { background: var(--accent); border-color: var(--accent); }
 
   .block--head { padding-bottom: 0; }
   .block--head :global(.sec-head) { margin-bottom: clamp(1.1rem, 0.6rem + 1.4vw, 1.8rem); }

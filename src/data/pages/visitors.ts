@@ -33,7 +33,7 @@ export const visitorPages: PageDef[] = [
             { label: "Зарегистрироваться", href: "/visitors/tickets/" },
             { label: "Программа выставок", href: "/visitors/programme/" },
           ],
-          image: "/images/hall-crowd.jpg",
+          image: "/images/hall-busy.jpg",
           imageAlt: "Посетители между стендами в зале",
         },
         {
@@ -163,7 +163,7 @@ export const visitorPages: PageDef[] = [
             { label: "Register", href: "/visitors/tickets/" },
             { label: "Show programmes", href: "/visitors/programme/" },
           ],
-          image: "/images/hall-crowd.jpg",
+          image: "/images/hall-busy.jpg",
           imageAlt: "Visitors between stands in the hall",
         },
         {
@@ -964,7 +964,7 @@ export const visitorPages: PageDef[] = [
           title: "В зал заходит каждый",
           lead: "Площадка одноуровневая: вход без ступеней, широкие проходы между стендами, места для отдыха и доступный санитарный блок. Сообщите о визите заранее — подготовим сопровождение.",
           actions: [{ label: "Запросить помощь", href: "/contacts/" }],
-          image: "/images/hero-hall.jpg",
+          image: "/images/hall-walk.jpg",
           imageAlt: "Экспозиционный зал",
         },
         {
@@ -1014,7 +1014,7 @@ export const visitorPages: PageDef[] = [
           title: "Everyone gets into the hall",
           lead: "The venue is single-level: step-free entrance, wide aisles between stands, seating areas and an accessible sanitary block. Tell us before you come and we prepare assistance.",
           actions: [{ label: "Request assistance", href: "/contacts/" }],
-          image: "/images/hero-hall.jpg",
+          image: "/images/hall-walk.jpg",
           imageAlt: "Exhibition hall",
         },
         {

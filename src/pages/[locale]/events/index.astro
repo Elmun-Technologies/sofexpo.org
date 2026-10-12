@@ -26,8 +26,8 @@ const locale = Astro.params.locale as Locale;
 const ru = locale === 'ru';
 const L = (p: string) => localize(locale, p);
 const next = upcoming[0];
-/** future first, then the finished editions — the archive row keeps its report link */
-const rows = [...events].sort((a, b) => a.dates.start.localeCompare(b.dates.start));
+/** upcoming shows by date, then the finished editions — the archive row keeps its report link */
+const rows = [...events].sort((a, b) => Number(a.status === 'past') - Number(b.status === 'past') || a.dates.start.localeCompare(b.dates.start));
 /** filter chips: only industries that actually have a show */
 const filters = [...new Set(events.map((e) => e.industry))];
 

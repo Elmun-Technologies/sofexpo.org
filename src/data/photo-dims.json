@@ -8,12 +8,12 @@
     750
   ],
   "buyers-talk": [
-    768,
-    432
+    1200,
+    750
   ],
   "cafe-interior": [
-    900,
-    563
+    1200,
+    750
   ],
   "car-road": [
     1200,
@@ -24,8 +24,16 @@
     750
   ],
   "conference-room": [
-    900,
-    563
+    1200,
+    750
+  ],
+  "conference-rows": [
+    1200,
+    750
+  ],
+  "conference-stage": [
+    1200,
+    750
   ],
   "documents": [
     1200,
@@ -75,9 +83,21 @@
     768,
     480
   ],
+  "hall-aerial-2": [
+    1200,
+    750
+  ],
+  "hall-aerial": [
+    1200,
+    750
+  ],
   "hall-aisle-red": [
-    900,
-    563
+    1200,
+    750
+  ],
+  "hall-busy": [
+    1200,
+    750
   ],
   "hall-crowd": [
     1200,
@@ -96,8 +116,12 @@
     750
   ],
   "hall-walk": [
-    768,
-    432
+    1200,
+    725
+  ],
+  "hall-wide": [
+    1200,
+    750
   ],
   "hall-windows": [
     1200,
@@ -116,20 +140,24 @@
     750
   ],
   "machinery-outdoor": [
-    768,
-    480
-  ],
-  "office-people": [
     1200,
     750
   ],
+  "meeting-room": [
+    1200,
+    750
+  ],
+  "office-people": [
+    1024,
+    640
+  ],
   "officials-tour": [
-    768,
-    480
+    1200,
+    750
   ],
   "opening-ceremony": [
-    768,
-    480
+    1200,
+    750
   ],
   "outdoor-area": [
     768,
@@ -156,16 +184,32 @@
     555
   ],
   "stand-agro-chem": [
-    768,
-    480
+    1200,
+    750
+  ],
+  "stand-agro-hall": [
+    1200,
+    750
   ],
   "stand-agro": [
-    768,
-    480
+    1200,
+    750
+  ],
+  "stand-basalt": [
+    1200,
+    750
+  ],
+  "stand-building-models": [
+    1024,
+    576
   ],
   "stand-equipment": [
     768,
     432
+  ],
+  "stand-falcon": [
+    1200,
+    750
   ],
   "stand-fertilizer": [
     768,
@@ -175,21 +219,41 @@
     1200,
     750
   ],
+  "stand-house-model": [
+    1200,
+    750
+  ],
   "stand-industrial": [
-    768,
-    480
+    1200,
+    750
+  ],
+  "stand-lights": [
+    1200,
+    750
   ],
   "stand-modern": [
     1049,
     656
   ],
-  "students-campus": [
+  "stand-nrg": [
+    1024,
+    576
+  ],
+  "stand-shell": [
     768,
     480
   ],
+  "stand-two-level": [
+    1200,
+    750
+  ],
+  "students-campus": [
+    1200,
+    750
+  ],
   "supermarket-aisle": [
-    768,
-    432
+    1200,
+    750
   ],
   "venue-aerial": [
     900,
@@ -208,7 +272,7 @@
     750
   ],
   "visitors-flowers": [
-    768,
-    480
+    1200,
+    750
   ]
 }

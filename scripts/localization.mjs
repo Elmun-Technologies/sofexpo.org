@@ -193,7 +193,9 @@ export function translator(locale, { collect, missing, strict = false } = {}) {
     const key = normalize(value);
     if (!isCopy(key) && !reviewed[key]) return value.replace(/м²/g, 'm²');
     const dynamic = dynamicText(key, locale, translate);
-    if (dynamic != null) return value.replace(key, dynamic);
+    /* `key` is whitespace-normalised: a source node with a double space inside (two JSX
+       expressions side by side) would never match it, and the copy stayed English */
+    if (dynamic != null) return value.replace(value.trim(), dynamic);
     collect?.add(key);
     const translated = dictionaries[locale]?.[key];
     if (!translated) {

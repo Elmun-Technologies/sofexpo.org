@@ -1596,6 +1596,14 @@ body.nav-open .mnav {
   color: rgba(255, 255, 255, 0.72);
 }
 
+/* below the five-column tier the brand block (logo, about, contacts) takes the full row:
+   squeezed into half a phone it broke into one-word lines */
+@media (max-width: 1079px) {
+  .ftr__grid > :first-child {
+    grid-column: 1 / -1;
+  }
+}
+
 @media (min-width: 1080px) {
   .ftr__grid {
     grid-template-columns: 1.3fr repeat(4, 1fr);
@@ -1970,9 +1978,8 @@ body.nav-open .mnav {
   font-family: var(--f-display);
   font-size: 1.14rem;
   letter-spacing: -0.01em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  /* "ECOM & RETAIL EXPO SAMARKAND" is the longest name: it wraps instead of ending in "…" */
+  line-height: 1.2;
 }
 
 .cal__name small {
@@ -2085,7 +2092,8 @@ body.nav-open .mnav {
 
 @media (min-width: 1080px) {
   .cal__row {
-    grid-template-columns: 168px 118px minmax(0, 1.25fr) 180px 118px minmax(160px, auto);
+    /* status: auto, so "arizalar ochiq" / "приём заявок" never clips inside its chip */
+    grid-template-columns: 168px 118px minmax(0, 1.25fr) 160px auto minmax(150px, auto);
     gap: 1.1rem;
     grid-template-areas: none;
     padding: 1.05rem 1.3rem;
@@ -2436,11 +2444,9 @@ body.nav-open .mnav {
   .gallery {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
-  /* four columns: tile 1 (2×2) and tiles 2–5 fill two rows exactly, so the sixth closes
-     the bento as a full-width panorama instead of leaving half a row empty */
-  .gallery > :nth-child(6) {
-    grid-column: 1 / -1;
-  }
+  /* four columns: tile 1 (2×2) and tiles 2–5 fill two rows exactly; the third row is
+     tile 6 (two columns) plus tiles 7–8. A full-width sixth tile at row height read as a
+     thin, squashed strip */
 }
 
 /* ------- home: the venue in one line (no table) -------

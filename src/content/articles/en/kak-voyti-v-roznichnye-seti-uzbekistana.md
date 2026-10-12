@@ -34,7 +34,7 @@ A cold e-mail to a purchasing department decides nothing: the buyer doesn't know
 
 ### How FOODERA EXPO works
 
-FOODERA EXPO 2026 runs **20–22 October 2026** at SOF EXPO Samarkand: 4,400 m² indoors and 5,000 m² outdoors, **12 thematic sections** from drinks and grocery to confectionery and packaging. Three elements make it a working tool rather than a shop window:
+FOODERA EXPO 2026 runs **27–29 October 2026** at SOF EXPO Samarkand: 4,400 m² indoors and 5,000 m² outdoors, **12 thematic sections** from drinks and grocery to confectionery and packaging. Three elements make it a working tool rather than a shop window:
 
 * **Buyer matchmaking with retail chains.** Meetings are booked in advance: you sit down with a specific category manager instead of hoping they walk past.
 * **The product contest.** An independent assessment — something you can put next to a certificate in a commercial offer.

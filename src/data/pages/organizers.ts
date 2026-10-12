@@ -56,7 +56,7 @@ export const organizerPages: PageDef[] = [
             { label: "Оставить бриф", href: "/organizers/#brief" },
             { label: "Ставки аренды", href: "/organizers/rates/" },
           ],
-          image: "/images/venue-exterior.jpg",
+          image: "/images/hall-empty.jpg",
           imageAlt: "Выставочный центр",
         },
         {
@@ -109,7 +109,7 @@ export const organizerPages: PageDef[] = [
               caption: "Конференция в конференц-зале на 350 мест",
             },
             {
-              src: "/images/hall-stand.jpg",
+              src: "/images/stand-shell.jpg",
               caption: "Монтаж экспозиции в главном зале",
             },
             {
@@ -225,7 +225,7 @@ export const organizerPages: PageDef[] = [
             { label: "Send a brief", href: "/organizers/#brief" },
             { label: "Rental rates", href: "/organizers/rates/" },
           ],
-          image: "/images/venue-exterior.jpg",
+          image: "/images/hall-empty.jpg",
           imageAlt: "Exhibition centre",
         },
         {
@@ -278,7 +278,7 @@ export const organizerPages: PageDef[] = [
               caption: "Conference in the 350-seat hall",
             },
             {
-              src: "/images/hall-stand.jpg",
+              src: "/images/stand-shell.jpg",
               caption: "Exhibition build-up in the main hall",
             },
             {
@@ -605,7 +605,7 @@ export const organizerPages: PageDef[] = [
           kicker: "Конференц-зал в Самарканде",
           title: "Программа, которую слышно и видно",
           lead: "Собираем деловую часть под ключ: от сцены и звука до регистрации делегатов и записи выступлений. Можно заказать как весь контур, так и отдельные позиции.",
-          image: "/images/conference-audience.jpg",
+          image: "/images/conference-stage.jpg",
           imageAlt: "Конференция в конференц-зале",
           actions: [{ label: "Заказать программу", href: "/contacts/" }],
         },
@@ -676,7 +676,7 @@ export const organizerPages: PageDef[] = [
           kicker: "Conference venue · Samarkand",
           title: "A programme you can hear and see",
           lead: "We build the business side turnkey: from stage and sound to delegate registration and session recording. Order the whole contour or single items.",
-          image: "/images/conference-audience.jpg",
+          image: "/images/conference-stage.jpg",
           imageAlt: "Conference in the conference hall",
           actions: [{ label: "Order a programme", href: "/contacts/" }],
         },
@@ -761,7 +761,7 @@ export const organizerPages: PageDef[] = [
           kicker: "Чек-лист организатора мероприятия",
           title: "Календарь организатора: 90 дней до входа посетителя",
           lead: "Этот список мы используем сами на своих выставках. Скачайте и адаптируйте под своё событие — он снимает 90% вопросов на монтаже.",
-          image: "/images/conference-audience.jpg",
+          image: "/images/conference-room.jpg",
           imageAlt: "Конференц-зал во время события",
         },
         {
@@ -841,7 +841,7 @@ export const organizerPages: PageDef[] = [
           kicker: "Event organizer checklist",
           title: "The organizer calendar: 90 days before the doors open",
           lead: "We use this list for our own shows. Download it and adapt it to your event — it removes 90% of the questions at build-up.",
-          image: "/images/conference-audience.jpg",
+          image: "/images/conference-room.jpg",
           imageAlt: "Conference hall during an event",
         },
         {

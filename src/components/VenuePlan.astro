@@ -19,7 +19,7 @@ const z = {
   entrance: ru ? 'Вход посетителей' : 'Visitor entrance',
   dock: ru ? 'Крытый маневрирующий двор' : 'Loading yard',
   parking: ru ? 'Парковка' : 'Parking',
-  power: ru ? 'Щитовая · 700 кВт' : 'Switchroom · 700 kW',
+  power: ru ? 'Щитовая' : 'Switchroom',
 };
 ---
 
@@ -49,36 +49,39 @@ const z = {
     </g>
     <text x="550" y="72" class="plan__t">{z.open.t}</text>
     <text x="550" y="94" class="plan__a">{z.open.a}</text>
-    <text x="550" y="316" class="plan__s">{ru ? 'подъезд фур · кран' : 'truck access · crane'}</text>
+    <!-- above the visitor-entrance label at y=324: the two used to print on top of each other -->
+    <text x="550" y="296" class="plan__s">{ru ? 'подъезд фур · кран' : 'truck access · crane'}</text>
 
     <!-- conference + cafés -->
-    <rect x="40" y="350" width="200" height="90" fill="var(--paper)" stroke="var(--evergreen)" stroke-width="1.5" />
+    <rect x="40" y="350" width="180" height="90" fill="var(--paper)" stroke="var(--evergreen)" stroke-width="1.5" />
     <text x="56" y="380" class="plan__t">{z.conf.t}</text>
     <text x="56" y="400" class="plan__a">{z.conf.a}</text>
 
-    <rect x="250" y="350" width="140" height="90" fill="var(--paper)" stroke="var(--evergreen)" stroke-width="1.5" />
-    <text x="266" y="380" class="plan__t">{z.cafe.t}</text>
-    <text x="266" y="400" class="plan__a">{z.cafe.a}</text>
+    <rect x="230" y="350" width="120" height="90" fill="var(--paper)" stroke="var(--evergreen)" stroke-width="1.5" />
+    <text x="244" y="380" class="plan__t">{z.cafe.t}</text>
+    <text x="244" y="400" class="plan__a">{z.cafe.a}</text>
 
     <!-- services row -->
-    <rect x="400" y="350" width="110" height="90" fill="var(--paper)" stroke="var(--line-strong)" stroke-width="1.5" />
-    <text x="412" y="380" class="plan__s">{ru ? 'Регистрация' : 'Registration'}</text>
-    <text x="412" y="400" class="plan__s">{ru ? 'Хранение' : 'Storage'}</text>
+    <rect x="360" y="350" width="125" height="90" fill="var(--paper)" stroke="var(--line-strong)" stroke-width="1.5" />
+    <text x="372" y="380" class="plan__s">{ru ? 'Регистрация' : 'Registration'}</text>
+    <text x="372" y="400" class="plan__s">{ru ? 'Хранение' : 'Storage'}</text>
 
-    <rect x="520" y="350" width="120" height="90" fill="var(--paper)" stroke="var(--line-strong)" stroke-width="1.5" />
-    <text x="532" y="380" class="plan__s">{z.power}</text>
-    <text x="532" y="400" class="plan__s">{ru ? '220/380 В' : '220/380 V'}</text>
+    <!-- name, power and voltage on three lines: one line overflowed the box in every locale -->
+    <rect x="490" y="350" width="140" height="90" fill="var(--paper)" stroke="var(--line-strong)" stroke-width="1.5" />
+    <text x="502" y="378" class="plan__s">{z.power}</text>
+    <text x="502" y="398" class="plan__s">{ru ? '700 кВт' : '700 kW'}</text>
+    <text x="502" y="418" class="plan__s">{ru ? '220/380 В' : '220/380 V'}</text>
 
     <!-- access points -->
     <g>
-      <circle cx="690" cy="395" r="17" fill="var(--evergreen)" />
-      <text x="690" y="401" class="plan__p" text-anchor="middle">P</text>
-      <text x="714" y="400" class="plan__s">{z.parking}</text>
+      <circle cx="672" cy="386" r="17" fill="var(--evergreen)" />
+      <text x="672" y="392" class="plan__p" text-anchor="middle">P</text>
+      <text x="672" y="430" class="plan__s" text-anchor="middle">{z.parking}</text>
     </g>
     <g>
-      <rect x="730" y="368" width="70" height="54" fill="var(--paper)" stroke="var(--moss)" stroke-width="1.5" />
-      <path d="M742 402 v-14 l10 -8 h26 l10 8 v14 z M742 398 h44" stroke="var(--moss)" stroke-width="1.6" fill="none" />
-      <text x="765" y="436" class="plan__s" text-anchor="middle">{ru ? 'грузовой двор' : 'loading dock'}</text>
+      <rect x="740" y="368" width="70" height="54" fill="var(--paper)" stroke="var(--moss)" stroke-width="1.5" />
+      <path d="M752 402 v-14 l10 -8 h26 l10 8 v14 z M752 398 h44" stroke="var(--moss)" stroke-width="1.6" fill="none" />
+      <text x="775" y="436" class="plan__s" text-anchor="middle">{ru ? 'грузовой двор' : 'loading dock'}</text>
     </g>
     <g>
       <path d="M560 340 v-18 M552 328 l8 -10 8 10" stroke="var(--moss)" stroke-width="2" fill="none" />

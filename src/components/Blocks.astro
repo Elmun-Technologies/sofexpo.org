@@ -539,13 +539,6 @@ const galleryGroups = (b: Block): BlockAlbum[] =>
   .checks { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: .6rem 1.4rem; }
   .checks li { display: flex; gap: .6rem; align-items: flex-start; padding: .5rem 0; border-bottom: 1px dashed var(--line); }
   .checks :global(svg) { color: var(--moss); margin-top: .28rem; flex: none; }
-  .files { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: .8rem; }
-  .files a { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: .9rem; align-items: center; padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: var(--r); background: var(--paper); text-decoration: none; transition: border-color var(--tr), background-color var(--tr); }
-  .files a:hover { border-color: var(--moss); border-color: var(--ink); }
-  .files__ico { width: 44px; height: 44px; border-radius: var(--r); background: var(--cream-2); color: var(--evergreen); display: grid; place-items: center; }
-  .files b { display: block; font-size: .98rem; font-weight: 600; }
-  .files small { color: var(--ink-40); font-size: .8rem; }
-  .files__go { color: var(--moss); font-weight: 700; font-size: .85rem; }
   .gal { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: clamp(.7rem, .4rem + .8vw, 1.1rem); }
   .gal__item :global(.ph) { box-shadow: var(--shadow-soft); }
   .gal__cap { margin: .65rem 0 0; font-size: .86rem; line-height: 1.45; color: var(--ink-60); }

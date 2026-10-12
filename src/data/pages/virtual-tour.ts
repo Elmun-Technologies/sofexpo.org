@@ -6,7 +6,7 @@ const PANORAMA = "x36rtq6ggm";
 export const virtualTourPages: PageDef[] = [
   {
     path: "/venue/virtual-tour/",
-    image: "/images/hall-crowd.jpg",
+    image: "/images/hall-aerial.jpg",
     meta: {
       ru: {
         title: "Виртуальный тур SOF EXPO Samarkand — 360° обзор площадки",
@@ -35,7 +35,7 @@ export const virtualTourPages: PageDef[] = [
             { label: "Начать виртуальный тур", href: "#virtual-tour" },
             { label: "Залы и площадки", href: "/venue/halls/" },
           ],
-          image: "/images/hall-crowd.jpg",
+          image: "/images/hall-aerial.jpg",
           imageAlt: "Выставочный зал с экспозицией и потоками посетителей",
         },
         {
@@ -66,7 +66,7 @@ export const virtualTourPages: PageDef[] = [
           type: "gallery",
           items: [
             {
-              src: "/images/hall-stand.jpg",
+              src: "/images/hall-wide.jpg",
               caption: "Главный зал: экспозиция и переговорные зоны",
             },
             {
@@ -74,7 +74,7 @@ export const virtualTourPages: PageDef[] = [
               caption: "Открытая площадка 5 000 м²: крупногабаритная техника",
             },
             {
-              src: "/images/conference-audience.jpg",
+              src: "/images/venue-conference.jpg",
               caption: "Конференц-зал во время деловой программы",
             },
             {
@@ -110,7 +110,7 @@ export const virtualTourPages: PageDef[] = [
             { label: "Start the virtual tour", href: "#virtual-tour" },
             { label: "Halls and areas", href: "/venue/halls/" },
           ],
-          image: "/images/hall-crowd.jpg",
+          image: "/images/hall-aerial.jpg",
           imageAlt: "Exhibition hall with stands and foot traffic",
         },
         {
@@ -141,7 +141,7 @@ export const virtualTourPages: PageDef[] = [
           type: "gallery",
           items: [
             {
-              src: "/images/hall-stand.jpg",
+              src: "/images/hall-wide.jpg",
               caption: "Main hall: expo and meeting zones",
             },
             {
@@ -149,7 +149,7 @@ export const virtualTourPages: PageDef[] = [
               caption: "The 5,000 m² open-air area: large machinery",
             },
             {
-              src: "/images/conference-audience.jpg",
+              src: "/images/venue-conference.jpg",
               caption: "Conference hall during the business programme",
             },
             {

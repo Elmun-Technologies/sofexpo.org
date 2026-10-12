@@ -278,11 +278,11 @@
   };
 
   const events = {
-    uz: { 'foodera-expo': ['FOODERA EXPO 2026', '20–22 oktabr 2026'], 'buildpro-expo': ['BUILD PRO EXPO 2026', '9–11 noyabr 2026'], 'agropro-expo': ['AGROPRO EXPO 2027', '2–4 mart 2027'], 'world-edu-expo': ['WORLD EDU · SPRING 2027', '9–10 aprel 2027'], 'ecom-retail-expo': ['ECOM & RETAIL EXPO', '16–17 iyun 2027'] },
-    en: { 'foodera-expo': ['FOODERA EXPO 2026', '20–22 October 2026'], 'buildpro-expo': ['BUILD PRO EXPO 2026', '9–11 November 2026'], 'agropro-expo': ['AGROPRO EXPO 2027', '2–4 March 2027'], 'world-edu-expo': ['WORLD EDU · SPRING 2027', '9–10 April 2027'], 'ecom-retail-expo': ['ECOM & RETAIL EXPO', '16–17 June 2027'] },
-    ru: { 'foodera-expo': ['FOODERA EXPO 2026', '20–22 октября 2026'], 'buildpro-expo': ['BUILD PRO EXPO 2026', '9–11 ноября 2026'], 'agropro-expo': ['AGROPRO EXPO 2027', '2–4 марта 2027'], 'world-edu-expo': ['WORLD EDU · SPRING 2027', '9–10 апреля 2027'], 'ecom-retail-expo': ['ECOM & RETAIL EXPO', '16–17 июня 2027'] },
-    tr: { 'foodera-expo': ['FOODERA EXPO 2026', '20–22 Ekim 2026'], 'buildpro-expo': ['BUILD PRO EXPO 2026', '9–11 Kasım 2026'], 'agropro-expo': ['AGROPRO EXPO 2027', '2–4 Mart 2027'], 'world-edu-expo': ['WORLD EDU · SPRING 2027', '9–10 Nisan 2027'], 'ecom-retail-expo': ['ECOM & RETAIL EXPO', '16–17 Haziran 2027'] },
-    zh: { 'foodera-expo': ['FOODERA EXPO 2026', '2026年10月20–22日'], 'buildpro-expo': ['BUILD PRO EXPO 2026', '2026年11月9–11日'], 'agropro-expo': ['AGROPRO EXPO 2027', '2027年3月2–4日'], 'world-edu-expo': ['WORLD EDU · SPRING 2027', '2027年4月9–10日'], 'ecom-retail-expo': ['ECOM & RETAIL EXPO', '2027年6月16–17日'] },
+    uz: { 'foodera-expo': ['FOODERA EXPO 2026', '27–29 oktabr 2026'], 'buildpro-expo': ['BUILD PRO EXPO 2026', '9–11 noyabr 2026'], 'agropro-expo': ['AGROPRO EXPO 2027', '2–4 mart 2027'], 'world-edu-expo': ['WORLD EDU · SPRING 2027', '9–10 aprel 2027'], 'ecom-retail-expo': ['ECOM & RETAIL EXPO', '16–17 iyun 2027'] },
+    en: { 'foodera-expo': ['FOODERA EXPO 2026', '27–29 October 2026'], 'buildpro-expo': ['BUILD PRO EXPO 2026', '9–11 November 2026'], 'agropro-expo': ['AGROPRO EXPO 2027', '2–4 March 2027'], 'world-edu-expo': ['WORLD EDU · SPRING 2027', '9–10 April 2027'], 'ecom-retail-expo': ['ECOM & RETAIL EXPO', '16–17 June 2027'] },
+    ru: { 'foodera-expo': ['FOODERA EXPO 2026', '27–29 октября 2026'], 'buildpro-expo': ['BUILD PRO EXPO 2026', '9–11 ноября 2026'], 'agropro-expo': ['AGROPRO EXPO 2027', '2–4 марта 2027'], 'world-edu-expo': ['WORLD EDU · SPRING 2027', '9–10 апреля 2027'], 'ecom-retail-expo': ['ECOM & RETAIL EXPO', '16–17 июня 2027'] },
+    tr: { 'foodera-expo': ['FOODERA EXPO 2026', '27–29 Ekim 2026'], 'buildpro-expo': ['BUILD PRO EXPO 2026', '9–11 Kasım 2026'], 'agropro-expo': ['AGROPRO EXPO 2027', '2–4 Mart 2027'], 'world-edu-expo': ['WORLD EDU · SPRING 2027', '9–10 Nisan 2027'], 'ecom-retail-expo': ['ECOM & RETAIL EXPO', '16–17 Haziran 2027'] },
+    zh: { 'foodera-expo': ['FOODERA EXPO 2026', '2026年10月27–29日'], 'buildpro-expo': ['BUILD PRO EXPO 2026', '2026年11月9–11日'], 'agropro-expo': ['AGROPRO EXPO 2027', '2027年3月2–4日'], 'world-edu-expo': ['WORLD EDU · SPRING 2027', '2027年4月9–10日'], 'ecom-retail-expo': ['ECOM & RETAIL EXPO', '2027年6月16–17日'] },
   };
 
   const publicLocales = { uz: 'uz-UZ', en: 'en-US', ru: 'ru-RU', tr: 'tr-TR', zh: 'zh-CN' };

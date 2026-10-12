@@ -41,6 +41,12 @@ export type HostBrand = {
   /** 'star' = the organiser's eight-pointed badge (FOODERA); null = wordmark only until their logo file arrives */
   mark: "star" | null;
   contrast: string;
+  /** the show's signature colour, taken from its logo: the stripe and tags that tell the shows
+     apart on the centre's own pages (calendar, home rail, cards). Graphic only, never text */
+  color: string;
+  /** the logo's colours as one band (CSS gradient): the 6px stripe on the hero, the show's
+     sub-navigation and the footer, so FOODERA reads blue/gold, AGROPRO green/yellow/red */
+  stripe: string;
   palette: BrandPalette;
 };
 
@@ -51,6 +57,11 @@ export const brands: Record<string, HostBrand> = hosts;
 export function brandForEvent(slug?: string | null): HostBrand | null {
   if (!slug) return null;
   return hosts[slug] ?? null;
+}
+
+/** a show's signature colour (falls back for an event without a brand entry) */
+export function showColor(slug: string | null | undefined, fallback = "var(--ink-40)"): string {
+  return (slug && hosts[slug]?.color) || fallback;
 }
 
 /** the single override block for a branded host; '' for the centre */
@@ -64,6 +75,7 @@ export function brandCss(brand: HostBrand | null): string {
     `--line:${p.line};--line-strong:${p.lineStrong};`,
     `--cream:${p.cream};--cream-2:${p.cream2};`,
     `--gold:${p.gold};--gold-soft:${p.goldSoft};--ornament:${p.ornament};--brand-mark:${p.mark};`,
+    `--brand-stripe:${brand.stripe};`,
     "}",
   ].join("");
 }

@@ -13,7 +13,7 @@
  * Nothing in the markup has to know which photograph is behind a name: swapping a source
  * here re-skins the whole site. Run with `npm run photos`.
  */
-import { mkdirSync, existsSync, statSync, writeFileSync } from 'node:fs';
+import { mkdirSync, existsSync, statSync, writeFileSync, unlinkSync } from 'node:fs';
 import { readdir } from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';
@@ -27,41 +27,41 @@ const MAP = {
   /* ── the hall, the building, the floor ───────────────────────────── */
   'hero-hall': ['Expo2024_7-1.jpg', 'centre'],
   'hall-crowd': ['1-3-768x432.jpg', 'centre'],
-  'hall-stand': ['15.webp', 'centre'],
-  'hall-walk': ['7-768x432.jpg', 'centre'],
+  'hall-stand': ['sofexpo-uz/stand-glass.jpg', 'centre'],
+  'hall-walk': ['sofexpo-uz/hall-panorama.jpg', 'centre'],
   'hall-empty': ['20220624_144816-scaled-1-1536x865.jpg', 'centre'],
   'hall-windows': ['20220624_144839-scaled-1-1536x865.jpg', 'centre'],
   'venue-exterior': ['IMG_20220514_220651-1-scaled-1-1536x755.jpg', 'centre'],
   /* 2026-10-04 (docs/15 §10): every name below now shows what it says — several pointed at
      stock frames or at another show's stand */
-  'venue-facade': ['IMG_20220514_220651-1-scaled-1-1536x755.jpg', 'centre'],
-  'venue-conference': ['1-2-1536x864.jpg', 'centre'],
-  'conference-audience': ['1-2-1536x864.jpg', 'centre'],
+  'venue-facade': ['sofexpo-uz/exterior-1.jpg', 'centre'],
+  'venue-conference': ['sofexpo-uz/speaker.jpg', 'centre'],
+  'conference-audience': ['sofexpo-uz/speaker.jpg', 'centre'],
   'outdoor-area': ['6-768x432.jpg', 'centre'],
 
   /* ── the shows ───────────────────────────────────────────────────── */
   'event-foodera': ['9-768x432.jpg', 'centre'],
-  'event-agropro': ['3-3-768x432.jpg', 'centre'],
-  'event-buildpro': ['16.webp', 'centre'],
-  'event-ecom': ['10.webp', 'centre'],
-  'event-promotors': ['2-2-1536x864.jpg', 'centre'],
-  'event-worldedu': ['1-2-1536x864.jpg', 'centre'],
+  'event-agropro': ['sofexpo-uz/agro-machines.jpg', 'centre'],
+  'event-buildpro': ['sofexpo-uz/stand-berat.jpg', 'centre'],
+  'event-ecom': ['sofexpo-uz/stand-russia.jpg', 'centre'],
+  'event-promotors': ['sofexpo-uz/transfer.jpg', 'centre'],
+  'event-worldedu': ['sofexpo-uz/edu-crowd.jpg', 'centre'],
 
   /* ── people, product, service ────────────────────────────────────── */
   'food-tasting': ['9-768x432.jpg', 'centre'],
   'food-tasting-counter': ['8-768x432.jpg', 'centre'],
-  'supermarket-aisle': ['8-768x432.jpg', 'centre'],
+  'supermarket-aisle': ['sofexpo-uz/stand-lights.jpg', 'centre'],
   'greenhouse-tomatoes': ['agro-expo-uzbekistan-3-768x512.webp', 'centre'],
-  'students-campus': ['3-1-768x512.webp', 'centre'],
-  'office-people': ['12-1536x864.jpg', 'centre'],
-  'officials-tour': ['agro-expo-uzbekistan-768x512.webp', 'centre'],
+  'students-campus': ['sofexpo-uz/hall-crowd-world-edu.jpg', 'centre'],
+  'office-people': ['sofexpo-uz/meeting-room-2.jpg', 'centre'],
+  'officials-tour': ['sofexpo-uz/opening-officials.jpg', 'centre'],
   'stand-equipment': ['2-3-768x432.jpg', 'centre'],
-  'stand-agro': ['agro-expo-samarkand-768x512.webp', 'centre'],
+  'stand-agro': ['sofexpo-uz/stand-talk.jpg', 'centre'],
   'stand-modern': ['12.webp', 'centre'],
   'stand-green': ['13.webp', 'centre'],
-  'buyers-talk': ['4-4-768x432.jpg', 'centre'],
-  'visitors-flowers': ['agro-expo-uzbekistan-2-768x512.webp', 'centre'],
-  'machinery-outdoor': ['1-1-768x512.webp', 'centre'],
+  'buyers-talk': ['sofexpo-uz/b2b-talk.jpg', 'centre'],
+  'visitors-flowers': ['sofexpo-uz/visitors-flowers.jpg', 'centre'],
+  'machinery-outdoor': ['sofexpo-uz/tractors.jpg', 'centre'],
 
   /* ── the paperwork layer (badges, plans, contracts) ──────────────── */
   'badge-lanyard': ['3-2-1536x864.jpg', 'centre'],
@@ -70,13 +70,13 @@ const MAP = {
   'hall-plan': ['222.png', 'centre'],
 
   /* ── more of the floor: the client sent far more than six usable frames ── */
-  'stand-agro-chem': ['2-1-768x512.webp', 'centre'],
-  'opening-ceremony': ['3-1-768x512.webp', 'centre'],
+  'stand-agro-chem': ['sofexpo-uz/visitors-7.jpg', 'centre'],
+  'opening-ceremony': ['sofexpo-uz/opening.jpg', 'centre'],
   'stand-fertilizer': ['agro-expo-2-768x512.webp', 'centre'],
-  'stand-industrial': ['agro-expo-samarkand-2-768x512.webp', 'centre'],
-  'conference-room': ['1-qu1l7uif3w9j7ew408ye9jrl52s6o6fzabnn8rr8hk.jpg', 'centre'],
-  'hall-aisle-red': ['4-1-qu1l7uif3w9j7ew408ye9jrl52s6o6fzabnn8rr8hk.jpg', 'centre'],
-  'cafe-interior': ['4-qu1l7uif3w9j7ew408ye9jrl52s6o6fzabnn8rr8hk.jpg', 'centre'],
+  'stand-industrial': ['sofexpo-uz/stand-equip.jpg', 'centre'],
+  'conference-room': ['sofexpo-uz/conf-room.jpg', 'centre'],
+  'hall-aisle-red': ['sofexpo-uz/hall-overview-top.jpg', 'centre'],
+  'cafe-interior': ['sofexpo-uz/cafe-restaurant.jpg', 'centre'],
   'venue-aerial': ['5-qu1l7uif3w9j7ew408ye9jrl52s6o6fzabnn8rr8hk.jpg', 'centre'],
 
   /* ── plans and identity ─────────────────────────────────────────── */
@@ -85,10 +85,34 @@ const MAP = {
   'expo-banner': ['Banners-1-2048x1287.png', 'centre'],
 
   /* ── travel & stay ───────────────────────────────────────────────── */
-  'hotel-room': ['1-1-1536x864.jpg', 'centre'],
-  'hotel-facade': ['2-1-1536x864.jpg', 'centre'],
-  'car-road': ['2-2-1536x864.jpg', 'centre'],
+  'hotel-room': ['sofexpo-uz/hall-empty-3.jpg', 'centre'],
+  'hotel-facade': ['sofexpo-uz/hotel.jpg', 'centre'],
+  'car-road': ['sofexpo-uz/transfer.jpg', 'centre'],
+
+  /* ── 2026-10-12: full-size frames from sofexpo.uz (images/sofexpo-uz/). The names above
+     that used to sit on 768px CMS thumbnails now point at the same shots at 1536–1800px,
+     and the names below give each page its own frame instead of the same three photos ── */
+  'hall-aerial': ['sofexpo-uz/hall-aerial.jpg', 'centre'],
+  'hall-aerial-2': ['sofexpo-uz/hall-aerial2.jpg', 'centre'],
+  'hall-wide': ['sofexpo-uz/hall-wide-1.jpg', 'centre'],
+  'hall-busy': ['sofexpo-uz/hall-wide-6.jpg', 'centre'],
+  'stand-two-level': ['sofexpo-uz/stand-2level.jpg', 'centre'],
+  'stand-falcon': ['sofexpo-uz/stand-blue-tall.jpg', 'centre'],
+  'stand-nrg': ['sofexpo-uz/stand-nrg.jpg', 'centre'],
+  'stand-lights': ['sofexpo-uz/stand-lights.jpg', 'centre'],
+  'stand-basalt': ['sofexpo-uz/stand-basalt.jpg', 'centre'],
+  'stand-agro-hall': ['sofexpo-uz/stand-agro-2.jpg', 'centre'],
+  'stand-house-model': ['sofexpo-uz/stand-house.jpg', 'centre'],
+  'stand-building-models': ['sofexpo-uz/stand-building-models.jpg', 'centre'],
+  'stand-shell': ['sofexpo-uz/shell-stand-3.jpg', 'centre'],
+  'conference-stage': ['sofexpo-uz/conf-stage.jpg', 'centre'],
+  'conference-rows': ['sofexpo-uz/conf-rows.jpg', 'centre'],
+  'meeting-room': ['sofexpo-uz/meeting-room.jpg', 'centre'],
 };
+
+/* `node scripts/build-photos.mjs <name> …` rebuilds only those names (and the manifests),
+   so swapping one source does not re-encode the whole library */
+const ONLY = new Set(process.argv.slice(2));
 
 /** names that must keep the source aspect (plans/diagrams must not be cropped) */
 const NO_CROP = new Set(['floor-plan', 'hall-plan', 'site-plan', 'site-section', 'expo-banner']);
@@ -142,6 +166,8 @@ const tone = (p, name) =>
 const hdOf = (file) => path.join(SRC, 'hd', file.replace(/\.[a-z]+$/i, '.jpg'));
 
 async function one(name, [file]) {
+  /* a new source can have fewer rungs than the old one: drop the old ladder first */
+  for (const f of await readdir(OUT)) if (new RegExp(`^${name}-\\d+\\.webp$`).test(f)) unlinkSync(path.join(OUT, f));
   const hd = hdOf(file);
   const src = existsSync(hd) ? hd : path.join(SRC, file);
   if (!existsSync(src)) {
@@ -214,6 +240,7 @@ mkdirSync(OUT, { recursive: true });
 const before = (await readdir(OUT)).length;
 let total = 0;
 for (const [name, def] of Object.entries(MAP)) {
+  if (ONLY.size && !ONLY.has(name)) continue;
   total += await one(name, def);
   process.stdout.write(`· ${name}\n`);
 }
@@ -227,7 +254,7 @@ console.log(
 const built = new Set(Object.keys(MAP));
 for (const f of await readdir(OUT)) {
   const mm = /^([a-z0-9-]+)\.jpg$/.exec(f);
-  if (!mm || built.has(mm[1])) continue;
+  if (!mm || built.has(mm[1]) || ONLY.size) continue;
   const name = mm[1];
   const src = path.join(OUT, f);
   const meta = await sharp(src).metadata();
@@ -254,7 +281,7 @@ for (const f of await readdir(OUT)) {
 mkdirSync(`${OUT}/team`, { recursive: true });
 {
   const teamSrc = 'images/team';
-  const teamFiles = existsSync(teamSrc) ? (await readdir(teamSrc)).filter((f) => /^team-[\w-]+\.jpg$/i.test(f)).sort() : [];
+  const teamFiles = !ONLY.size && existsSync(teamSrc) ? (await readdir(teamSrc)).filter((f) => /^team-[\w-]+\.jpg$/i.test(f)).sort() : [];
   let t = 0;
   for (const f of teamFiles) {
     const src = path.join(teamSrc, f);
@@ -283,7 +310,7 @@ mkdirSync(`${OUT}/team`, { recursive: true });
  * not photographs to be cropped: each one is a designed card with type on it, so the ladder
  * keeps the full frame at 4:5 and only ever scales down.
  */
-const SPEAKERS = [
+const SPEAKERS = ONLY.size ? [] : [
   ...(await readdir(SRC)).filter((f) => /^1-1-\d+\.png$/.test(f)),
   ...['2.jpg', '4.jpg', '5.jpg', '7.jpg', '9.jpg', '10.jpg', '11.jpg', '12.jpg', '13.jpg', '14.jpg', '15.jpg', '16.jpg', '17.jpg', '18.jpg', '19.jpg'],
 ].sort();

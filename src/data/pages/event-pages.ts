@@ -31,12 +31,12 @@ export const eventPages: Record<string, EventPages> = {
             title:
               "FOODERA EXPO 2026 — выставка продуктов и напитков, Самарканд",
             description:
-              "Выставка продуктов питания и напитков в Самарканде, 20–22 октября 2026: 12 разделов, дегустации, закупочная биржа с сетями, форум Food Retail. Бронирование стендов.",
+              "Выставка продуктов питания и напитков в Самарканде, 27–29 октября 2026: 12 разделов, дегустации, закупочная биржа с сетями, форум Food Retail. Бронирование стендов.",
           },
           en: {
             title: "FOODERA EXPO 2026 — food and drink exhibition, Samarkand",
             description:
-              "Food and beverage exhibition in Samarkand, 20–22 October 2026: 12 sections, tastings, a buying marketplace with retail chains, Food Retail forum. Stand booking open.",
+              "Food and beverage exhibition in Samarkand, 27–29 October 2026: 12 sections, tastings, a buying marketplace with retail chains, Food Retail forum. Stand booking open.",
           },
         },
         hero: {
@@ -110,7 +110,7 @@ export const eventPages: Record<string, EventPages> = {
                 "FOODERA проходит в Самарканде не случайно: город — логистический узел юга Узбекистана, где сходятся потоки из Ташкента, Бухары, Карши и пограничных регионов. Для поставщика это способ за три дня покрыть переговоры, которые иначе растягиваются на сезон объезда.",
                 "Рынок одновременно и щедрый, и придирчивый: розница Узбекистана выросла до 182 трлн сумов за 2024 год, но полка ограничена. Побеждает тот, кто приехал с образцом, ценой и готовностью к первой поставке.",
               ],
-              image: "/images/food-tasting.jpg",
+              image: "/images/food-tasting-counter.jpg",
               imageAlt: "Дегустации на FOODERA EXPO",
             },
             {
@@ -160,7 +160,7 @@ export const eventPages: Record<string, EventPages> = {
                 "FOODERA is held in Samarkand for a reason: the city is a logistics node of southern Uzbekistan where flows from Tashkent, Bukhara, Karshi and the border regions meet. For a supplier it is three days that replace a season of field trips.",
                 "The market is generous and demanding at once: Uzbekistan retail reached UZS 182 trillion in 2024, but shelf space is finite. The one who arrives with a sample, a price and a first delivery date wins.",
               ],
-              image: "/images/food-tasting.jpg",
+              image: "/images/food-tasting-counter.jpg",
               imageAlt: "Tastings at FOODERA EXPO",
             },
             {
@@ -176,7 +176,7 @@ export const eventPages: Record<string, EventPages> = {
       },
       exhibitors: {
         path: "/events/foodera-expo/exhibitors/",
-        image: "/images/hero-hall.jpg",
+        image: "/images/hall-aerial.jpg",
         meta: {
           ru: {
             title:
@@ -260,7 +260,7 @@ export const eventPages: Record<string, EventPages> = {
                 "Для сетевых поставщиков мы отдельно ведём лист ожидания на биржу контактов: если ваш продукт попадает в дефицитную категорию (fresh, private label, халяль-сертификация), встреч будет больше, чем мест в расписании.",
                 "Иностранным участникам помогаем с письмом для таможни на выставочные образцы и с переводом этикеток на узбекский — это требование маркировки, а не наша прихоть.",
               ],
-              image: "/images/hall-stand.jpg",
+              image: "/images/stand-shell.jpg",
               imageAlt: "Стенды FOODERA EXPO в монтаже",
             },
             {
@@ -333,7 +333,7 @@ export const eventPages: Record<string, EventPages> = {
                 "For chain-facing suppliers we keep a separate waiting list for the buying marketplace: if your product sits in a short category (fresh, private label, halal certification), there will be more meetings than slots.",
                 "Foreign participants get help with the customs letter for exhibition samples and with label translation into Uzbek — that is a marking requirement, not our preference.",
               ],
-              image: "/images/hall-stand.jpg",
+              image: "/images/stand-shell.jpg",
               imageAlt: "FOODERA EXPO stands under construction",
             },
             {
@@ -395,7 +395,7 @@ export const eventPages: Record<string, EventPages> = {
                   icon: "cart",
                   title: "Закупщикам сетей",
                   text: "Отдел закупок получает каталог участников за неделю до выставки и отмечает, к кому идти.",
-                  image: "/images/food-tasting.jpg",
+                  image: "/images/buyers-talk.jpg",
                   imageAlt: "Закупочная сессия на FOODERA EXPO",
                 },
                 {
@@ -409,7 +409,7 @@ export const eventPages: Record<string, EventPages> = {
                   icon: "shop",
                   title: "Оптовикам и рынкам",
                   text: "Цены на сезон, условия отсрочки, упаковка под трейд-ин — всё обсуждается на месте.",
-                  image: "/images/hall-crowd.jpg",
+                  image: "/images/hall-busy.jpg",
                   imageAlt: "Поток посетителей в зале",
                 },
               ],
@@ -452,7 +452,7 @@ export const eventPages: Record<string, EventPages> = {
                   icon: "cart",
                   title: "Chain buyers",
                   text: "Purchasing gets the exhibitor catalogue a week ahead and marks who to visit.",
-                  image: "/images/food-tasting.jpg",
+                  image: "/images/buyers-talk.jpg",
                   imageAlt: "Buying session at FOODERA EXPO",
                 },
                 {
@@ -466,7 +466,7 @@ export const eventPages: Record<string, EventPages> = {
                   icon: "shop",
                   title: "Wholesale and markets",
                   text: "Season pricing, deferral terms, packaging for trade-in — all discussed on site.",
-                  image: "/images/hall-crowd.jpg",
+                  image: "/images/hall-busy.jpg",
                   imageAlt: "Visitor flow in the hall",
                 },
               ],
@@ -574,7 +574,7 @@ export const eventPages: Record<string, EventPages> = {
               kicker: "Как попасть",
               title: "Места в зале резервируются при регистрации",
               text: "Напишите в комментарии к заявке, какие сессии хотите посетить, — поставим вас в список. На биржу контактов отбор идёт по профилю закупки.",
-              image: "/images/conference-audience.jpg",
+              image: "/images/conference-rows.jpg",
               imageAlt: "Сессия деловой программы FOODERA EXPO",
               tone: "sand",
               action: {
@@ -617,7 +617,7 @@ export const eventPages: Record<string, EventPages> = {
               kicker: "How to attend",
               title: "Hall seats are reserved at registration",
               text: "Write in the comment which sessions you want and we add you to the list. The marketplace screens by buying profile.",
-              image: "/images/conference-audience.jpg",
+              image: "/images/conference-rows.jpg",
               imageAlt: "FOODERA EXPO business programme session",
               tone: "sand",
               action: { label: "Register", href: "/visitors/tickets/" },
@@ -876,7 +876,7 @@ eventPages["buildpro-expo"] = {
             "BUILD PRO вырос из региональной строительной выставки в площадку, куда приезжают за поставщиками из Турции и Китая: на площадке работают переводчики, а деловая программа ведётся на четырёх языках.",
             "Отдельная часть — форум архитекторов и дизайнеров: сессии о материалах, световых решениях и частном домостроении. Для поставщика это шанс попасть в спецификации объектов, которые строятся в 2027 году.",
           ],
-          image: "/images/hall-stand.jpg",
+          image: "/images/hall-wide.jpg",
           imageAlt: "Выставочный зал BUILD PRO EXPO",
         },
         {
@@ -942,7 +942,7 @@ eventPages["buildpro-expo"] = {
             "BUILD PRO grew from a regional construction show into a venue where suppliers from Turkey and China look for partners. Interpreters work on site and the business programme runs in four languages.",
             "A separate track is the architects and designers forum: sessions on materials, lighting and private housing. For a supplier this is a way into the specifications of objects built in 2027.",
           ],
-          image: "/images/hall-stand.jpg",
+          image: "/images/hall-wide.jpg",
           imageAlt: "BUILD PRO EXPO exhibition hall",
         },
         {
@@ -979,7 +979,7 @@ eventPages["buildpro-expo"] = {
   },
   exhibitors: {
     path: "/events/buildpro-expo/exhibitors/",
-    image: "/images/hero-hall.jpg",
+    image: "/images/stand-nrg.jpg",
     meta: {
       ru: {
         title: "Экспонентам BUILD PRO 2026: застройка, техника, перевод",
@@ -1039,7 +1039,7 @@ eventPages["buildpro-expo"] = {
             "Цены на метраж и застройку едины для всех участников выставки и публикуются в разделе пакетов. Фиксация стоимости происходит по дате подачи заявки: ранние заявки получают ставку текущего сезона.",
             "Для участников из Турции и Китая мы берём на себя коммуникацию с русско- и узбекоязычными закупщиками: перевод сессий, карточка участника на трёх языках, сопровождение на бирже контактов.",
           ],
-          image: "/images/hall-stand.jpg",
+          image: "/images/stand-basalt.jpg",
           imageAlt: "Стенды BUILD PRO EXPO в зале",
         },
         {
@@ -1101,7 +1101,7 @@ eventPages["buildpro-expo"] = {
             "Rates for space and build are identical for all participants and published in the packages section. The price is fixed by the date of your application: early entries get the current-season rate.",
             "For exhibitors from Turkey and China we handle communication with Russian- and Uzbek-speaking buyers: session interpreting, a trilingual exhibitor card, support at the contact exchange.",
           ],
-          image: "/images/hall-stand.jpg",
+          image: "/images/stand-basalt.jpg",
           imageAlt: "BUILD PRO EXPO stands in the hall",
         },
         {
@@ -1169,21 +1169,21 @@ eventPages["buildpro-expo"] = {
               icon: "search",
               title: "Программа под задачу",
               text: "Отметьте при регистрации, что ищете: материал, оборудование, проект, подрядчик — маршрут придёт письмом.",
-              image: "/images/hall-walk.jpg",
+              image: "/images/hall-wide.jpg",
               imageAlt: "Маршрут по залу BUILD PRO EXPO",
             },
             {
               icon: "hammer",
               title: "Демо-площадка",
               text: "Монтаж фасадов, кровли, световых решений по расписанию. Доступ по бейджу посетителя.",
-              image: "/images/hall-stand.jpg",
+              image: "/images/stand-building-models.jpg",
               imageAlt: "Демо-стенды в главном зале",
             },
             {
               icon: "users",
               title: "Форум архитекторов",
               text: "Сессии о спецификациях и новых материалах — полезны и проектировщикам, и застройщикам.",
-              image: "/images/conference-audience.jpg",
+              image: "/images/conference-stage.jpg",
               imageAlt: "Сессия форума архитекторов",
             },
           ],
@@ -1226,21 +1226,21 @@ eventPages["buildpro-expo"] = {
               icon: "search",
               title: "A route per task",
               text: "Tell us at registration what you look for: material, equipment, design, contractor — the route arrives by email.",
-              image: "/images/hall-walk.jpg",
+              image: "/images/hall-wide.jpg",
               imageAlt: "Route through the BUILD PRO EXPO hall",
             },
             {
               icon: "hammer",
               title: "Demo area",
               text: "Facade, roof and lighting installations on schedule. Access with a visitor badge.",
-              image: "/images/hall-stand.jpg",
+              image: "/images/stand-building-models.jpg",
               imageAlt: "Demo stands in the main hall",
             },
             {
               icon: "users",
               title: "Architects forum",
               text: "Sessions on specifications and new materials — useful for designers and for private builders.",
-              image: "/images/conference-audience.jpg",
+              image: "/images/conference-stage.jpg",
               imageAlt: "Architects forum session",
             },
           ],
@@ -1553,7 +1553,7 @@ eventPages["agropro-expo"] = {
   },
   exhibitors: {
     path: "/events/agropro-expo/exhibitors/",
-    image: "/images/venue-exterior.jpg",
+    image: "/images/stand-agro-hall.jpg",
     meta: {
       ru: {
         title: "AGROPRO 2027: метраж, уличная площадка, электричество 380 В",
@@ -2554,7 +2554,7 @@ eventPages["world-edu-expo"] = {
             "Мы публикуем каталог участников на сайте выставки и в онлайновом каталоге: карточка вуза с программами, стоимостью и контактами приёмной комиссии. Заявки на каталог закрываются за три недели до открытия.",
             "Для иностранных вузов помогаем с визовой поддержкой, переводом презентаций и размещением делегации.",
           ],
-          image: "/images/hall-stand.jpg",
+          image: "/images/students-campus.jpg",
           imageAlt: "Стенды вузов на WORLD EDU EXPO",
         },
         {
@@ -2606,7 +2606,7 @@ eventPages["world-edu-expo"] = {
             "We publish the exhibitor catalogue on the show page and in the online catalogue: a university card with programs, tuition and admissions contacts. Catalogue entries close three weeks before opening.",
             "Foreign universities get help with visa support, translation of presentations and delegation accommodation.",
           ],
-          image: "/images/hall-stand.jpg",
+          image: "/images/students-campus.jpg",
           imageAlt: "University stands at WORLD EDU EXPO",
         },
         {
@@ -3212,14 +3212,14 @@ eventPages["ecom-retail-expo"] = {
               icon: "package",
               title: "Производителю",
               text: "Ищете канал — приходите на биржу и на трек про опт под маркетплейсы.",
-              image: "/images/hall-stand.jpg",
+              image: "/images/stand-lights.jpg",
               imageAlt: "Стенд производителя на E-COM & RETAIL EXPO",
             },
             {
               icon: "phone",
               title: "Банкам и финтеху",
               text: "Сессия о платежах, рассрочках и скоринге для оптовых закупок.",
-              image: "/images/conference-audience.jpg",
+              image: "/images/conference-stage.jpg",
               imageAlt: "Сессия о платежах для торговли",
             },
           ],
@@ -3252,14 +3252,14 @@ eventPages["ecom-retail-expo"] = {
               icon: "package",
               title: "Manufacturers",
               text: "Looking for a channel — go to the contact exchange and the wholesale-for-marketplaces track.",
-              image: "/images/hall-stand.jpg",
+              image: "/images/stand-lights.jpg",
               imageAlt: "Producer stand at E-COM & RETAIL EXPO",
             },
             {
               icon: "phone",
               title: "Banks and fintech",
               text: "A session on payments, instalments and scoring for wholesale purchases.",
-              image: "/images/conference-audience.jpg",
+              image: "/images/conference-stage.jpg",
               imageAlt: "Payments for retail session",
             },
           ],
@@ -3344,7 +3344,7 @@ eventPages["ecom-retail-expo"] = {
           tone: "sand",
           title: "Биржа контактов",
           text: "Заявку на встречу оставляют обе стороны: селлер ищет поставщика, поставщик — клиента. Расписание составляется до открытия выставки.",
-          image: "/images/conference-audience.jpg",
+          image: "/images/buyers-talk.jpg",
           imageAlt: "Биржа контактов E-COM & RETAIL EXPO",
         },
       ],
@@ -3385,7 +3385,7 @@ eventPages["ecom-retail-expo"] = {
           tone: "sand",
           title: "Contact exchange",
           text: "Both sides file a request: a seller looks for supply, a supplier looks for clients. The schedule is built before the doors open.",
-          image: "/images/conference-audience.jpg",
+          image: "/images/buyers-talk.jpg",
           imageAlt: "E-COM & RETAIL EXPO contact exchange",
         },
       ],

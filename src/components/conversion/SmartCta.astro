@@ -6,6 +6,7 @@
  */
 import type { SourceLocale as Locale } from '@/i18n/config';
 import { conversionConfig } from '@/data/conversion';
+import Icon from '@/components/Icon.astro';
 
 interface Props {
   locale: Locale;
@@ -140,17 +141,14 @@ const finalSecondaryHref = secondaryHref || d.href2;
 
 {variant === 'card' && (
   <div class="smart-cta smart-cta--card" data-intent={intent}>
-    <div class="smart-cta__icon">
-      {intent === 'exhibitor' && '📐'}
-      {intent === 'visitor' && '🎟️'}
-      {intent === 'organizer' && '🏢'}
-      {intent === 'sponsor' && '⭐'}
-      {(intent === 'contact' || intent === 'callback') && '💬'}
-      {intent === 'catalog' && '📄'}
-      {intent === 'group' && '👥'}
+    {/* line icons from the site set instead of emoji, which rendered differently per OS */}
+    <div class="smart-cta__icon" aria-hidden="true">
+      <Icon name={({ exhibitor: 'grid', visitor: 'ticket', organizer: 'building', sponsor: 'star', contact: 'phone', callback: 'phone', catalog: 'doc', group: 'users' } as Record<string, string>)[intent] ?? 'arrow'} size={22} />
     </div>
-    <h4>{finalTitle}</h4>
-    <p data-nosnippet>{finalText}</p>
+    <div class="smart-cta__body">
+      <h4>{finalTitle}</h4>
+      <p data-nosnippet>{finalText}</p>
+    </div>
     <a class="btn btn--sm" href={finalPrimaryHref} data-cta={`${intent}-card`}>{finalPrimary}</a>
   </div>
 )}
@@ -277,32 +275,46 @@ const finalSecondaryHref = secondaryHref || d.href2;
     text-decoration: underline;
   }
 
+  /* mobile-first: icon, copy and button stack; from 700px the card is one row — the
+     centred layout with a full-width button read as a stray block on wide pages */
   .smart-cta--card {
     background: var(--paper);
     border: 1px solid var(--line);
     border-radius: 12px;
-    padding: 18px;
+    padding: 18px 20px;
     display: grid;
-    gap: 8px;
-    text-align: center;
+    grid-template-columns: 48px minmax(0, 1fr);
+    align-items: center;
+    gap: 12px 16px;
+  }
+  .smart-cta--card .btn {
+    grid-column: 1 / -1;
+  }
+  @media (min-width: 700px) {
+    .smart-cta--card {
+      grid-template-columns: 48px minmax(0, 1fr) auto;
+      padding: 20px 24px;
+    }
+    .smart-cta--card .btn {
+      grid-column: auto;
+    }
   }
   .smart-cta--card .smart-cta__icon {
     width: 48px;
     height: 48px;
-    margin: 0 auto;
     border-radius: 12px;
     background: var(--cream-2);
+    color: var(--evergreen);
     display: grid;
     place-items: center;
-    font-size: 22px;
   }
   .smart-cta--card h4 {
-    margin: 0;
-    font-size: 15px;
+    margin: 0 0 2px;
+    font-size: 16px;
   }
   .smart-cta--card p {
     margin: 0;
-    font-size: 12px;
+    font-size: 13px;
     color: var(--ink-60);
     line-height: 1.45;
   }

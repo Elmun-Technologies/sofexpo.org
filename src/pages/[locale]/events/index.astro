@@ -1,6 +1,6 @@
 ---
 /**
- * The line-up as a table calendar (docs/08 §4.3): date block, industry colour line,
+ * The line-up as a table calendar (docs/08 §4.3): date block, the show's own colour line,
  * one row per show, industry filter without JS (CSS :has()), .ics export generated
  * at build time from events.ts. The old card grid (5+1 orphan cards) is gone —
  * a calendar is what top-3 CIS expo sites put on this page.
@@ -17,6 +17,7 @@ import Icon from '@/components/Icon.astro';
 import ShowLogo from '@/components/ShowLogo.astro';
 import CtaBand from '@/components/CtaBand.astro';
 import { bigDate, daysUntil, industryColor, industryLabel } from '@/lib/labels';
+import { showColor } from '@/data/brands';
 
 export function getStaticPaths() {
   return rootOnlyPaths();
@@ -26,8 +27,8 @@ const locale = Astro.params.locale as Locale;
 const ru = locale === 'ru';
 const L = (p: string) => localize(locale, p);
 const next = upcoming[0];
-/** future first, then the finished editions — the archive row keeps its report link */
-const rows = [...events].sort((a, b) => a.dates.start.localeCompare(b.dates.start));
+/** upcoming shows by date, then the finished editions — the archive row keeps its report link */
+const rows = [...events].sort((a, b) => Number(a.status === 'past') - Number(b.status === 'past') || a.dates.start.localeCompare(b.dates.start));
 /** filter chips: only industries that actually have a show */
 const filters = [...new Set(events.map((e) => e.industry))];
 
@@ -118,7 +119,7 @@ const copy = {
             const days = daysUntil(e.dates.start);
             const status = past ? copy.statusPast : e.status === 'open' ? copy.statusOpen : copy.statusReg;
             return (
-              <a class="cal__row" href={L(`/events/${e.slug}/`)} data-ind={e.industry} style={{ '--ic': industryColor(e.industry) } as Record<string, string>} aria-label={`${e.brand[locale]} — ${e.dates.display[locale]}`}>
+              <a class="cal__row" href={L(`/events/${e.slug}/`)} data-ind={e.industry} style={{ '--ic': showColor(e.slug, industryColor(e.industry)) } as Record<string, string>} aria-label={`${e.brand[locale]} — ${e.dates.display[locale]}`}>
                 <span class="cal__img" aria-hidden="true">
                   <img src={e.heroImage.replace(/\.jpg$/, '-640.webp')} alt="" aria-hidden="true" width="640" height="400" loading="lazy" decoding="async" />
                   <ShowLogo slug={e.slug} height={30} class="cal__logo" />

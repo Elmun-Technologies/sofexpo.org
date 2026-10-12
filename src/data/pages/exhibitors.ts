@@ -35,7 +35,7 @@ export const exhibitorPages: PageDef[] = [
             { label: "Получить прайс и план зала", href: "/request-stand/" },
             { label: "Пакеты участия", href: "/exhibitors/packages/" },
           ],
-          image: "/images/hall-stand.jpg",
+          image: "/images/hall-aerial.jpg",
           imageAlt: "Выставочный зал: стенды и поток посетителей",
         },
         {
@@ -295,7 +295,7 @@ export const exhibitorPages: PageDef[] = [
             { label: "Get rates and floor plan", href: "/request-stand/" },
             { label: "Participation packages", href: "/exhibitors/packages/" },
           ],
-          image: "/images/hall-stand.jpg",
+          image: "/images/hall-aerial.jpg",
           imageAlt: "Exhibition hall with stands and foot traffic",
         },
         {
@@ -1081,7 +1081,7 @@ export const exhibitorPages: PageDef[] = [
           kicker: "Строительство стендов · Самарканд",
           title: "Три уровня стенда и один вопрос: что вы показываете",
           lead: "Если продукт нужно взять в руки — хватает готовой застройки. Если продукт нужно включить — планируйте собственную застройку. Если продукт едет на фурах — вам на открытую площадку.",
-          image: "/images/hall-stand.jpg",
+          image: "/images/stand-shell.jpg",
           imageAlt: "Стенды в монтаже: каркас и брендирование",
         },
         {
@@ -1163,7 +1163,7 @@ export const exhibitorPages: PageDef[] = [
           kicker: "Stand construction · Samarkand",
           title: "Three stand levels and one question: what do you show",
           lead: "If the product is picked up, a shell scheme is enough. If it must be switched on, plan a custom build. If it arrives by truck, you belong on the open area.",
-          image: "/images/hall-stand.jpg",
+          image: "/images/stand-shell.jpg",
           imageAlt: "Stands under construction: shell and branding",
         },
         {
@@ -1268,7 +1268,7 @@ export const exhibitorPages: PageDef[] = [
           kicker: "Сервисы для экспонентов",
           title: "Соберите участие как конструктор — один бланк, один счёт",
           lead: "Все позиции подтверждаются до монтажа, поэтому в день заезда ничего «вдруг» не появляется. Ниже — то, что чаще всего заказывают.",
-          image: "/images/hall-crowd.jpg",
+          image: "/images/stand-equipment.jpg",
           imageAlt: "Сервис на площадке в день выставки",
         },
         {
@@ -1375,7 +1375,7 @@ export const exhibitorPages: PageDef[] = [
           title:
             "Assemble participation like a constructor — one form, one invoice",
           lead: 'Everything is confirmed before build-up, so nothing appears "suddenly" on arrival day. Below is what is ordered most often.',
-          image: "/images/hall-crowd.jpg",
+          image: "/images/stand-equipment.jpg",
           imageAlt: "On-site services on show day",
         },
         {
@@ -1496,7 +1496,7 @@ export const exhibitorPages: PageDef[] = [
           kicker: "Спонсорство выставок",
           title: "Контент, который видит вся аудитория, а не только ваш проход",
           lead: "Спонсорский пакет — самый быстрый способ занять место в сценарии выставки: доклады, приветствие, награды, материалы в сумке участника.",
-          image: "/images/hall-stand.jpg",
+          image: "/images/stand-falcon.jpg",
           imageAlt: "Зал с брендированными стендами",
         },
         {
@@ -1594,7 +1594,7 @@ export const exhibitorPages: PageDef[] = [
           kicker: "Exhibition sponsorship",
           title: "Content the whole audience sees, not only your aisle",
           lead: "A sponsorship package is the fastest way to enter the script of the exhibition: talks, welcome word, awards, material in the participant bag.",
-          image: "/images/hall-stand.jpg",
+          image: "/images/stand-falcon.jpg",
           imageAlt: "Hall with branded stands",
         },
         {
@@ -1926,7 +1926,7 @@ export const exhibitorPages: PageDef[] = [
           kicker: "Каталог участников выставок",
           title: "Кто выставляет и что искать",
           lead: "Каталог выходит в PDF перед каждой выставкой и обновляется на сайте после: с контактными данными, разделом и стендом участника. Для закупщиков — доступ открыт бесплатно.",
-          image: "/images/hall-crowd.jpg",
+          image: "/images/hall-aerial-2.jpg",
           imageAlt: "Выставочный зал в день работы",
         },
         {
@@ -2005,7 +2005,7 @@ export const exhibitorPages: PageDef[] = [
           kicker: "Exhibitor catalogue",
           title: "Who exhibits and what to look for",
           lead: "The catalogue is published in PDF before every show and updated on the site afterwards: contacts, section and stand number. Free access for buyers.",
-          image: "/images/hall-crowd.jpg",
+          image: "/images/hall-aerial-2.jpg",
           imageAlt: "Exhibition hall on a working day",
         },
         {

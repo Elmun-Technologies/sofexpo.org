@@ -69,9 +69,9 @@ const copy = {
     venueText: 'Электричество 700 кВт, климат-контроль, аудио, интернет и подъезд для фур уже в здании. Технические детали высылаем до подписания договора.',
     doorsTitle: 'Ваш следующий шаг начинается здесь',
     doors: [
-      { title: 'Экспонентам', text: 'Площадь, застройка, услуга «стенд под ключ», реклама на площадке и список закупщиков до старта выставки.', href: '/exhibitors/', meta: 'Пакеты и цены', image: '/images/hall-stand.jpg', imageAlt: 'Выставочный зал: стенды на монтаже' },
-      { title: 'Посетителям', text: 'Билеты и бесплатная регистрация, расписание докладов, маршрут, отели и что взять с собой.', href: '/visitors/', meta: 'Как посетить', image: '/images/hall-crowd.jpg', imageAlt: 'Посетители в зале в день выставки' },
-      { title: 'Организаторам событий', text: 'Аренда зала под свою выставку, конференцию или фестиваль — с техподдержкой и сервисом на площадке.', href: '/organizers/', meta: 'Забронировать площадку', image: '/images/conference-audience.jpg', imageAlt: 'Конференц-зал: деловая программа' },
+      { title: 'Экспонентам', text: 'Площадь, застройка, услуга «стенд под ключ», реклама на площадке и список закупщиков до старта выставки.', href: '/exhibitors/', meta: 'Пакеты и цены', image: '/images/stand-two-level.jpg', imageAlt: 'Выставочный зал: стенды на монтаже' },
+      { title: 'Посетителям', text: 'Билеты и бесплатная регистрация, расписание докладов, маршрут, отели и что взять с собой.', href: '/visitors/', meta: 'Как посетить', image: '/images/hall-busy.jpg', imageAlt: 'Посетители в зале в день выставки' },
+      { title: 'Организаторам событий', text: 'Аренда зала под свою выставку, конференцию или фестиваль — с техподдержкой и сервисом на площадке.', href: '/organizers/', meta: 'Забронировать площадку', image: '/images/conference-stage.jpg', imageAlt: 'Конференц-зал: деловая программа' },
     ],
     marketKicker: 'Почему Самарканд',
     marketTitle: 'Транзитный узел между шестью рынками',
@@ -116,9 +116,9 @@ const copy = {
     venueText: '700 kW power, climate control, audio, internet and truck access are already in the shell. Technical details go out before the contract is signed.',
     doorsTitle: 'Your next opportunity starts here',
     doors: [
-      { title: 'For exhibitors', text: 'Space, shell scheme, turnkey stands, on-site advertising and a buyer list before the doors open.', href: '/exhibitors/', meta: 'Packages and rates', image: '/images/hall-stand.jpg', imageAlt: 'Exhibition hall: stands during build-up' },
-      { title: 'For visitors', text: 'Tickets and free registration, talk schedule, route plan, hotels and what to bring.', href: '/visitors/', meta: 'How to attend', image: '/images/hall-crowd.jpg', imageAlt: 'Visitors in the hall on show day' },
-      { title: 'For event organizers', text: 'Hall rental for your own show, conference or festival, with technical and visitor services.', href: '/organizers/', meta: 'Book the venue', image: '/images/conference-audience.jpg', imageAlt: 'Conference hall: business programme' },
+      { title: 'For exhibitors', text: 'Space, shell scheme, turnkey stands, on-site advertising and a buyer list before the doors open.', href: '/exhibitors/', meta: 'Packages and rates', image: '/images/stand-two-level.jpg', imageAlt: 'Exhibition hall: stands during build-up' },
+      { title: 'For visitors', text: 'Tickets and free registration, talk schedule, route plan, hotels and what to bring.', href: '/visitors/', meta: 'How to attend', image: '/images/hall-busy.jpg', imageAlt: 'Visitors in the hall on show day' },
+      { title: 'For event organizers', text: 'Hall rental for your own show, conference or festival, with technical and visitor services.', href: '/organizers/', meta: 'Book the venue', image: '/images/conference-stage.jpg', imageAlt: 'Conference hall: business programme' },
     ],
     marketKicker: 'Why Samarkand',
     marketTitle: 'A transit node between six markets',
@@ -257,7 +257,7 @@ const jsonLd = [
         </div>
         <Photo
           class="venue-strip__img"
-          src="/images/venue-exterior.jpg"
+          src="/images/venue-facade.jpg"
           alt={ru ? 'Экстерьер выставочного центра SOF EXPO Samarkand' : 'Exterior of SOF EXPO Samarkand exhibition centre'}
           ratio="4/3"
           sizes="(max-width: 1080px) 100vw, 320px"
@@ -287,12 +287,14 @@ const jsonLd = [
         <a class="btn btn--ghost" href={P('/venue/')}>{copy.galleryCta}</a>
       </div>
       <div class="gallery">
-        <Photo src="/images/hall-crowd.jpg" alt={ru ? 'Посетители в главном зале в день открытия' : 'Visitors in the main hall on opening day'} zoom sizes="(max-width: 780px) 100vw, 50vw" />
+        <Photo src="/images/hall-aerial.jpg" alt={ru ? 'Посетители в главном зале в день открытия' : 'Visitors in the main hall on opening day'} zoom sizes="(max-width: 780px) 100vw, 50vw" />
         <Photo src="/images/stand-equipment.jpg" alt={ru ? 'Стенд с оборудованием на выставке' : 'Equipment stand at the show'} zoom sizes="(max-width: 780px) 50vw, 25vw" />
         <Photo src="/images/hall-empty.jpg" alt={ru ? 'Зал 4 400 м² до монтажа' : 'The 4,400 m² hall before build-up'} zoom sizes="(max-width: 780px) 50vw, 25vw" />
         <Photo src="/images/officials-tour.jpg" alt={ru ? 'Делегация на обходе экспозиции' : 'A delegation touring the exhibition'} zoom sizes="(max-width: 780px) 50vw, 25vw" />
         <Photo src="/images/stand-green.jpg" alt={ru ? 'Застройка стенда' : 'Custom stand build'} zoom sizes="(max-width: 780px) 50vw, 25vw" />
-        <Photo src="/images/outdoor-area.jpg" alt={ru ? 'Открытая площадка 5 000 м²' : 'The 5,000 m² open-air area'} zoom sizes="(max-width: 780px) 100vw, 50vw" />
+        <Photo src="/images/machinery-outdoor.jpg" alt={ru ? 'Открытая площадка 5 000 м²' : 'The 5,000 m² open-air area'} zoom sizes="(max-width: 780px) 100vw, 50vw" />
+        <Photo src="/images/stand-nrg.jpg" alt={ru ? 'Брендированный стенд с живой стеной' : 'A branded stand with a living wall'} zoom sizes="(max-width: 780px) 50vw, 25vw" />
+        <Photo src="/images/conference-rows.jpg" alt={ru ? 'Конференц-зал перед сессией' : 'The conference hall before a session'} zoom sizes="(max-width: 780px) 50vw, 25vw" />
       </div>
     </div>
   </section>

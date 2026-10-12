@@ -77,7 +77,7 @@ export const venuePages: PageDef[] = [
           /* docs/15 §11: the venue page showed one photograph; the floor itself sells the hall */
           type: "gallery",
           items: [
-            { src: "/images/hall-stand.jpg", caption: "Главный зал: экспозиция и переговорные зоны" },
+            { src: "/images/hall-wide.jpg", caption: "Главный зал: экспозиция и переговорные зоны" },
             { src: "/images/hall-empty.jpg", caption: "Зал 4 400 м² без застройки: шаг колонн и высота потолка" },
             { src: "/images/hall-walk.jpg", caption: "Проход между стендами в главный зал" },
             { src: "/images/outdoor-area.jpg", caption: "Открытая площадка 5 000 м²: крупногабаритная техника" },
@@ -282,7 +282,7 @@ export const venuePages: PageDef[] = [
           /* docs/15 §11: the venue page showed one photograph; the floor itself sells the hall */
           type: "gallery",
           items: [
-            { src: "/images/hall-stand.jpg", caption: "Main hall: expo and meeting zones" },
+            { src: "/images/hall-wide.jpg", caption: "Main hall: expo and meeting zones" },
             { src: "/images/hall-empty.jpg", caption: "The 4,400 m² hall before build-up: column grid and clear height" },
             { src: "/images/hall-walk.jpg", caption: "Aisle between stands to the main hall" },
             { src: "/images/outdoor-area.jpg", caption: "The 5,000 m² open-air area: large machinery" },
@@ -448,7 +448,7 @@ export const venuePages: PageDef[] = [
           kicker: "Залы выставочного центра · Самарканд",
           title: "Планировки, которые выдерживают и выставку, и фестиваль",
           lead: "Ниже — базовые конфигурации, которые мы используем в своих выставках. Они же служат отправной точкой для сторонних организаторов: меняются только плотность стендов и место сцены.",
-          image: "/images/hall-stand.jpg",
+          image: "/images/hall-aerial.jpg",
           imageAlt: "Выставочный зал SOF EXPO Samarkand со стендами",
           actions: [
             { label: "Запросить план в PDF", href: "/venue/tech-specs/" },
@@ -554,7 +554,7 @@ export const venuePages: PageDef[] = [
           kicker: "Exhibition halls · Samarkand",
           title: "Layouts that carry both a trade show and a festival",
           lead: "Below are the baseline configurations we run for our own shows. They are also the starting point for external organizers: only stand density and stage position change.",
-          image: "/images/hall-stand.jpg",
+          image: "/images/hall-aerial.jpg",
           imageAlt: "SOF EXPO Samarkand exhibition hall with stands",
           actions: [
             { label: "Request the plan (PDF)", href: "/venue/tech-specs/" },
@@ -674,7 +674,7 @@ export const venuePages: PageDef[] = [
           kicker: "Услуги и аренда оборудования",
           title: "Всё, что делает стенд рабочим, заказывается одним бланком",
           lead: "Мы не делим услуги на «обязательные у партнёров» и «только свои». Форма подается до монтажа, позиции подтверждаются вместе со сметой — так на площадке не появляется ситуация «а этого у нас нет».",
-          image: "/images/hall-walk.jpg",
+          image: "/images/stand-industrial.jpg",
           imageAlt: "Зал в день работы: услуги площадки",
           actions: [
             { label: "Заказать услуги", href: "/contacts/" },
@@ -824,7 +824,7 @@ export const venuePages: PageDef[] = [
           kicker: "Exhibition equipment rental",
           title: "Everything that makes a stand work is ordered on one form",
           lead: 'We do not split services into "mandatory via partners" and "ours only". The order form goes in before build-up and every line is confirmed with the quote — so nothing is missing on site.',
-          image: "/images/hall-walk.jpg",
+          image: "/images/stand-industrial.jpg",
           imageAlt: "Hall on a working day: venue services",
           actions: [
             { label: "Order services", href: "/contacts/" },
@@ -999,7 +999,7 @@ export const venuePages: PageDef[] = [
           actions: [
             { label: "Запросить datasheet с чертежами", href: "/contacts/" },
           ],
-          image: "/images/hero-hall.jpg",
+          image: "/images/hall-windows.jpg",
           imageAlt: "Экспозиционный зал",
         },
         {
@@ -1092,7 +1092,7 @@ export const venuePages: PageDef[] = [
           title: "Venue technical data sheet",
           lead: "The full datasheet with drawings goes out as a PDF on request; below are the parameters enough for a preliminary stand calculation.",
           actions: [{ label: "Request the datasheet", href: "/contacts/" }],
-          image: "/images/hero-hall.jpg",
+          image: "/images/hall-windows.jpg",
           imageAlt: "Exhibition hall",
         },
         {
@@ -1451,7 +1451,7 @@ export const venuePages: PageDef[] = [
                   caption: "Зал 4 400 м² без застройки: шаг колонн и высота потолка",
                 },
                 {
-                  src: "/images/hall-stand.jpg",
+                  src: "/images/hall-aerial-2.jpg",
                   caption: "Главный зал: экспозиция и переговорные зоны",
                 },
                 {
@@ -1489,7 +1489,7 @@ export const venuePages: PageDef[] = [
               title: "Конференц-зал и переговорные",
               items: [
                 {
-                  src: "/images/conference-audience.jpg",
+                  src: "/images/venue-conference.jpg",
                   caption: "Конференц-зал во время деловой программы",
                 },
                 {
@@ -1527,7 +1527,7 @@ export const venuePages: PageDef[] = [
               title: "Здание, кафе и территория",
               items: [
                 {
-                  src: "/images/venue-exterior.jpg",
+                  src: "/images/venue-facade.jpg",
                   caption: "Входная группа и парковка",
                 },
                 {
@@ -1602,7 +1602,7 @@ export const venuePages: PageDef[] = [
                   caption: "The 4,400 m² hall before build-up: column grid and clear height",
                 },
                 {
-                  src: "/images/hall-stand.jpg",
+                  src: "/images/hall-aerial-2.jpg",
                   caption: "Main hall: expo and meeting zones",
                 },
                 {
@@ -1640,7 +1640,7 @@ export const venuePages: PageDef[] = [
               title: "Conference hall and meeting rooms",
               items: [
                 {
-                  src: "/images/conference-audience.jpg",
+                  src: "/images/venue-conference.jpg",
                   caption: "Conference hall during the business programme",
                 },
                 {
@@ -1678,7 +1678,7 @@ export const venuePages: PageDef[] = [
               title: "Building, cafe and grounds",
               items: [
                 {
-                  src: "/images/venue-exterior.jpg",
+                  src: "/images/venue-facade.jpg",
                   caption: "Entrance and parking",
                 },
                 {

@@ -10,7 +10,7 @@ const ADMIN_DIR = fileURLToPath(new URL('./admin/', import.meta.url));
 const PORTAL_DIR = fileURLToPath(new URL('./portal/', import.meta.url));
 const CONTENT_TYPES = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.svg': 'image/svg+xml' };
 const PORTAL_EVENTS = [
-  { slug: 'foodera-expo', name: 'FOODERA EXPO 2026', dates: '20–22 oktabr 2026' },
+  { slug: 'foodera-expo', name: 'FOODERA EXPO 2026', dates: '27–29 oktabr 2026' },
   { slug: 'buildpro-expo', name: 'BUILD PRO EXPO 2026', dates: '9–11 noyabr 2026' },
   { slug: 'agropro-expo', name: 'AGROPRO EXPO 2027', dates: '2–4 mart 2027' },
   { slug: 'world-edu-expo', name: 'WORLD EDU · SPRING 2027', dates: '9–10 aprel 2027' },

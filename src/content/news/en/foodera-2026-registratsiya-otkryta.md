@@ -1,6 +1,6 @@
 ---
 title: "FOODERA EXPO 2026 opens exhibitor registration"
-description: "Booth applications are accepted for the food and beverage exhibition on 20–22 October 2026 at SOF EXPO Samarkand. 38 premium stands remain."
+description: "Booth applications are accepted for the food and beverage exhibition on 27–29 October 2026 at SOF EXPO Samarkand. 38 premium stands remain."
 date: 2026-09-16
 category: "food"
 tags: ["FOODERA", "2026"]
@@ -8,7 +8,7 @@ event: foodera-expo
 ---
 ### What is open
 
-Applications are being accepted for **FOODERA EXPO 2026**, the specialised food and beverage exhibition in Uzbekistan, held **20–22 October 2026** at SOF EXPO Samarkand — 4,400 m² of indoor expo and 5,000 m² of open ground.
+Applications are being accepted for **FOODERA EXPO 2026**, the specialised food and beverage exhibition in Uzbekistan, held **27–29 October 2026** at SOF EXPO Samarkand — 4,400 m² of indoor expo and 5,000 m² of open ground.
 
 FOODERA connects manufacturers, distributors, importers and suppliers with retail chains, wholesale, HoReCa and catering buyers. For a producer it is the shortest route in the region from a stand tasting to a signed supply contract.
 

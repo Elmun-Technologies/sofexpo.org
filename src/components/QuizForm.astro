@@ -588,7 +588,7 @@ const mailto = `mailto:${site.contacts.email}?subject=${encodeURIComponent(ru ? 
   }
   .quiz__opt:has(input:focus-visible) {
     outline: none;
-    box-shadow: 0 0 0 4px rgba(29, 122, 72, 0.16);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--moss) 16%, transparent);
   }
   /* the input covers the whole option (transparent, on top) so the card is
      one reliable click target for users, keyboards and automation alike */
@@ -660,7 +660,7 @@ const mailto = `mailto:${site.contacts.email}?subject=${encodeURIComponent(ru ? 
   .quiz-tel select:focus {
     border-color: var(--moss);
     outline: none;
-    box-shadow: 0 0 0 4px rgba(29, 122, 72, 0.14);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--moss) 14%, transparent);
   }
   .quiz__channel {
     display: flex;
@@ -695,7 +695,7 @@ const mailto = `mailto:${site.contacts.email}?subject=${encodeURIComponent(ru ? 
     background: #f2f7f3;
   }
   .quiz__seg:has(input:focus-visible) {
-    box-shadow: 0 0 0 4px rgba(29, 122, 72, 0.16);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--moss) 16%, transparent);
   }
   .quiz__seg input {
     position: absolute;

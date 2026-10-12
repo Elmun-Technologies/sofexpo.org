@@ -120,7 +120,7 @@ a, button, summary { -webkit-tap-highlight-color: transparent; }
 .venue-strip__txt p { font-size: .84rem; }
 .venue-strip__img { display: none; border-radius: 8px; }
 .card, .ev { box-shadow: none; border: 1px solid var(--line); }
-a.card:hover, .ev:hover { border-color: #a4afa0; box-shadow: 0 15px 35px -20px #183e3640; }
+a.card:hover, .ev:hover { border-color: var(--line-strong); box-shadow: 0 15px 35px -20px color-mix(in srgb, var(--evergreen) 25%, transparent); }
 .ev { overflow: hidden; background: #fff; border-radius: 12px; }
 .ev__top { display: block; position: relative; }
 .ev__date { position: absolute; z-index: 2; top: 1rem; left: 1rem; width: auto; min-width: 76px; padding: .65rem .8rem; border-radius: 7px; background: #fbfaf3f5; color: #153b2f; border-bottom: none !important; }
@@ -216,6 +216,15 @@ html:lang(tr) { --f-body: "TT Norms Pro", Arial, sans-serif; }
   .venue-strip__img { display: block; }
 }
 @media (min-width: 1281px) { .mnav { display: none !important; } }
+/* 1280–1439px: the tightest desktop. Logo + six menu groups + tools left ~10px in RU and
+   overflowed by 100px in UZ, so a runner whose fonts render a hair wider (CI) scrolled
+   sideways. Tighter link padding, type and gaps leave ≥40px free in every locale. */
+@media (min-width: 1280px) and (max-width: 1439px) {
+  .hdr__in { gap: 12px; }
+  .nav__link { padding: 9px 7px; font-size: 12.5px; }
+  .hdr__tools { gap: 8px; }
+  .hdr__tools .btn--desk { padding: 8px 11px; }
+}
 
 /* ≥900px: the wide hero — 340px featured column, centered alignment, full type ramp */
 @media (min-width: 900px) {
@@ -295,4 +304,49 @@ html:lang(tr) { --f-body: "TT Norms Pro", Arial, sans-serif; }
   .hdr__tools .btn--desk { font-size: 14px; min-height: 48px; padding: 10px 16px; }
   .language-picker { font-size: 14px; }
   .language-picker summary { min-height: 48px; gap: 6px; }
+}
+
+/* home "one building, two areas" strip (2026-10-12): at ≥900px the three-column row
+   squeezed the copy to 0.84rem between the numbers and a 220px thumbnail. Now the building
+   photo takes the left half and the numbers, heading, copy and links stack on the right. */
+@media (min-width: 900px) {
+  .venue-strip {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    grid-template-areas: 'img nums' 'img txt';
+    align-items: center;
+    column-gap: clamp(2rem, 1rem + 3vw, 4rem);
+    row-gap: 1.6rem;
+    padding-block: clamp(2rem, 1rem + 2vw, 3rem);
+  }
+  .venue-strip__img {
+    grid-area: img;
+    display: block;
+    width: 100%;
+    order: 0;
+    border-radius: var(--r-img);
+  }
+  .venue-strip__nums {
+    grid-area: nums;
+    align-self: end;
+    flex-wrap: wrap;
+    gap: 1.2rem 2.2rem;
+  }
+  .venue-strip__txt {
+    grid-area: txt;
+    align-self: start;
+    max-width: 52ch;
+  }
+  .venue-strip__txt h2 {
+    font-size: clamp(1.5rem, 1.1rem + 0.9vw, 2rem);
+    margin-bottom: 0.6rem;
+  }
+  .venue-strip__txt p {
+    font-size: 1rem;
+  }
+  .venue-strip__links {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.6rem;
+    margin-top: 1.3rem;
+  }
 }

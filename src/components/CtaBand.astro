@@ -56,8 +56,10 @@ const { locale, kicker, title, text, primary, secondary, dark = true } = Astro.p
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(70% 140% at 88% 10%, rgba(29, 122, 72, 0.5), transparent 60%),
-      radial-gradient(50% 120% at 8% 100%, rgba(200, 136, 44, 0.16), transparent 62%);
+      radial-gradient(70% 140% at 88% 10%, color-mix(in srgb, var(--moss) 50%, transparent), transparent 60%),
+      /* the second glow is the show's own accent (FOODERA gold, AGROPRO yellow …) — a fixed brass
+         tint read as a stain on the blue and black shows */
+      radial-gradient(50% 120% at 8% 100%, color-mix(in srgb, var(--gold-soft) 16%, transparent), transparent 62%);
     pointer-events: none;
   }
   .cta-band > :global(.wrap) {

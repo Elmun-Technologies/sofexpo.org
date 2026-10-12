@@ -28,7 +28,7 @@ export const companyPages: PageDef[] = [
             "Отраслевые команды, которые говорят на языке рынка",
             "Инфраструктура и сервис — свои",
           ],
-          image: "/images/venue-exterior.jpg",
+          image: "/images/venue-facade.jpg",
           imageAlt: "Выставочный центр SOF EXPO",
           actions: [
             { label: "Команда", href: "/about/team/" },
@@ -77,7 +77,7 @@ export const companyPages: PageDef[] = [
           /* docs/15 §11: the about page showed one photograph of the building */
           type: "gallery",
           items: [
-            { src: "/images/hall-crowd.jpg", caption: "День выставки: поток посетителей в главном зале" },
+            { src: "/images/hall-busy.jpg", caption: "День выставки: поток посетителей в главном зале" },
             { src: "/images/opening-ceremony.jpg", caption: "Церемония открытия: официальная часть на красной дорожке" },
             { src: "/images/food-tasting.jpg", caption: "FOODERA EXPO: дегустационная линия" },
             { src: "/images/officials-tour.jpg", caption: "Официальная делегация на обходе экспозиции" },
@@ -133,7 +133,7 @@ export const companyPages: PageDef[] = [
             "Industry teams that speak the market language",
             "Our own infrastructure and service",
           ],
-          image: "/images/venue-exterior.jpg",
+          image: "/images/venue-facade.jpg",
           imageAlt: "SOF EXPO exhibition centre",
           actions: [
             { label: "Team", href: "/about/team/" },
@@ -182,7 +182,7 @@ export const companyPages: PageDef[] = [
           /* docs/15 §11: the about page showed one photograph of the building */
           type: "gallery",
           items: [
-            { src: "/images/hall-crowd.jpg", caption: "Show day: visitor flow in the main hall" },
+            { src: "/images/hall-busy.jpg", caption: "Show day: visitor flow in the main hall" },
             { src: "/images/opening-ceremony.jpg", caption: "Opening ceremony: the official part on the red carpet" },
             { src: "/images/food-tasting.jpg", caption: "FOODERA EXPO: tasting line" },
             { src: "/images/officials-tour.jpg", caption: "An official delegation touring the exhibition" },
@@ -913,7 +913,7 @@ export const companyPages: PageDef[] = [
           kicker: "СМИ",
           title: "Материалы, которые можно брать в работу",
           lead: "Логотипы, фотографии зала и событий, проверенные цифры и контакты спикеров. Аккредитация на выставки — по заявке за 2 рабочих дня, съёмка в монтажные дни — по согласованию с техслужбой.",
-          image: "/images/venue-exterior.jpg",
+          image: "/images/venue-facade.jpg",
           imageAlt: "Экстерьер центра",
           actions: [{ label: "Запросить аккредитацию", href: "#accreditation" }],
         },
@@ -1000,7 +1000,7 @@ export const companyPages: PageDef[] = [
           kicker: "For media",
           title: "Material you can put to work",
           lead: "Logos, hall and event photography, verified figures and speaker contacts. Show accreditation on request two business days ahead; filming during build-up goes through the technical service.",
-          image: "/images/venue-exterior.jpg",
+          image: "/images/venue-facade.jpg",
           imageAlt: "Centre exterior",
           actions: [{ label: "Request accreditation", href: "#accreditation" }],
         },
@@ -1104,7 +1104,7 @@ export const companyPages: PageDef[] = [
           kicker: "Правовая информация",
           title: "Политика конфиденциальности",
           lead: "Мы собираем минимум данных и только для того, чтобы обработать вашу заявку. Ниже — что именно, зачем и как удалить.",
-          image: "/images/hero-hall.jpg",
+          image: "/images/hall-aisle-red.jpg",
           imageAlt: "Зал центра",
         },
         {
@@ -1149,7 +1149,7 @@ export const companyPages: PageDef[] = [
           kicker: "Legal",
           title: "Privacy policy",
           lead: "We collect the minimum needed to handle your request. Below is what, why and how to delete it.",
-          image: "/images/hero-hall.jpg",
+          image: "/images/hall-aisle-red.jpg",
           imageAlt: "Centre hall",
         },
         {

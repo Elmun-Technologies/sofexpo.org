@@ -1834,6 +1834,272 @@ body.nav-open .mnav {
   background: var(--paper);
 }
 
+/* ===================================================================
+   Phase 1 — structure (docs/08 §4): the calendar is the product.
+   Date block, industry colour line, one row = one show.
+   =================================================================== */
+
+/* ------- /events/ : the table calendar ------- */
+.cal__filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1.5rem 0 1.1rem;
+}
+
+.cal__filter input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.cal__filter label {
+  cursor: pointer;
+  padding: 0.45rem 0.95rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  background: var(--paper);
+  font-size: 0.88rem;
+  color: var(--ink-60);
+  user-select: none;
+}
+
+.cal__filter input:checked + label {
+  background: var(--evergreen);
+  border-color: var(--evergreen);
+  color: #fff;
+}
+
+.cal__filter input:focus-visible + label {
+  outline: 2px solid var(--moss);
+  outline-offset: 2px;
+}
+
+.cal__ics {
+  margin-left: auto;
+  font-size: 0.86rem;
+  color: var(--ink-60);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line-strong);
+  padding-bottom: 1px;
+  white-space: nowrap;
+}
+
+.cal__ics:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+.cal {
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--paper);
+  overflow: hidden;
+}
+
+/* mobile-first: a show is one card on a phone — name on top, the date figure under it,
+   industry and the action links below. At ≥640px the date plate comes back left of the
+   name; at ≥1080px the row is the full five-column table (docs/08 §4). */
+.cal__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "name"
+    "date"
+    "meta"
+    "act";
+  gap: 0.5rem;
+  align-items: center;
+  padding: 1.1rem;
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+  text-decoration: none;
+  color: inherit;
+}
+
+.cal__row:first-child {
+  border-top: 0;
+}
+
+.cal__row:hover {
+  background: var(--cream);
+}
+
+/* the date is the loudest figure in the row */
+.cal__date {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  line-height: 1;
+  grid-area: date;
+}
+
+.cal__date b {
+  font-family: var(--f-display);
+  font-size: var(--t-date);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.cal__date span {
+  font-family: var(--f-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-40);
+}
+
+/* industry colour: the 4px line, not a paint job */
+.cal__name {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  border-left: 4px solid var(--ic, var(--ink-40));
+  padding-left: 0.95rem;
+  min-width: 0;
+  grid-area: name;
+}
+
+.cal__name b {
+  font-family: var(--f-display);
+  font-size: 1.14rem;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cal__name small {
+  font-size: 0.84rem;
+  color: var(--ink-60);
+}
+
+.cal__ind {
+  font-size: 0.9rem;
+  color: var(--ink-60);
+  grid-area: meta;
+}
+
+/* the status chip does not earn a row on a phone: hidden until the full table at ≥1080px */
+.cal__status {
+  display: none;
+}
+
+.cal__act {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.9rem;
+  white-space: nowrap;
+  grid-area: act;
+}
+
+.cal__act .txt {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line-strong);
+  padding-bottom: 1px;
+}
+
+.cal__act .txt:hover {
+  border-color: var(--ink);
+}
+
+/* pure-CSS industry filter (docs/08 §4.3): no JS, the checked radio wins */
+.cal-wrap:has(#f-food:checked) .cal__row:not([data-ind="food"]),
+.cal-wrap:has(#f-construction:checked) .cal__row:not([data-ind="construction"]),
+.cal-wrap:has(#f-agriculture:checked) .cal__row:not([data-ind="agriculture"]),
+.cal-wrap:has(#f-automotive:checked) .cal__row:not([data-ind="automotive"]),
+.cal-wrap:has(#f-ecommerce:checked) .cal__row:not([data-ind="ecommerce"]),
+.cal-wrap:has(#f-education:checked) .cal__row:not([data-ind="education"]) {
+  display: none;
+}
+
+/* every show row carries its own photograph and logo (docs/15 §11): a text-only list of
+   six shows read as a spreadsheet, not as an exhibition calendar */
+.cal__img {
+  grid-area: img;
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 7;
+  border-radius: var(--r);
+  overflow: hidden;
+  background: var(--cream-2);
+}
+.cal__img > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 600ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.cal__row:hover .cal__img > img {
+  transform: scale(1.04);
+}
+.cal__img .cal__logo {
+  position: absolute;
+  left: 0.45rem;
+  bottom: 0.45rem;
+  border-radius: 7px;
+}
+.cal__row {
+  grid-template-areas:
+    "img"
+    "name"
+    "date"
+    "meta"
+    "act";
+}
+
+@media (min-width: 640px) {
+  .cal__row {
+    grid-template-columns: 148px 104px minmax(0, 1fr) auto;
+    grid-template-areas:
+      "img date name act"
+      "img meta name act";
+    column-gap: 1.1rem;
+    row-gap: 0.4rem;
+    padding: 1.05rem 1.3rem;
+  }
+  .cal__act {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.35rem;
+  }
+}
+
+@media (min-width: 640px) {
+  .cal__img {
+    aspect-ratio: auto;
+    height: 100%;
+    min-height: 92px;
+  }
+}
+
+@media (min-width: 1080px) {
+  .cal__row {
+    grid-template-columns: 168px 118px minmax(0, 1.25fr) 180px 118px minmax(160px, auto);
+    gap: 1.1rem;
+    grid-template-areas: none;
+    padding: 1.05rem 1.3rem;
+  }
+  .cal__row > * {
+    grid-area: auto;
+  }
+  .cal__act {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.9rem;
+  }
+  .cal__status {
+    display: inline;
+  }
+}
+
 /* ------- home: next-show hero + calendar rail -------
    Full-bleed photography, a dark cinematic wash from the bottom-left, the date as the
    loudest element on the page and a glass fact panel over the picture. The rail of the
@@ -2235,6 +2501,7 @@ body.nav-open .mnav {
 }
 
 .hero__media.ph--round,
+.ehero__bg.ph--round,
 .pc__media .ph,
 .feature__media,
 .ev__img {
@@ -2287,6 +2554,15 @@ h2.h3 { font-size: var(--t-h3); line-height: 1.18; letter-spacing: -0.014em; }
   }
   .hero h1 {
     font-size: clamp(2.8rem, 2rem + 3.2vw, 5rem);
+  }
+  .cal__row {
+    padding: 1.25rem 1.5rem;
+  }
+  .cal__date b {
+    font-size: calc(var(--t-date) * 1.15);
+  }
+  .cal__name b {
+    font-size: 1.3rem;
   }
   .ev__body h3 {
     font-size: 1.35rem;

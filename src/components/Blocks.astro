@@ -501,7 +501,10 @@ const galleryGroups = (b: Block): BlockAlbum[] =>
   .sec--sand { background: var(--cream-2); }
   /* the quiz reads best as a focused column, never stretched over a wide grid */
   .quiz-block { max-width: 760px; }
-  .block--hero { background: var(--paper); padding-block: clamp(2rem, 1rem + 3vw, 4rem); }
+  /* 2026-10 design (docs/18 §9): the page hero is two panels side by side — a white text panel
+     and the photograph as its own full-height panel — instead of one panel with a thumbnail */
+  .block--hero { background: none; padding-block: 0; border-radius: 0; overflow: visible; }
+  .block--hero > .wrap { max-width: none; padding-inline: 0; }
   .block--tour .tour__head { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.2rem 2rem; align-items: end; margin-bottom: 1.25rem; }
   .block--tour .tour__intro h2 { margin: .2rem 0 .5rem; color: #fff; }
   .block--tour .tour__intro .lead { max-width: 68ch; margin: 0; color: rgba(255,255,255,.78); font-size: 1rem; }
@@ -517,12 +520,14 @@ const galleryGroups = (b: Block): BlockAlbum[] =>
   @media (max-width: 680px) { .block--tour .tour__frame iframe { height: 72svh; min-height: 29rem; } }
   .block--faq { padding-block: 0; }
   .block--faq :global(.sec) { padding-block: clamp(3rem, 2rem + 3vw, 5rem); background: var(--paper); }
-  .block__head { display: grid; grid-template-columns: minmax(0, 1fr); gap: clamp(1.4rem, .8rem + 2.4vw, 3rem); align-items: center; }
-  .block__head h1 { font-size: clamp(2.125rem, 1.1rem + 2.6vw, 3.75rem); line-height: 1; letter-spacing: -0.04em; max-width: 20ch; }
+  .block__head { display: flex; flex-wrap: wrap; gap: var(--gap, 10px); align-items: stretch; }
+  .block__head > div { flex: 1.2 1 560px; min-width: 0; display: flex; flex-direction: column; justify-content: flex-end; padding: clamp(28px, 4vw, 56px); border-radius: var(--r-panel); background: var(--paper); }
+  .block__head h1 { font-size: clamp(2.375rem, 1rem + 4vw, 5rem); line-height: 0.98; letter-spacing: -0.04em; max-width: 16ch; }
   .block__head h1 .kicker { display: block; margin-bottom: 1rem; font-size: .875rem; line-height: 1.4; letter-spacing: 0; }
-  .block__media { margin: 0; }
-  .block__media img { border-radius: var(--r-img); }
-  @media (min-width: 940px) { .block__head { grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr); } }
+  .block__head :global(.block__media) { position: relative; flex: 1 1 440px; min-width: 0; min-height: 300px; margin: 0; border-radius: var(--r-panel); overflow: hidden; aspect-ratio: auto !important; }
+  .block__head :global(.block__media img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 0; }
+
+  @media (min-width: 900px) { .block__head > div, .block__head :global(.block__media) { min-height: 560px; } }
 
   .block--head { padding-bottom: 0; }
   .block--head :global(.sec-head) { margin-bottom: clamp(1.1rem, 0.6rem + 1.4vw, 1.8rem); }

@@ -36,7 +36,7 @@ export const venuePages: PageDef[] = [
             { label: "Техспецификация (PDF)", href: "/venue/tech-specs/" },
             { label: "Виртуальный тур", href: "/venue/virtual-tour/" },
           ],
-          image: "/images/venue-exterior.jpg",
+          image: "/images/venue-facade.jpg",
           imageAlt: "Экстерьер выставочного центра SOF EXPO Samarkand",
         },
         {
@@ -241,7 +241,7 @@ export const venuePages: PageDef[] = [
             { label: "Technical data sheet", href: "/venue/tech-specs/" },
             { label: "Virtual tour", href: "/venue/virtual-tour/" },
           ],
-          image: "/images/venue-exterior.jpg",
+          image: "/images/venue-facade.jpg",
           imageAlt: "Exterior of SOF EXPO Samarkand",
         },
         {

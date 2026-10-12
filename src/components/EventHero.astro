@@ -181,6 +181,29 @@ const heroKicker =
     height: 6px;
     background: var(--brand-stripe);
   }
+  /* the show's motif from its logo (--brand-pattern, brands.ts), fading in towards the right so
+     it never sits under the headline */
+  .ehero__main::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--brand-pattern, none) 0 0 / var(--brand-pattern-size, 120px) repeat;
+    -webkit-mask-image: linear-gradient(105deg, transparent 38%, #000 88%);
+    mask-image: linear-gradient(105deg, transparent 38%, #000 88%);
+    pointer-events: none;
+  }
+  /* one column on a phone: the buttons span the full width, so the motif stays in the top
+     corner next to the logo plate instead of running behind the actions */
+  @media (max-width: 900px) {
+    .ehero__main::after {
+      -webkit-mask-image: radial-gradient(90% 260px at 100% 0, #000, transparent);
+      mask-image: radial-gradient(90% 260px at 100% 0, #000, transparent);
+    }
+  }
+  .ehero__main > :global(*) {
+    position: relative;
+    z-index: 1;
+  }
   /* the main action wears the show's accent (FOODERA gold, AGROPRO sun yellow, WORLD EDU
      cyan …); gold-soft on evergreen is ≥ 4.5:1 for every show (check-brand-contrast) */
   .ehero :global(.btn--show) {
@@ -301,6 +324,10 @@ const heroKicker =
     background: color-mix(in srgb, var(--evergreen) 82%, transparent);
     backdrop-filter: blur(14px);
     color: #fff;
+  }
+  .ehero__count :global(.mono-label),
+  .ehero__archive :global(.mono-label) {
+    color: rgba(255, 255, 255, 0.8);
   }
   .ehero__archive {
     padding-bottom: 14px;

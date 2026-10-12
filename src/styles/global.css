@@ -1852,7 +1852,6 @@ body.nav-open .mnav {
   background: var(--paper);
 }
 
-/* ===================================================================
    Phase 1 — structure (docs/08 §4): the calendar is the product.
    Date block, industry colour line, one row = one show.
    =================================================================== */
@@ -2118,6 +2117,7 @@ body.nav-open .mnav {
   }
 }
 
+=======
 /* ------- home: next-show hero + calendar rail -------
    Full-bleed photography, a dark cinematic wash from the bottom-left, the date as the
    loudest element on the page and a glass fact panel over the picture. The rail of the
@@ -2517,7 +2517,6 @@ body.nav-open .mnav {
 }
 
 .hero__media.ph--round,
-.ehero__bg.ph--round,
 .pc__media .ph,
 .feature__media,
 .ev__img {
@@ -2570,15 +2569,6 @@ h2.h3 { font-size: var(--t-h3); line-height: 1.18; letter-spacing: -0.014em; }
   }
   .hero h1 {
     font-size: clamp(2.8rem, 2rem + 3.2vw, 5rem);
-  }
-  .cal__row {
-    padding: 1.25rem 1.5rem;
-  }
-  .cal__date b {
-    font-size: calc(var(--t-date) * 1.15);
-  }
-  .cal__name b {
-    font-size: 1.3rem;
   }
   .ev__body h3 {
     font-size: 1.35rem;

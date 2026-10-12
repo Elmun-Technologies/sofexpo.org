@@ -83,6 +83,11 @@ main > :is(section, article) .wrap {
 }
 /* a section head and the block it introduces are one panel, as are consecutive blocks on
    the same ground (Blocks.astro marks them) — the 10px seam would cut a heading from its list */
+/* overflow: clip does not contain margins: a head block's bottom margin would leak out and
+   the joined panel below would cover the heading's last line */
+main > .block {
+  display: flow-root;
+}
 main > :is(.block--after-head, .block--cont) {
   margin-top: calc(-1 * var(--gap));
   border-top-left-radius: 0;
@@ -668,6 +673,11 @@ input[type="radio"] {
   max-width: none;
   padding-inline: clamp(24px, 3vw, 44px);
 }
+@media (max-width: 1079px) {
+  .ftr__grid > :first-child {
+    grid-column: 1 / -1;
+  }
+}
 .ftr__about {
   max-width: 34ch;
   margin: 1rem 0 0;
@@ -706,9 +716,188 @@ input[type="radio"] {
   border-top-color: rgba(255, 255, 255, 0.14);
 }
 
-/* ---------- event sub-navigation: a white pill strip on the canvas ---------- */
+/* ---------- event sub-navigation (design: sticky pill tabs, docs/18 §8) ---------- */
 main > .evnav {
+  top: calc(var(--header-h) + 2px);
+  padding: 8px;
+  border: 0;
+  border-radius: 28px;
+  background: var(--paper);
+  overflow: visible;
+}
+main > .evnav .evnav__in {
+  padding: 0;
+}
+.evnav__tabs {
+  gap: 6px;
+}
+.evnav__tabs a {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  font-size: 0.875rem;
+  color: var(--ink);
+}
+.evnav__tabs a:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+.evnav__tabs a[aria-current="page"] {
+  background: var(--ink);
+  border-color: var(--ink);
+}
+.evnav__sep {
+  height: 24px;
+  margin-inline: 4px;
+}
+
+/* ---------- stat tiles (design: a row of grey tiles, the figure in Manrope) ---------- */
+.stats {
+  gap: var(--gap);
+  background: none;
+  border: 0;
+  border-radius: 0;
+  overflow: visible;
+}
+.stat {
+  border: 0;
+  border-radius: var(--r-lg);
+  background: var(--cream-2);
+  padding: 22px 24px;
+}
+.stat b {
+  font-weight: 500;
+  font-size: clamp(1.75rem, 1.2rem + 1.6vw, 2.5rem);
+  letter-spacing: -0.04em;
+}
+.sec--sand .stat {
+  background: var(--paper);
+}
+.sec--forest .stat {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ---------- show card (EventCard): the home's card — photo, date pill, logo plate ---------- */
+.ev {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border: 0;
+  border-radius: var(--r-lg);
+  background: var(--cream-2);
+  box-shadow: none;
+  overflow: visible;
+}
+.ev:hover {
+  border: 0;
+  box-shadow: none;
+  transform: none;
+}
+.ev .ev__top {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+}
+.ev .ev__date {
+  position: absolute;
+  z-index: 2;
+  top: 12px;
+  left: 12px;
+  min-width: 0;
+  min-height: 30px;
+  padding: 0 12px;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
   border-radius: var(--r-pill);
+  background: #fff;
+  color: var(--ink);
+  text-decoration: none;
+}
+.ev .ev__date b,
+.ev .ev__date span {
+  display: inline;
+  font-family: var(--f-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1;
+  color: var(--ink);
+}
+.ev .ev__top .ev__logo {
+  position: absolute;
+  z-index: 2;
+  left: 12px;
+  bottom: 12px;
+  top: auto;
+  right: auto;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: #fff;
+}
+.ev .ev__body {
+  padding: 18px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.ev .ev__body .mono-label {
+  font-size: 0.8125rem;
+  color: var(--ink-60);
+  letter-spacing: 0;
+}
+.ev .ev__body h3 {
+  font-size: 1.3125rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 8px 0;
+}
+.ev .ev__tagline {
+  color: var(--ink-60);
+  font-size: 0.9375rem;
+}
+.ev .ev__foot {
+  margin-top: auto;
+  padding-top: 12px;
+  border: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.ev .ev__sections {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-pill);
+  font-size: 0.8125rem;
+  white-space: nowrap;
+  color: #4a4a4a;
+}
+.ev .ev__foot .ev__more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-decoration: none;
+  white-space: nowrap;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: var(--ink);
+  color: #fff;
+}
+.ev .ev__foot .ev__more:hover {
+  background: var(--accent);
+  color: var(--ink);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -717,4 +906,378 @@ main > .evnav {
   .mega__links a {
     transition: none;
   }
+}
+
+/* ---------- /events/: calendar (design Events) ---------- */
+main > .calh {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px;
+}
+.calh__main {
+  flex: 1 1 560px;
+  min-width: 0;
+  padding: clamp(18px, 3vw, 46px);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.calh__main h1 {
+  margin: 0;
+  font-size: var(--t-h1, clamp(2.1rem, 1.2rem + 3vw, 4rem));
+}
+.calh__main .lead {
+  margin: 0;
+  max-width: 640px;
+  color: var(--ink-60);
+}
+.calh__sub {
+  flex: 0 1 380px;
+  min-width: 0;
+  padding: 28px;
+  border-radius: var(--r-lg);
+  background: var(--ink);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.calh__sub p {
+  margin: 0;
+}
+.calh__sub-t {
+  font-family: var(--f-display);
+  font-size: 1.5rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+.calh__sub-x {
+  color: #bdbdbd;
+}
+.calh__sub-a {
+  margin-top: auto !important;
+  padding-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pill.pill--w {
+  background: #fff;
+  color: var(--ink);
+  border-color: #fff;
+}
+.pill.pill--w:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+main > .calf {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 14px 14px 18px;
+}
+.calf__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.calf__chips input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.calf__chips label {
+  min-height: 44px;
+  padding: 0 18px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-pill);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+.calf__chips label:hover {
+  border-color: var(--ink);
+}
+.calf__chips input:checked + label {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+.calf__chips input:focus-visible + label {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+main:has(#f-food:checked) .calc:not([data-ind='food']),
+main:has(#f-construction:checked) .calc:not([data-ind='construction']),
+main:has(#f-agriculture:checked) .calc:not([data-ind='agriculture']),
+main:has(#f-automotive:checked) .calc:not([data-ind='automotive']),
+main:has(#f-ecommerce:checked) .calc:not([data-ind='ecommerce']),
+main:has(#f-education:checked) .calc:not([data-ind='education']) {
+  display: none;
+}
+
+main > .calc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px;
+}
+.calc__img {
+  flex: 0 1 380px;
+  min-width: 260px;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+.calc__img .ph {
+  height: 100%;
+  min-height: 280px;
+}
+.calc__img img {
+  height: 100%;
+  object-fit: cover;
+}
+.calc__body {
+  flex: 1 1 460px;
+  min-width: 0;
+  padding: clamp(10px, 2vw, 22px) clamp(10px, 2vw, 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.calc__top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px 16px;
+}
+.calc__pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.calc__pill {
+  min-height: 30px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--r-pill);
+  background: var(--cream-2);
+  font-size: 0.8125rem;
+}
+.calc__pill--open {
+  background: var(--accent);
+  font-weight: 600;
+}
+.calc h2 {
+  margin: 0;
+  font-size: clamp(1.5rem, 1.1rem + 1vw, 1.875rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.calc h2 a {
+  color: inherit;
+  text-decoration: none;
+}
+.calc h2 a:hover {
+  color: var(--moss);
+}
+.calc__desc {
+  margin: 0;
+  max-width: 620px;
+  color: var(--ink-60);
+}
+.calc__act {
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.calc__meta {
+  margin-left: 8px;
+  font-size: 0.875rem;
+  color: var(--ink-60);
+}
+.calc__meta > span + span::before {
+  content: ' · ';
+}
+.calc__date {
+  flex: 0 0 220px;
+  padding: 24px;
+  border-radius: var(--r-lg);
+  background: var(--cream-2);
+  color: var(--ink);
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+  transition: background-color 0.15s;
+}
+.calc__date:hover {
+  background: var(--accent);
+}
+.calc__y {
+  font-size: 0.875rem;
+  color: var(--ink-60);
+}
+.calc__date b {
+  font-family: var(--f-display);
+  white-space: nowrap;
+  font-weight: 500;
+  font-size: 3.5rem;
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+}
+.calc__m {
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+}
+@media (max-width: 900px) {
+  .calc__img {
+    flex-basis: 100%;
+  }
+  .calc__img .ph {
+    min-height: 0;
+  }
+  .calc__date {
+    flex: 1 1 100%;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: flex-start;
+    padding: 16px 20px;
+  }
+  .calc__date b {
+    font-size: 2.5rem;
+  }
+  .calc__y {
+    order: 3;
+    margin-left: auto;
+  }
+}
+
+main > .calq {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px 40px;
+  padding: clamp(24px, 4vw, 56px);
+}
+.calq h2 {
+  flex: 1 1 320px;
+  margin: 0;
+  font-size: var(--t-h2, clamp(2rem, 1.2rem + 2.4vw, 3.25rem));
+}
+.calq__list {
+  flex: 2 1 640px;
+  min-width: 0;
+}
+.calq__item {
+  padding: 22px 0;
+  border-bottom: 1px solid var(--cream);
+}
+.calq__item:first-child {
+  padding-top: 0;
+}
+.calq__item:last-child {
+  border-bottom: 0;
+}
+.calq__item h3 {
+  margin: 0 0 8px;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+.calq__item p {
+  margin: 0;
+  color: var(--ink-60);
+}
+
+/* ---------- content blocks on inner pages (Blocks.astro; docs/18 §8) ---------- */
+.ico-tile {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--ink);
+  border: 0;
+}
+.callout {
+  border: 0;
+  border-radius: var(--r-lg);
+  background: var(--cream-2);
+}
+.callout--gold {
+  background: var(--accent);
+}
+.callout--gold .muted,
+.callout--gold .kicker {
+  color: var(--ink);
+}
+.rows {
+  border-top: 0;
+}
+.row {
+  border-bottom-color: var(--cream);
+}
+.row:last-child {
+  border-bottom: 0;
+}
+.row__n {
+  font-family: var(--f-body);
+  font-size: 0.875rem;
+  color: var(--ink-60);
+}
+.row :is(h2, h3) {
+  font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.table th,
+.table td {
+  border-bottom-color: var(--cream);
+}
+.table thead th {
+  border-bottom: 2px solid var(--ink);
+  font-family: var(--f-display);
+  font-size: 1.0625rem;
+  color: var(--ink);
+}
+.table thead th:first-child {
+  font-family: var(--f-body);
+  font-size: 0.875rem;
+  color: var(--ink-60);
+}
+.table tbody tr:last-child > * {
+  border-bottom: 0;
+}
+.table-scroll {
+  border: 0;
+  border-radius: 0;
+  background: none;
+  scrollbar-color: var(--ink-40) var(--cream-2);
+}
+.table-scroll .table thead th {
+  background: none;
+}
+/* a form inside a block is already on a white panel: no second card around it */
+main > :is(.block--form, .block--auto-form) :is(.form-ex, .form-vi, .form-org, .form-sp, .form-cb, .form-cat, .form-gr, .form-wrap) {
+  border: 0;
+  box-shadow: none;
+  background: none;
+  padding: 0;
+  max-width: 980px;
+}
+main > .calf .pill span {
+  margin-left: 0.3em;
 }

@@ -121,20 +121,29 @@ const L = {
     display: flex;
     gap: 8px;
     align-items: center;
-    padding: 8px 10px;
-    border-radius: 8px;
-    border: 1px solid var(--line);
-    background: #fff;
+    min-height: 48px;
+    padding: 8px 16px;
+    border-radius: var(--r);
+    border: 1px solid transparent;
+    background: #f5f5f5;
     cursor: pointer;
-    font-size: 12px;
-    transition: all var(--tr);
+    font-size: 15px;
+    text-align: left;
+    transition: border-color var(--tr), background-color var(--tr);
+  }
+  .form-sp__pkg:hover {
+    border-color: var(--line-strong);
   }
   .form-sp__pkg:has(input:checked) {
-    border-color: var(--gold);
-    background: #fff8e6;
+    border-color: var(--ink);
+    background: #fff;
   }
-  .form-sp__pkg input {
-    accent-color: var(--gold);
+  .form-sp .form-sp__pkg input {
+    width: auto;
+    min-height: 0;
+    flex: none;
+    margin: 0;
+    accent-color: var(--ink);
   }
   @media (min-width: 600px) {
     .form-sp__grid, .form-sp__pkgs { grid-template-columns: 1fr 1fr; }

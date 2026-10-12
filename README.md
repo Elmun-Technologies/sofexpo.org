@@ -314,6 +314,7 @@ See [.env.example](.env.example), `npm run lead-webhook`, and [docs/17-backend-a
 | [docs/14-post-show-report.md](docs/14-post-show-report.md) | **UZ** · Post-show report template and the on-site data checklist |
 | [docs/15-audit-2026-10.md](docs/15-audit-2026-10.md) | **UZ** · Full project audit (Oct 2026): fixes, removals, benchmark update, A-to-Z scorecard |
 | [docs/16-keyword-audit.md](docs/16-keyword-audit.md) | **UZ** · Keyword audit: semantic core per page, before/after scores, `audit:keywords` gate |
+| [docs/18-redesign-2026-10.md](docs/18-redesign-2026-10.md) | **UZ** · 2026-10 redesign, phase 1: tokens, Manrope/Onest, header/footer, home page |
 | [docs/17-backend-admin.md](docs/17-backend-admin.md) | **UZ** · Backend architecture, API, SQLite/CRM algorithm, admin panels and production setup |
 | [public/files/README.md](public/files/README.md)               | Note on the placeholder PDFs                                      |
 

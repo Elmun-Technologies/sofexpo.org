@@ -118,21 +118,18 @@ const list: Edition[] = [...archive].sort((a, b) => b.year - a.year);
 <style>
   .editions {
     display: grid;
-    gap: 1px;
-    background: var(--line);
-    border: 1px solid var(--line);
-    border-radius: var(--r-lg);
-    overflow: hidden;
+    gap: 10px;
     margin-top: 1.4rem;
   }
   /* mobile-first: the year plate stacks above the edition on a phone;
      side by side from ≥760px */
   .ed {
-    background: var(--paper);
+    background: var(--cream-2);
+    border-radius: var(--r-lg);
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: clamp(1rem, 0.5rem + 2vw, 2.4rem);
-    padding: clamp(1.2rem, 0.8rem + 1.6vw, 2rem);
+    padding: clamp(1rem, 0.6rem + 1.2vw, 1.6rem);
   }
   .ed__year {
     display: grid;
@@ -140,15 +137,21 @@ const list: Edition[] = [...archive].sort((a, b) => b.year - a.year);
     align-content: start;
   }
   .ed__year span {
-    font-size: 2rem;
-    color: var(--evergreen);
+    font-family: var(--f-display);
+    font-size: 3rem;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.05em;
+    color: var(--ink);
   }
   .ed__year small {
-    color: var(--ink-40);
-    font-size: 0.82rem;
+    color: var(--ink-60);
+    font-size: 0.875rem;
   }
   .ed h2 {
-    font-size: clamp(1.1rem, 1rem + 0.5vw, 1.5rem);
+    font-size: clamp(1.25rem, 1rem + 0.7vw, 1.75rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
     margin: 0 0 0.4rem;
   }
   .ed p {
@@ -169,8 +172,11 @@ const list: Edition[] = [...archive].sort((a, b) => b.year - a.year);
     gap: 0.1rem;
   }
   .ed__stats b {
-    font-size: 1.25rem;
-    color: var(--gold);
+    font-family: var(--f-display);
+    font-size: 1.75rem;
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    color: var(--ink);
   }
   .ed__stats span {
     font-size: 0.8rem;
@@ -185,7 +191,7 @@ const list: Edition[] = [...archive].sort((a, b) => b.year - a.year);
   /* each edition shows a frame from the show (docs/15 §11) */
   .ed__img {
     display: block;
-    border-radius: var(--r);
+    border-radius: 20px;
     overflow: hidden;
   }
   @media (min-width: 760px) {

@@ -158,7 +158,7 @@ const after = ((page.after ?? []) as SectionKey[]).filter((s) => s !== 'faq' || 
     showHighlight={kind === 'overview'}
   />
   <EventNav {locale} {event} {past} active={page.path} />
-  {before.map((s) => <EventSections {locale} {event} section={s} tone={s === 'facts' ? 'forest' : 'default'} />)}
+  {before.map((s) => <EventSections {locale} {event} section={s} />)}
   <Blocks {blocks} {locale} />
   {after.map((s) => <EventSections {locale} {event} section={s} />)}
   {

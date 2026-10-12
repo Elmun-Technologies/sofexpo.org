@@ -31,12 +31,12 @@ export const eventPages: Record<string, EventPages> = {
             title:
               "FOODERA EXPO 2026 — выставка продуктов и напитков, Самарканд",
             description:
-              "Выставка продуктов питания и напитков в Самарканде, 20–22 октября 2026: 12 разделов, дегустации, закупочная биржа с сетями, форум Food Retail. Бронирование стендов.",
+              "Выставка продуктов питания и напитков в Самарканде, 27–29 октября 2026: 12 разделов, дегустации, закупочная биржа с сетями, форум Food Retail. Бронирование стендов.",
           },
           en: {
             title: "FOODERA EXPO 2026 — food and drink exhibition, Samarkand",
             description:
-              "Food and beverage exhibition in Samarkand, 20–22 October 2026: 12 sections, tastings, a buying marketplace with retail chains, Food Retail forum. Stand booking open.",
+              "Food and beverage exhibition in Samarkand, 27–29 October 2026: 12 sections, tastings, a buying marketplace with retail chains, Food Retail forum. Stand booking open.",
           },
         },
         hero: {

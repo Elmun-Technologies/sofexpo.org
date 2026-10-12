@@ -113,9 +113,9 @@ export const events: ExpoEvent[] = [
     shortName: 'FOODERA',
     industry: 'food',
     dates: {
-      start: '2026-10-20',
-      end: '2026-10-22',
-      display: { ru: '20–22 октября 2026', en: '20–22 October 2026' },
+      start: '2026-10-27',
+      end: '2026-10-29',
+      display: { ru: '27–29 октября 2026', en: '27–29 October 2026' },
     },
     edition: { ru: 'Специализированная выставка продуктов и напитков в Узбекистане', en: 'The food and beverage exhibition for Uzbekistan and Central Asia' },
     status: 'open',
@@ -236,7 +236,7 @@ export const events: ExpoEvent[] = [
       { q: { ru: 'Сколько стоит вход для посетителей?', en: 'What does a visitor pass cost?' }, a: { ru: 'Для специалистов отрасли вход бесплатный по предварительной регистрации: электронный билет приходит сразу. Регистрация на кассе тоже бесплатна, но займёт 10–15 минут.', en: 'Entry is free for trade professionals who pre-register: the e-ticket arrives at once. Registering at the desk is free as well, but takes 10–15 minutes.' } },
       { q: { ru: 'Можно ли заранее назначить встречи с закупщиками?', en: 'Can I book meetings with buyers in advance?' }, a: { ru: 'Да, через закупочную биржу: 60 слотов по 15 минут, расписание приходит за неделю до выставки. Участие входит в пакеты «Стандартный» и выше.', en: 'Yes, through the buying marketplace: 60 slots of 15 minutes, with the schedule sent a week before the show. It is included in Standard packages and above.' } },
       { q: { ru: 'Как попасть в программу для закупщиков?', en: 'How do I join the buyer programme?' }, a: { ru: 'Подайте заявку до 10 октября 2026: профиль проверяем за два рабочих дня. Программа бесплатная, число мест ограничено столами в зоне переговоров.', en: 'Apply by 10 October 2026; we check the profile within two working days. The programme is free, and places are limited by the tables in the negotiation area.' } },
-      { q: { ru: 'Как подать продукт на конкурс «Лучший продукт»?', en: 'How do I enter the Best Product contest?' }, a: { ru: 'Конкурс бесплатный и открыт только для экспонентов. Заявки принимаются до 10 октября 2026, награждение — 20 октября, в первый день выставки.', en: 'The contest is free and open to exhibitors only. Entries close on 10 October 2026; the awards take place on 20 October, the opening day.' } },
+      { q: { ru: 'Как подать продукт на конкурс «Лучший продукт»?', en: 'How do I enter the Best Product contest?' }, a: { ru: 'Конкурс бесплатный и открыт только для экспонентов. Заявки принимаются до 10 октября 2026, награждение — 27 октября, в первый день выставки.', en: 'The contest is free and open to exhibitors only. Entries close on 10 October 2026; the awards take place on 27 October, the opening day.' } },
       { q: { ru: 'Как добраться до площадки?', en: 'How do I get to the venue?' }, a: { ru: 'SOF EXPO Samarkand — в 16 км от аэропорта и в 23 км от вокзала. Парковка у входа бесплатная, трансфер от аэропорта и вокзала бронируется через менеджера.', en: 'SOF EXPO Samarkand is 16 km from the airport and 23 km from the railway station. Parking at the gate is free; transfers from the airport and the station are booked through the manager.' } },
     ],
     socials: { telegram: 'https://t.me/sofexpo', instagram: 'https://www.instagram.com/sofexpo.uz/' },
@@ -277,7 +277,7 @@ export const events: ExpoEvent[] = [
         },
         {
           label: { ru: 'Встречи', en: 'Meetings' },
-          when: { ru: '20–22 октября', en: '20–22 October' },
+          when: { ru: '27–29 октября', en: '27–29 October' },
           text: { ru: 'Переговоры идут в отдельной зоне: стол, вода, розетка, 15 минут на встречу.', en: 'Meetings run in a dedicated area: a table, water, a socket, 15 minutes per meeting.' },
         },
       ],
@@ -320,7 +320,7 @@ export const events: ExpoEvent[] = [
       timeline: [
         { label: { ru: 'Приём заявок', en: 'Entries open' }, when: { ru: 'до 10 октября 2026', en: 'until 10 October 2026' } },
         { label: { ru: 'Слепая дегустация жюри', en: 'Blind jury tasting' }, when: { ru: '14–16 октября', en: '14–16 October' } },
-        { label: { ru: 'Награждение', en: 'Awards' }, when: { ru: '20 октября, день 1', en: '20 October, day 1' } },
+        { label: { ru: 'Награждение', en: 'Awards' }, when: { ru: '27 октября, день 1', en: '27 October, day 1' } },
         { label: { ru: 'Публикация результатов', en: 'Results published' }, when: { ru: '23 октября', en: '23 October' } },
       ],
       prize: {

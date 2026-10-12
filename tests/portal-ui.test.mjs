@@ -7,7 +7,7 @@ const html = readFileSync(new URL('../scripts/backend/portal/index.html', import
 const headerSource = readFileSync(new URL('../src/components/Header.astro', import.meta.url), 'utf8');
 const translations = readFileSync(new URL('../scripts/backend/portal/i18n.js', import.meta.url), 'utf8');
 const app = readFileSync(new URL('../scripts/backend/portal/app.js', import.meta.url), 'utf8');
-const foodera = { slug: 'foodera-expo', name: 'FOODERA EXPO 2026', dates: '20–22 oktabr 2026' };
+const foodera = { slug: 'foodera-expo', name: 'FOODERA EXPO 2026', dates: '27–29 oktabr 2026' };
 
 function jsonResponse(data, status = 200) {
   return {
@@ -213,11 +213,11 @@ test('public header forwards the active locale when linking to the account cabin
 
 test('portal can switch across all five site languages and keeps its public links in the selected language', async () => {
   const expectations = [
-    ['uz', 'Kirish', 'Tashrif rejasini yuborish', 'FOODERA EXPO 2026 · 20–22 oktabr 2026'],
-    ['en', 'Log in', 'Plan your visit', 'FOODERA EXPO 2026 · 20–22 October 2026'],
-    ['ru', 'Войти', 'Запланировать посещение', 'FOODERA EXPO 2026 · 20–22 октября 2026'],
-    ['tr', 'Giriş yap', 'Ziyaretinizi planlayın', 'FOODERA EXPO 2026 · 20–22 Ekim 2026'],
-    ['zh', '登录', '提交参观计划', 'FOODERA EXPO 2026 · 2026年10月20–22日'],
+    ['uz', 'Kirish', 'Tashrif rejasini yuborish', 'FOODERA EXPO 2026 · 27–29 oktabr 2026'],
+    ['en', 'Log in', 'Plan your visit', 'FOODERA EXPO 2026 · 27–29 October 2026'],
+    ['ru', 'Войти', 'Запланировать посещение', 'FOODERA EXPO 2026 · 27–29 октября 2026'],
+    ['tr', 'Giriş yap', 'Ziyaretinizi planlayın', 'FOODERA EXPO 2026 · 27–29 Ekim 2026'],
+    ['zh', '登录', '提交参观计划', 'FOODERA EXPO 2026 · 2026年10月27–29日'],
   ];
   for (const [locale, login, visitTitle, eventOption] of expectations) {
     const { dom, window, calls } = createPortalPage(`?type=visitor&lang=${locale}`);

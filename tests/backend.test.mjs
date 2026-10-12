@@ -330,7 +330,7 @@ test('visitor and exhibitor accounts have isolated profiles and their own CRM-tr
   const { server, base } = await startBackend(t);
   const options = await jsonRequest(base, '/api/portal/options');
   assert.equal(options.response.status, 200);
-  assert.equal(options.data.events.find((event) => event.slug === 'foodera-expo').dates, '20–22 oktabr 2026');
+  assert.equal(options.data.events.find((event) => event.slug === 'foodera-expo').dates, '27–29 oktabr 2026');
   assert.ok(!options.data.events.some((event) => event.slug.startsWith('promotors')));
   let result = await jsonRequest(base, '/api/portal/register', {
     method: 'POST', body: {

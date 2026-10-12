@@ -214,5 +214,49 @@
   ],
   "visitors-flowers": [
     640
+  ],
+  "hall-panorama": [
+    640,
+    1024,
+    1600
+  ],
+  "venue-flags": [
+    640,
+    1024,
+    1600
+  ],
+  "outdoor-tractors": [
+    640,
+    1024,
+    1600
+  ],
+  "registan-night": [
+    640,
+    1024,
+    1600
+  ],
+  "stand-dark": [
+    640,
+    1024,
+    1600
+  ],
+  "b2b-meeting": [
+    640,
+    1024,
+    1600
+  ],
+  "conference-stage": [
+    640,
+    1024
+  ],
+  "stand-exhibitor": [
+    640,
+    1024,
+    1600
+  ],
+  "opening-crowd": [
+    640,
+    1024,
+    1600
   ]
 }

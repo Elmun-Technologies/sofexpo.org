@@ -88,6 +88,17 @@ const MAP = {
   'hotel-room': ['1-1-1536x864.jpg', 'centre'],
   'hotel-facade': ['2-1-1536x864.jpg', 'centre'],
   'car-road': ['2-2-1536x864.jpg', 'centre'],
+
+  /* ── 2026-10 redesign (docs/18): real photos from the new site package (sofexpo.uz) ── */
+  'hall-panorama': ['site-2026-10/hall-panorama.jpg', 'centre'],
+  'venue-flags': ['site-2026-10/exterior-1.jpg', 'centre'],
+  'outdoor-tractors': ['site-2026-10/outdoor-tractors-building.jpg', 'centre'],
+  'registan-night': ['site-2026-10/registan-night.jpg', 'centre'],
+  'stand-dark': ['site-2026-10/stand-dark-art.jpg', 'centre'],
+  'b2b-meeting': ['site-2026-10/b2b-meeting-2.jpg', 'centre'],
+  'conference-stage': ['site-2026-10/conference-stage-2.jpg', 'centre'],
+  'stand-exhibitor': ['site-2026-10/stand-1.jpg', 'centre'],
+  'opening-crowd': ['site-2026-10/opening-crowd.jpg', 'centre'],
 };
 
 /** names that must keep the source aspect (plans/diagrams must not be cropped) */

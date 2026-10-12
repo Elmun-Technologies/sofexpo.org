@@ -22,6 +22,7 @@ export const site = {
     email: "info@sofexpo.uz",
     telegramManager: "https://t.me/sofexpomgr",
     telegramChannel: "https://t.me/sofexpo",
+    whatsapp: "https://wa.me/998557050705",
     instagram: "https://www.instagram.com/sofexpo.uz/",
     facebook: "https://www.facebook.com/sofexpo.uz",
     youtube: "https://www.youtube.com/channel/UCNPRKCh6okafi4EBLR2LvKg",

@@ -216,6 +216,15 @@ html:lang(tr) { --f-body: "TT Norms Pro", Arial, sans-serif; }
   .venue-strip__img { display: block; }
 }
 @media (min-width: 1281px) { .mnav { display: none !important; } }
+/* 1280–1439px: the tightest desktop. Logo + six menu groups + tools left ~10px in RU and
+   overflowed by 100px in UZ, so a runner whose fonts render a hair wider (CI) scrolled
+   sideways. Tighter link padding, type and gaps leave ≥40px free in every locale. */
+@media (min-width: 1280px) and (max-width: 1439px) {
+  .hdr__in { gap: 12px; }
+  .nav__link { padding: 9px 7px; font-size: 12.5px; }
+  .hdr__tools { gap: 8px; }
+  .hdr__tools .btn--desk { padding: 8px 11px; }
+}
 
 /* ≥900px: the wide hero — 340px featured column, centered alignment, full type ramp */
 @media (min-width: 900px) {

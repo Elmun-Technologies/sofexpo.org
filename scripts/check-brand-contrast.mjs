@@ -16,7 +16,8 @@ export const ratio = (a, b) => {
 
 export function paletteProblems(p) {
   // goldSoft is text on the dark band (evergreen); evergreen-2 is only a hover ground
-  const pairs = [['#ffffff', p.evergreen], ['#ffffff', p.evergreen2], [p.goldSoft, p.evergreen]];
+  // goldSoft is also the show's --accent: a filled CTA/call-out with ink text on it
+  const pairs = [['#ffffff', p.evergreen], ['#ffffff', p.evergreen2], [p.goldSoft, p.evergreen], [p.ink, p.goldSoft]];
   for (const t of ['ink', 'ink60', 'ink40']) for (const g of ['cream', 'cream2', 'line']) pairs.push([p[t], p[g]]);
   // brass/accent text sits on paper and sheets, never on the 1px rule colour
   for (const t of ['gold', 'moss']) for (const g of ['cream', 'cream2']) pairs.push([p[t], p[g]]);

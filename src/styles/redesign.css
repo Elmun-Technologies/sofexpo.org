@@ -1281,3 +1281,38 @@ main > :is(.block--form, .block--auto-form) :is(.form-ex, .form-vi, .form-org, .
 main > .calf .pill span {
   margin-left: 0.3em;
 }
+
+/* ---------- per-show identity inside the 2026-10 frame (brand-map.json, docs/19 §3) ---------- */
+/* the logo-colour stripe sits inside the black footer panel, not as a hairline across the page */
+.ftr {
+  border-top: 0;
+  border-image: none;
+}
+.ftr__main {
+  position: relative;
+  overflow: hidden;
+}
+.ftr__main::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 6px;
+  background: var(--brand-stripe);
+}
+/* the show tabs are a pill panel: the hero above already carries the stripe */
+main > .evnav {
+  background-image: none;
+}
+/* show cards: a dot in the show's own colour in the date pill */
+.ev .ev__date::before {
+  content: '';
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ic, var(--moss));
+}
+/* calendar cards: the date tile carries the show's colour as a top band */
+.calc__date {
+  box-shadow: inset 0 5px 0 var(--ic, transparent);
+}

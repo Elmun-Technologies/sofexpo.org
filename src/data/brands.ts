@@ -75,6 +75,8 @@ export function brandCss(brand: HostBrand | null): string {
     `--line:${p.line};--line-strong:${p.lineStrong};`,
     `--cream:${p.cream};--cream-2:${p.cream2};`,
     `--gold:${p.gold};--gold-soft:${p.goldSoft};--ornament:${p.ornament};--brand-mark:${p.mark};`,
+    /* the 2026-10 design's yellow accent (booking CTA, call-outs) becomes the show's own accent */
+    `--accent:${p.goldSoft};`,
     `--brand-stripe:${brand.stripe};`,
     "}",
   ].join("");

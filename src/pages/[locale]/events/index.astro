@@ -17,7 +17,8 @@ import Icon from '@/components/Icon.astro';
 import ShowLogo from '@/components/ShowLogo.astro';
 import { logoFor } from '@/lib/showLogos';
 import Photo from '@/components/Photo.astro';
-import { bigDate, daysUntil, industryLabel } from '@/lib/labels';
+import { bigDate, daysUntil, industryColor, industryLabel } from '@/lib/labels';
+import { showColor } from '@/data/brands';
 
 export function getStaticPaths() {
   return rootOnlyPaths();
@@ -140,7 +141,7 @@ const copy = {
     const days = daysUntil(e.dates.start);
     const href = L(`/events/${e.slug}/`);
     return (
-      <article class="calc" data-ind={e.industry}>
+      <article class="calc" data-ind={e.industry} style={`--ic:${showColor(e.slug, industryColor(e.industry))}`}>
         <a class="calc__img" href={href} tabindex="-1" aria-hidden="true">
           <Photo src={e.heroImage} alt={e.tagline[locale]} ratio="4/3" rounded={false} priority={i === 0} sizes="(max-width: 900px) 100vw, 380px" />
         </a>

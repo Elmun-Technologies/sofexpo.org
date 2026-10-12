@@ -3,6 +3,10 @@
     900,
     900
   ],
+  "b2b-meeting": [
+    1200,
+    750
+  ],
   "badge-lanyard": [
     1200,
     750
@@ -107,6 +111,10 @@
     1200,
     750
   ],
+  "hall-panorama": [
+    1200,
+    725
+  ],
   "hall-plan": [
     864,
     596
@@ -159,13 +167,25 @@
     1200,
     750
   ],
+  "opening-crowd": [
+    1200,
+    750
+  ],
   "outdoor-area": [
     768,
     432
   ],
+  "outdoor-tractors": [
+    1200,
+    750
+  ],
   "plane-window": [
     612,
     408
+  ],
+  "registan-night": [
+    1200,
+    750
   ],
   "samarkand-real": [
     1200,
@@ -203,9 +223,17 @@
     1024,
     576
   ],
+  "stand-dark": [
+    1200,
+    750
+  ],
   "stand-equipment": [
     768,
     432
+  ],
+  "stand-exhibitor": [
+    1200,
+    750
   ],
   "stand-falcon": [
     1200,
@@ -268,6 +296,10 @@
     750
   ],
   "venue-facade": [
+    1200,
+    750
+  ],
+  "venue-flags": [
     1200,
     750
   ],

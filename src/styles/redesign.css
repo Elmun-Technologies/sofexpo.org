@@ -1,0 +1,720 @@
+/* ============================================================
+   SOF EXPO SAMARKAND — 2026-10 redesign layer (docs/18)
+
+   The approved design (design/ in the site package): a grey canvas, white
+   36px panels separated by 10px, black ink, one brand blue (#0063E4) and one
+   acid yellow (#F4FD10) reserved for the booking action. Type: Manrope 500
+   for display, Onest for body.
+
+   The tokens themselves live in global.css (:root) — this file re-draws the
+   shared components on top of them: the page frame and its panels, the header
+   bar, mega-menu and mobile menu, the footer, buttons, chips, cards, form
+   controls and the eyebrow. It loads last, so it wins over global.css and
+   premium.css without !important. Mobile-first: min-width queries only, on
+   the design's ladder 641 · 901 · 1101.
+   ============================================================ */
+
+/* ---------- desktop type scale (the phone sizes are the :root defaults) ---------- */
+@media (min-width: 641px) {
+  :root {
+    --t-hero: clamp(2.75rem, 1rem + 4.4vw, 5.5rem);
+    --t-h2: clamp(2rem, 0.9rem + 2.8vw, 3.5rem);
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--moss);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ---------- eyebrow: muted 14px, sentence case — no mono caps, no rule ---------- */
+.kicker {
+  font-family: var(--f-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink-60);
+  margin: 0 0 0.75rem;
+}
+.kicker::before {
+  display: none;
+}
+.sec--forest .kicker,
+.hero .kicker,
+.ehero .kicker,
+.cta-band .kicker {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* ---------- the page frame: canvas, then a column of panels ---------- */
+body {
+  background: var(--cream);
+}
+main {
+  max-width: calc(var(--maxw) + 2 * var(--page-pad));
+  margin-inline: auto;
+  padding: var(--gap) var(--page-pad) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+main > :is(section, article, .hero, .phero, .ehero) {
+  background: var(--paper);
+  border-radius: var(--r-panel);
+  /* clip, not hidden: a clipped box is not a scroll container, so sticky children still stick */
+  overflow: clip;
+  margin: 0;
+}
+main > .sec--sand {
+  background: var(--cream-2);
+}
+main > .sec--forest {
+  background: var(--evergreen);
+}
+main > :is(section, article) > .wrap,
+main > :is(section, article) .wrap {
+  max-width: none;
+  padding-inline: var(--gutter);
+}
+.sec {
+  padding-block: clamp(1.75rem, 1rem + 3vw, 3.5rem);
+}
+/* a section head and the block it introduces are one panel, as are consecutive blocks on
+   the same ground (Blocks.astro marks them) — the 10px seam would cut a heading from its list */
+main > :is(.block--after-head, .block--cont) {
+  margin-top: calc(-1 * var(--gap));
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  padding-top: 0;
+}
+main > .block:has(+ :is(.block--after-head, .block--cont)) {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+main > script {
+  display: none;
+}
+/* breadcrumbs sit on the canvas, above the first panel */
+main > .wrap {
+  padding-inline: calc(var(--gutter) * 0.5);
+  max-width: none;
+}
+main > .wrap .crumbs {
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+}
+
+/* ---------- header: a white pill bar inside the 10px frame ---------- */
+.hdr {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  border: 0;
+  background: transparent;
+  padding: var(--page-pad) var(--page-pad) 0;
+}
+.hdr__in {
+  position: relative;
+  max-width: var(--maxw);
+  min-height: 68px;
+  margin-inline: auto;
+  padding: 10px 10px 10px clamp(12px, 2vw, 26px);
+  background: var(--paper);
+  border-radius: 28px;
+  gap: 12px;
+  box-shadow: 0 1px 0 rgba(10, 10, 10, 0.03);
+}
+.hdr__in::before {
+  display: none;
+}
+.is-scrolled .hdr__in {
+  box-shadow: 0 10px 30px -18px rgba(10, 10, 10, 0.35);
+}
+/* a 320px phone needs every pixel of the bar: the mark is 34px there, 42px from 641px */
+.logo__h {
+  display: block;
+  width: auto;
+  height: 34px;
+}
+@media (min-width: 641px) {
+  .logo__h {
+    height: 42px;
+  }
+}
+.nav {
+  gap: 4px;
+  align-self: center;
+}
+.nav__link {
+  height: 42px;
+  padding: 0 14px 0 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  background: var(--paper);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  gap: 6px;
+}
+.nav__link::after {
+  display: none;
+}
+.nav__link:hover,
+.nav__item:hover .nav__link,
+.nav__item:focus-within .nav__link,
+.nav__link[aria-current="page"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+.nav__caret {
+  opacity: 0.8;
+}
+
+.hdr__tools {
+  gap: 8px;
+  margin-left: auto;
+}
+.nav + .hdr__tools {
+  margin-left: 0;
+}
+.language-picker summary,
+.header-search,
+.header-call {
+  height: 44px;
+  min-width: 44px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  background: var(--paper);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--ink);
+  text-decoration: none;
+  transition: background-color var(--tr), color var(--tr), border-color var(--tr);
+}
+.language-picker summary {
+  padding: 0 14px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.language-picker summary:hover,
+.header-search:hover,
+.header-call:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+.header-call {
+  display: none;
+}
+.hdr .btn--desk {
+  min-height: 48px;
+  padding: 0 22px;
+  font-size: 0.9375rem;
+}
+.burger {
+  width: auto;
+  min-width: 48px;
+  height: 48px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: var(--ink);
+}
+.burger span,
+.burger span::before,
+.burger span::after {
+  background: #fff;
+}
+/* the call button lives in the bar on tablets and on wide desktops; between 1280 and
+   1599px six section pills, the language, search and the CTA already fill it */
+@media (min-width: 641px) and (max-width: 1279px), (min-width: 1600px) {
+  .header-call {
+    display: inline-flex;
+  }
+}
+@media (min-width: 1280px) {
+  .nav__link {
+    padding: 0 10px 0 13px;
+  }
+}
+/* 1280–1439px: the narrowest desktop bar — the search moves to the footer and the menu,
+   the language pill drops its globe */
+@media (min-width: 1280px) and (max-width: 1439px) {
+  .nav__link {
+    padding: 0 8px 0 11px;
+    font-size: 0.875rem;
+  }
+  .hdr .header-search,
+  .language-picker summary > svg:first-child {
+    display: none;
+  }
+  .hdr .btn--desk {
+    padding: 0 16px;
+    font-size: 0.875rem;
+  }
+}
+
+/* mega-menu: a 36px card 10px under the bar; the ::before bridge keeps :hover alive across
+   the gap */
+.mega {
+  top: calc(100% + 10px);
+  border: 1px solid var(--line);
+  border-radius: var(--r-panel);
+  box-shadow: 0 30px 60px -30px rgba(10, 10, 10, 0.35);
+}
+.mega::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -12px;
+  height: 12px;
+}
+.mega__in {
+  grid-template-columns: minmax(200px, 280px) minmax(0, 1fr) minmax(220px, 300px);
+  gap: 32px;
+  padding: 36px;
+}
+.mega__title {
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: 2.25rem;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin: 0 0 14px;
+}
+.mega__lead {
+  color: var(--ink-60);
+}
+.mega__all {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--ink);
+  border-radius: var(--r-pill);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.mega__all:hover {
+  background: var(--ink);
+  color: #fff;
+}
+.mega__links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  align-content: start;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  list-style: none;
+}
+.mega__links a {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  height: 100%;
+  padding: 14px 18px;
+  border-radius: 20px;
+  background: #f5f5f5;
+  text-decoration: none;
+  transition: background-color var(--tr);
+}
+.mega__links a:hover {
+  background: #ececec;
+  color: var(--ink);
+}
+.mega__t {
+  font-weight: 600;
+}
+.mega__d {
+  font-size: 0.8125rem;
+  color: var(--ink-60);
+}
+.mega__photo {
+  position: relative;
+  display: block;
+  min-height: 240px;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  text-decoration: none;
+}
+.mega__photo .ph {
+  position: absolute;
+  inset: 0;
+  aspect-ratio: auto;
+  height: 100%;
+}
+.mega__photo-card {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 20px;
+  background: var(--paper);
+}
+.mega__photo-card > span:first-child {
+  display: flex;
+  flex-direction: column;
+}
+.mega__photo-card small {
+  font-size: 0.75rem;
+  color: var(--ink-60);
+}
+
+/* the round "go" arrow used on every card; it turns yellow when its card is hovered */
+.arr {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color var(--tr), color var(--tr);
+}
+.arr--xl {
+  width: 64px;
+  height: 64px;
+}
+@media (min-width: 641px) {
+  .arr--xl {
+    width: 88px;
+    height: 88px;
+  }
+}
+a:hover > .arr,
+a:hover .arr,
+a:focus-visible .arr {
+  background: var(--accent);
+  color: var(--ink);
+}
+
+/* mobile menu: a white card under the bar, one grey accordion row per section */
+.mnav {
+  position: absolute;
+  inset: calc(100% + 8px) var(--page-pad) auto;
+  height: auto;
+  max-height: calc(100dvh - var(--header-h) - 18px);
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+}
+.mnav nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.mnav details {
+  border: 0;
+  border-radius: 20px;
+  background: #f5f5f5;
+}
+.mnav summary {
+  min-height: 56px;
+  padding: 0 18px;
+  font-family: var(--f-body);
+  font-size: 1.125rem;
+}
+.mnav summary::after {
+  color: var(--ink);
+  font-size: 1.4rem;
+}
+.mnav__list {
+  gap: 4px;
+  padding: 0 10px 10px;
+}
+.mnav__list a {
+  min-height: 48px;
+  padding: 6px 14px;
+  border-radius: 14px;
+  background: var(--paper);
+  font-weight: 600;
+}
+.mnav__ctas {
+  gap: 6px;
+  padding-top: 4px;
+}
+.mnav__ctas .btn {
+  min-height: 54px;
+}
+
+/* ---------- buttons ---------- */
+.btn {
+  border-radius: var(--r-pill);
+  min-height: 3.5rem;
+  padding: 0 1.6rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+.btn:hover {
+  box-shadow: none;
+  color: #fff;
+}
+.btn--sm {
+  min-height: 2.75rem;
+  padding: 0 1.1rem;
+  font-size: 0.9375rem;
+}
+.btn--accent,
+.btn--accent:hover {
+  color: var(--ink);
+}
+.btn--accent:hover {
+  background: #e2eb00;
+}
+.btn--ghost {
+  border-color: var(--ink);
+}
+.btn--ghost:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+.btn--light:hover {
+  background: var(--accent);
+  color: var(--ink);
+}
+.sec--forest .btn--ghost:hover,
+.hero .btn--ghost:hover,
+.ehero .btn--ghost:hover,
+.cta .btn--ghost:hover,
+.ftr .btn--ghost:hover {
+  background: #fff;
+  color: var(--ink);
+}
+
+/* outline pill link (design `.pill`): inverts to ink on hover */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--ink);
+  border-radius: var(--r-pill);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  color: var(--ink);
+  transition: background-color var(--tr), color var(--tr);
+}
+.pill:hover {
+  background: var(--ink);
+  color: #fff;
+}
+
+/* ---------- chips, cards ---------- */
+.chip {
+  min-height: 32px;
+  padding: 0 12px;
+  border-color: var(--line-strong);
+  font-size: 0.8125rem;
+}
+.chip--gold {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--ink);
+  font-weight: 600;
+}
+.card {
+  background: var(--cream-2);
+  border-color: transparent;
+  border-radius: var(--r-lg);
+}
+a.card:hover,
+.card--hover:hover {
+  transform: none;
+  box-shadow: none;
+  background: #ececec;
+}
+.sec--sand .card {
+  background: var(--paper);
+}
+
+/* ---------- form controls (design FormKit) ---------- */
+body :is(input:not([type="radio"]):not([type="checkbox"]):not([type="hidden"]):not([type="range"]):not([type="submit"]):not([type="file"]), select, textarea) {
+  min-height: 56px;
+  padding: 0 18px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r);
+  background: #f5f5f5;
+  color: var(--ink);
+  font-size: 1rem; /* never under 16px: iOS zooms on focus otherwise */
+}
+body textarea {
+  padding-block: 14px;
+  min-height: 120px;
+}
+body :is(input:not([type="radio"]):not([type="checkbox"]), select, textarea):focus {
+  outline: none;
+  border-color: var(--moss);
+  background: #fff;
+  box-shadow: var(--focus-ring);
+}
+body :is(input, textarea)::placeholder {
+  color: #8a8a8a;
+}
+body :is(input:not([type="radio"]):not([type="checkbox"]), select, textarea)[aria-invalid="true"] {
+  border-color: var(--danger);
+  background: #fdece7;
+}
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--ink);
+}
+
+/* ---------- footer: booking + sales cards, then the black panel ---------- */
+.ftr {
+  max-width: calc(var(--maxw) + 2 * var(--page-pad));
+  margin: var(--gap) auto 0;
+  padding: 0 var(--page-pad) var(--page-pad);
+  background: transparent;
+  color: #fff;
+}
+.ftr__top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap);
+  margin-bottom: var(--gap);
+}
+.ftr__cta {
+  flex: 1.4 1 520px;
+  min-width: 0;
+  min-height: 220px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding: clamp(24px, 3vw, 40px);
+  border-radius: var(--r-panel);
+  background: var(--moss);
+  color: #fff;
+  text-decoration: none;
+}
+.ftr .ftr__cta:hover {
+  color: #fff;
+  text-decoration: none;
+}
+.ftr__cta-t {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  max-width: 620px;
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: clamp(2rem, 1rem + 3vw, 3.75rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+.ftr__cta .arr {
+  background: var(--accent);
+  color: var(--ink);
+}
+.ftr__sales {
+  flex: 1 1 360px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 18px;
+  padding: clamp(24px, 3vw, 36px);
+  border-radius: var(--r-panel);
+  background: var(--paper);
+  color: var(--ink);
+}
+.ftr__sales-k {
+  font-size: 0.875rem;
+  color: var(--ink-60);
+}
+.ftr .ftr__phone {
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: clamp(1.75rem, 1.2rem + 1.4vw, 2.25rem);
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+.ftr__pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.ftr .ftr__pills .pill {
+  color: var(--ink);
+}
+.ftr .ftr__pills .pill:hover {
+  color: #fff;
+  text-decoration: none;
+}
+.ftr__main {
+  padding-block: clamp(28px, 3vw, 44px);
+  border-radius: var(--r-panel);
+  background: var(--ink);
+}
+.ftr__main .wrap {
+  max-width: none;
+  padding-inline: clamp(24px, 3vw, 44px);
+}
+.ftr__about {
+  max-width: 34ch;
+  margin: 1rem 0 0;
+  color: #9a9a9a;
+}
+.ftr h3 {
+  font-family: var(--f-body);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #9a9a9a;
+}
+.ftr ul {
+  gap: 10px;
+}
+.ftr a:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+.ftr .logo__h {
+  height: 48px;
+}
+.socials .ftr__social {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+.socials .ftr__social:hover {
+  background: #fff;
+  color: var(--ink);
+}
+.ftr__bottom {
+  color: #9a9a9a;
+  border-top-color: rgba(255, 255, 255, 0.14);
+}
+
+/* ---------- event sub-navigation: a white pill strip on the canvas ---------- */
+main > .evnav {
+  border-radius: var(--r-pill);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arr,
+  .nav__link,
+  .mega__links a {
+    transition: none;
+  }
+}

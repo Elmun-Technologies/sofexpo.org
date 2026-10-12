@@ -2,6 +2,11 @@
   "afrosiyob-train": [
     640
   ],
+  "b2b-meeting": [
+    640,
+    1024,
+    1600
+  ],
   "badge-lanyard": [
     640,
     1024,
@@ -126,6 +131,11 @@
     1024,
     1600
   ],
+  "hall-panorama": [
+    640,
+    1024,
+    1600
+  ],
   "hall-plan": [
     640
   ],
@@ -187,11 +197,26 @@
     1024,
     1600
   ],
+  "opening-crowd": [
+    640,
+    1024,
+    1600
+  ],
   "outdoor-area": [
     640
   ],
+  "outdoor-tractors": [
+    640,
+    1024,
+    1600
+  ],
   "plane-window": [
     640
+  ],
+  "registan-night": [
+    640,
+    1024,
+    1600
   ],
   "samarkand": [
     640,
@@ -235,8 +260,18 @@
     640,
     1024
   ],
+  "stand-dark": [
+    640,
+    1024,
+    1600
+  ],
   "stand-equipment": [
     640
+  ],
+  "stand-exhibitor": [
+    640,
+    1024,
+    1600
   ],
   "stand-falcon": [
     640,
@@ -306,6 +341,11 @@
     1600
   ],
   "venue-facade": [
+    640,
+    1024,
+    1600
+  ],
+  "venue-flags": [
     640,
     1024,
     1600

@@ -38,6 +38,12 @@
   }
 }
 
+.js .home-hero__kicker,
+.js .home-hero h1,
+.js .home-hero__lead,
+.js .home-hero .btn-row,
+.js .home-hero .hero-location,
+.js .home-hero__side,
 .js .ehero h1,
 .js .ehero .kicker,
 .js .phero h1,
@@ -46,28 +52,43 @@
 .js .block--hero .wrap > * {
   animation: rise 900ms var(--ease-out) both;
 }
+.js .home-hero h1 {
+  animation-delay: 80ms;
+}
 /* the kicker rides inside the h1 now; one rise, not two stacked */
 .js h1 > .kicker,
 .js .ehero h1 > .kicker,
 .js .phero h1 > .kicker {
   animation: none;
 }
-
+.js .home-hero__lead,
 .js .ehero h1,
 .js .phero h1 {
   animation-delay: 160ms;
 }
-
+.js .home-hero .btn-row,
 .js .phero__lead {
   animation-delay: 240ms;
 }
+.js .home-hero .hero-location {
+  animation-delay: 320ms;
+}
+.js .home-hero__side {
+  animation-delay: 380ms;
+}
+.js .home-hero .rail {
+  animation: fade 900ms var(--ease-out) 480ms both;
+}
+.js .home-hero__bg img {
+  animation: kenburns 14s var(--ease-out) both;
+}
 
 /* ---------- 2 · staggered children inside revealed sections ---------- */
-.reveal-pending :is(.grid, .gallery, .stats, .steps, .checks) > * {
+.reveal-pending :is(.grid, .gallery, .stats, .venue-strip__nums, .home-news-rows, .steps, .checks) > * {
   opacity: 0;
   transform: translateY(16px);
 }
-.reveal-in :is(.grid, .gallery, .stats, .steps, .checks) > * {
+.reveal-in :is(.grid, .gallery, .stats, .venue-strip__nums, .home-news-rows, .steps, .checks) > * {
   opacity: 1;
   transform: none;
   transition:
@@ -100,12 +121,14 @@
 /* ---------- 5 · micro-interactions ---------- */
 .btn svg,
 .txt-link svg,
-.ev__more svg{
+.ev__more svg,
+.featured-link svg {
   transition: transform 320ms var(--ease-spring);
 }
 .btn:hover svg,
 .txt-link:hover svg,
-.ev__more:hover svg{
+.ev__more:hover svg,
+.featured-link:hover svg {
   transform: translateX(4px);
 }
 .btn {
@@ -161,16 +184,18 @@ a.feature:hover .feature__media img {
 }
 
 /* underline that draws itself on text links inside prose */
-.prose a:not(.btn){
+.prose a:not(.btn),
+.venue-strip__links a {
   background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
   transition: background-size 420ms var(--ease-out);
 }
-.prose a:not(.btn):hover{
+.prose a:not(.btn):hover,
+.venue-strip__links a:hover {
   background-size: 100% 1px;
 }
 
 /* live badge breathes */
-
+.featured-live .dot,
 .chip--live .dot {
   animation: pulse 2.4s infinite;
 }
@@ -226,12 +251,13 @@ a.feature:hover .feature__media img {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  
+  .js .home-hero *,
   .js .ehero *,
-  .js .phero *{
+  .js .phero *,
+  .js .home-hero__bg img {
     animation: none !important;
   }
-  .reveal-pending :is(.grid, .gallery, .stats, .steps, .checks) > * {
+  .reveal-pending :is(.grid, .gallery, .stats, .venue-strip__nums, .home-news-rows, .steps, .checks) > * {
     opacity: 1;
     transform: none;
   }
@@ -253,13 +279,36 @@ a.feature:hover .feature__media img {
   .marquee {
     display: none !important;
   }
-  .reveal-pending :is(.grid, .gallery, .stats, .steps, .checks) > * {
+  .reveal-pending :is(.grid, .gallery, .stats, .venue-strip__nums, .home-news-rows, .steps, .checks) > * {
     opacity: 1 !important;
     transform: none !important;
   }
 }
 
 /* home H1 = keyword pill + slogan (see [locale]/index.astro) */
+.home-hero h1 .home-hero__kicker {
+  display: flex;
+  width: fit-content;
+  line-height: 1.3;
+  font-weight: 500;
+  text-shadow: none;
+  max-width: 100%;
+}
+.home-hero h1 .home-hero__slogan {
+  display: block;
+}
+.js .home-hero h1 .home-hero__kicker {
+  animation: rise 900ms var(--ease-out) both;
+}
+.js .home-hero h1 .home-hero__slogan {
+  animation: rise 900ms var(--ease-out) 90ms both;
+}
+.js .home-hero h1 {
+  animation: none;
+}
+.home-hero h1 .home-hero__slogan {
+  max-width: 15ch;
+}
 
 /* the hint is UI chrome, not content: rendered from an attribute so it never repeats in the indexed text */
 .table-hint[data-hint]::before {

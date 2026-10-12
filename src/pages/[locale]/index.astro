@@ -1,24 +1,29 @@
 ---
 import Base from '@/layouts/Base.astro';
 import { localize } from '@/i18n/config';
+import { useUI } from '@/i18n/ui';
 import { localePaths } from '@/lib/pages';
 import { site } from '@/data/site';
 import { upcoming, events } from '@/data/events';
 import { CURRENT_EVENT } from '@/data/hosts';
 import { eventPages } from '@/data/pages/event-pages';
-import { neighbours } from '@/data/markets';
-import { homeLogos, partnerSrc } from '@/lib/partners';
 import EventPage from '@/components/EventPage.astro';
 import { getCollection } from 'astro:content';
 import { rootJsonLd, breadcrumbJsonLd, itemListJsonLd, faqJsonLd } from '@/lib/seo';
 import { bigDate, daysUntil, industryLabel } from '@/lib/labels';
-import { formatDate } from '@/lib/nav';
-import { postHref } from '@/lib/contentOwnership';
 import Icon from '@/components/Icon.astro';
-import Photo from '@/components/Photo.astro';
-import ShowLogo from '@/components/ShowLogo.astro';
+import CalendarRail from '@/components/CalendarRail.astro';
+import Countdown from '@/components/Countdown.astro';
+import Faq from '@/components/Faq.astro';
 import LeadForm from '@/components/LeadForm.astro';
-import { logoFor } from '@/lib/showLogos';
+import FeatureGrid from '@/components/FeatureGrid.astro';
+import StatBand from '@/components/StatBand.astro';
+import MarketReach from '@/components/MarketReach.astro';
+import PostCard from '@/components/PostCard.astro';
+import Photo from '@/components/Photo.astro';
+import EventCard from '@/components/EventCard.astro';
+import Marquee from '@/components/Marquee.astro';
+import PartnerLogoWall from '@/components/PartnerLogoWall.astro';
 
 export function getStaticPaths() {
   return localePaths();
@@ -30,160 +35,126 @@ const hostEvent = CURRENT_EVENT ? events.find((e) => e.slug === CURRENT_EVENT) ?
 const hostPage = hostEvent ? eventPages[hostEvent.slug]?.overview ?? null : null;
 
 const { locale } = Astro.params as { locale: 'ru' | 'en' };
+const t = useUI(locale);
 const P = (p: string) => localize(locale, p);
 const ru = locale === 'ru';
 const next = upcoming[0];
+const d = bigDate(next.dates.start, next.dates.end, locale);
 const days = daysUntil(next.dates.start);
-/* the big date block of the next-show card: "27–29" + "OCT 2026" (the EventHero helper) */
-const nd = bigDate(next.dates.start, next.dates.end, locale);
+const countdownLine =
+  days > 1
+    ? ru
+      ? `До старта — ${days} ${days % 10 === 1 && days % 100 !== 11 ? 'день' : days % 10 >= 2 && days % 10 <= 4 && (days % 100 < 10 || days % 100 >= 20) ? 'дня' : 'дней'}`
+      : `${days} days to opening`
+    : days === 1
+      ? ru
+        ? 'До старта — завтра'
+        : 'Opening tomorrow'
+      : ru
+        ? 'Выставка идёт сейчас'
+        : 'The show is running now';
 
-/*
- * 2026-10 redesign (docs/18 §4): the home is a column of panels — a split hero (venue + a
- * hall photo), the next show beside the venue in four numbers, the six shows, three
- * audiences, the building, why Samarkand, logos, news and four questions. Every figure is
- * one the site already states elsewhere (docs/02 §5); the market totals are computed from
- * src/data/markets.ts, not typed in.
- */
 const copy = {
   ru: {
     title: 'Выставочный центр в Самарканде — выставки и экспо Узбекистана | SOF EXPO',
     desc:
       'Выставочный центр SOF EXPO в Самарканде: 4 400 м² зала и 5 000 м² улицы, 20+ выставок и событий, 70 000+ посетителей в год. Бронирование стендов и аренда зала.',
-    chips: ['Зал 4 400 м²', 'Открытая площадка 5 000 м²', '20+ событий в год'],
-    h1: 'SOF EXPO — международный выставочный центр в Самарканде',
-    lead: 'Отраслевые выставки, форумы и B2B-встречи. Шесть рынков Центральной Азии — в одном дне пути.',
+    heroKicker: (e: string, ind: string) => `Ближайшая выставка · ${ind}`,
+    lead:
+      'Один зал 4 400 м², открытая площадка 5 000 м², конференц-зал на 350 мест. Бронирование стенда — ответ за 24 часа; техспецификация и планировка — до договора.',
     stand: 'Забронировать стенд',
-    calendar: 'Календарь 2026–2027',
-    heroPhoto: 'Зал SOF EXPO в день открытия',
-    heroGo: 'Знакомство с центром',
-    nextLabel: 'Ближайшая выставка',
-    stats: [
-      { v: '4 400 м²', l: 'крытый выставочный зал' },
-      { v: '5 000 м²', l: 'открытая площадка' },
-      { v: '20+', l: 'событий в год' },
-      { v: '70 000+', l: 'посетителей в год' },
+    ticket: 'Билет посетителя',
+    more: 'Про выставку',
+    venueTitle: 'Один корпус, две площади, ноль сюрпризов при монтаже',
+    venueText: 'Электричество 700 кВт, климат-контроль, аудио, интернет и подъезд для фур уже в здании. Технические детали высылаем до подписания договора.',
+    doorsTitle: 'Ваш следующий шаг начинается здесь',
+    doors: [
+      { title: 'Экспонентам', text: 'Площадь, застройка, услуга «стенд под ключ», реклама на площадке и список закупщиков до старта выставки.', href: '/exhibitors/', meta: 'Пакеты и цены', image: '/images/hall-stand.jpg', imageAlt: 'Выставочный зал: стенды на монтаже' },
+      { title: 'Посетителям', text: 'Билеты и бесплатная регистрация, расписание докладов, маршрут, отели и что взять с собой.', href: '/visitors/', meta: 'Как посетить', image: '/images/hall-crowd.jpg', imageAlt: 'Посетители в зале в день выставки' },
+      { title: 'Организаторам событий', text: 'Аренда зала под свою выставку, конференцию или фестиваль — с техподдержкой и сервисом на площадке.', href: '/organizers/', meta: 'Забронировать площадку', image: '/images/conference-audience.jpg', imageAlt: 'Конференц-зал: деловая программа' },
     ],
-    quoteT: 'Цены, план зала и свободные места — за один рабочий день',
-    quoteCta: 'Отправить запрос',
-    showsK: 'Выставки в Узбекистане 2026–2027',
-    showsT: 'Шесть отраслей. Один центр.',
-    allEvents: 'Весь календарь',
-    status: { open: 'Регистрация открыта', registration: 'Приём заявок', past: 'Итоги 2026' },
-    aud: [
-      { t: 'Экспонентам', d: 'Готовый стенд, место на плане зала и список закупщиков до открытия выставки.', href: '/exhibitors/', img: '/images/stand-dark.jpg', alt: 'Стенд экспонента индивидуальной застройки', tags: ['Пакеты', 'Застройка стендов', 'Спонсорство'], tone: 'ink' },
-      { t: 'Посетителям', d: 'Бесплатный вход в торговые дни, QR-билет, деловая программа и отели.', href: '/visitors/', img: '/images/b2b-meeting.jpg', alt: 'Переговоры гостей на стенде', tags: ['Регистрация', 'Отели', 'Трансфер'], tone: 'blue' },
-      { t: 'Организаторам', d: 'Зал и сервис для вашей выставки, форума или фестиваля.', href: '/organizers/', img: '/images/conference-stage.jpg', alt: 'Сцена конференц-зала', tags: ['Аренда зала', 'Конференции', 'Оборудование'], tone: 'paper' },
+    marketKicker: 'Почему Самарканд',
+    marketTitle: 'Транзитный узел между шестью рынками',
+    marketText:
+      'Узбекистан — крупнейший по населению рынок Центральной Азии: более 125 млн потребителей в зоне прямого доступа, розница Узбекистана — 182 трлн сумов за 2024 год. От Самарканда до Ташкента, Душанбе, Ашхабада и Кабула — один перелёт или одна ночная фура.',
+    countries: [
+      ['Узбекистан', '125 млн потребителей региона'],
+      ['Казахстан', 'крупнейший импортёр продуктов питания в CA'],
+      ['Таджикистан', 'высокая доля узбекского импорта'],
+      ['Кыргызстан', 'розничные сети и опт'],
+      ['Туркменистан', 'госзакупки и тендеры'],
+      ['Афганистан', 'приграничная торговля через Термез'],
     ],
-    venueK: 'Выставочный центр',
-    venueT: 'Здание, готовое к монтажу',
-    venueText: '700 кВт мощности, климат-контроль, Wi-Fi, переговорные для B2B, конференц-зал, ресторан и молельная комната — на одной территории.',
-    specs: [
-      { k: 'Электричество', v: '700 кВт · 220/380 В' },
-      { k: 'Аэропорт / вокзал', v: '16 км / 23 км' },
-      { k: 'Кафе и ресторан', v: '350 мест' },
-      { k: 'Высота стенда', v: 'до 6 м' },
-    ],
-    venueAlts: ['Пустой выставочный зал перед монтажом', 'Здание SOF EXPO с флагами', 'Тракторы на открытой площадке'],
-    halls: 'Залы и площади',
-    specsCta: 'Техническая спецификация',
-    regPhoto: 'Регистан вечером, Самарканд',
-    regLabel: '18 км до Регистана',
-    whyK: 'Почему Самарканд',
-    whyT: 'Транзитный узел между шестью рынками',
-    popL: 'млн человек на соседних рынках',
-    gdpL: 'млрд долларов ВВП вместе · Всемирный банк',
-    logosT: 'Экспоненты и партнёры',
-    logosText: 'Государственные структуры, отраслевые бренды, медиа и отели.',
-    logosCta: 'Все партнёры',
-    newsT: 'Новости',
-    newsCta: 'Все новости',
-    formK: 'Заявка',
+    mediaKicker: 'Медиа',
+    mediaTitle: 'Новости выставки и аналитика рынков',
+    allNews: 'Все новости',
     formTitle: 'Получить планировку, цены и свободные места',
     formText: 'Укажите выставку и площадь — пришлём прайс, floor plan и профиль аудитории. Без оплаты сейчас.',
     formTitleCard: 'Заявка на стенд',
     formSub: '30 секунд — без оплаты сейчас.',
     formList: ['Прайс-лист и план зала в PDF', 'Профиль аудитории и список участников', 'Фиксация цены раннего бронирования', 'Подбор места с учётом вашего продукта'],
-    directions: ['Продукты питания', 'Напитки', 'Стройматериалы', 'Агро', 'Авто', 'E-commerce и ритейл', 'Образование', 'Услуги', 'Другое'],
-    faqT: 'Частые вопросы',
-    faqCta: 'Все вопросы',
+    lineupKicker: 'Календарь',
+    lineupTitle: 'Ближайшие выставки сезона',
+    lineupText: 'Шесть отраслевых проектов в одном центре: продукты и напитки, стройматериалы, агро, авто, e-commerce и образование.',
+    allEvents: 'Весь календарь',
+    galleryKicker: 'Площадка в деле',
+    galleryTitle: 'Как это выглядит на самом деле',
+    galleryText: 'Снимки с прошедших выставок в SOF EXPO Samarkand: зал на 4 400 м², застройка стендов, открытая площадка и деловая программа.',
+    galleryCta: 'Смотреть площадку',
   },
   en: {
     title: 'Expo Centre Samarkand — Exhibitions & Trade Shows in Uzbekistan | SOF EXPO',
     desc:
       'SOF EXPO, the exhibition centre in Samarkand: 4,400 m² hall and 5,000 m² outdoors, 20+ trade shows and events, 70,000+ visitors a year. Book a stand or rent the hall.',
-    chips: ['4,400 m² hall', '5,000 m² open-air area', '20+ events a year'],
-    h1: 'SOF EXPO — the international exhibition centre in Samarkand',
-    lead: 'Trade shows, forums and B2B meetings. Six Central Asian markets within a day’s travel.',
+    heroKicker: (e: string, ind: string) => `Next show · ${ind}`,
+    lead:
+      'One 4,400 m² hall, 5,000 m² of open ground, a 350-seat conference hall. Stand request answered within 24 hours; technical data sheet and floor plan before the contract.',
     stand: 'Book a stand',
-    calendar: 'Calendar 2026–2027',
-    heroPhoto: 'The SOF EXPO hall on opening day',
-    heroGo: 'Get to know the centre',
-    nextLabel: 'Next exhibition',
-    stats: [
-      { v: '4 400 m²', l: 'indoor exhibition hall' },
-      { v: '5 000 m²', l: 'open-air area' },
-      { v: '20+', l: 'events a year' },
-      { v: '70 000+', l: 'visitors a year' },
+    ticket: 'Visitor pass',
+    more: 'About the show',
+    venueTitle: 'One building, two areas, no surprises at build-up',
+    venueText: '700 kW power, climate control, audio, internet and truck access are already in the shell. Technical details go out before the contract is signed.',
+    doorsTitle: 'Your next opportunity starts here',
+    doors: [
+      { title: 'For exhibitors', text: 'Space, shell scheme, turnkey stands, on-site advertising and a buyer list before the doors open.', href: '/exhibitors/', meta: 'Packages and rates', image: '/images/hall-stand.jpg', imageAlt: 'Exhibition hall: stands during build-up' },
+      { title: 'For visitors', text: 'Tickets and free registration, talk schedule, route plan, hotels and what to bring.', href: '/visitors/', meta: 'How to attend', image: '/images/hall-crowd.jpg', imageAlt: 'Visitors in the hall on show day' },
+      { title: 'For event organizers', text: 'Hall rental for your own show, conference or festival, with technical and visitor services.', href: '/organizers/', meta: 'Book the venue', image: '/images/conference-audience.jpg', imageAlt: 'Conference hall: business programme' },
     ],
-    quoteT: 'Rates, the floor plan and free spots — within one business day',
-    quoteCta: 'Send a request',
-    showsK: 'Exhibitions in Uzbekistan 2026–2027',
-    showsT: 'Six industries. One centre.',
-    allEvents: 'Full calendar',
-    status: { open: 'Registration open', registration: 'Applications open', past: '2026 results' },
-    aud: [
-      { t: 'For exhibitors', d: 'A ready stand, a place on the floor plan and the buyer list before the show opens.', href: '/exhibitors/', img: '/images/stand-dark.jpg', alt: 'A custom-built exhibitor stand', tags: ['Packages', 'Stand construction', 'Sponsorship'], tone: 'ink' },
-      { t: 'For visitors', d: 'Free entry on trade days, a QR ticket, the business programme and hotels.', href: '/visitors/', img: '/images/b2b-meeting.jpg', alt: 'Guests in a meeting at a stand', tags: ['Registration', 'Hotels', 'Transfer'], tone: 'blue' },
-      { t: 'For organizers', d: 'The hall and the services for your own exhibition, forum or festival.', href: '/organizers/', img: '/images/conference-stage.jpg', alt: 'The conference hall stage', tags: ['Hall rental', 'Conferences', 'Equipment'], tone: 'paper' },
+    marketKicker: 'Why Samarkand',
+    marketTitle: 'A transit node between six markets',
+    marketText:
+      'Uzbekistan is the most populous market in Central Asia: more than 125 million consumers within direct reach, retail turnover of UZS 182 trillion in 2024. From Samarkand to Tashkent, Dushanbe, Ashgabat or Kabul is one flight or one overnight truck.',
+    countries: [
+      ['Uzbekistan', '125 M consumers in the region'],
+      ['Kazakhstan', 'largest food importer in CA'],
+      ['Tajikistan', 'high share of Uzbek imports'],
+      ['Kyrgyzstan', 'retail chains and wholesale'],
+      ['Turkmenistan', 'state procurement and tenders'],
+      ['Afghanistan', 'border trade via Termez'],
     ],
-    venueK: 'Exhibition centre',
-    venueT: 'A building ready for build-up',
-    venueText: '700 kW of power, climate control, Wi-Fi, B2B meeting rooms, a conference hall, a restaurant and a prayer room — on one site.',
-    specs: [
-      { k: 'Power', v: '700 kW · 220/380 V' },
-      { k: 'Airport / railway station', v: '16 km / 23 km' },
-      { k: 'Café and restaurant', v: '350 seats' },
-      { k: 'Stand height', v: 'up to 6 m' },
-    ],
-    venueAlts: ['The empty exhibition hall before build-up', 'The SOF EXPO building with flags', 'Tractors on the open-air area'],
-    halls: 'Halls and areas',
-    specsCta: 'Technical data sheet',
-    regPhoto: 'Registan in the evening, Samarkand',
-    regLabel: '18 km to the Registan',
-    whyK: 'Why Samarkand',
-    whyT: 'A transit node between six markets',
-    popL: 'million people in the neighbouring markets',
-    gdpL: 'billion USD of combined GDP · World Bank',
-    logosT: 'Exhibitors and partners',
-    logosText: 'State bodies, industry brands, media and hotels.',
-    logosCta: 'All partners',
-    newsT: 'News',
-    newsCta: 'All news',
-    formK: 'Request',
+    mediaKicker: 'Media',
+    mediaTitle: 'Show news and market analysis',
+    allNews: 'All news',
     formTitle: 'Get the floor plan, rates and free spots',
     formText: 'Name the exhibition and the area — we send the price list, floor plan and audience profile. No payment now.',
     formTitleCard: 'Stand request',
     formSub: '30 seconds — no payment now.',
     formList: ['Price list and hall plan in PDF', 'Audience profile and exhibitor list', 'Early-booking price lock', 'Location picked around your product'],
-    directions: ['Food products', 'Drinks', 'Building materials', 'Agriculture', 'Automotive', 'E-commerce and retail', 'Education', 'Services', 'Other'],
-    faqT: 'Frequently asked questions',
-    faqCta: 'All questions',
+    lineupKicker: 'Calendar',
+    lineupTitle: 'The season ahead',
+    lineupText: 'Six industry projects under one roof: food and drink, building materials, agriculture, automotive, e-commerce and education.',
+    allEvents: 'Full calendar',
+    galleryKicker: 'The venue at work',
+    galleryTitle: 'What it actually looks like',
+    galleryText: 'Photographs from past editions at SOF EXPO Samarkand: the 4,400 m² hall, stand build-up, the open-air area and the business programme.',
+    galleryCta: 'See the venue',
   },
 }[locale];
 
-/* the six shows of the season: the five ahead, then the one whose results are in */
-const shows = [...upcoming, ...events.filter((e) => e.status === 'past')].slice(0, 6);
-
-/* why Samarkand: the five neighbours by distance; totals computed, never typed */
-const markets = [...neighbours].sort((a, b) => a.distanceKm - b.distanceKm);
-const fmt = (n: number) => n.toLocaleString(ru ? 'ru-RU' : 'en-US');
-const popTotal = Math.round(markets.reduce((n, m) => n + m.populationMln, 0) * 10) / 10;
-const gdpTotal = Math.round(markets.reduce((n, m) => n + m.gdpBlnUsd, 0));
-
 const news = (await getCollection('news'))
   .filter((e) => e.id.startsWith(`${locale}/`))
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-  .slice(0, 3);
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const [newsLead, ...newsRest] = news;
 
 const faq = (ru
   ? [
@@ -218,972 +189,287 @@ const jsonLd = [
   description={copy.desc}
   jsonLd={jsonLd}
   image={next.heroImage}
-  preload="/images/hall-panorama.jpg"
+  preload="/images/hero-hall.jpg"
 >
-  <!-- 1 · hero: the venue in one sentence, beside the hall on opening day -->
-  <section class="h-hero">
-    <div class="h-hero__text">
-      <ul class="h-chips">{copy.chips.map((c) => <li>{c}</li>)}</ul>
-      <h1>{copy.h1}</h1>
-      <div class="h-hero__foot">
-        <p>{copy.lead}</p>
-        <div class="btn-row">
-          <a class="btn" href={P('/request-stand/')} data-quiz-open data-quiz-source="home-hero">{copy.stand}</a>
-          <a class="btn btn--ghost" href={P('/events/')}>{copy.calendar}</a>
+  <!-- 1 · hero = the next show: the date is the biggest element on the page -->
+  <section class="home-hero">
+    <Photo
+      class="home-hero__bg"
+      src="/images/hero-hall.jpg"
+      alt={ru ? 'Выставочный зал SOF EXPO Samarkand в день открытия' : 'SOF EXPO Samarkand hall on opening day'}
+      ratio="16/9"
+      rounded={false}
+      priority
+      sizes="100vw"
+    />
+    <div class="wrap">
+      <div class="home-hero__in">
+        <div>
+          {/* The keyword line (city · country · "exhibition centre") is part of the H1, so the
+              page's main heading carries the queries it should rank for; visually it is
+              still the small pill above the slogan. */}
+          <h1>
+            <span class="home-hero__kicker"><span class="dot" aria-hidden="true"></span>{ru ? 'Самарканд · Узбекистан · Международный выставочный центр' : 'Samarkand · Uzbekistan · International exhibition centre'}</span>
+            <span class="home-hero__slogan">{ru ? 'Место встречи' : 'Where business'}<br /><em>{ru ? 'больших возможностей.' : 'meets opportunity.'}</em></span>
+          </h1>
+          <p class="home-hero__lead">{ru ? 'Объединяем людей, идеи и рынки. Выставки, деловые связи и новые возможности в самом сердце Центральной Азии.' : 'Connecting people, ideas and markets. Discover exceptional exhibitions and new business opportunities in the heart of Central Asia.'}</p>
+          <div class="btn-row">
+            <a class="btn btn--accent" href={P('/events/')}>{ru ? 'Открыть календарь' : 'Explore exhibitions'} <Icon name="arrow" size={17} /></a>
+            <a class="btn btn--ghost" href={P('/request-stand/')}>{copy.stand} <Icon name="arrow" size={17} /></a>
+          </div>
+          <div class="hero-location"><Icon name="pin" size={15} /><span>{ru ? 'Ваш выход на рынки Центральной Азии' : 'Your gateway to Central Asia'}</span></div>
+        </div>
+        <aside class="home-hero__side">
+          <div class="featured-top"><span class="mono-label">{ru ? 'Ближайшая выставка' : 'Next exhibition'}</span><span class="featured-live"><span class="dot"></span>{ru ? 'Регистрация открыта' : 'Registration open'}</span></div>
+          <Photo class="featured-image" src={next.heroImage} alt={next.tagline[locale]} ratio="16/9" sizes="(max-width: 780px) 90vw, 360px" />
+          <p class="featured-industry">{industryLabel(next.industry, locale)}</p>
+          <h2>{next.brand[locale]}</h2>
+          <p class="featured-date">{next.dates.display[locale]}</p>
+          <Countdown locale={locale} target={next.dates.start} />
+          <a class="featured-link" href={P(`/events/${next.slug}/`)}>{copy.more}<Icon name="arrow" size={20} /></a>
+        </aside>
+      </div>
+      <CalendarRail locale={locale} />
+    </div>
+  </section>
+
+  <Marquee locale={locale} />
+
+  <!-- 2 · the venue in one line (the table lives on /venue/) -->
+  <section class="sec--tight reveal">
+    <div class="wrap">
+      <div class="venue-strip">
+        <div class="venue-strip__nums">
+          <div><b>4 400<small> m²</small></b><span>{ru ? 'зал' : 'hall'}</span></div>
+          <div><b>5 000<small> m²</small></b><span>{ru ? 'улица' : 'outdoor'}</span></div>
+          <div><b>700<small> kW</small></b><span>{ru ? '220/380 В' : '220/380 V'}</span></div>
+          <div><b>350</b><span>{ru ? 'мест, кафе' : 'seats, café'}</span></div>
+        </div>
+        <div class="venue-strip__txt">
+          <h2>{copy.venueTitle}</h2>
+          <p>{copy.venueText}</p>
+          <div class="venue-strip__links">
+            <a href={P('/venue/halls/')}>{ru ? 'Залы и площади' : 'Halls and areas'} →</a>
+            <a href={P('/venue/tech-specs/')}>{ru ? 'Техническая спецификация' : 'Technical data sheet'} →</a>
+            <a href={P('/venue/how-to-get-there/')}>{ru ? 'Как добраться' : 'Getting there'} →</a>
+            <a href={P('/venue/virtual-tour/')}>{ru ? 'Виртуальный тур' : 'Virtual tour'} →</a>
+          </div>
+        </div>
+        <Photo
+          class="venue-strip__img"
+          src="/images/venue-exterior.jpg"
+          alt={ru ? 'Экстерьер выставочного центра SOF EXPO Samarkand' : 'Exterior of SOF EXPO Samarkand exhibition centre'}
+          ratio="4/3"
+          sizes="(max-width: 1080px) 100vw, 320px"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · three doors -->
+  <section class="sec reveal">
+    <div class="wrap">
+      <h2 class="sec-title">{copy.doorsTitle}</h2>
+      <FeatureGrid locale={locale} cols={3} items={copy.doors.map((i) => ({ title: i.title, text: i.text, href: P(i.href), meta: i.meta, image: i.image, imageAlt: i.imageAlt }))} />
+    </div>
+  </section>
+
+
+  <!-- 3.5 · the real hall: photographs, not renders -->
+  <section class="sec sec--paper reveal">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="kicker">{copy.galleryKicker}</p>
+          <h2>{copy.galleryTitle}</h2>
+          <p style="margin-top:.6rem">{copy.galleryText}</p>
+        </div>
+        <a class="btn btn--ghost" href={P('/venue/')}>{copy.galleryCta}</a>
+      </div>
+      <div class="gallery">
+        <Photo src="/images/hall-crowd.jpg" alt={ru ? 'Посетители в главном зале в день открытия' : 'Visitors in the main hall on opening day'} zoom sizes="(max-width: 780px) 100vw, 50vw" />
+        <Photo src="/images/stand-equipment.jpg" alt={ru ? 'Стенд с оборудованием на выставке' : 'Equipment stand at the show'} zoom sizes="(max-width: 780px) 50vw, 25vw" />
+        <Photo src="/images/hall-empty.jpg" alt={ru ? 'Зал 4 400 м² до монтажа' : 'The 4,400 m² hall before build-up'} zoom sizes="(max-width: 780px) 50vw, 25vw" />
+        <Photo src="/images/officials-tour.jpg" alt={ru ? 'Делегация на обходе экспозиции' : 'A delegation touring the exhibition'} zoom sizes="(max-width: 780px) 50vw, 25vw" />
+        <Photo src="/images/stand-green.jpg" alt={ru ? 'Застройка стенда' : 'Custom stand build'} zoom sizes="(max-width: 780px) 50vw, 25vw" />
+        <Photo src="/images/outdoor-area.jpg" alt={ru ? 'Открытая площадка 5 000 м²' : 'The 5,000 m² open-air area'} zoom sizes="(max-width: 780px) 100vw, 50vw" />
+      </div>
+    </div>
+  </section>
+
+  <!-- 3.6 · the line-up -->
+  <section class="sec reveal">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="kicker">{copy.lineupKicker}</p>
+          <h2>{copy.lineupTitle}</h2>
+          <p style="margin-top:.6rem">{copy.lineupText}</p>
+        </div>
+        <a class="txt-link" href={P('/events/')}>{copy.allEvents} <Icon name="arrow" size={15} /></a>
+      </div>
+      <div class="grid g3">
+        {upcoming.slice(0, 6).map((e, i) => <EventCard locale={locale} event={e} priority={false} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · why Samarkand: one stat band, once -->
+  <section class="sec sec--paper reveal">
+    <div class="wrap">
+      <div class="grid g-sidebar" style="align-items:center">
+        <div>
+          <p class="kicker">{copy.marketKicker}</p>
+          <h2 set:html={copy.marketTitle} />
+          <p class="lead">{copy.marketText}</p>
+          {/* Uzbekistan itself stays a sentence; the five neighbours around it are
+              numbers with a source (src/data/markets.ts). */}
+          <div class="grid g2" style="margin-top:1.4rem">
+            {copy.countries.slice(0, 1).map(([c, note]) => (
+              <div class="mini">
+                <b>{c}</b>
+                <span>{note}</span>
+              </div>
+            ))}
+          </div>
+          <MarketReach {locale} />
+        </div>
+        <div>
+          <Photo src="/images/samarkand-real.jpg" alt={ru ? 'Регистан в Самарканде' : 'Registan in Samarkand'} ratio="3/2" sizes="(max-width: 1080px) 100vw, 340px" />
+          <div style="margin-top:1rem">
+            <StatBand locale={locale} />
+          </div>
         </div>
       </div>
     </div>
-    <div class="h-hero__photo">
-      <Photo src="/images/hall-panorama.jpg" alt={copy.heroPhoto} ratio="4/5" rounded={false} priority sizes="(max-width: 900px) 100vw, 46vw" />
-      <span class="h-tag" aria-hidden="true">{copy.heroPhoto}</span>
-      <a class="h-go" href={P('/venue/')} aria-label={copy.heroGo}><Icon name="arrow-ne" size={30} /></a>
-    </div>
   </section>
 
-  <!-- 2 · the next show, and the venue in four numbers -->
-  <section class="h-next">
-    <a class="h-show" href={P(`/events/${next.slug}/`)}>
-      <span class="h-show__top">
-        <span class="h-show__k">
-          <span>{copy.nextLabel}</span>
-          {days > 0 && <><span aria-hidden="true"> · </span><span>{ru ? `через ${days} дн.` : `in ${days} days`}</span></>}
-        </span>
-        <span class="arr arr--lg" aria-hidden="true"><Icon name="arrow-ne" size={22} /></span>
-      </span>
-      <span class="h-show__logo"><ShowLogo slug={next.slug} height={logoFor(next.slug)?.round ? 72 : 44} /></span>
-      <span class="h-show__foot">
-        <span class="h-show__date">{nd.days}<small> {nd.month} {nd.year}</small></span>
-        <span class="h-chips h-chips--dark">
-          <span>{industryLabel(next.industry, locale)}</span>
-          {next.highlight && <span class="is-hot">{next.highlight.label[locale]}</span>}
-        </span>
-      </span>
-      <span class="sr-only">{next.brand[locale]} · {next.dates.display[locale]}</span>
-    </a>
-    <div class="h-stats">
-      {copy.stats.map((s) => <div class="h-stat"><span>{s.l}</span><b>{s.v}</b></div>)}
-      <div class="h-quote">
-        <p>{copy.quoteT}</p>
-        <a class="pill pill--light" href={P('/request-stand/')} data-quiz-open data-quiz-source="home-quote">{copy.quoteCta}</a>
+  <!-- 5 · media: one lead with a photo, three rows -->
+  <section class="sec reveal">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="kicker">{copy.mediaKicker}</p>
+          <h2>{copy.mediaTitle}</h2>
+        </div>
+        <a class="txt-link" href={P('/news/')}>{copy.allNews} <Icon name="arrow" size={15} /></a>
+      </div>
+      {newsLead && (
+        <div style="margin-top:1.4rem">
+          <PostCard locale={locale} post={newsLead} path="/news/" variant="lead" priority />
+        </div>
+      )}
+      <div class="home-news-rows">
+        {newsRest.slice(0, 3).map((n) => <PostCard locale={locale} post={n} path="/news/" variant="row" />)}
       </div>
     </div>
   </section>
 
-  <!-- 3 · the six shows -->
-  <section class="h-panel">
-    <div class="h-head">
-      <div>
-        <p class="kicker">{copy.showsK}</p>
-        <h2>{copy.showsT}</h2>
+  <!-- 5.5 · partners: the organisations that carry the shows (logos drop in by filename) -->
+  <section class="sec sec--sand reveal">
+    <div class="wrap">
+      <PartnerLogoWall
+        locale={locale}
+        kicker={ru ? 'Партнёры' : 'Partners'}
+        title={ru ? 'Выставки идут при поддержке партнёров' : 'The shows run with our partners behind them'}
+        text={ru
+          ? 'Отраслевые ассоциации, государственные программы, отели и сервисы. Логотипы партнёров каждой выставки — на её странице.'
+          : 'Industry associations, state programmes, hotels and services. Each show\'s own partners are listed on its page.'}
+      />
+    </div>
+  </section>
+
+  <!-- 6 · request + FAQ, full width, no empty column -->
+  <section class="sec sec--paper reveal" id="booking">
+    <div class="wrap">
+      <div class="grid g2" style="align-items:start">
+        <Faq locale={locale} items={faq} title={ru ? 'Частые вопросы' : 'Frequently asked questions'} />
+        <div>
+          <p class="kicker">{ru ? 'Заявка' : 'Request'}</p>
+          <h2 set:html={copy.formTitle} />
+          <p class="lead">{copy.formText}</p>
+          <ul class="form-list">
+            {copy.formList.map((x) => <li>{x}</li>)}
+          </ul>
+        </div>
       </div>
-      <a class="pill" href={P('/events/')}>{copy.allEvents}</a>
-    </div>
-    <div class="h-shows">
-      {shows.map((e, i) => (
-        <a class="h-card" href={P(`/events/${e.slug}/`)}>
-          <span class="h-card__media">
-            <Photo src={e.heroImage} alt={e.tagline[locale]} ratio="16/10" rounded={false} sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 33vw" />
-            <span class="h-card__date">{e.dates.display[locale]}</span>
-            <span class="h-card__logo"><ShowLogo slug={e.slug} height={26} /></span>
-          </span>
-          <span class="h-card__body">
-            <span class="h-card__name"><b>{e.brand[locale]}</b><span aria-hidden="true">{String(i + 1).padStart(2, '0')}</span></span>
-            <span class="h-card__desc">{e.tagline[locale]}</span>
-            <span class="h-card__foot"><span class="h-card__status">{copy.status[e.status]}</span><span class="arr" aria-hidden="true"><Icon name="arrow-ne" size={16} /></span></span>
-          </span>
-        </a>
-      ))}
-    </div>
-  </section>
-
-  <!-- 4 · three audiences -->
-  <section class="h-aud">
-    {copy.aud.map((a) => (
-      <a class:list={['h-aud__card', `is-${a.tone}`]} href={P(a.href)}>
-        <Photo src={a.img} alt={a.alt} ratio="16/9" rounded={false} sizes="(max-width: 900px) 100vw, 33vw" />
-        <span class="h-aud__body">
-          <span class="h-aud__t"><b>{a.t}</b><span class="arr arr--line" aria-hidden="true"><Icon name="arrow-ne" size={18} /></span></span>
-          <span class="h-aud__d">{a.d}</span>
-          <span class="h-aud__tags">{a.tags.map((t) => <span>{t}</span>)}</span>
-        </span>
-      </a>
-    ))}
-  </section>
-
-  <!-- 5 · the building -->
-  <section class="h-venue">
-    <div class="h-venue__photos">
-      <Photo src="/images/hall-empty.jpg" alt={copy.venueAlts[0]} ratio="16/7" rounded={false} sizes="(max-width: 900px) 100vw, 56vw" />
-      <Photo src="/images/venue-flags.jpg" alt={copy.venueAlts[1]} ratio="4/3" rounded={false} sizes="(max-width: 640px) 100vw, 28vw" />
-      <Photo src="/images/outdoor-tractors.jpg" alt={copy.venueAlts[2]} ratio="4/3" rounded={false} sizes="(max-width: 640px) 100vw, 28vw" />
-    </div>
-    <div class="h-venue__text">
-      <p class="kicker">{copy.venueK}</p>
-      <h2>{copy.venueT}</h2>
-      <p class="h-muted">{copy.venueText}</p>
-      <dl class="h-specs">{copy.specs.map((x) => <div><dt>{x.k}</dt><dd>{x.v}</dd></div>)}</dl>
-      <div class="btn-row">
-        <a class="btn" href={P('/venue/halls/')}>{copy.halls}</a>
-        <a class="btn btn--ghost" href={P('/venue/tech-specs/')}>{copy.specsCta}</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- 6 · why Samarkand -->
-  <section class="h-why">
-    <div class="h-why__photo">
-      <Photo src="/images/registan-night.jpg" alt={copy.regPhoto} ratio="4/5" rounded={false} sizes="(max-width: 900px) 100vw, 40vw" />
-      <span class="h-tag h-tag--left">{copy.regLabel}</span>
-    </div>
-    <div class="h-why__text">
-      <p class="kicker">{copy.whyK}</p>
-      <h2>{copy.whyT}</h2>
-      <ul class="h-markets">{markets.map((m) => <li>{m.name[locale]} <span>{fmt(m.distanceKm)} km</span></li>)}</ul>
-      <div class="h-why__nums">
-        <div><span>{copy.popL}</span><b>{fmt(popTotal)}</b></div>
-        <div><span>{copy.gdpL}</span><b>${fmt(gdpTotal)}</b></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 7 · logos -->
-  <section class="h-panel h-logos">
-    <div class="h-logos__head">
-      <h2>{copy.logosT}</h2>
-      <p class="h-muted">{copy.logosText}</p>
-      <a class="pill" href={P('/about/partners/')}>{copy.logosCta}</a>
-    </div>
-    <ul class="h-logos__grid">
-      {homeLogos.map((l) => <li><img src={partnerSrc(l.id)} alt={ru ? `Логотип ${l.name}` : `${l.name} logo`} loading="lazy" decoding="async" height="56" /></li>)}
-    </ul>
-  </section>
-
-  <!-- 8 · news -->
-  <section class="h-panel">
-    <div class="h-head">
-      <h2>{copy.newsT}</h2>
-      <a class="pill" href={P('/news/')}>{copy.newsCta}</a>
-    </div>
-    <div class="h-news">
-      {news.map((n) => {
-        const slug = n.id.split('/').slice(1).join('/');
-        const ev = n.data.event ? events.find((e) => e.slug === n.data.event) : undefined;
-        return (
-          <a class="h-news__card" href={postHref(locale, 'news', slug)}>
-            <Photo src={n.data.hero ?? ev?.heroImage ?? '/images/hero-hall.jpg'} alt={n.data.title} ratio="16/10" rounded={false} sizes="(max-width: 640px) 100vw, 33vw" />
-            <span class="h-news__meta"><time datetime={n.data.date.toISOString()}>{formatDate(n.data.date.toISOString().slice(0, 10), locale)}</time>{ev && <> · {ev.shortName}</>}</span>
-            <span class="h-news__t">{n.data.title}</span>
-          </a>
-        );
-      })}
-    </div>
-  </section>
-
-  <!-- 8.5 · the request: leads are the site's first goal (docs/18 §4), so the home keeps a form -->
-  <section class="h-panel h-form" id="booking">
-    <div class="h-form__head">
-      <p class="kicker">{copy.formK}</p>
-      <h2>{copy.formTitle}</h2>
-      <p class="h-muted">{copy.formText}</p>
-      <ul class="h-form__list">{copy.formList.map((x) => <li>{x}</li>)}</ul>
-    </div>
-    <div class="h-form__card">
-      <LeadForm locale={locale} title={copy.formTitleCard} subtitle={copy.formSub} eventName={next.brand[locale]} directions={copy.directions} />
-    </div>
-  </section>
-
-  <!-- 9 · four questions -->
-  <section class="h-panel h-faq">
-    <div class="h-faq__head">
-      <h2>{copy.faqT}</h2>
-      <a class="pill" href={P('/exhibitors/faq/')}>{copy.faqCta}</a>
-    </div>
-    <div class="h-faq__list">
-      {faq.map((f) => <div><h3>{f.q}</h3><p>{f.a}</p></div>)}
+      <LeadForm
+        locale={locale}
+        title={copy.formTitleCard}
+        subtitle={copy.formSub}
+        eventName={next.brand[locale]}
+        directions={ru
+          ? ['Продукты питания', 'Напитки', 'Стройматериалы', 'Агро', 'Авто', 'E-commerce и ритейл', 'Образование', 'Услуги', 'Другое']
+          : ['Food products', 'Drinks', 'Building materials', 'Agriculture', 'Automotive', 'E-commerce and retail', 'Education', 'Services', 'Other']}
+      />
     </div>
   </section>
 </Base>}
 
 <style>
-  /* 2026-10 home (docs/18 §4). Mobile-first on the design's ladder: 641 · 901 · 1101px.
-     Every block is a panel in main's 10px column (redesign.css); the split rows are flex
-     rows of two panels. */
-  /* the rows below are bare flex rows; only their children are panels */
-  section {
-    background: none;
-    overflow: visible;
-    border-radius: 0;
-  }
-  .h-panel,
-  .h-hero__text,
-  .h-venue__text {
-    background: var(--paper);
-    border-radius: var(--r-panel);
-    padding: clamp(24px, 4vw, 56px);
-  }
-  .h-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
-  }
-  h2 {
-    margin: 0;
-  }
-  .h-muted {
-    color: var(--ink-60);
-    margin: 0;
-  }
-  .h-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .h-chips > * {
+  .home-hero__more {
     display: inline-flex;
     align-items: center;
-    min-height: 32px;
-    padding: 0 14px;
-    border-radius: var(--r-pill);
-    background: var(--cream-2);
-    font-size: 0.8125rem;
-  }
-  .h-head {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: space-between;
-    align-items: flex-end;
-    padding-bottom: 28px;
-    border-bottom: 1px solid var(--cream);
-  }
-  .h-head .kicker {
-    margin-bottom: 12px;
-  }
-  .h-tag {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    display: inline-flex;
-    align-items: center;
-    min-height: 34px;
-    padding: 0 14px;
-    border-radius: var(--r-pill);
-    background: var(--paper);
-    font-size: 0.8125rem;
+    gap: 0.35rem;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.95rem;
     font-weight: 600;
-  }
-  .h-tag--left {
-    right: auto;
-    left: 20px;
-  }
-  .h-hero__photo :global(.ph),
-  .h-why__photo :global(.ph) {
-    position: absolute;
-    inset: 0;
-    aspect-ratio: auto;
-    height: 100%;
-  }
-
-  /* 1 · hero */
-  .h-hero,
-  .h-next,
-  .h-aud,
-  .h-venue,
-  .h-why {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--gap);
-    padding: 0;
-  }
-  .h-hero__text {
-    flex: 1.05 1 560px;
-    min-width: 0;
-    min-height: 420px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 32px;
-  }
-  .h-hero h1 {
-    margin: 0;
-    font-size: clamp(2.125rem, 10vw, 2.875rem);
-    letter-spacing: -0.045em;
-    color: #1a1a1a;
-  }
-  .h-hero__foot {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 24px;
-    justify-content: space-between;
-    align-items: flex-end;
-  }
-  .h-hero__foot p {
-    max-width: 420px;
-    margin: 0;
-    color: var(--ink-60);
-    font-size: 1.0625rem;
-  }
-  .h-hero__photo {
-    position: relative;
-    flex: 1 1 480px;
-    min-width: 0;
-    min-height: 320px;
-    border-radius: var(--r-panel);
-    overflow: hidden;
-  }
-  .h-go {
-    position: absolute;
-    left: 24px;
-    bottom: 24px;
-    width: 84px;
-    height: 84px;
-    border-radius: 50%;
-    background: var(--accent);
-    color: var(--ink);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color var(--tr);
-  }
-  .h-go:hover {
-    background: #e2eb00;
-    color: var(--ink);
-  }
-
-  /* 2 · next show + numbers */
-  .h-show {
-    flex: 1.2 1 520px;
-    min-width: 0;
-    min-height: 320px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 28px;
-    padding: clamp(24px, 3vw, 36px);
-    border-radius: var(--r-panel);
-    background: var(--ink);
-    color: #fff;
     text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+    padding-bottom: 1px;
   }
-  .h-show:hover {
+  .home-hero__more:hover {
     color: #fff;
+    border-color: var(--gold-soft);
   }
-  .h-show__top {
+  .sec--tight {
+    padding-block: clamp(1.6rem, 1rem + 2vw, 3rem);
+  }
+  .sec-title {
+    margin: 0 0 1.6rem;
+    font-size: var(--t-h2);
+  }
+  .mini {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 16px;
-  }
-  .h-show__k {
-    font-size: 0.875rem;
-    color: #9a9a9a;
-  }
-  .arr--lg {
-    width: 56px;
-    height: 56px;
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-  }
-  .h-show__logo {
-    align-self: flex-start;
-    padding: 10px 16px;
-    border-radius: 16px;
-    background: #fff;
-  }
-  .h-show__foot {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: space-between;
-    align-items: flex-end;
-  }
-  .h-show__date {
-    font-family: var(--f-display);
-    font-weight: 500;
-    font-size: clamp(3.5rem, 2rem + 5vw, 7.25rem);
-    line-height: 0.88;
-    letter-spacing: -0.05em;
-  }
-  .h-show__date small {
-    font-size: 0.36em;
-    letter-spacing: -0.02em;
-    color: #9a9a9a;
-  }
-  .h-chips--dark > * {
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-  }
-  .h-chips--dark > .is-hot {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: var(--ink);
-    font-weight: 600;
-  }
-  .h-stats {
-    flex: 1 1 520px;
-    min-width: 0;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--gap);
-  }
-  .h-stat {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    padding: 18px 28px;
-    border-radius: var(--r-pill);
+    flex-direction: column;
+    gap: 0.1rem;
+    padding: 0.85rem 1rem;
     background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--r);
   }
-  .h-stat span {
-    font-size: 0.8125rem;
-    line-height: 1.3;
-    color: var(--ink-60);
-    max-width: 14ch;
-  }
-  .h-stat b {
+  .mini b {
     font-family: var(--f-display);
-    font-weight: 600;
-    font-size: 1.75rem;
-    letter-spacing: -0.02em;
-    white-space: nowrap;
-  }
-  .h-quote {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    padding: 24px 28px;
-    border-radius: var(--r-panel);
-    background: var(--moss);
-    color: #fff;
-  }
-  .h-quote p {
-    margin: 0;
-    max-width: 380px;
-    font-family: var(--f-display);
-    font-weight: 500;
-    font-size: 1.375rem;
-    line-height: 1.2;
-    letter-spacing: -0.02em;
-  }
-  .pill--light {
-    border-color: #fff;
-    color: #fff;
-    min-height: 50px;
-    padding: 0 22px;
-    font-weight: 600;
-  }
-  .pill--light:hover {
-    background: #fff;
-    color: var(--ink);
-  }
-
-  /* 3 · shows */
-  .h-shows {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--gap);
-  }
-  .h-card {
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
-    border-radius: var(--r-lg);
-    background: var(--cream-2);
-    text-decoration: none;
-    color: var(--ink);
-  }
-  .h-card:hover {
-    color: var(--ink);
-  }
-  .h-card__media {
-    position: relative;
-    display: block;
-    border-radius: 20px;
-    overflow: hidden;
-  }
-  .h-card__media :global(img) {
-    transition: transform 220ms var(--ease, ease);
-  }
-  .h-card:hover .h-card__media :global(img) {
-    transform: scale(1.03);
-  }
-  .h-card__date {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    display: inline-flex;
-    align-items: center;
-    min-height: 30px;
-    padding: 0 12px;
-    border-radius: var(--r-pill);
-    background: #fff;
-    font-size: 0.8125rem;
-    font-weight: 600;
-  }
-  .h-card__logo {
-    position: absolute;
-    left: 12px;
-    bottom: 12px;
-    padding: 8px 12px;
-    border-radius: 12px;
-    background: #fff;
-    line-height: 0;
-  }
-  .h-card__body {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    flex: 1;
-    padding: 18px 14px 12px;
-  }
-  .h-card__name {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 12px;
-  }
-  .h-card__name b {
-    font-family: var(--f-display);
-    font-weight: 600;
-    font-size: 1.3125rem;
-    line-height: 1.15;
-    letter-spacing: -0.02em;
-  }
-  .h-card__name span {
-    font-family: var(--f-display);
-    font-size: 1.625rem;
-    line-height: 1;
-    color: #858585; /* 3.3:1 on #F2F2F2 — large text (26px) needs 3:1 */
-  }
-  .h-card__desc {
-    color: var(--ink-60);
-    font-size: 0.9375rem;
-  }
-  .h-card__foot {
-    margin-top: auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-  }
-  .h-card__status {
-    display: inline-flex;
-    align-items: center;
-    min-height: 30px;
-    padding: 0 12px;
-    border: 1px solid var(--line-strong);
-    border-radius: var(--r-pill);
-    font-size: 0.8125rem;
-    color: #4a4a4a;
-  }
-  .h-card .arr {
-    width: 40px;
-    height: 40px;
-  }
-
-  /* 4 · audiences */
-  .h-aud__card {
-    flex: 1 1 340px;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
-    border-radius: var(--r-panel);
-    text-decoration: none;
-  }
-  .h-aud__card :global(.ph) {
-    border-radius: var(--r-lg);
-  }
-  .h-aud__card.is-ink {
-    background: var(--ink);
-    color: #fff;
-    --line-c: rgba(255, 255, 255, 0.35);
-  }
-  .h-aud__card.is-blue {
-    background: var(--moss);
-    color: #fff;
-    --line-c: rgba(255, 255, 255, 0.5);
-  }
-  .h-aud__card.is-paper {
-    background: var(--paper);
-    color: var(--ink);
-    --line-c: #d0d0d0;
-  }
-  .h-aud__card:hover {
-    color: inherit;
-  }
-  .h-aud__body {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    flex: 1;
-    padding: 24px 22px 20px;
-  }
-  .h-aud__t {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-  }
-  .h-aud__t b {
-    min-width: 0;
-    overflow-wrap: anywhere;
-    font-family: var(--f-display);
-    font-weight: 500;
-    font-size: clamp(1.5rem, 7vw, 2rem);
-    letter-spacing: -0.03em;
-    line-height: 1;
-  }
-  .arr--line {
-    width: 48px;
-    height: 48px;
-    background: transparent;
-    color: inherit;
-    border: 1px solid var(--line-c);
-  }
-  /* white on #0063E4 is 5.4:1 — no translucency on the blue card, it would drop under AA */
-  .h-aud__d {
-    opacity: 0.8;
-  }
-  .is-blue .h-aud__d {
-    opacity: 1;
-  }
-  .h-aud__tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: auto;
-  }
-  .h-aud__tags span {
-    display: inline-flex;
-    align-items: center;
-    min-height: 32px;
-    padding: 0 12px;
-    border: 1px solid var(--line-c);
-    border-radius: var(--r-pill);
-    font-size: 0.8125rem;
-  }
-
-  /* 5 · venue */
-  .h-venue__photos {
-    flex: 1.25 1 560px;
-    min-width: 0;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--gap);
-  }
-  .h-venue__photos :global(.ph) {
-    border-radius: var(--r-panel);
-  }
-  .h-venue__text {
-    flex: 1 1 420px;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 22px;
-  }
-  .h-venue__text .kicker {
-    margin: 0;
-  }
-  .h-specs {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin: 0;
-  }
-  .h-specs div {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 14px 22px;
-    border-radius: var(--r-pill);
-    background: #f5f5f5;
-  }
-  .h-specs dt {
-    color: var(--ink-60);
-  }
-  .h-specs dd {
-    margin: 0;
-    font-weight: 600;
-    text-align: right;
-  }
-  .h-venue__text .btn-row {
-    margin-top: auto;
-  }
-
-  /* 6 · why Samarkand */
-  .h-why__photo {
-    position: relative;
-    flex: 1 1 420px;
-    min-width: 0;
-    min-height: 320px;
-    border-radius: var(--r-panel);
-    overflow: hidden;
-  }
-  .h-why__text {
-    flex: 1.3 1 560px;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 26px;
-    padding: clamp(24px, 4vw, 56px);
-    border-radius: var(--r-panel);
-    background: var(--moss);
-    color: #fff;
-  }
-  .h-why__text .kicker {
-    margin: 0;
-    color: #fff;
-  }
-  .h-why__text h2 {
-    color: #fff;
-  }
-  .h-markets {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .h-markets li {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    min-height: 48px;
-    padding: 0 20px;
-    border: 1px solid rgba(255, 255, 255, 0.45);
-    border-radius: var(--r-pill);
-    font-size: 1.0625rem;
-  }
-  .h-markets span {
-    color: #fff;
-  }
-  .h-why__nums {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--gap);
-    margin-top: auto;
-  }
-  .h-why__nums div {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    padding: 18px 26px;
-    border-radius: var(--r-pill);
-    /* a darker blue, not a white tint: the 13px label stays ≥ 4.5:1 (white on #0052BD ≈ 6.9:1) */
-    background: #0052bd;
-  }
-  .h-why__nums span {
-    font-size: 0.8125rem;
-    line-height: 1.3;
-    max-width: 22ch;
-  }
-  .h-why__nums b {
-    font-family: var(--f-display);
-    font-weight: 600;
-    font-size: 1.75rem;
-    white-space: nowrap;
-  }
-
-  /* 7 · logos */
-  .h-logos {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 40px;
-  }
-  .h-logos__head {
-    flex: 1 1 280px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-  }
-  .h-logos__grid {
-    flex: 2.2 1 600px;
-    min-width: 0;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    border-top: 1px solid var(--cream);
-    border-left: 1px solid var(--cream);
-  }
-  .h-logos__grid li {
-    height: 110px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 18px;
-    border-right: 1px solid var(--cream);
-    border-bottom: 1px solid var(--cream);
-  }
-  .h-logos__grid img {
-    width: auto;
-    max-width: 80%;
-    max-height: 56px;
-    object-fit: contain;
-  }
-
-  /* 8 · news */
-  .h-news {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--gap);
-  }
-  .h-news__card {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    padding: 10px 10px 22px;
-    border-radius: var(--r-lg);
-    background: var(--cream-2);
-    text-decoration: none;
-    color: var(--ink);
-  }
-  .h-news__card :global(.ph) {
-    border-radius: 20px;
-  }
-  .h-news__meta {
-    padding: 0 12px;
-    font-size: 0.8125rem;
-    color: var(--ink-60);
-  }
-  .h-news__t {
-    padding: 0 12px;
-    font-family: var(--f-display);
-    font-weight: 600;
-    font-size: 1.25rem;
-    line-height: 1.25;
+    font-size: 0.98rem;
     letter-spacing: -0.01em;
   }
-
-  /* 8.5 · request */
-  .h-form {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 40px;
-  }
-  .h-form__head {
-    flex: 1 1 300px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-  .h-form__head .kicker {
-    margin: 0;
-  }
-  .h-form__list {
-    display: grid;
-    gap: 8px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .h-form__list li {
-    padding: 12px 20px;
-    border-radius: var(--r-pill);
-    background: #f5f5f5;
-  }
-  .h-form__card {
-    flex: 2 1 560px;
-    min-width: 0;
-  }
-
-  /* 9 · FAQ */
-  .h-faq {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 40px;
-  }
-  .h-faq__head {
-    flex: 1 1 300px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-  }
-  .h-faq__list {
-    flex: 2 1 600px;
-    min-width: 0;
-  }
-  .h-faq__list > div {
-    padding: 22px 0;
-    border-bottom: 1px solid var(--cream);
-  }
-  .h-faq__list h3 {
-    margin: 0 0 8px;
-    font-size: 1.25rem;
-  }
-  .h-faq__list p {
-    margin: 0;
+  .mini span {
+    font-size: 0.85rem;
     color: var(--ink-60);
   }
-
-  .btn-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+  .txt-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line-strong);
+    padding-bottom: 1px;
   }
-  .btn-row .btn {
-    flex: 0 1 auto;
+  .txt-link:hover {
+    border-color: var(--ink);
   }
-
-  @media (min-width: 641px) {
-    .h-hero h1 {
-      font-size: clamp(2.875rem, 1rem + 4.8vw, 5.75rem);
-    }
-    .h-shows,
-    .h-news,
-    .h-stats,
-    .h-why__nums {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-    .h-quote {
-      grid-column: 1 / -1;
-    }
-    .h-venue__photos {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-    .h-venue__photos > :global(.ph:first-child) {
-      grid-column: 1 / -1;
-    }
-    .h-logos__grid {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-    .h-logos__grid li {
-      height: 120px;
-    }
+  .home-news-rows {
+    margin-top: 0.8rem;
+    border-top: 1px solid var(--line);
   }
-  @media (min-width: 901px) {
-    .h-hero__text,
-    .h-hero__photo {
-      min-height: 640px;
-    }
-    .h-show {
-      min-height: 360px;
-    }
-    .h-why__photo {
-      min-height: 540px;
-    }
-  }
-  @media (min-width: 1101px) {
-    .h-shows,
-    .h-news {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .h-card__media :global(img) {
-      transition: none;
-    }
+  .form-list {
+    padding-left: 1.1rem;
+    margin-top: 1rem;
+    display: grid;
+    gap: 0.4rem;
+    color: var(--ink-60);
   }
 </style>

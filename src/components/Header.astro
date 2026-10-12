@@ -8,7 +8,6 @@ import BrandMark from '@/components/BrandMark.astro';
 import { localize, localeMeta, supportedLocales, type SourceLocale as Locale } from '@/i18n/config';
 import { useUI } from '@/i18n/ui';
 import Icon from '@/components/Icon.astro';
-import Photo from '@/components/Photo.astro';
 
 interface Props {
   locale: Locale;
@@ -49,24 +48,6 @@ const nextShow = events
  * to the calendar, not to service contacts.
  */
 const items = nav.filter((i) => i.key !== 'nav.news');
-/* 2026-10 design (docs/18 §3): every mega panel ends in a photo card that leads somewhere
-   concrete — the next show, the hall plan, the packages, free registration, the conference
-   hall, the company. */
-const featured: Record<string, { img: string; alt: string; kicker: string; date?: string; title: string; href: string }> = {
-  '/events/': {
-    img: nextShow.heroImage,
-    alt: nextShow.tagline[locale],
-    kicker: ru ? 'Ближайшая выставка' : 'Next exhibition',
-    date: nextShow.dates.display[locale],
-    title: nextShow.brand[locale],
-    href: `/events/${nextShow.slug}/`,
-  },
-  '/venue/': { img: '/images/hall-panorama.jpg', alt: ru ? 'Зал SOF EXPO в день открытия' : 'The SOF EXPO hall on opening day', kicker: t('nav.venue'), title: ru ? 'Залы и площади' : 'Halls and areas', href: '/venue/halls/' },
-  '/exhibitors/': { img: '/images/stand-exhibitor.jpg', alt: ru ? 'Стенд экспонента' : 'An exhibitor stand', kicker: ru ? 'Стенд' : 'Stand', title: ru ? 'Выберите пакет' : 'Choose a package', href: '/exhibitors/packages/' },
-  '/visitors/': { img: '/images/opening-crowd.jpg', alt: ru ? 'Гости на церемонии открытия' : 'Guests at the opening ceremony', kicker: t('nav.visitors'), title: ru ? 'Бесплатная регистрация' : 'Free registration', href: '/visitors/tickets/' },
-  '/organizers/': { img: '/images/conference-stage.jpg', alt: ru ? 'Сцена конференц-зала' : 'The conference hall stage', kicker: ru ? 'Аренда' : 'Rental', title: ru ? 'Конференц-зал' : 'Conference hall', href: '/organizers/conferences/' },
-  '/about/': { img: '/images/venue-flags.jpg', alt: ru ? 'Здание SOF EXPO с флагами' : 'The SOF EXPO building with flags', kicker: t('nav.about'), title: ru ? 'О SOF EXPO' : 'About SOF EXPO', href: '/about/' },
-};
 ---
 
 <header class="hdr" id="top">
@@ -88,15 +69,20 @@ const featured: Record<string, { img: string; alt: string; kicker: string; date?
           {/* the centre's real mark (three figures around the SOF EXPO roundel), not a
               two-letter placeholder — served at 2x for retina, sized in CSS */}
           <img
-            class="logo__h"
-            src="/brand/sofexpo-horizontal.png"
+            class="logo__img"
+            src="/brand/sofexpo-logo.png"
+            srcset="/brand/sofexpo-logo.png 1x, /brand/sofexpo-logo@2x.png 2x"
             alt=""
             aria-hidden="true"
-            width="274"
-            height="96"
+            width="180"
+            height="193"
             loading="eager"
             decoding="async"
           />
+          <span class="logo__txt">
+            <b>{site.brand[locale]}</b>
+            <span>{t('brand.sub')}</span>
+          </span>
         </>
       )}
     </a>
@@ -133,14 +119,22 @@ const featured: Record<string, { img: string; alt: string; kicker: string; date?
                       </li>
                     ))}
                   </ul>
-                  {featured[item.base] && (
-                    <a class="mega__photo" href={P(featured[item.base].href)}>
-                      <Photo src={featured[item.base].img} alt={featured[item.base].alt} ratio="4/5" sizes="300px" rounded={false} />
-                      <span class="mega__photo-card">
-                        <span><small><span>{featured[item.base].kicker}</span>{featured[item.base].date && <> · <span>{featured[item.base].date}</span></>}</small><b>{featured[item.base].title}</b></span>
-                        <span class="arr" aria-hidden="true"><Icon name="arrow-ne" size={14} /></span>
-                      </span>
+                  {item.base === '/events/' && nextShow ? (
+                    <a class="mega__card" href={P(`/events/${nextShow.slug}/`)}>
+                      <span class="mega__card-k">{ru ? 'Ближайшая выставка' : 'Next exhibition'}</span>
+                      <ShowLogo slug={nextShow.slug} height={logoFor(nextShow.slug)?.round ? 64 : 40} />
+                      <b>{nextShow.brand[locale]}</b>
+                      <span>{nextShow.dates.display[locale]}</span>
+                      <span class="mega__card-cta">{t('cta.details')} <Icon name="arrow" size={14} /></span>
                     </a>
+                  ) : (
+                    <div class="mega__card mega__card--contact">
+                      <span class="mega__card-k">{t('nav.contacts')}</span>
+                      <a href={`tel:${site.contacts.phoneMain.replace(/\s/g, '')}`}><b>{site.contacts.phoneMain}</b></a>
+                      <a href={`mailto:${site.contacts.email}`}>{site.contacts.email}</a>
+                      <span>{t('topbar.hours')}</span>
+                      <a class="mega__card-cta" href={P('/request-stand/')}>{t('cta.stand')} <Icon name="arrow" size={14} /></a>
+                    </div>
                   )}
                 </div>
               </div>
@@ -171,9 +165,8 @@ const featured: Record<string, { img: string; alt: string; kicker: string; date?
         </details>
       )}
       <a class="header-search" href={P('/search/')} aria-label={t('cta.search')}><Icon name="search" size={19} /></a>
-      <a class="header-call" href={`tel:${site.contacts.phoneMain.replace(/\s/g, '')}`} aria-label={`${ru ? 'Позвонить' : 'Call'} ${site.contacts.phoneMain}`}><Icon name="phone" size={18} /></a>
       <a class="btn btn--sm btn--desk" href={P('/request-stand/')} data-quiz-open data-quiz-event={quizEvent} data-quiz-source="header">
-        {t('cta.stand')}
+        <Icon name="sparkle" size={16} /> {t('cta.stand')}
       </a>
       <button class="burger" type="button" aria-controls="mnav" aria-expanded="false" aria-label={t('nav.menu')}>
         <span></span>
@@ -199,7 +192,8 @@ const featured: Record<string, { img: string; alt: string; kicker: string; date?
         ))
       }
       <div class="mnav__ctas">
-        <a class="btn btn--accent" href={P('/request-stand/')} data-quiz-open data-quiz-event={quizEvent} data-quiz-source="menu">{t('cta.stand')}</a>
+        <a class="btn btn--ghost" href={P('/search/')}>{t('cta.search')}</a>
+        <a class="btn" href={P('/request-stand/')} data-quiz-open data-quiz-event={quizEvent} data-quiz-source="menu">{t('cta.stand')}</a>
         <a class="btn btn--ghost" href={P('/visitors/tickets/')}>{t('cta.ticket')}</a>
         {portalBase && (
           <>
@@ -208,7 +202,6 @@ const featured: Record<string, { img: string; alt: string; kicker: string; date?
           </>
         )}
         <a class="btn btn--ghost" href={P('/events/')}>{t('nav.lineup')}</a>
-        <a class="btn btn--ghost" href={P('/search/')}>{t('cta.search')}</a>
         <a class="btn btn--ghost" href={`tel:${site.contacts.phoneMain.replace(/\s/g, '')}`}>
           {t('topbar.phone')}
         </a>

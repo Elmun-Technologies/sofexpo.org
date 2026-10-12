@@ -17,24 +17,6 @@ const ru = locale === 'ru';
 ---
 
 <footer class="ftr">
-  {/* 2026-10 design (docs/18 §3): a blue booking card and a white sales card above the black
-      footer panel — the last screen of every page still offers the two actions that matter */}
-  <div class="ftr__top">
-    <a class="ftr__cta" href={P('/request-stand/')} data-quiz-open data-quiz-source="footer">
-      <span class="ftr__cta-t">{ru ? 'Ваш стенд — на следующей выставке' : 'Put your stand at the next show'}</span>
-      <span class="arr arr--xl" aria-hidden="true"><Icon name="arrow-ne" size={30} /></span>
-    </a>
-    <div class="ftr__sales">
-      <span class="ftr__sales-k">{ru ? 'Отдел продаж · Пн–Пт 09:00–18:00' : 'Sales desk · Mon–Fri 09:00–18:00'}</span>
-      <a class="ftr__phone" href={`tel:${site.contacts.phoneMain.replace(/\s/g, '')}`}>{site.contacts.phoneMain}</a>
-      <span class="ftr__pills">
-        <a class="pill" href={`mailto:${site.contacts.email}`}>{site.contacts.email}</a>
-        <a class="pill" href={site.contacts.telegramManager} rel="noopener" target="_blank">{ru ? 'Менеджер в Telegram' : 'Telegram manager'}</a>
-        <a class="pill" href={site.contacts.whatsapp} rel="noopener" target="_blank">WhatsApp</a>
-      </span>
-    </div>
-  </div>
-  <div class="ftr__main">
     {CURRENT_BRAND?.ornament && <Ornament variant="band" height={20} flip />}
   <div class="wrap">
     <div class="ftr__grid">
@@ -51,13 +33,22 @@ const ru = locale === 'ru';
             </span>
           ) : (
             <>
-              {/* the centre's horizontal mark, drawn white for the black panel */}
-              <img class="logo__h" src="/brand/sofexpo-horizontal-white.png" alt={site.brand[locale]} width="274" height="96" loading="lazy" decoding="async" />
+              {/* the centre's real mark on a paper plate — it is drawn for a light ground */}
+              <span class="ftr__mark" aria-hidden="true">
+                <img src="/brand/sofexpo-logo.png" srcset="/brand/sofexpo-logo.png 1x, /brand/sofexpo-logo@2x.png 2x" alt="" aria-hidden="true" width="180" height="193" loading="lazy" decoding="async" />
+              </span>
+              <span class="logo__txt">
+                <b>{site.brand[locale]}</b>
+                <span style="color:rgba(255, 255, 255, .6)">{ru ? 'Выставочный центр' : 'Exhibition centre'}</span>
+              </span>
             </>
           )}
         </a>
-        <p class="ftr__about">{t('footer.about')}</p>
-        <p class="ftr__about">{site.location.region[locale]}</p>
+        <p style="margin-top:1rem;max-width:38ch">{t('footer.about')}</p>
+        <p class="small" style="margin:0">
+          {site.contacts.phoneMain}<br />
+          <a href={`mailto:${site.contacts.email}`}>{site.contacts.email}</a>
+        </p>
         <div class="socials" style="margin-top:1rem">
           {
             Object.entries({
@@ -67,7 +58,7 @@ const ru = locale === 'ru';
               youtube: { icon: 'youtube', href: site.contacts.youtube, label: 'YouTube' },
             }).map(
               ([, s]) => (
-                <a class="ftr__social" href={s.href} aria-label={s.label} rel="noopener" target="_blank">
+                <a href={s.href} aria-label={s.label} rel="noopener" target="_blank" style="text-decoration:none">
                   <Icon name={s.icon} size={18} />
                 </a>
               ),
@@ -106,6 +97,5 @@ const ru = locale === 'ru';
       </a>
     </div>
     <p class="small" style="margin:1rem 0 0;color:rgba(255, 255, 255, .7)">{t('footer.made')}</p>
-  </div>
   </div>
 </footer>

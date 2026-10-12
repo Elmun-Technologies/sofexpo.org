@@ -106,21 +106,30 @@ test('any gadget or TV: core pages never overflow horizontally (320px–3840px)'
   expect(failures,failures.join('\n')).toEqual([]);
 });
 
-test('large displays keep the 2026-10 design column: 1420px of panels, centred, 16px type (1920/2560/3840)',async({page})=>{
-  /* docs/18 §2: the design is drawn on a fixed 1420px column inside a 10px canvas frame; a TV
-     gets the same column centred on the canvas, not a stretched one */
-  for(const width of [1920,2560,3840]){
+test('the large-display tier scales type and the column on TVs (1920/2560/3840)',async({page})=>{
+  /* root font = clamp(16px, 15.6px + 0.25vw, 21px): 20.4px at 1920, capped at 21px from ~2240px */
+  for(const [width,expectMaxw,expectRoot] of [[1920,1450,20.3],[2560,1700,20.9],[3840,1800,20.9]] as const){
     await page.setViewportSize({width,height:tvHeight(width)});
     await page.goto('/ru/');
     await page.evaluate(()=>document.fonts.ready);
-    const main=await page.evaluate(()=>{const r=document.querySelector('main')!.getBoundingClientRect();const p=document.body.getBoundingClientRect();return {w:r.width,l:r.left-p.left,r:p.right-r.right};});
-    expect(main.w,`main width at ${width}px`).toBeLessThanOrEqual(1440);
-    expect(Math.abs(main.l-main.r),`main centred at ${width}px`).toBeLessThanOrEqual(2);
+    /* the fluid column: wider than the 1320px desktop floor at room scale */
+    const maxw=await page.evaluate(()=>parseFloat(getComputedStyle(document.querySelector('.wrap')!).maxWidth));
+    expect(maxw,`wrap max-width at ${width}px`).toBeGreaterThanOrEqual(expectMaxw);
     const rootFs=await page.evaluate(()=>parseFloat(getComputedStyle(document.documentElement).fontSize));
-    expect(rootFs,`root font at ${width}px`).toBe(16);
-    const h1=await page.evaluate(()=>parseFloat(getComputedStyle(document.querySelector('main h1')!).fontSize));
-    expect(h1,`home h1 at ${width}px`).toBeGreaterThanOrEqual(80);
+    expect(rootFs,`root font at ${width}px (${rootFs}px)`).toBeGreaterThanOrEqual(expectRoot);
+    /* the headline ceiling is raised: home h1 must be bigger at 3840 than at 1440 */
   }
+  const at1440=await (async()=>{
+    await page.setViewportSize({width:1440,height:900});
+    await page.goto('/ru/');
+    return page.evaluate(()=>document.querySelector('.home-hero h1')!.getBoundingClientRect().width>0?
+      parseFloat(getComputedStyle(document.querySelector('.home-hero h1')!).fontSize):0);
+  })();
+  await page.setViewportSize({width:3840,height:2160});
+  await page.goto('/ru/');
+  await page.evaluate(()=>document.fonts.ready);
+  const at3840=await page.evaluate(()=>parseFloat(getComputedStyle(document.querySelector('.home-hero h1')!).fontSize));
+  expect(at3840,`h1 font 3840 (${at3840}) vs 1440 (${at1440})`).toBeGreaterThan(at1440*1.4);
 });
 
 test('other editions share the device matrix at the extreme widths',async({page})=>{

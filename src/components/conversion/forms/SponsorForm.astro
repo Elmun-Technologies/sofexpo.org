@@ -3,6 +3,7 @@
  * SponsorForm — sponsorship packages
  */
 import type { SourceLocale as Locale } from '@/i18n/config';
+import Icon from '@/components/Icon.astro';
 
 interface Props {
   locale: Locale;
@@ -38,7 +39,7 @@ const L = {
       <h3>{L.title}</h3>
       <p>{L.sub}</p>
     </div>
-    <div class="form-sp__icon">⭐</div>
+    <div class="form-sp__icon" aria-hidden="true"><Icon name="star" size={22} /></div>
   </div>
 
   <div class="form-sp__grid">

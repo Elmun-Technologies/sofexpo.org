@@ -137,7 +137,7 @@ const featured: Record<string, { img: string; alt: string; kicker: string; date?
                     <a class="mega__photo" href={P(featured[item.base].href)}>
                       <Photo src={featured[item.base].img} alt={featured[item.base].alt} ratio="4/5" sizes="300px" rounded={false} />
                       <span class="mega__photo-card">
-                        <span><small><span>{featured[item.base].kicker}</span>{featured[item.base].date && <> · <span>{featured[item.base].date}</span></>}</small><b>{featured[item.base].title}</b></span>
+                        <span><small>{featured[item.base].kicker}</small><b>{featured[item.base].title}</b>{featured[item.base].date && <small class="mega__photo-date">{featured[item.base].date}</small>}</span>
                         <span class="arr" aria-hidden="true"><Icon name="arrow-ne" size={14} /></span>
                       </span>
                     </a>

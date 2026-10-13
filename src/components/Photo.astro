@@ -52,6 +52,21 @@ const srcset = rungs.length
   : undefined;
 const fallback = name ? `/images/${name}.jpg` : src;
 const [rw, rh] = ratio.split('/').map((n) => Number(n.trim()) || 1);
+/* Every rung is a 16:10 crop. A taller frame with object-fit: cover shows only the middle of
+   it, so the browser needs a wider file than the frame's own width: a 300px-wide 4:5 card
+   on a 2x screen needs 1200 source pixels, not 600. `sizes` is scaled by that crop factor
+   (calc() is valid inside sizes), which is what kept portrait cards soft on retina. */
+const crop = fit === 'cover' ? 1.6 / (rw / rh) : 1;
+const finalSizes =
+  crop > 1.05
+    ? sizes
+        .split(',')
+        .map((part) => {
+          const mm = /^(\(.*\)\s+)?(.+)$/.exec(part.trim());
+          return mm ? `${mm[1] ?? ''}calc(${mm[2]} * ${crop.toFixed(2)})` : part;
+        })
+        .join(', ')
+    : sizes;
 ---
 
 <figure
@@ -59,7 +74,7 @@ const [rw, rh] = ratio.split('/').map((n) => Number(n.trim()) || 1);
   style={`--ph-ratio:${rw} / ${rh};--ph-fit:${fit};--ph-pos:${position}`}
 >
   <picture>
-    {srcset && <source type="image/webp" srcset={srcset} sizes={sizes} />}
+    {srcset && <source type="image/webp" srcset={srcset} sizes={finalSizes} />}
     <img
       src={fallback}
       alt={alt}
@@ -68,7 +83,7 @@ const [rw, rh] = ratio.split('/').map((n) => Number(n.trim()) || 1);
       loading={loading ?? (priority ? 'eager' : 'lazy')}
       decoding={priority ? 'sync' : 'async'}
       fetchpriority={priority ? 'high' : 'auto'}
-      sizes={sizes}
+      sizes={finalSizes}
     />
   </picture>
   <slot />

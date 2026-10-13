@@ -165,12 +165,28 @@ main > .wrap .crumbs {
 .nav__link::after {
   display: none;
 }
+/* open (hover/focus) is the filled pill; the section you are in is an outlined pill with a dot,
+   so an open menu next to the current section never shows two identical black pills */
+.nav__link[aria-current="page"] {
+  border-color: var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--ink);
+}
+.nav__link[aria-current="page"]::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold); /* the brand blue on sofexpo.org, each show's own colour on its host */
+  flex: none;
+}
 .nav__link:hover,
 .nav__item:hover .nav__link,
-.nav__item:focus-within .nav__link,
-.nav__link[aria-current="page"] {
+.nav__item:focus-within .nav__link {
   background: var(--ink);
   border-color: var(--ink);
+  box-shadow: none;
   color: #fff;
 }
 .nav__caret {
@@ -327,6 +343,8 @@ main > .wrap .crumbs {
   flex-direction: column;
   gap: 2px;
   height: 100%;
+  margin: 0; /* global.css still bleeds the old list links by -0.75rem, which glued the cards */
+  border: 1px solid transparent;
   padding: 14px 18px;
   border-radius: 20px;
   background: #f5f5f5;
@@ -335,6 +353,14 @@ main > .wrap .crumbs {
 }
 .mega__links a:hover {
   background: #ececec;
+  color: var(--ink);
+}
+.mega__links a[aria-current="page"] {
+  background: var(--paper);
+  border-color: var(--ink);
+}
+.mega__links a:hover .mega__t,
+.mega__links a[aria-current="page"] .mega__t {
   color: var(--ink);
 }
 .mega__t {
@@ -378,6 +404,14 @@ main > .wrap .crumbs {
 .mega__photo-card small {
   font-size: 0.75rem;
   color: var(--ink-60);
+}
+.mega__photo-card b {
+  line-height: 1.25;
+}
+.mega__photo-card .mega__photo-date {
+  margin-top: 2px;
+  color: var(--ink);
+  font-weight: 500;
 }
 
 /* the round "go" arrow used on every card; it turns yellow when its card is hovered */
@@ -1332,4 +1366,13 @@ main > .evnav {
 .ftr__main > * {
   position: relative;
   z-index: 1;
+}
+
+/* calendar rail: a show name never ends in "…" — the long one (ECOM & RETAIL EXPO SAMARKAND)
+   wraps to a second line instead of being cut */
+.rail b {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  line-height: 1.2;
 }

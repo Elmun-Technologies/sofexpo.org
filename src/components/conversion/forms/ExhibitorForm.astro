@@ -4,6 +4,7 @@
  * Different from generic LeadForm: has industry, area, budget, urgency
  */
 import type { SourceLocale as Locale } from '@/i18n/config';
+import Icon from '@/components/Icon.astro';
 
 interface Props {
   locale: Locale;
@@ -68,9 +69,9 @@ const events = [
       <p class="form-ex__sub">{L.sub}</p>
     </div>
     <div class="form-ex__trust">
-      <span class="form-ex__trust-item">⚡ 15 {ru ? 'мин' : 'min'}</span>
-      <span class="form-ex__trust-item">📐 {ru ? 'план зала' : 'floor plan'}</span>
-      <span class="form-ex__trust-item">💬 TG/WA</span>
+      <span class="form-ex__trust-item"><Icon name="clock" size={14} />{ru ? '15 мин' : '15 min'}</span>
+      <span class="form-ex__trust-item"><Icon name="grid" size={14} />{ru ? 'план зала' : 'floor plan'}</span>
+      <span class="form-ex__trust-item"><Icon name="telegram" size={14} />TG/WA</span>
     </div>
   </div>
 
@@ -205,6 +206,9 @@ const events = [
     flex-wrap: wrap;
   }
   .form-ex__trust-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
     padding: 4px 8px;
     border-radius: 20px;
     background: var(--cream-2);

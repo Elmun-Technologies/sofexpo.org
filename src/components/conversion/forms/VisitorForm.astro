@@ -4,6 +4,7 @@
  * Light, fast, QR-focused
  */
 import type { SourceLocale as Locale } from '@/i18n/config';
+import Icon from '@/components/Icon.astro';
 
 interface Props {
   locale: Locale;
@@ -38,7 +39,7 @@ const L = {
 
 <form class="form-vi" id={id} data-lead-form data-fallback={ru ? 'Мы получили ваш контакт только в этом браузере — отправьте заявку также на почту.' : 'Your request was kept in this browser only — please also send it by email.'} data-form-type="visitor" data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} novalidate>
   <div class="form-vi__head">
-    <div class="form-vi__icon">🎟️</div>
+    <div class="form-vi__icon" aria-hidden="true"><Icon name="ticket" size={22} /></div>
     <div>
       <h3>{L.title}</h3>
       <p>{L.sub}</p>
@@ -113,15 +114,6 @@ const L = {
     position: relative;
     overflow: hidden;
   }
-  .form-vi::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--moss), var(--gold));
-  }
   .form-vi__head {
     display: flex;
     gap: 12px;
@@ -134,16 +126,19 @@ const L = {
     background: var(--cream-2);
     display: grid;
     place-items: center;
-    font-size: 22px;
+    color: var(--ink);
     flex: none;
   }
   .form-vi__head h3 {
     margin: 0 0 4px;
-    font-size: 18px;
+    font-family: var(--f-display);
+    font-weight: 500;
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
   }
   .form-vi__head p {
     margin: 0;
-    font-size: 12px;
+    font-size: 0.875rem;
     color: var(--ink-60);
     line-height: 1.4;
   }

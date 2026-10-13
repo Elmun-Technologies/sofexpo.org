@@ -44,7 +44,7 @@ export const visitorPages: PageDef[] = [
         },
         {
           type: "rail",
-          railCount: 4,
+          railCount: 6,
         },
         {
           type: "h2",
@@ -174,7 +174,7 @@ export const visitorPages: PageDef[] = [
         },
         {
           type: "rail",
-          railCount: 4,
+          railCount: 6,
         },
         {
           type: "h2",

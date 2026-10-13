@@ -25,7 +25,7 @@ const WIDTHS = [640, 1024, 1600, 2048];
 /** name → [source file, focal position] ; position drives the smart crop. */
 const MAP = {
   /* ── the hall, the building, the floor ───────────────────────────── */
-  'hero-hall': ['Expo2024_7-1.jpg', 'centre'],
+  'hero-hall': ['sofexpo-uz/hall-aerial.jpg', 'centre'],
   'hall-crowd': ['1-3-768x432.jpg', 'centre'],
   'hall-stand': ['sofexpo-uz/stand-glass.jpg', 'centre'],
   'hall-walk': ['sofexpo-uz/hall-panorama.jpg', 'centre'],
@@ -37,25 +37,25 @@ const MAP = {
   'venue-facade': ['sofexpo-uz/exterior-1.jpg', 'centre'],
   'venue-conference': ['sofexpo-uz/speaker.jpg', 'centre'],
   'conference-audience': ['sofexpo-uz/speaker.jpg', 'centre'],
-  'outdoor-area': ['6-768x432.jpg', 'centre'],
+  'outdoor-area': ['client-2026-10/outdoor-area-3.jpg', 'centre'],
 
   /* ── the shows ───────────────────────────────────────────────────── */
-  'event-foodera': ['9-768x432.jpg', 'centre'],
+  'event-foodera': ['client-2026-10/non.jpg', 'centre'],
   'event-agropro': ['sofexpo-uz/agro-machines.jpg', 'centre'],
   'event-buildpro': ['sofexpo-uz/stand-berat.jpg', 'centre'],
-  'event-ecom': ['sofexpo-uz/stand-russia.jpg', 'centre'],
-  'event-promotors': ['sofexpo-uz/transfer.jpg', 'centre'],
+  'event-ecom': ['client-2026-10/ecom.jpg', 'centre'],
+  'event-promotors': ['client-2026-10/drift.jpg', 'centre'],
   'event-worldedu': ['sofexpo-uz/edu-crowd.jpg', 'centre'],
 
   /* ── people, product, service ────────────────────────────────────── */
-  'food-tasting': ['9-768x432.jpg', 'centre'],
-  'food-tasting-counter': ['8-768x432.jpg', 'centre'],
+  'food-tasting': ['client-2026-10/chefs.jpg', 'centre'],
+  'food-tasting-counter': ['client-2026-10/driedfruit.jpg', 'centre'],
   'supermarket-aisle': ['sofexpo-uz/stand-lights.jpg', 'centre'],
-  'greenhouse-tomatoes': ['agro-expo-uzbekistan-3-768x512.webp', 'centre'],
+  'greenhouse-tomatoes': ['client-2026-10/food.jpg', 'centre'],
   'students-campus': ['sofexpo-uz/hall-crowd-world-edu.jpg', 'centre'],
   'office-people': ['sofexpo-uz/meeting-room-2.jpg', 'centre'],
   'officials-tour': ['sofexpo-uz/opening-officials.jpg', 'centre'],
-  'stand-equipment': ['2-3-768x432.jpg', 'centre'],
+  'stand-equipment': ['sofexpo-uz/stand-equip.jpg', 'centre'],
   'stand-agro': ['sofexpo-uz/stand-talk.jpg', 'centre'],
   'stand-modern': ['12.webp', 'centre'],
   'stand-green': ['13.webp', 'centre'],
@@ -72,12 +72,12 @@ const MAP = {
   /* ── more of the floor: the client sent far more than six usable frames ── */
   'stand-agro-chem': ['sofexpo-uz/visitors-7.jpg', 'centre'],
   'opening-ceremony': ['sofexpo-uz/opening.jpg', 'centre'],
-  'stand-fertilizer': ['agro-expo-2-768x512.webp', 'centre'],
+  'stand-fertilizer': ['sofexpo-uz/stand-agro-2.jpg', 'centre'],
   'stand-industrial': ['sofexpo-uz/stand-equip.jpg', 'centre'],
   'conference-room': ['sofexpo-uz/conf-room.jpg', 'centre'],
-  'hall-aisle-red': ['sofexpo-uz/hall-overview-top.jpg', 'centre'],
+  'hall-aisle-red': ['client-2026-10/hall-wide-5.jpg', 'centre'],
   'cafe-interior': ['sofexpo-uz/cafe-restaurant.jpg', 'centre'],
-  'venue-aerial': ['5-qu1l7uif3w9j7ew408ye9jrl52s6o6fzabnn8rr8hk.jpg', 'centre'],
+  'venue-aerial': ['sofexpo-uz/hall-aerial2.jpg', 'centre'],
 
   /* ── plans and identity ─────────────────────────────────────────── */
   'site-plan': ['Ресурс-1map1-1536x794.png', 'centre'],
@@ -104,7 +104,7 @@ const MAP = {
   'stand-agro-hall': ['sofexpo-uz/stand-agro-2.jpg', 'centre'],
   'stand-house-model': ['sofexpo-uz/stand-house.jpg', 'centre'],
   'stand-building-models': ['sofexpo-uz/stand-building-models.jpg', 'centre'],
-  'stand-shell': ['sofexpo-uz/shell-stand-3.jpg', 'centre'],
+  'stand-shell': ['site-2026-10/stand-1.jpg', 'centre'],
   'conference-stage': ['sofexpo-uz/conf-stage.jpg', 'centre'],
   'conference-rows': ['sofexpo-uz/conf-rows.jpg', 'centre'],
   'meeting-room': ['sofexpo-uz/meeting-room.jpg', 'centre'],
@@ -189,8 +189,11 @@ async function one(name, [file]) {
   /* a tiny source is never blown up to 1600: it is capped at 3x, which keeps the artefacts
      below what a card-sized viewport can resolve. Full-bleed heroes with a real (or
      AI-restored) 2000px+ master also get a 2048 rung for 1440px screens at 2x. */
-  const top = hero && (meta.width ?? 0) >= 2000 ? 2048 : 1600;
-  const maxW = hero ? Math.min(top, Math.max(640, (meta.width ?? 0) * 3)) : Math.min(1600, meta.width ?? 1600);
+  /* 2026-10-13: retina screens crop these 16:10 rungs into tall panels, so the old 3x
+     upscale of 768px sources read as blur. A rung is never wider than ~1.15x its source
+     now, and every source of 1800px+ gets the 2048 rung, not only heroes. */
+  const sw = meta.width ?? 1600;
+  const maxW = Math.min(sw >= 1800 ? 2048 : 1600, Math.max(640, Math.round(sw * (hero ? 1.15 : 1))));
   let bytes = 0;
 
   const crop = (w) => {
@@ -234,12 +237,16 @@ async function one(name, [file]) {
     .toFile(jpg);
   bytes += statSync(jpg).size;
 
+  let prev = 0;
   for (const w of WIDTHS) {
-    if (w > maxW + 80) continue;
+    /* the top rung is emitted at the source's own width when it falls between two rungs
+       (an 1800px photo gets an 1800px "-2048" file, not a cap at 1600) */
+    if (w > maxW + 80 && prev >= maxW - 100) continue;
+    prev = Math.min(w, maxW);
     const out = path.join(OUT, `${name}-${w}.webp`);
     /* bigger rung = seen larger but also further from the eye's detail budget: the quality
        ladder drops as the pixel count climbs, which is what keeps a 1600w hero under 200 KB */
-    const q = w >= 2048 ? 60 : w >= 1600 ? 64 : w >= 1024 ? 70 : 74;
+    const q = w >= 2048 ? 72 : w >= 1600 ? 74 : w >= 1024 ? 76 : 78;
     await crop(w).webp({ quality: q, effort: 6 }).toFile(out);
     bytes += statSync(out).size;
   }

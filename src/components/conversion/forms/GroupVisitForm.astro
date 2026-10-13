@@ -3,6 +3,7 @@
  * GroupVisitForm — group visits 10+ people, transfer, guide
  */
 import type { SourceLocale as Locale } from '@/i18n/config';
+import Icon from '@/components/Icon.astro';
 
 interface Props {
   locale: Locale;
@@ -34,12 +35,12 @@ const L = {
 
 <form class="form-gr" id={id} data-lead-form data-fallback={ru ? 'Мы получили ваш контакт только в этом браузере — отправьте заявку также на почту.' : 'Your request was kept in this browser only — please also send it by email.'} data-form-type="group" data-endpoint={endpoint || undefined} data-ok={L.ok} data-err={L.err} novalidate>
   <div class="form-gr__head">
-    <h3>👥 {L.title}</h3>
+    <h3>{L.title}</h3>
     <p>{L.sub}</p>
     <div class="form-gr__benefits">
-      <span>🚌 {ru ? 'Трансфер' : 'Transfer'}</span>
-      <span>🎧 {ru ? 'Гид' : 'Guide'}</span>
-      <span>☕ {ru ? 'Кофе-брейк' : 'Coffee break'}</span>
+      <span><Icon name="car" size={16} />{ru ? 'Трансфер' : 'Transfer'}</span>
+      <span><Icon name="audio" size={16} />{ru ? 'Гид' : 'Guide'}</span>
+      <span><Icon name="coffee" size={16} />{ru ? 'Кофе-брейк' : 'Coffee break'}</span>
     </div>
   </div>
 
@@ -84,6 +85,9 @@ const L = {
     flex-wrap: wrap;
   }
   .form-gr__benefits span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
     padding: 4px 10px;
     border-radius: 20px;
     background: var(--cream-2);

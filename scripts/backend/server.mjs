@@ -35,13 +35,14 @@ const LEAD_TEXT_FIELDS = {
   formType: 'Форма', event: 'Выставка', name: 'Имя', company: 'Компания', position: 'Должность',
   phone: 'Телефон', email: 'Email', direction: 'Направление', area: 'Площадь', goal: 'Задача',
   purpose: 'Цель', industry: 'Отрасль', package: 'Пакет', eventType: 'Формат', attendees: 'Гостей',
-  count: 'Человек', date: 'Дата', time: 'Время', channel: 'Канал', messenger: 'Мессенджер', comment: 'Комментарий',
+  count: 'Человек', visitorType: 'Кто', date: 'Дата', time: 'Время', channel: 'Канал', messenger: 'Мессенджер', comment: 'Комментарий',
 };
 const LEAD_SKIP_FIELDS = new Set(['ts', 'locale', 'url', 'referrer', 'source', 'src', '_error', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'page', 'landing', 'sessionId']);
 const REQUIRED_BY_FORM = {
   generic: ['company', 'consent'], press: ['company', 'consent'],
   exhibitor: ['company', 'industry', 'area', 'consent'],
-  visitor: ['email', 'industry', 'consent'],
+  /* a guest gives a name, a phone, an email and the show — no company, title or industry */
+  visitor: ['email', 'consent'],
   organizer: ['company', 'email', 'eventType', 'consent'], sponsor: ['company'],
   callback: [], catalog: [], group: ['count'], quiz: ['company', 'event', 'goal', 'area', 'consent'],
 };

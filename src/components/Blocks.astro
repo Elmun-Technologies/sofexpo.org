@@ -30,6 +30,7 @@ import CallbackForm from '@/components/conversion/forms/CallbackForm.astro';
 import CatalogForm from '@/components/conversion/forms/CatalogForm.astro';
 import GroupVisitForm from '@/components/conversion/forms/GroupVisitForm.astro';
 import SmartCta from '@/components/conversion/SmartCta.astro';
+import ExhibitorDirectory from '@/components/ExhibitorDirectory.astro';
 
 const { blocks, locale, path = '' } = Astro.props as { blocks: Block[]; locale: Locale; path?: string };
 
@@ -84,7 +85,7 @@ const galleryGroups = (b: Block): BlockAlbum[] =>
     const showMidCta = auto && !hasForm && blocks.length > 3 && (idx === 1 || idx === 3);
     return (
       <>
-      <section class:list={['sec', 'block', 'reveal', `block--${b.type}`, b.tone === 'paper' && 'sec--paper', b.tone === 'forest' && 'sec--forest', b.tone === 'sand' && 'sec--sand', b.anchor && 'has-anchor', leadsIn && 'block--head', afterHead && 'block--after-head', sameGround && !afterHead && 'block--cont']} id={b.id}>
+      <section hidden={b.type === 'directory' ? true : undefined} class:list={['sec', 'block', 'reveal', `block--${b.type}`, b.type === 'directory' && 'xdir-host', b.tone === 'paper' && 'sec--paper', b.tone === 'forest' && 'sec--forest', b.tone === 'sand' && 'sec--sand', b.anchor && 'has-anchor', leadsIn && 'block--head', afterHead && 'block--after-head', sameGround && !afterHead && 'block--cont']} id={b.id}>
         <div class:list={['wrap', !wide && 'wrap--narrow']}>
           {b.type === 'hero' && (
             <div class="block__head">
@@ -347,6 +348,8 @@ const galleryGroups = (b: Block): BlockAlbum[] =>
           )}
 
           {b.type === 'plan' && <VenuePlan locale={locale} />}
+
+          {b.type === 'directory' && <ExhibitorDirectory locale={locale} event={b.event} />}
 
           {b.type === 'map' && <MapSchema locale={locale} />}
 

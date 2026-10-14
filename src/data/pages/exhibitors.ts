@@ -1929,6 +1929,7 @@ export const exhibitorPages: PageDef[] = [
           image: "/images/hall-aerial-2.jpg",
           imageAlt: "Выставочный зал в день работы",
         },
+        { type: "directory" },
         {
           type: "files",
           items: [
@@ -2008,6 +2009,7 @@ export const exhibitorPages: PageDef[] = [
           image: "/images/hall-aerial-2.jpg",
           imageAlt: "Exhibition hall on a working day",
         },
+        { type: "directory" },
         {
           type: "files",
           items: [

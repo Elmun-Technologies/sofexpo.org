@@ -73,17 +73,20 @@ yozish kerak.
 | `portal_sessions` | Portal token/CSRF xeshi, expiry va account foreign key |
 | `portal_profiles` | Ism, telefon, kompaniya, mamlakat, soha, sayt va qiziqishlar |
 | `portal_requests` | Account’ga tegishli tashrif/ishtirok so‘rovi; CRM lead ID va holat bilan bog‘langan |
-| `leads` | Aloqa, forma/tadbir, locale, manba, landing/referrer, UTM, status, priority, mas’ul va forma payload’i |
+| `leads` | Aloqa, forma/tadbir, locale, manba, landing/referrer, UTM, `session_id`, status, priority, mas’ul, bitim summasi/valyuta, stend m², keyingi qadam va sanasi, yo‘qotish sababi, forma payload’i |
+| `lead_stage_history` | Har bir bosqich o‘zgarishi: qaysi bosqichdan qaysiga, kim, qachon — voronka va “bosqichda o‘rtacha kun” shu jadvaldan |
 | `lead_notes` | Ariza ustidagi ichki izohlar, muallif va sana |
 | `delivery_outbox` | Provider, urinish soni, keyingi urinish, holat va oxirgi xato |
 | `analytics_events` | Privacy-minimal hodisalar; IP va raw URL yo‘q |
-| `audit_log` | Status/ustuvorlik/mas’ul/foydalanuvchi o‘zgarishlari |
+| `audit_log` | Status/ustuvorlik/mas’ul/foydalanuvchi o‘zgarishlari, kompaniya sahifasini nashr/rad/yashirish |
+| `exhibitor_showcases` | Eksponentning kompaniya sahifasi: qoralama (`draft_json`), nashr qilingan nusxa (`published_json`), holat, slug, moderator izohi |
+| `portal_files` | Eksponent yuklagan logo va materiallar (katalog, buklet, listovka, taqdimot, prays-list, foto): tur, sarlavha, MIME, hajm, sha256, `published` belgisi; fayl o‘zi `UPLOADS_DIR` papkasida (standart: SQLite fayli yonidagi `uploads/`, ya’ni Fly volume’da) |
 | `schema_migrations` | Eski `.cache/leads.jsonl` va `events.jsonl` ni bir marta import qilish belgisi |
 
-Lead statuslari: `new → contacted → qualified → won / lost`; qo‘shimcha `spam`. Admin panelda
-qidiruv, status/forma filtri, sahifalash, CSV eksport (10 000 tagacha), priority, mas’ul, ichki
-izoh va ariza tarixi mavjud. “Status transition” qattiq bloklanmaydi — menejer xato statusni ham
-orqaga qaytara oladi; har o‘zgarish audit logga yoziladi.
+Lead hayot sikli (bosqichlar): `new → contacted → qualified → proposal → negotiation → won`, yopilish
+`lost` (sababi majburiy) yoki `spam`. Har o‘tish `lead_stage_history` va audit logga yoziladi; menejer
+xato bosqichni orqaga qaytara oladi. Saytdagi forma `sessionId` yuboradi, shuning uchun lead kartasida
+o‘sha tashrifning yo‘li (ko‘rilgan sahifalar, bosilgan CTA’lar) ko‘rinadi.
 
 ## 3. Admin paneli
 
@@ -92,9 +95,19 @@ orqaga qaytara oladi; har o‘zgarish audit logga yoziladi.
 - **Umumiy ko‘rinish:** davr tanlash (7/30/90 kun), jami/yangi leadlar, sessiya va konversiya,
   arizalar trendi/status/form/source kesimi hamda shu davrdagi yangi mehmon/eksponent akkauntlari,
   kabinet so‘rovlari va yangi so‘rovlar.
+- **Bugun (vazifalar):** muddati o‘tgan va bugungi keyingi qadamlar, egasiz yangi leadlar, 7 kundan
+  beri qimirlamagan bitimlar, 1 soatdan ortiq javobsiz yangi arizalar soni.
+- **Voronka (pipeline):** bosqichlar bo‘yicha kanban, har ustunda soni va bitim summasi; kartani ochib
+  bosqich, summa, m², keyingi qadam/sana, mas’ul va yo‘qotish sababini o‘zgartirish; qo‘ng‘iroq/uchrashuv/
+  email/xabar qaydlari; bosqichlar tarixi va saytdagi tashrif yo‘li.
 - **Arizalar:** ism/telefon/kompaniya bo‘yicha qidiruv, status va forma filtri, tafsilot paneli,
-  status/priority/mas’ulni yangilash, jamoa izohlari, CSV eksport. Portal so‘rovlari ham shu CRM
-  kartalariga ulangan; menejer o‘zgartirgan status account egasining kabinetida ko‘rinadi.
+  CSV eksport. Portal so‘rovlari ham shu CRM kartalariga ulangan; menejer o‘zgartirgan status account
+  egasining kabinetida ko‘rinadi.
+- **Savdo analitikasi:** davr bo‘yicha bosqichma-bosqich konversiya, won/lost, yutilgan summa,
+  o‘rtacha bitim, birinchi javobgacha vaqt, bosqichda o‘rtacha kun, yo‘qotish sabablari, manba/UTM,
+  forma va tadbir kesimida natija, menejerlar reytingi.
+- **Kompaniya sahifalari (moderatsiya):** eksponent yuborgan sahifa va fayllarni ko‘rish, nashr
+  qilish, rad etish (sabab eksponent kabinetida ko‘rinadi) yoki saytdan yashirish.
 - **Kabinet akkauntlari:** mehmon/eksponent profilini qidirish va filtrlash, ro‘yxatdan o‘tish/oxirgi
   kirish tarixi, har bir akkauntning barcha portal so‘rovlari va CRM kartalariga tez o‘tish. Admin
   akkauntni bloklaydi yoki qayta faollashtiradi; bloklash barcha sessiyalarni bekor qiladi va auditga
@@ -119,8 +132,17 @@ Backenddagi `/cabinet` sahifasida alohida ro‘yxatdan o‘tish va kirish oqimi 
 
 - **Mehmon (`visitor`)**: ism/telefon/profil va qiziqishlarini saqlaydi; tadbirni tanlab tashrif,
   buyer dasturi, guruh yoki konferensiya bo‘yicha so‘rov yuboradi.
+- **Mehmon** ro‘yxatdan o‘tishda kompaniya majburiy emas (talaba, xususiy xaridor). Saytdagi bepul chipta
+  formasi ham faqat ism, telefon, email va (ixtiyoriy) ko‘rgazmani so‘raydi; “O‘zim” tanlansa kompaniya
+  maydoni yashiriladi. Backend `visitor` formasi uchun faqat `email` va `consent` ni talab qiladi.
 - **Eksponent (`exhibitor`)**: kompaniya, soha, mamlakat va sayt profilini boshqaradi; tadbir,
   taxminiy m² va ishtirok formatini ko‘rsatib, stend so‘rovi yuboradi.
+- **Kompaniya sahifasi (eksponent):** logo, bir qatorli tavsif (≤120), “kompaniya haqida” (≤1000),
+  soha, shahar/mamlakat, sayt, ijtimoiy tarmoqlar (Instagram, Telegram, Facebook, LinkedIn, YouTube,
+  TikTok), qaysi ko‘rgazmalarda (joriy va o‘tgan yillar) va qaysi stendda qatnashgani hamda materiallar:
+  PDF ≤20 MB, rasm (PNG/JPG/WebP) ≤5 MB, jami ≤30 fayl, SVG qabul qilinmaydi; fayl turi baytlar bo‘yicha
+  tekshiriladi. “Ko‘rib chiqishga yuborish” → admin nashr qiladi → saytda chiqadi. Nashrdan keyingi
+  tahrirlar yana ko‘rib chiqiladi, saytda esa oxirgi tasdiqlangan nusxa turadi.
 - Har bir so‘rov `portal_requests` va mavjud `leads` jadvaliga bitta SQLite tranzaksiyasida yoziladi.
   Admin uni odatdagi CRM lead sifatida ko‘radi; menejer statusni yangilasa, shu holat account
   egasining kabinetida ham ko‘rinadi. Bir account boshqa account so‘rovlarini o‘qiy olmaydi.
@@ -144,9 +166,17 @@ qo‘llab-quvvatlanadigan qiymatlar `uz`, `ru`, `en`, `tr`, `zh`, to‘g‘ridan
 tili tanlanadi. Foydalanuvchi kabinet ichida tilni o‘zgartirishi mumkin. Bo‘sh bo‘lsa noto‘g‘ri/localhost
 havola chiqarilmaydi; portalni API hostidagi `/cabinet` orqali ochish mumkin.
 
+**Saytdagi eksponentlar katalogi.** Nashr qilingan sahifalar `GET /api/public/exhibitors` orqali
+ochiq (CORS `*`, 2 daqiqa kesh), fayllar `GET /media/exhibitors/:id` orqali (faqat nashr qilingan, faol
+akkauntniki). Statik sayt ularni brauzerda o‘qiydi (`src/components/ExhibitorDirectory.astro`):
+`/exhibitors/catalogue/` sahifasida barcha ko‘rgazmalar bo‘yicha, har bir ko‘rgazma sahifasida
+(umumiy va “Ishtirokchilarga”) faqat o‘sha ko‘rgazma bo‘yicha — qidiruv, ko‘rgazma va “yaqin/o‘tgan”
+filtri bilan. Backend manzili: `PUBLIC_EXHIBITORS_API`, bo‘lmasa `PUBLIC_PORTAL_URL`, bo‘lmasa
+`PUBLIC_LEAD_ENDPOINT` origin’i. Backend javob bermasa yoki ro‘yxat bo‘sh bo‘lsa blok umuman
+ko‘rinmaydi va sahifadagi statik PDF kataloglar qoladi — saytni qayta build qilish shart emas.
+
 **Chegaralar:** so‘rov yuborish chiptani/QR’ni chiqarish, qatnashishni tasdiqlash, stendni bron qilish,
-to‘lov, shartnoma/faktura yoki fayl yuklash degani emas. Bu oqimlar ushbu MVP’da mavjud emas; portal
-faqat murojaat va uning CRM holatini kuzatadi.
+to‘lov yoki shartnoma/faktura degani emas. Bu oqimlar ushbu MVP’da mavjud emas.
 
 ## 5. Lokal ishga tushirish
 
@@ -223,7 +253,12 @@ kalit yubormang.
 | `GET` | `/api/portal/me` | Login | Portal profili + CSRF tokenini yangilash |
 | `PATCH` | `/api/portal/profile` | Login + CSRF | Faqat o‘z profilini tahrirlash |
 | `GET/POST` | `/api/portal/requests` | Login (POST + CSRF) | Faqat o‘z tashrif/ishtirok so‘rovlarini ko‘rish/yuborish |
+| `GET/PUT` | `/api/portal/showcase` | Eksponent (PUT + CSRF) | Kompaniya sahifasi qoralamasi; `submit: true` = ko‘rib chiqishga yuborish |
+| `GET/POST` | `/api/portal/files` | Eksponent (POST + CSRF) | Logo/material yuklash (raw body; `?kind=&name=&title=`) |
+| `GET/PATCH/DELETE` | `/api/portal/files/:id` | Eksponent (PATCH/DELETE + CSRF) | O‘z faylini ko‘rish, nomini/turini o‘zgartirish, o‘chirish |
 | `POST` | `/api/portal/logout` | Login + CSRF | Portal sessiyasini bekor qilish |
+| `GET` | `/api/public/exhibitors?event=&when=&q=` | Ochiq | Nashr qilingan kompaniya sahifalari (sayt katalogi) |
+| `GET` | `/media/exhibitors/:id` | Ochiq | Nashr qilingan logo/material fayli |
 | `GET` | `/api/admin/status` | Ochiq | Birinchi admin sozlanganmi |
 | `POST` | `/api/admin/login` | Ochiq + rate limit | Sessiya yaratish |
 | `GET` | `/api/admin/me` | Login | Profil + yangilanadigan CSRF token |
@@ -232,10 +267,18 @@ kalit yubormang.
 | `GET` | `/api/admin/portal-accounts?...` | Login | Mehmon/eksponent akkauntlarini qidirish, filtrlash va sahifalash |
 | `GET` | `/api/admin/portal-accounts/:id` | Login | Profil va unga bog‘langan so‘rov/CRM kartalari |
 | `PATCH` | `/api/admin/portal-accounts/:id` | Admin + CSRF | Akkauntni bloklash/faollashtirish; bloklanganda sessiyalar bekor qilinadi |
+| `GET` | `/api/admin/pipeline` | Login | Bosqichlar bo‘yicha kanban (soni, summasi, kartalar) |
+| `GET` | `/api/admin/tasks` | Login | Muddati o‘tgan/bugungi/yaqin qadamlar, egasiz va “uxlab qolgan” leadlar |
+| `GET` | `/api/admin/team` | Login | Menejerlar bo‘yicha ochiq/yutilgan bitimlar |
+| `GET` | `/api/admin/sales-analytics?days=90` | Login | Konversiya, won/lost, summa, javob vaqti, yo‘qotish sabablari, manba/forma/tadbir kesimi |
+| `GET` | `/api/admin/showcases?status=` | Login | Kompaniya sahifalari ro‘yxati |
+| `GET` | `/api/admin/showcases/:accountId` | Login | Qoralama, nashr nusxasi va fayllar |
+| `POST` | `/api/admin/showcases/:accountId/review` | Login + CSRF | `publish` / `reject` (izoh majburiy) / `hide` |
+| `GET` | `/api/admin/files/:id` | Login | Moderatsiya uchun faylni ochish |
 | `GET` | `/api/admin/leads?...` | Login | Qidiruv/filtr/sahifalash |
 | `GET` | `/api/admin/leads/:id` | Login | Tafsilot + izoh + yetkazish holati |
-| `PATCH` | `/api/admin/leads/:id` | Login + CSRF | Status/priority/assignee |
-| `POST` | `/api/admin/leads/:id/notes` | Login + CSRF | Ichki izoh |
+| `PATCH` | `/api/admin/leads/:id` | Login + CSRF | Bosqich, priority, mas’ul, summa/valyuta, m², keyingi qadam/sana, yo‘qotish sababi |
+| `POST` | `/api/admin/leads/:id/notes` | Login + CSRF | Ichki izoh yoki aloqa qaydi (`kind`: call/meeting/email/message) |
 | `GET` | `/api/admin/leads/export.csv` | Login | Filtrlangan CSV, 10k limit |
 | `GET/POST/PATCH` | `/api/admin/users` | Admin + CSRF (o‘qishdan tashqari) | Hisob va ruxsatlar |
 | `GET` | `/api/admin/system` | Admin | Integratsiya/navbat holati |

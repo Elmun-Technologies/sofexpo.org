@@ -744,3 +744,26 @@ test('exhibitor company page: uploads, moderation and the public directory', asy
   const visitorCookie = result.response.headers.get('set-cookie').split(';')[0];
   assert.equal((await jsonRequest(base, '/api/portal/showcase', { cookie: visitorCookie })).response.status, 403);
 });
+
+test('a guest registers with name, phone, email and consent only — no company, title or industry', async (t) => {
+  const { server, base } = await startBackend(t, { origins: ['https://sof-expo.com'] });
+  const result = await jsonRequest(base, '/lead', {
+    method: 'POST',
+    origin: 'https://sof-expo.com',
+    body: {
+      name: 'Private Guest', phone: '+998 90 777 66 55', email: 'guest@example.com', visitorType: 'private',
+      formType: 'visitor', consent: 'on', locale: 'uz', page: '/uz/visitors/tickets/', sessionId: '1760450000000-abc1234',
+    },
+  });
+  assert.equal(result.response.status, 202);
+  const saved = server.backendStore.getLead(result.data.id);
+  assert.equal(saved.formType, 'visitor');
+  assert.equal(saved.company, '');
+  assert.equal(saved.sessionId, '1760450000000-abc1234');
+
+  const missingEmail = await jsonRequest(base, '/lead', {
+    method: 'POST', origin: 'https://sof-expo.com',
+    body: { name: 'No Mail', phone: '+998 90 777 66 54', formType: 'visitor', consent: 'on' },
+  });
+  assert.equal(missingEmail.response.status, 422);
+});

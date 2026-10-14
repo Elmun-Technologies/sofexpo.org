@@ -1,0 +1,620 @@
+---
+/**
+ * The live exhibitor directory: company pages that exhibitors fill in themselves in the
+ * exhibitor account (logo, a line about the company, links, catalogues, brochures, flyers),
+ * published after a manager's review. The site is static, so the list is read at runtime
+ * from the backend's public endpoint (`GET /api/public/exhibitors`, docs/17).
+ *
+ * The block renders nothing visible until the endpoint answers with at least one company:
+ * with no backend configured, or while it is down, the page keeps its static content
+ * (the PDF catalogues) and no empty frame is ever shown.
+ *
+ * Backend origin: PUBLIC_EXHIBITORS_API, else the origin of PUBLIC_PORTAL_URL, else the
+ * origin of PUBLIC_LEAD_ENDPOINT (the same Node service serves all three).
+ *
+ * Copy lives in hidden spans of the markup, not in the script, so the zh / tr / uz editions
+ * translate it with the rest of the page (scripts/localization.mjs).
+ */
+import type { SourceLocale as Locale } from '@/i18n/config';
+import { events } from '@/data/events';
+
+const { locale, event = '', heading = true } = Astro.props as {
+  locale: Locale;
+  /** narrow the list to one show (the show's own page) */
+  event?: string;
+  /** false when the page already carries a section head above the block */
+  heading?: boolean;
+};
+const ru = locale === 'ru';
+const env = import.meta.env;
+const originOf = (value: unknown) => {
+  const raw = String(value ?? '').trim();
+  if (!raw) return null;
+  if (raw.startsWith('/') && !raw.startsWith('//')) return '';
+  try {
+    const url = new URL(raw);
+    return ['http:', 'https:'].includes(url.protocol) && !url.username && !url.password ? url.origin : null;
+  } catch {
+    return null;
+  }
+};
+const api = [env.PUBLIC_EXHIBITORS_API, env.PUBLIC_PORTAL_URL, env.PUBLIC_LEAD_ENDPOINT]
+  .map(originOf)
+  .find((value) => value !== null);
+const enabled = api !== undefined;
+const portal = originOf(env.PUBLIC_PORTAL_URL);
+const portalHref = portal !== null ? `${portal}/cabinet?type=exhibitor&lang=${locale}` : '';
+const shows = events
+  .filter((e, i, all) => all.findIndex((x) => x.slug === e.slug) === i)
+  .map((e) => ({ slug: e.slug, name: e.brand.en }));
+const show = shows.find((s) => s.slug === event);
+const id = `xdir-${event || 'all'}`;
+
+const copy = {
+  kicker: ru ? 'Каталог участников' : 'Exhibitor directory',
+  title: show
+    ? ru ? 'Участники и их материалы' : 'Exhibitors and their materials'
+    : ru ? 'Компании наших выставок и их материалы' : 'Companies at our shows and their materials',
+  text: ru
+    ? 'Каталоги, буклеты и листовки, которые участники текущих и прошлых выставок опубликовали сами.'
+    : 'Catalogues, brochures and flyers published by the exhibitors of current and past editions.',
+  search: ru ? 'Компания, продукция или город' : 'Company, product or city',
+  allShows: ru ? 'Все выставки' : 'All shows',
+  allEditions: ru ? 'Все выставки и годы' : 'All editions',
+  current: ru ? 'Ближайшая выставка' : 'Coming edition',
+  past: ru ? 'Прошедшие выставки' : 'Past editions',
+};
+const labels: Record<string, string> = {
+  catalog: ru ? 'Каталог' : 'Catalogue',
+  brochure: ru ? 'Буклет' : 'Brochure',
+  flyer: ru ? 'Листовка' : 'Flyer',
+  presentation: ru ? 'Презентация' : 'Presentation',
+  pricelist: ru ? 'Прайс-лист' : 'Price list',
+  image: ru ? 'Фото продукции' : 'Product photo',
+  other: ru ? 'Материал' : 'Material',
+  upcoming: ru ? 'Участвует' : 'Exhibiting',
+  about: ru ? 'О компании' : 'About the company',
+  website: ru ? 'Сайт' : 'Website',
+  more: ru ? 'Показать ещё' : 'Show more',
+  empty: ru ? 'Ничего не найдено. Выберите другую выставку или сократите запрос.' : 'Nothing found. Choose another show or shorten the query.',
+  results: ru ? 'Найдено:' : 'Results:',
+};
+---
+
+{enabled && (
+  <div class="xdir" id={id} hidden data-xdir data-api={api} data-event={event}>
+    {heading && (
+      <div class="sec-head">
+        <div>
+          <p class="kicker">{copy.kicker}</p>
+          <h2>{copy.title}</h2>
+        </div>
+        <p>{copy.text}</p>
+      </div>
+    )}
+    <div class="xdir__bar" role="search">
+      <label class="xdir__search">
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+        <input type="search" data-q placeholder={copy.search} aria-label={copy.search} autocomplete="off" />
+      </label>
+      {!show && (
+        <select data-show aria-label={copy.allShows}>
+          <option value="">{copy.allShows}</option>
+          {shows.map((s) => <option value={s.slug} translate="no">{s.name}</option>)}
+        </select>
+      )}
+      <div class="xdir__when" role="radiogroup" aria-label={copy.allEditions}>
+        <label><input type="radio" name={`${id}-when`} value="" checked /><span>{copy.allEditions}</span></label>
+        <label><input type="radio" name={`${id}-when`} value="current" /><span>{copy.current}</span></label>
+        <label><input type="radio" name={`${id}-when`} value="past" /><span>{copy.past}</span></label>
+      </div>
+    </div>
+    <p class="xdir__count" aria-live="polite"><span>{labels.results}</span> <b data-count>0</b></p>
+    <ul class="xdir__grid" data-list></ul>
+    <p class="xdir__empty" data-empty hidden>{labels.empty}</p>
+    <div class="xdir__foot">
+      <button type="button" class="btn btn--ghost" data-more hidden>{labels.more}</button>
+      {portalHref && (
+        <p class="xdir__join">
+          {ru ? 'Вы участник? Добавьте страницу компании и материалы в кабинете экспонента.' : 'Exhibiting? Add your company page and materials in the exhibitor account.'}{' '}
+          <a href={portalHref}><span>{ru ? "Кабинет экспонента" : "Exhibitor account"}</span> →</a>
+        </p>
+      )}
+    </div>
+    <div hidden data-labels>
+      {Object.entries(labels).map(([key, value]) => <span data-l={key}>{value}</span>)}
+    </div>
+  </div>
+)}
+
+<script>
+  type Material = { id: string; kind: string; title: string; mime: string; size: number; url: string };
+  type Edition = { event: string; year: number; label: string; upcoming: boolean };
+  type Company = {
+    slug: string; name: string; tagline: string; about: string; category: string; country: string; city: string;
+    website: string; socials: Record<string, string>; logo: string | null; participation: Edition[]; materials: Material[];
+  };
+  const PAGE = 12;
+  const NETWORKS: Record<string, string> = {
+    instagram: 'Instagram', telegram: 'Telegram', facebook: 'Facebook', linkedin: 'LinkedIn', youtube: 'YouTube', tiktok: 'TikTok',
+  };
+  const safeUrl = (value: string) => (/^https?:\/\//i.test(value) ? value : '');
+  const size = (bytes: number) =>
+    bytes >= 1048576 ? `${(bytes / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(bytes / 1024))} KB`;
+  const make = <K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: string) => {
+    const node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text) node.textContent = text;
+    return node;
+  };
+
+  function init(root: HTMLElement) {
+    const api = root.dataset.api ?? '';
+    const pinned = root.dataset.event ?? '';
+    const label = (key: string) => root.querySelector<HTMLElement>(`[data-l="${key}"]`)?.textContent ?? key;
+    const list = root.querySelector<HTMLUListElement>('[data-list]')!;
+    const more = root.querySelector<HTMLButtonElement>('[data-more]')!;
+    const empty = root.querySelector<HTMLElement>('[data-empty]')!;
+    const count = root.querySelector<HTMLElement>('[data-count]')!;
+    const q = root.querySelector<HTMLInputElement>('[data-q]')!;
+    const showSelect = root.querySelector<HTMLSelectElement>('[data-show]');
+    let items: Company[] = [];
+    let shown = PAGE;
+    const KIND: Record<string, true> = { catalog: true, brochure: true, flyer: true, presentation: true, pricelist: true, image: true, other: true };
+
+    const card = (c: Company, show: string) => {
+      const li = make('li', 'xcard');
+      const head = make('div', 'xcard__head');
+      const logo = make('div', 'xcard__logo');
+      const src = c.logo ? `${api}${c.logo}` : '';
+      if (src) {
+        const img = make('img');
+        img.src = src;
+        img.alt = c.name;
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        logo.append(img);
+      } else {
+        logo.classList.add('xcard__logo--text');
+        logo.textContent = c.name.trim().slice(0, 2).toUpperCase();
+      }
+      const title = make('div', 'xcard__title');
+      const name = make('h3', '', c.name);
+      name.translate = false;
+      title.append(name);
+      const where = [c.category, [c.city, c.country].filter(Boolean).join(', ')].filter(Boolean).join(' · ');
+      if (where) title.append(make('p', 'xcard__meta', where));
+      head.append(logo, title);
+      li.append(head);
+      if (c.tagline) li.append(make('p', 'xcard__tagline', c.tagline));
+
+      const editions = make('ul', 'xcard__eds');
+      for (const ed of c.participation.filter((p) => !show || p.event === show)) {
+        const chip = make('li', ed.upcoming ? 'xcard__ed xcard__ed--now' : 'xcard__ed', ed.label);
+        chip.translate = false;
+        if (ed.upcoming) chip.title = label('upcoming');
+        editions.append(chip);
+      }
+      if (editions.children.length) li.append(editions);
+
+      if (c.materials.length) {
+        const files = make('ul', 'xcard__files');
+        for (const m of c.materials) {
+          const row = make('li');
+          const a = make('a');
+          a.href = `${api}${m.url}`;
+          a.target = '_blank';
+          a.rel = 'noopener';
+          const icon = make('span', 'xcard__ico', m.mime === 'application/pdf' ? 'PDF' : 'IMG');
+          const text = make('span', 'xcard__file');
+          text.append(make('b', '', m.title || label(m.kind)));
+          text.append(make('small', '', `${label(m.kind in KIND ? m.kind : 'other')} · ${size(m.size)}`));
+          a.append(icon, text);
+          row.append(a);
+          files.append(row);
+        }
+        li.append(files);
+      }
+
+      if (c.about) {
+        const details = make('details', 'xcard__about');
+        details.append(make('summary', '', label('about')), make('p', '', c.about));
+        li.append(details);
+      }
+
+      const links = make('div', 'xcard__links');
+      const site = safeUrl(c.website);
+      if (site) {
+        const a = make('a', 'xcard__link xcard__link--site', label('website'));
+        a.href = site;
+        a.target = '_blank';
+        a.rel = 'noopener nofollow';
+        links.append(a);
+      }
+      for (const [network, url] of Object.entries(c.socials || {})) {
+        const href = safeUrl(url);
+        if (!href || !NETWORKS[network]) continue;
+        const a = make('a', 'xcard__link', NETWORKS[network]);
+        a.href = href;
+        a.target = '_blank';
+        a.rel = 'noopener nofollow';
+        a.translate = false;
+        links.append(a);
+      }
+      if (links.children.length) li.append(links);
+      return li;
+    };
+
+    const render = () => {
+      const show = pinned || showSelect?.value || '';
+      const when = root.querySelector<HTMLInputElement>('.xdir__when input:checked')?.value ?? '';
+      const term = q.value.trim().toLowerCase();
+      const hits = items.filter((c) => {
+        const eds = show ? c.participation.filter((p) => p.event === show) : c.participation;
+        if (show && !eds.length) return false;
+        if (when === 'current' && !eds.some((p) => p.upcoming)) return false;
+        if (when === 'past' && !eds.some((p) => !p.upcoming)) return false;
+        if (!term) return true;
+        return [c.name, c.tagline, c.about, c.category, c.city, c.country].some((v) => (v || '').toLowerCase().includes(term));
+      });
+      list.replaceChildren(...hits.slice(0, shown).map((c) => card(c, show)));
+      count.textContent = String(hits.length);
+      empty.hidden = hits.length > 0;
+      more.hidden = hits.length <= shown;
+    };
+
+    const reset = () => {
+      shown = PAGE;
+      render();
+    };
+    let timer = 0;
+    q.addEventListener('input', () => {
+      clearTimeout(timer);
+      timer = window.setTimeout(reset, 160);
+    });
+    showSelect?.addEventListener('change', reset);
+    root.querySelectorAll('.xdir__when input').forEach((input) => input.addEventListener('change', reset));
+    more.addEventListener('click', () => {
+      shown += PAGE;
+      render();
+    });
+
+    const url = `${api}/api/public/exhibitors${pinned ? `?event=${encodeURIComponent(pinned)}` : ''}`;
+    fetch(url, { headers: { Accept: 'application/json' }, credentials: 'omit' })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data) => {
+        if (!data || !Array.isArray(data.items) || !data.items.length) return;
+        items = data.items as Company[];
+        render();
+        root.hidden = false;
+        root.closest('.xdir-host')?.removeAttribute('hidden');
+      })
+      .catch(() => {});
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-xdir]').forEach(init);
+</script>
+
+<style>
+  .xdir .sec-head {
+    margin-bottom: 1.4rem;
+  }
+  .xdir__bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 0.8rem;
+  }
+  .xdir__search {
+    flex: 1 1 260px;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 14px;
+    height: 46px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    background: var(--paper, #fff);
+    color: var(--ink-60);
+  }
+  .xdir__search:focus-within {
+    border-color: var(--evergreen);
+    box-shadow: var(--focus-ring);
+  }
+  /* the site boxes every input with `body :is(input:not(…)…)` (specificity 0,6,1); inside the
+     pill the field must be bare, so these few properties win with !important */
+  .xdir .xdir__search input {
+    flex: 1;
+    min-width: 0;
+    height: 100% !important;
+    margin: 0;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    outline: 0;
+    box-shadow: none !important;
+    background: none !important;
+    font: inherit;
+    color: var(--ink);
+  }
+  .xdir__bar select {
+    flex: 0 1 220px;
+    min-width: 0;
+    height: 46px !important;
+    padding: 0 14px !important;
+    border: 1px solid var(--line-strong) !important;
+    border-radius: 999px !important;
+    background-color: var(--paper, #fff) !important;
+    font: inherit;
+    color: var(--ink);
+  }
+  .xdir__when {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 999px;
+    background: var(--sage);
+  }
+  .xdir__when label {
+    position: relative;
+    cursor: pointer;
+  }
+  .xdir__when input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+  .xdir__when span {
+    display: block;
+    padding: 9px 14px;
+    border-radius: 999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--ink-60);
+    white-space: nowrap;
+  }
+  .xdir__when input:checked + span {
+    background: var(--paper, #fff);
+    color: var(--ink);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  }
+  .xdir__when input:focus-visible + span {
+    box-shadow: var(--focus-ring);
+  }
+  .xdir__count {
+    margin: 0 0 1rem;
+    font-size: 0.875rem;
+    color: var(--ink-60);
+  }
+  .xdir__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: var(--gap, 16px);
+  }
+  .xdir__grid :global(.xcard) {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-width: 0;
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg, 20px);
+    background: var(--paper, #fff);
+    overflow-wrap: anywhere;
+  }
+  .xdir__grid :global(.xcard__head) {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    min-width: 0;
+  }
+  .xdir__grid :global(.xcard__logo) {
+    flex: none;
+    width: 64px;
+    height: 64px;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    background: #fff;
+    overflow: hidden;
+  }
+  .xdir__grid :global(.xcard__logo img) {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    padding: 6px;
+  }
+  .xdir__grid :global(.xcard__logo--text) {
+    background: var(--evergreen);
+    border-color: var(--evergreen);
+    color: #fff;
+    font-family: var(--f-display);
+    font-weight: 600;
+    font-size: 1.25rem;
+  }
+  .xdir__grid :global(.xcard__title) {
+    min-width: 0;
+  }
+  .xdir__grid :global(.xcard h3) {
+    margin: 0;
+    font-size: 1.15rem;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .xdir__grid :global(.xcard__meta) {
+    margin: 4px 0 0;
+    font-size: 0.85rem;
+    color: var(--ink-60);
+  }
+  .xdir__grid :global(.xcard__tagline) {
+    margin: 0;
+    color: var(--ink);
+    line-height: 1.45;
+  }
+  .xdir__grid :global(.xcard__eds) {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .xdir__grid :global(.xcard__ed) {
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--line-strong);
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--ink-60);
+  }
+  .xdir__grid :global(.xcard__ed--now) {
+    background: var(--evergreen);
+    border-color: var(--evergreen);
+    color: #fff;
+  }
+  .xdir__grid :global(.xcard__files) {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+  .xdir__grid :global(.xcard__files a) {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    background: var(--sage);
+    color: var(--ink);
+    text-decoration: none;
+    transition: background 0.15s ease;
+  }
+  .xdir__grid :global(.xcard__files a:hover) {
+    background: var(--accent-soft);
+  }
+  .xdir__grid :global(.xcard__ico) {
+    flex: none;
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 9px;
+    background: var(--paper, #fff);
+    color: var(--gold);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .xdir__grid :global(.xcard__file) {
+    display: grid;
+    min-width: 0;
+  }
+  .xdir__grid :global(.xcard__file b) {
+    font-size: 0.92rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .xdir__grid :global(.xcard__file small) {
+    font-size: 0.78rem;
+    color: var(--ink-60);
+  }
+  .xdir__grid :global(.xcard__about summary) {
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--gold);
+  }
+  .xdir__grid :global(.xcard__about p) {
+    margin: 8px 0 0;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--ink-60);
+    white-space: pre-line;
+  }
+  .xdir__grid :global(.xcard__links) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: auto;
+  }
+  .xdir__grid :global(.xcard__link) {
+    padding: 6px 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .xdir__grid :global(.xcard__link:hover) {
+    border-color: var(--evergreen);
+    color: var(--evergreen);
+  }
+  .xdir__grid :global(.xcard__link--site) {
+    background: var(--evergreen);
+    border-color: var(--evergreen);
+    color: #fff;
+  }
+  .xdir__grid :global(.xcard__link--site:hover) {
+    color: #fff;
+    background: var(--evergreen-2);
+  }
+  .xdir__empty {
+    padding: 28px;
+    border: 1px dashed var(--line-strong);
+    border-radius: var(--r-lg, 20px);
+    text-align: center;
+    color: var(--ink-60);
+  }
+  .xdir__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 24px;
+    margin-top: 1.4rem;
+  }
+  .xdir__join {
+    margin: 0;
+    font-size: 0.92rem;
+    color: var(--ink-60);
+  }
+  .xdir__join a {
+    font-weight: 600;
+    color: var(--gold);
+  }
+  @media (max-width: 640px) {
+    .xdir__bar select,
+    .xdir__when {
+      flex: 1 1 100%;
+    }
+    .xdir__when {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-radius: 16px;
+    }
+    .xdir__when span {
+      height: 100%;
+      display: grid;
+      place-items: center;
+      padding: 8px 6px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      line-height: 1.2;
+      text-align: center;
+      white-space: normal;
+    }
+  }
+</style>

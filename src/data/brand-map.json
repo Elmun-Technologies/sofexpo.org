@@ -41,13 +41,15 @@
         "lineStrong": "#a9c2d6",
         "cream": "#d5dce1",
         "cream2": "#e8ecef",
-        "gold": "#6b5021",
+        "gold": "#1d5f8f",
         "goldSoft": "#c9a874",
         "ornament": "#bbd8ee",
         "mark": "#2c7fbb",
-        "_markNote": "graphic only: 4.12 on paper, 2.52 on the host ground -> on dark the square is drawn white and the diamond gold-soft (BrandMark tone rules)"
+        "_markNote": "graphic only: 4.12 on paper, 2.52 on the host ground -> on dark the square is drawn white and the diamond gold-soft (BrandMark tone rules)",
+        "_goldNote": "accent text = the logo blue (was brown #6b5021, which read as a third colour on a blue/gold badge); 4.91 on cream"
       },
-      "mark": "star"
+      "mark": "star",
+      "hero": "light"
     },
     "buildpro-expo": {
       "id": "buildpro",
@@ -83,7 +85,8 @@
         "ornament": "#c7dbe4",
         "mark": "#048c88",
         "_markNote": "taken from the organiser's BUILD PRO EXPO logo (images/brand-masters/buildpro-expo-logo.png): graphite-navy ground #18212a, house gradient teal #048c88 → blue #1f4285; teal darkened to #036461 for text on light (docs/15 §10)"
-      }
+      },
+      "hero": "dark"
     },
     "agropro-expo": {
       "id": "agropro",
@@ -114,12 +117,14 @@
         "lineStrong": "#b9c8a3",
         "cream": "#dde1d8",
         "cream2": "#edefe9",
-        "gold": "#b2291d",
+        "gold": "#3f6a1c",
         "goldSoft": "#fcd83c",
         "ornament": "#dcecc4",
         "mark": "#90c048",
-        "_markNote": "from the organiser's AGROPRO EXPO logo (images/brand-masters/agropro-expo-logo.png): leaf green #90c048, sun yellow #fcd83c, red #cc3024 on black type. Ground is the leaf green taken to night (#24391a); yellow is the accent on the dark ground, the red (darkened to #b2291d) the accent text on light"
-      }
+        "_markNote": "from the organiser's AGROPRO EXPO logo (images/brand-masters/agropro-expo-logo.png): leaf green #90c048, sun yellow #fcd83c, red #cc3024 on black type. Ground is the leaf green taken to night (#24391a); yellow is the accent on the dark ground, the red (darkened to #b2291d) the accent text on light",
+        "_goldNote": "accent text = the logo green (red #b2291d read like an error message); 4.81 on cream"
+      },
+      "hero": "light"
     },
     "world-edu-expo": {
       "id": "world-edu",
@@ -155,7 +160,8 @@
         "ornament": "#cdeefa",
         "mark": "#00b4e4",
         "_markNote": "from the organiser's WORLD EDU logo (images/brand-masters/world-edu-logo.png): petrol blue #246078 type and owl, cyan #00b4e4 globe. The earlier burgundy palette was a placeholder from before the logo arrived"
-      }
+      },
+      "hero": "light"
     },
     "ecom-retail-expo": {
       "id": "ecom-retail",
@@ -191,7 +197,8 @@
         "ornament": "#cdeaea",
         "mark": "#008a92",
         "_markNote": "taken from the organiser's e-com & retail posters (images/1-1-*.png): near-black ground #171717, wordmark teal #5abcbc, band teal #008a92; darkened to #00666d for text on light (docs/15 §10)"
-      }
+      },
+      "hero": "dark"
     },
     "promotors-show-samarkand": {
       "id": "promotors",
@@ -227,7 +234,9 @@
         "ornament": "#f1d3d5",
         "mark": "#d7192b",
         "_markNote": "from the organiser's PROMOTORS SHOW Samarkand logo: white italic on black, red script (images/brand-masters/promotors-show-logo.png). No hostname: the archived show lives on the centre (docs/15 §10)"
-      }
+      },
+      "hero": "dark"
     }
-  }
+  },
+  "_heroNote": "hero: 'light' for shows whose logo is drawn on white (FOODERA, AGROPRO, WORLD EDU) — the event hero becomes a white panel tinted with the show's mark colour, so the full-colour logo sits on its own ground; 'dark' for logos drawn on black (BUILD PRO, ECOM, PROMOTORS)."
 }

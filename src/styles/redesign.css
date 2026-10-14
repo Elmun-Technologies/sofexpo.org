@@ -481,7 +481,9 @@ a:focus-visible .arr {
   color: var(--ink);
 }
 .btn--accent:hover {
-  background: #e2eb00;
+  /* a shade of whichever accent the page wears — the centre's yellow, or a show's own
+     (brands.ts); a fixed #e2eb00 flashed acid yellow on every show page */
+  background: color-mix(in srgb, var(--accent) 88%, #000);
 }
 .btn--ghost {
   border-color: var(--ink);

@@ -487,6 +487,14 @@
     "申请已收到。客户经理将在24小时内与您联系。",
     "Başvurunuz alındı. Müşteri temsilcimiz 24 saat içinde sizinle iletişime geçecek."
   ],
+  "Request received | SOF EXPO": [
+    "申请已收到 | SOF EXPO",
+    "Talebiniz alındı | SOF EXPO"
+  ],
+  "Your request has reached the SOF EXPO team. An account manager will contact you within 24 hours to discuss the request and next steps.": [
+    "您的申请已送达 SOF EXPO 团队。客户经理将在24小时内联系您，讨论您的需求和后续安排。",
+    "Talebiniz SOF EXPO ekibine ulaştı. Bir hesap yöneticisi, talebinizi ve sonraki adımları görüşmek için 24 saat içinde sizinle iletişime geçecek."
+  ],
   "By submitting, you consent to the processing of your personal data.": [
     "提交申请即表示您同意我们处理您的个人数据。",
     "Başvurarak kişisel verilerinizin işlenmesine izin verirsiniz."

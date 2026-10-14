@@ -1,5 +1,5 @@
 app = "sofexpo-api"
-primary_region = "ist"
+primary_region = "fra"
 
 [build]
   dockerfile = "Dockerfile"
@@ -10,7 +10,7 @@ primary_region = "ist"
   LEAD_WEBHOOK_PORT = "8787"
   LEAD_WEBHOOK_DB = "/data/sofexpo.sqlite"
   LEAD_WEBHOOK_TRUST_PROXY = "1"
-  LEAD_WEBHOOK_ORIGINS = "https://sof-expo.com,https://foodera.sof-expo.com,https://buildpro.sof-expo.com,https://agropro.sof-expo.com,https://worldedu.sof-expo.com,https://ecomretail.sof-expo.com,https://api.sof-expo.com"
+  LEAD_WEBHOOK_ORIGINS = "https://sof-expo.com,https://www.sof-expo.com,https://foodera.sof-expo.com,https://buildpro.sof-expo.com,https://agropro.sof-expo.com,https://worldedu.sof-expo.com,https://ecomretail.sof-expo.com,https://api.sof-expo.com"
   ADMIN_SESSION_DAYS = "7"
   PORTAL_SESSION_DAYS = "14"
   BLOG_SYNC_ENABLED = "1"

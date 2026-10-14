@@ -215,6 +215,10 @@ const Hf = level === 2 ? 'h2' : 'h3';
       }
       msg.textContent = form.dataset.ok;
       form.querySelectorAll('input:not([type=checkbox]):not([type=radio]):not([readonly]), textarea, select').forEach((el) => (el.value = ''));
+      try { window.sofFlush?.(); } catch (e) {}
+      const rawLocale = (document.documentElement.lang || 'en').toLowerCase().split(/[-_]/)[0];
+      const locale = ['ru', 'en', 'zh', 'tr', 'uz'].includes(rawLocale) ? rawLocale : 'en';
+      window.setTimeout(() => window.location.assign(`/${locale}/thank-you/`), 350);
     });
   });
 </script>

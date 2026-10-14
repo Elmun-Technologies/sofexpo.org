@@ -19,6 +19,12 @@
     blogPage: 1,
     blogStatus: '',
     toastTimer: null,
+    notificationTimer: null,
+    notificationPollBusy: false,
+    notificationBaselineReady: false,
+    knownLeadIds: new Set(),
+    soundEnabled: (() => { try { return localStorage.getItem('sofexpo.admin.sound') === '1'; } catch { return false; } })(),
+    audioContext: null,
   };
   const labels = {
     dashboard: 'Umumiy ko‘rinish', leads: 'Arizalar', blog: 'Blog · Telegram', portalAccounts: 'Kabinet akkauntlari', analytics: 'Analitika',
@@ -70,10 +76,124 @@
     state.toastTimer = setTimeout(() => toast.classList.remove('show'), 3200);
   }
 
+  const LAST_LEAD_ID_KEY = 'sofexpo.admin.lastLeadId';
+
+  function updateSoundToggle() {
+    const button = $('#sound-toggle');
+    if (!button) return;
+    const icon = $('span[aria-hidden="true"]', button);
+    const label = $('.notice-label', button);
+    if (icon) icon.textContent = state.soundEnabled ? '🔔' : '🔕';
+    if (label) label.textContent = state.soundEnabled ? 'Ovoz yoqilgan' : 'Ovozni yoqish';
+    button.setAttribute('aria-pressed', String(state.soundEnabled));
+    button.setAttribute('aria-label', state.soundEnabled ? 'Tovushli xabarnomani o‘chirish' : 'Tovushli xabarnomani yoqish');
+    button.title = state.soundEnabled ? 'Yangi ariza ovozli signal bilan bildiriladi' : 'Yangi ariza uchun tovushli signalni yoqish';
+  }
+
+  async function unlockLeadAudio() {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return null;
+    if (!state.audioContext) state.audioContext = new AudioContextClass();
+    if (state.audioContext.state === 'suspended') await state.audioContext.resume();
+    return state.audioContext;
+  }
+
+  function playLeadChime() {
+    const context = state.audioContext;
+    if (!state.soundEnabled || !context || context.state !== 'running') return;
+    const tones = [[880, 0], [1174, 0.13], [1568, 0.26]];
+    for (const [frequency, offset] of tones) {
+      const start = context.currentTime + offset;
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(frequency, start);
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(0.12, start + 0.025);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.19);
+      oscillator.connect(gain);
+      gain.connect(context.destination);
+      oscillator.start(start);
+      oscillator.stop(start + 0.2);
+    }
+  }
+
+  async function refreshNewLeadBadge() {
+    try {
+      const data = await api(`/api/admin/dashboard?days=${state.days}`);
+      const badge = $('#new-count');
+      if (badge) badge.textContent = number(data.newLeads);
+    } catch { /* a notification should never break the current admin view */ }
+  }
+
+  function announceNewLeads(leads) {
+    if (!leads.length) return;
+    const message = leads.length === 1
+      ? `Yangi ariza: ${leads[0].name || 'Yangi murojaat'}`
+      : `${number(leads.length)} ta yangi ariza kelib tushdi`;
+    showToast(message);
+    playLeadChime();
+    if (state.view === 'dashboard') {
+      renderDashboard().catch(showError);
+    } else {
+      if (state.view === 'leads' && !$('#lead-drawer')?.classList.contains('open')) renderLeads().catch(showError);
+      refreshNewLeadBadge();
+    }
+  }
+
+  function stopLeadNotifications() {
+    if (state.notificationTimer) clearInterval(state.notificationTimer);
+    state.notificationTimer = null;
+    state.notificationBaselineReady = false;
+    state.knownLeadIds = new Set();
+  }
+
+  async function pollNewLeads() {
+    if (!state.user || state.notificationPollBusy) return;
+    state.notificationPollBusy = true;
+    try {
+      const data = await api('/api/admin/leads?limit=100');
+      const leads = Array.isArray(data.items) ? data.items : [];
+      const ids = leads.map((lead) => String(lead.id || '')).filter(Boolean);
+
+      if (!state.notificationBaselineReady) {
+        state.notificationBaselineReady = true;
+        state.knownLeadIds = new Set(ids);
+        let lastLeadId = '';
+        try { lastLeadId = localStorage.getItem(LAST_LEAD_ID_KEY) || ''; } catch {}
+        const lastSeenIndex = ids.indexOf(lastLeadId);
+        if (lastLeadId && lastSeenIndex > 0) announceNewLeads(leads.slice(0, lastSeenIndex));
+        if (ids[0]) {
+          try { localStorage.setItem(LAST_LEAD_ID_KEY, ids[0]); } catch {}
+        }
+        return;
+      }
+
+      const fresh = leads.filter((lead) => lead.id && !state.knownLeadIds.has(String(lead.id)));
+      ids.forEach((id) => state.knownLeadIds.add(id));
+      if (state.knownLeadIds.size > 250) state.knownLeadIds = new Set(ids);
+      if (ids[0]) {
+        try { localStorage.setItem(LAST_LEAD_ID_KEY, ids[0]); } catch {}
+      }
+      if (fresh.length) announceNewLeads(fresh);
+    } catch (error) {
+      if (error?.status === 401) stopLeadNotifications();
+    } finally {
+      state.notificationPollBusy = false;
+    }
+  }
+
+  function startLeadNotifications() {
+    stopLeadNotifications();
+    pollNewLeads();
+    state.notificationTimer = window.setInterval(pollNewLeads, 12_000);
+  }
+
   function setAuthVisible(visible) {
     $('#auth').hidden = !visible;
     $('#app').hidden = visible;
     if (visible) {
+      stopLeadNotifications();
       state.user = null;
       state.csrf = '';
     }
@@ -588,6 +708,7 @@
     setUser(data.user);
     setAuthVisible(false);
     navigate('dashboard');
+    startLeadNotifications();
   }
 
   async function initialize() {
@@ -624,6 +745,7 @@
       setAuthVisible(false);
       formElement.reset();
       navigate('dashboard');
+      startLeadNotifications();
     } catch (error) {
       errorNode.textContent = error.message;
       errorNode.hidden = false;
@@ -657,6 +779,31 @@
   });
   $$('[data-close-drawer]').forEach((button) => button.addEventListener('click', closeDrawer));
   document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeDrawer(); });
+  updateSoundToggle();
+  $('#sound-toggle').addEventListener('click', async () => {
+    state.soundEnabled = !state.soundEnabled;
+    try { localStorage.setItem('sofexpo.admin.sound', state.soundEnabled ? '1' : '0'); } catch {}
+    updateSoundToggle();
+    if (!state.soundEnabled) return;
+    try {
+      const context = await unlockLeadAudio();
+      if (!context) throw new Error('AudioContext is unavailable');
+      playLeadChime();
+    } catch {
+      state.soundEnabled = false;
+      try { localStorage.setItem('sofexpo.admin.sound', '0'); } catch {}
+      updateSoundToggle();
+      showToast('Tovush yoqilmadi. Brauzer ruxsatini tekshiring.', 'error');
+    }
+  });
+  document.addEventListener('pointerdown', () => {
+    if (state.soundEnabled && (!state.audioContext || state.audioContext.state === 'suspended')) {
+      unlockLeadAudio().catch(() => {});
+    }
+  }, { passive: true });
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) pollNewLeads();
+  });
 
   initialize();
 })();

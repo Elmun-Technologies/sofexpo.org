@@ -269,6 +269,34 @@ const preload = props.preload
             { rootMargin: '0px 0px 12% 0px', threshold: 0.01 },
           );
           els.forEach((el) => io.observe(el));
+          /* Chromium keeps observers only WEAKLY from the document: an observer
+             with no JS reference can be garbage-collected mid-session, which
+             silently stops callbacks and leaves later sections invisible
+             forever. Retain every observer for the page lifetime. */
+          ((window as any).__sofIO ??= []).push(io);
+          /* Safety net: the IO alone can miss a section that is jumped over in a
+             single instant scroll (ratio 0 → 0 between samples, no entry ever).
+             Sweep on every scroll frame: anything whose top has reached the
+             viewport reveals immediately — no section can stay invisible. */
+          const revealNow = (el: Element) => {
+            if (el.classList.contains('reveal-in')) return;
+            el.classList.add('reveal-in');
+            io.unobserve(el);
+          };
+          let sweeping = false;
+          const sweep = () => {
+            if (sweeping) return;
+            sweeping = true;
+            requestAnimationFrame(() => {
+              sweeping = false;
+              const bottom = window.innerHeight;
+              for (const el of els) {
+                if (el.getBoundingClientRect().top < bottom * 0.96) revealNow(el);
+              }
+            });
+          };
+          window.addEventListener('scroll', sweep, { passive: true });
+          sweep();
         }
       }
       /* stagger index for children of revealed grids (consumed by motion.css) */
@@ -351,6 +379,9 @@ const preload = props.preload
           { threshold: 0.6 },
         );
         nums.forEach((n) => cio.observe(n));
+        /* keep the observer reachable — unreferenced observers may be GC'd
+           and the count-up would never run (same pitfall as the reveal io) */
+        ((window as any).__sofIO ??= []).push(cio);
       }
     </script>
     <TableEnhancements />

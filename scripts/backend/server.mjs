@@ -1,9 +1,17 @@
 import http from 'node:http';
-import { timingSafeEqual } from 'node:crypto';
-import { readFileSync } from 'node:fs';
-import { extname } from 'node:path';
+import { createHash, randomUUID, timingSafeEqual } from 'node:crypto';
+import { createReadStream, mkdirSync, readFileSync, statSync, unlinkSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { dirname, extname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { BackendStore, LEAD_PRIORITIES, LEAD_STATUSES, USER_ROLES } from './db.mjs';
+import {
+  BackendStore, CURRENCIES, FILE_KINDS, LEAD_PRIORITIES, LEAD_STATUSES, NOTE_KINDS, SHOWCASE_STATUSES, USER_ROLES,
+} from './db.mjs';
+import { PORTAL_EVENTS, SHOWS } from './shows.mjs';
+import {
+  SHOWCASE_LIMITS, SOCIAL_NETWORKS, UPLOAD_LIMITS, cleanFileName, cleanFileTitle, fileTitleFromName, normalizeShowcase,
+  sniffUpload, submitErrors,
+} from './showcase.mjs';
 import { createSecret, hashToken, normalizeEmail, validEmail, validPassword, verifyPassword } from './auth.mjs';
 import { loadTgBlogConfig } from './tgblog/config.mjs';
 import { TgBlogStore } from './tgblog/store.mjs';
@@ -24,20 +32,13 @@ const SHARED_FILES = {
   ]))),
 };
 const CONTENT_TYPES = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.png': 'image/png' };
-const PORTAL_EVENTS = [
-  { slug: 'foodera-expo', name: 'FOODERA EXPO 2026', dates: '27–29 oktabr 2026' },
-  { slug: 'buildpro-expo', name: 'BUILD PRO EXPO 2026', dates: '9–11 noyabr 2026' },
-  { slug: 'agropro-expo', name: 'AGROPRO EXPO 2027', dates: '2–4 mart 2027' },
-  { slug: 'world-edu-expo', name: 'WORLD EDU · SPRING 2027', dates: '9–10 aprel 2027' },
-  { slug: 'ecom-retail-expo', name: 'ECOM & RETAIL EXPO', dates: '16–17 iyun 2027' },
-];
 const LEAD_TEXT_FIELDS = {
   formType: 'Форма', event: 'Выставка', name: 'Имя', company: 'Компания', position: 'Должность',
   phone: 'Телефон', email: 'Email', direction: 'Направление', area: 'Площадь', goal: 'Задача',
   purpose: 'Цель', industry: 'Отрасль', package: 'Пакет', eventType: 'Формат', attendees: 'Гостей',
   count: 'Человек', date: 'Дата', time: 'Время', channel: 'Канал', messenger: 'Мессенджер', comment: 'Комментарий',
 };
-const LEAD_SKIP_FIELDS = new Set(['ts', 'locale', 'url', 'referrer', 'source', 'src', '_error', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'page', 'landing']);
+const LEAD_SKIP_FIELDS = new Set(['ts', 'locale', 'url', 'referrer', 'source', 'src', '_error', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'page', 'landing', 'sessionId']);
 const REQUIRED_BY_FORM = {
   generic: ['company', 'consent'], press: ['company', 'consent'],
   exhibitor: ['company', 'industry', 'area', 'consent'],
@@ -148,6 +149,8 @@ export function normalizeLead(input) {
     landing: safePath(input.landing),
     referrer: safePath(input.referrer, { includeOrigin: true }),
     utm: cleanUtm(input),
+    /* the site's anonymous analytics session: links the request to the pages that led to it */
+    sessionId: cleanText(input.sessionId, 100).replace(/[^a-zA-Z0-9_-]/g, ''),
     payload,
   };
 }
@@ -253,6 +256,20 @@ async function readJson(req, maxBytes = 32_000) {
   }
 }
 
+async function readRaw(req, maxBytes) {
+  const declared = Number(req.headers['content-length'] || 0);
+  if (declared > maxBytes) throw new HttpError(413, 'Fayl hajmi ruxsat etilgan chegaradan oshdi.');
+  const chunks = [];
+  let size = 0;
+  for await (const chunk of req) {
+    size += chunk.length;
+    if (size > maxBytes) throw new HttpError(413, 'Fayl hajmi ruxsat etilgan chegaradan oshdi.');
+    chunks.push(chunk);
+  }
+  if (!size) throw new HttpError(400, 'Fayl bo‘sh.');
+  return Buffer.concat(chunks);
+}
+
 function sendJson(res, status, data) {
   const body = JSON.stringify(data);
   res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': Buffer.byteLength(body), 'Cache-Control': 'no-store' });
@@ -325,8 +342,13 @@ function parseLeadQuery(url) {
   const search = cleanText(url.searchParams.get('q'), 120);
   const from = normalizeDateParam(url.searchParams.get('from'));
   const to = normalizeDateParam(url.searchParams.get('to'));
-  if (status && !LEAD_STATUSES.includes(status)) throw new HttpError(400, 'Status filtri noto emas.');
-  return { page, limit, status, formType, search, from, to };
+  const assignee = cleanText(url.searchParams.get('assignee'), 254);
+  const event = cleanText(url.searchParams.get('event'), 180);
+  const overdue = url.searchParams.get('overdue') === '1';
+  const sort = cleanText(url.searchParams.get('sort'), 20) || 'created';
+  if (status && status !== 'open' && !LEAD_STATUSES.includes(status)) throw new HttpError(400, 'Status filtri noto‘g‘ri.');
+  if (!['created', 'updated', 'next', 'amount'].includes(sort)) throw new HttpError(400, 'Saralash turi noto‘g‘ri.');
+  return { page, limit, status, formType, search, from, to, assignee, event, overdue, sort };
 }
 
 export function createLeadServer(options = {}) {
@@ -349,6 +371,11 @@ export function createLeadServer(options = {}) {
   const crmWebhookUrl = options.crmWebhookUrl ?? process.env.CRM_WEBHOOK_URL ?? '';
   const crmWebhookToken = options.crmWebhookToken ?? process.env.CRM_WEBHOOK_TOKEN ?? '';
   const deliverProvider = options.deliverProvider;
+  /* exhibitor uploads live next to the database, never inside the web root; they are
+     streamed only through the routes below (cabinet owner, admins, or — once published —
+     the public directory) */
+  const uploadsDir = options.uploadsDir ?? process.env.UPLOADS_DIR
+    ?? (dbPath === ':memory:' ? join(tmpdir(), `sofexpo-uploads-${process.pid}`) : join(dirname(dbPath), 'uploads'));
   const store = options.store ?? new BackendStore({
     dbPath,
     legacyLeadsPath: options.legacyLeadsPath ?? process.env.LEAD_WEBHOOK_STORE ?? '.cache/leads.jsonl',
@@ -491,6 +518,53 @@ export function createLeadServer(options = {}) {
     const token = String(req.headers['x-csrf-token'] || '');
     if (!token || !secureEqual(hashToken(token), session.csrf_hash)) throw new HttpError(403, 'Xavfsizlik tokeni yaroqsiz. Sahifani yangilang.');
   };
+  const storedPath = (storageName) => {
+    if (!/^[a-f0-9-]{36}\.(pdf|png|jpg|webp)$/.test(storageName)) throw new HttpError(404, 'Fayl topilmadi.');
+    return join(uploadsDir, storageName);
+  };
+  const removeStored = (names = []) => {
+    for (const name of names) {
+      try { unlinkSync(storedPath(name)); } catch { /* already gone */ }
+    }
+  };
+  const sendStoredFile = (req, res, file, { publicCache = false } = {}) => {
+    let path;
+    let size;
+    try {
+      path = storedPath(file.storageName);
+      size = statSync(path).size;
+    } catch {
+      throw new HttpError(404, 'Fayl topilmadi.');
+    }
+    const etag = `"${String(file.sha256 || '').slice(0, 32)}"`;
+    if (file.sha256 && req.headers['if-none-match'] === etag) {
+      res.writeHead(304, { ETag: etag });
+      return res.end();
+    }
+    const ext = { 'application/pdf': 'pdf', 'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp' }[file.mime] || 'bin';
+    const base = String(file.title || file.originalName || 'file').replace(/["\\\r\n]/g, '').slice(0, 100) || 'file';
+    const ascii = base.normalize('NFKD').replace(/[^\x20-\x7e]/g, '').trim() || 'file';
+    res.writeHead(200, {
+      'Content-Type': file.mime,
+      'Content-Length': size,
+      'Content-Disposition': `inline; filename="${ascii}.${ext}"; filename*=UTF-8''${encodeURIComponent(`${base}.${ext}`)}`,
+      'Cache-Control': publicCache ? 'public, max-age=3600' : 'private, no-store',
+      ...(file.sha256 ? { ETag: etag } : {}),
+      'X-Content-Type-Options': 'nosniff',
+      'Cross-Origin-Resource-Policy': 'cross-origin',
+      /* PDFs need the browser's own viewer (a CSP sandbox blocks it in Chromium); the bytes
+         were sniffed on upload, so only a real PDF or raster image is ever served here */
+      ...(file.mime === 'application/pdf' ? {} : { 'Content-Security-Policy': "default-src 'none'; img-src 'self'; style-src 'unsafe-inline'; sandbox" }),
+    });
+    if (req.method === 'HEAD') return res.end();
+    createReadStream(path).pipe(res);
+  };
+  const portalFileResponse = (file) => ({ ...file, url: `/api/portal/files/${file.id}` });
+  const showcaseResponse = (showcase) => ({ ...showcase, files: showcase.files.map(portalFileResponse) });
+  const requireExhibitor = (session) => {
+    if (session.account_type !== 'exhibitor') throw new HttpError(403, 'Bu bo‘lim faqat eksponentlar uchun.');
+  };
+
   const checkIngressSecret = (req, url) => {
     if (!ingressSecret) return true;
     const header = String(req.headers.authorization || '').replace(/^Bearer\s+/i, '');
@@ -552,11 +626,50 @@ export function createLeadServer(options = {}) {
     }
   }
 
+  /* read-only public data for the static site (any sof-expo subdomain): no cookies, no
+     credentials, so a wildcard origin is safe */
+  async function handlePublic(req, res, path, url) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    if (req.method === 'OPTIONS') {
+      res.writeHead(204, { 'Access-Control-Allow-Methods': 'GET, HEAD, OPTIONS', 'Access-Control-Max-Age': '600' });
+      return res.end();
+    }
+    if (!['GET', 'HEAD'].includes(req.method)) throw new HttpError(405, 'Faqat o‘qish mumkin.');
+    if (!rateAllowed(`public:${getClientAddress(req)}`, 240)) throw new HttpError(429, 'Juda ko‘p so‘rov.');
+    const media = path.match(/^\/media\/exhibitors\/([a-f0-9-]{36})$/i);
+    if (media) {
+      const file = store.publicFile(media[1].toLowerCase());
+      if (!file) throw new HttpError(404, 'Fayl topilmadi.');
+      return sendStoredFile(req, res, file, { publicCache: true });
+    }
+    if (path === '/api/public/exhibitors') {
+      const event = cleanText(url.searchParams.get('event'), 60);
+      const when = cleanText(url.searchParams.get('when'), 10);
+      const items = store.publicExhibitors({
+        event: SHOWS.some((show) => show.slug === event) ? event : '',
+        when: ['current', 'past'].includes(when) ? when : '',
+        q: cleanText(url.searchParams.get('q'), 80),
+      });
+      const body = JSON.stringify({ ok: true, items, shows: SHOWS.map(({ slug, name }) => ({ slug, name })) });
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': Buffer.byteLength(body), 'Cache-Control': 'public, max-age=120' });
+      return res.end(req.method === 'HEAD' ? undefined : body);
+    }
+    throw new HttpError(404, 'Sahifa topilmadi.');
+  }
+
   async function handleRequest(req, res) {
+    const rawPath = String(req.url || '/').split('?', 1)[0].replace(/\/{2,}/g, '/');
+    if (rawPath.startsWith('/api/public/') || rawPath.startsWith('/media/')) {
+      let publicUrl;
+      try { publicUrl = new URL(req.url || '/', 'http://localhost'); } catch { throw new HttpError(400, 'URL noto‘g‘ri.'); }
+      return handlePublic(req, res, rawPath, publicUrl);
+    }
     if (!corsAndSecurity(req, res)) return sendJson(res, 403, { ok: false, error: 'Origin not allowed' });
     if (req.method === 'OPTIONS') {
       res.writeHead(204, {
-        'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-CSRF-Token, Idempotency-Key',
         'Access-Control-Max-Age': '600',
       });
@@ -690,7 +803,14 @@ export function createLeadServer(options = {}) {
     }
 
     if (req.method === 'GET' && path === '/api/portal/options') {
-      return sendJson(res, 200, { ok: true, events: PORTAL_EVENTS });
+      return sendJson(res, 200, {
+        ok: true,
+        events: PORTAL_EVENTS,
+        shows: SHOWS,
+        fileKinds: FILE_KINDS.filter((kind) => kind !== 'logo'),
+        socials: SOCIAL_NETWORKS,
+        limits: { ...SHOWCASE_LIMITS, ...UPLOAD_LIMITS },
+      });
     }
 
     if (req.method === 'POST' && path === '/api/portal/register') {
@@ -815,8 +935,8 @@ export function createLeadServer(options = {}) {
           details = { industry: account.industry, area: `${areaNumber} m²`, package: packageName, message };
           payload = { portalAccountType: account.accountType, industry: account.industry, country: account.country, area: details.area, package: packageName, comment: message };
         } else {
-          const interest = cleanText(body.interest, 160);
-          if (!interest) throw new HttpError(422, 'Qiziqish yo‘nalishini kiriting.');
+          /* a guest only picks the show; the visit goal is optional (many come without a company) */
+          const interest = cleanText(body.interest, 160) || 'visit';
           details = { interest, message };
           payload = { portalAccountType: account.accountType, country: account.country, industry: account.industry, interest, comment: message };
         }
@@ -849,6 +969,95 @@ export function createLeadServer(options = {}) {
         return sendJson(res, 201, { ok: true, request });
       }
 
+      if (path === '/api/portal/showcase') {
+        requireExhibitor(session);
+        if (req.method === 'GET') return sendJson(res, 200, { ok: true, showcase: showcaseResponse(store.getShowcase(session.account_id)) });
+        if (req.method === 'PUT') {
+          verifyCsrf(req, session);
+          if (!rateAllowed(`portal-showcase:${session.account_id}`, 60, 60 * 60_000)) throw new HttpError(429, 'Juda ko‘p saqlash. Birozdan keyin urinib ko‘ring.');
+          const body = await readJson(req, 32_000);
+          const { value, errors } = normalizeShowcase(body.showcase || {});
+          const submit = body.submit === true;
+          Object.assign(errors, submit ? submitErrors(value) : {});
+          if (Object.keys(errors).length) throw new HttpError(422, 'Ba’zi maydonlar noto‘g‘ri to‘ldirilgan.', errors);
+          const showcase = store.saveShowcaseDraft(session.account_id, value, { submit });
+          return sendJson(res, 200, { ok: true, showcase: showcaseResponse(showcase) });
+        }
+      }
+
+      if (req.method === 'GET' && path === '/api/portal/files') {
+        requireExhibitor(session);
+        return sendJson(res, 200, { ok: true, items: store.listPortalFiles(session.account_id).map(portalFileResponse) });
+      }
+
+      if (req.method === 'POST' && path === '/api/portal/files') {
+        requireExhibitor(session);
+        verifyCsrf(req, session);
+        if (!rateAllowed(`portal-upload:${session.account_id}`, 40, 60 * 60_000)) throw new HttpError(429, 'Fayllar soni ko‘p. Birozdan keyin urinib ko‘ring.');
+        const kind = cleanText(url.searchParams.get('kind'), 20) || 'other';
+        if (!FILE_KINDS.includes(kind)) throw new HttpError(422, 'Fayl turi noto‘g‘ri.');
+        if (store.countPortalFiles(session.account_id) >= UPLOAD_LIMITS.filesPerAccount) {
+          throw new HttpError(422, `Ko‘pi bilan ${UPLOAD_LIMITS.filesPerAccount} ta fayl yuklash mumkin. Keraksizini o‘chiring.`);
+        }
+        const buffer = await readRaw(req, UPLOAD_LIMITS.pdfBytes);
+        const type = sniffUpload(buffer);
+        if (!type) throw new HttpError(415, 'Faqat PDF, PNG, JPG yoki WEBP fayl yuklash mumkin.');
+        if (kind === 'logo' && !type.image) throw new HttpError(415, 'Logotip PNG, JPG yoki WEBP rasm bo‘lishi kerak.');
+        if (type.image && buffer.length > UPLOAD_LIMITS.imageBytes) throw new HttpError(413, 'Rasm hajmi 5 MB dan oshmasin.');
+        const originalName = cleanFileName(url.searchParams.get('name'));
+        const title = cleanFileTitle(url.searchParams.get('title')) || (kind === 'logo' ? 'Logo' : fileTitleFromName(originalName));
+        const storageName = `${randomUUID()}.${type.ext}`;
+        mkdirSync(uploadsDir, { recursive: true });
+        writeFileSync(storedPath(storageName), buffer, { mode: 0o640 });
+        let result;
+        try {
+          result = store.addPortalFile({
+            accountId: session.account_id,
+            kind,
+            title,
+            originalName,
+            mime: type.mime,
+            size: buffer.length,
+            sha256: createHash('sha256').update(buffer).digest('hex'),
+            storageName,
+          });
+        } catch (error) {
+          removeStored([storageName]);
+          throw error;
+        }
+        removeStored(result.removed);
+        return sendJson(res, 201, { ok: true, file: portalFileResponse(result.file) });
+      }
+
+      const portalFileMatch = path.match(/^\/api\/portal\/files\/([a-f0-9-]{36})$/i);
+      if (portalFileMatch) {
+        requireExhibitor(session);
+        const fileId = portalFileMatch[1].toLowerCase();
+        if (req.method === 'GET' || req.method === 'HEAD') {
+          const file = store.getPortalFile(fileId);
+          if (!file || file.accountId !== session.account_id) throw new HttpError(404, 'Fayl topilmadi.');
+          return sendStoredFile(req, res, file);
+        }
+        if (req.method === 'PATCH') {
+          verifyCsrf(req, session);
+          const body = await readJson(req, 4_000);
+          const kind = body.kind === undefined ? undefined : cleanText(body.kind, 20);
+          if (kind !== undefined && (!FILE_KINDS.includes(kind) || kind === 'logo')) throw new HttpError(422, 'Fayl turi noto‘g‘ri.');
+          const title = body.title === undefined ? undefined : cleanFileTitle(body.title);
+          if (title !== undefined && !title) throw new HttpError(422, 'Fayl nomi bo‘sh bo‘lmasin.');
+          const file = store.updatePortalFile(session.account_id, fileId, { title, kind });
+          if (!file) throw new HttpError(404, 'Fayl topilmadi.');
+          return sendJson(res, 200, { ok: true, file: portalFileResponse(file) });
+        }
+        if (req.method === 'DELETE') {
+          verifyCsrf(req, session);
+          const file = store.deletePortalFile(session.account_id, fileId);
+          if (!file) throw new HttpError(404, 'Fayl topilmadi.');
+          removeStored([file.storageName]);
+          return sendJson(res, 200, { ok: true });
+        }
+      }
+
       throw new HttpError(404, 'Portal API manzili topilmadi.');
     }
 
@@ -874,6 +1083,81 @@ export function createLeadServer(options = {}) {
 
       if (req.method === 'GET' && path === '/api/admin/analytics') {
         return sendJson(res, 200, { ok: true, ...store.analytics(clamp(url.searchParams.get('days'), 1, 90, 30)) });
+      }
+
+      if (req.method === 'GET' && path === '/api/admin/sales-analytics') {
+        return sendJson(res, 200, { ok: true, ...store.salesAnalytics(clamp(url.searchParams.get('days'), 1, 365, 30)) });
+      }
+
+      if (req.method === 'GET' && path === '/api/admin/pipeline') {
+        return sendJson(res, 200, {
+          ok: true,
+          ...store.pipeline({
+            assignee: cleanText(url.searchParams.get('assignee'), 254),
+            event: cleanText(url.searchParams.get('event'), 180),
+            search: cleanText(url.searchParams.get('q'), 120),
+            closedDays: clamp(url.searchParams.get('closedDays'), 1, 365, 30),
+          }),
+        });
+      }
+
+      if (req.method === 'GET' && path === '/api/admin/tasks') {
+        return sendJson(res, 200, { ok: true, ...store.tasks() });
+      }
+
+      if (req.method === 'GET' && path === '/api/admin/team') {
+        return sendJson(res, 200, {
+          ok: true,
+          team: store.listTeam(),
+          events: [...new Set([...PORTAL_EVENTS.map((item) => item.name), ...SHOWS.map((show) => show.name)])],
+          currencies: CURRENCIES,
+          noteKinds: NOTE_KINDS,
+          statuses: LEAD_STATUSES,
+        });
+      }
+
+      if (req.method === 'GET' && path === '/api/admin/showcases') {
+        const status = cleanText(url.searchParams.get('status'), 20);
+        if (status && !SHOWCASE_STATUSES.includes(status)) throw new HttpError(422, 'Holat filtri noto‘g‘ri.');
+        return sendJson(res, 200, {
+          ok: true,
+          ...store.listShowcases({
+            status,
+            search: cleanText(url.searchParams.get('q'), 120),
+            page: clamp(url.searchParams.get('page'), 1, 1_000_000, 1),
+            limit: clamp(url.searchParams.get('limit'), 1, 50, 25),
+          }),
+        });
+      }
+
+      const showcaseMatch = path.match(/^\/api\/admin\/showcases\/([a-f0-9-]{36})(?:\/(review))?$/i);
+      if (showcaseMatch) {
+        const accountId = showcaseMatch[1].toLowerCase();
+        if (req.method === 'GET' && !showcaseMatch[2]) {
+          const showcase = store.getShowcaseForAdmin(accountId);
+          if (!showcase) throw new HttpError(404, 'Kompaniya sahifasi topilmadi.');
+          return sendJson(res, 200, { ok: true, showcase });
+        }
+        if (req.method === 'POST' && showcaseMatch[2]) {
+          verifyCsrf(req, session);
+          const body = await readJson(req, 4_000);
+          const action = cleanText(body.action, 20);
+          if (!['publish', 'reject', 'hide'].includes(action)) throw new HttpError(422, 'Amal noto‘g‘ri.');
+          const note = cleanText(body.note, 1000);
+          if (action === 'reject' && !note) throw new HttpError(422, 'Rad etish sababini yozing — eksponent uni kabinetda ko‘radi.');
+          const result = store.reviewShowcase(accountId, { action, note }, session.email);
+          if (result.error === 'not_found') throw new HttpError(404, 'Kompaniya sahifasi topilmadi.');
+          if (result.error === 'name_required') throw new HttpError(422, 'Kompaniya nomi bo‘sh — nashr qilib bo‘lmaydi.');
+          removeStored(result.removed);
+          return sendJson(res, 200, { ok: true, showcase: result.showcase });
+        }
+      }
+
+      const adminFileMatch = path.match(/^\/api\/admin\/files\/([a-f0-9-]{36})$/i);
+      if (adminFileMatch && (req.method === 'GET' || req.method === 'HEAD')) {
+        const file = store.getPortalFile(adminFileMatch[1].toLowerCase());
+        if (!file) throw new HttpError(404, 'Fayl topilmadi.');
+        return sendStoredFile(req, res, file);
       }
 
       if (req.method === 'GET' && path === '/api/admin/portal-accounts') {
@@ -988,6 +1272,34 @@ export function createLeadServer(options = {}) {
             patch.priority = body.priority;
           }
           if (body.assignee !== undefined) patch.assignee = cleanText(body.assignee, 120);
+          if (body.dealAmount !== undefined) {
+            const amount = body.dealAmount === '' || body.dealAmount === null ? 0 : Number(body.dealAmount);
+            if (!Number.isFinite(amount) || amount < 0 || amount > 1e12) throw new HttpError(422, 'Bitim summasi noto‘g‘ri.');
+            patch.dealAmount = Math.round(amount * 100) / 100;
+          }
+          if (body.currency !== undefined) {
+            if (!CURRENCIES.includes(body.currency)) throw new HttpError(422, 'Valyuta noto‘g‘ri.');
+            patch.currency = body.currency;
+          }
+          if (body.standArea !== undefined) {
+            const area = body.standArea === '' || body.standArea === null ? null : Number(body.standArea);
+            if (area !== null && (!Number.isFinite(area) || area < 0 || area > 100_000)) throw new HttpError(422, 'Stend maydoni noto‘g‘ri.');
+            patch.standArea = area;
+          }
+          if (body.lostReason !== undefined) patch.lostReason = cleanText(body.lostReason, 300);
+          if (body.nextAction !== undefined) patch.nextAction = cleanText(body.nextAction, 300);
+          if (body.nextActionAt !== undefined) {
+            if (body.nextActionAt === '' || body.nextActionAt === null) patch.nextActionAt = null;
+            else {
+              const at = Date.parse(String(body.nextActionAt));
+              if (!Number.isFinite(at)) throw new HttpError(422, 'Keyingi qadam sanasi noto‘g‘ri.');
+              patch.nextActionAt = new Date(at).toISOString();
+            }
+          }
+          if (body.event !== undefined) patch.event = cleanText(body.event, 180);
+          if (patch.status === 'lost' && body.lostReason !== undefined && !patch.lostReason) {
+            throw new HttpError(422, 'Yo‘qotish sababini ko‘rsating.');
+          }
           if (!Object.keys(patch).length) throw new HttpError(422, 'Yangilash uchun maydon topilmadi.');
           const lead = store.updateLead(leadId, patch, session.email);
           if (!lead) throw new HttpError(404, 'Lid topilmadi.');
@@ -998,7 +1310,9 @@ export function createLeadServer(options = {}) {
           const body = await readJson(req, 8_000);
           const text = cleanText(body.body, 4000);
           if (!text) throw new HttpError(422, 'Izoh matni bo‘sh bo‘lmasligi kerak.');
-          const note = store.addLeadNote(leadId, { userId: session.user_id, authorEmail: session.email, body: text });
+          const kind = body.kind === undefined ? 'note' : cleanText(body.kind, 20);
+          if (!NOTE_KINDS.includes(kind)) throw new HttpError(422, 'Faoliyat turi noto‘g‘ri.');
+          const note = store.addLeadNote(leadId, { userId: session.user_id, authorEmail: session.email, body: text, kind });
           if (!note) throw new HttpError(404, 'Lid topilmadi.');
           return sendJson(res, 201, { ok: true, note });
         }
@@ -1120,9 +1434,11 @@ export function createLeadServer(options = {}) {
     });
   });
   server.headersTimeout = 10_000;
-  server.requestTimeout = 20_000;
+  /* uploads of up to 20 MB over a slow mobile link need more than the JSON default */
+  server.requestTimeout = 120_000;
   server.keepAliveTimeout = 5_000;
   server.backendStore = store;
+  server.uploadsDir = uploadsDir;
   server.tgBlog = tgBlog;
   server.tgBlogConfig = tgBlogConfig;
   server.processOutbox = processOutbox;

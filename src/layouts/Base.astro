@@ -263,7 +263,10 @@ const preload = props.preload
                 }
               }
             },
-            { rootMargin: '0px 0px -8% 0px', threshold: 0.05 },
+            /* fire ~12% of a viewport BEFORE the section scrolls into view so
+               the entrance is already done by the time the user sees the
+               section — no blank band on fast scrolling (2026-10 fix) */
+            { rootMargin: '0px 0px 12% 0px', threshold: 0.01 },
           );
           els.forEach((el) => io.observe(el));
         }

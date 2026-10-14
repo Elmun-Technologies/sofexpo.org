@@ -83,6 +83,9 @@ const labels: Record<string, string> = {
 ---
 
 {enabled && (
+  /* the directory is the same widget on every show page and is filled at runtime, so its
+     interface copy is marked data-nosnippet: not page content for search snippets, and not
+     "duplicate text" to the page audit (scripts/page-audit.mjs) */
   <div class="xdir" id={id} hidden data-xdir data-api={api} data-event={event}>
     {heading && (
       <div class="sec-head">
@@ -90,7 +93,7 @@ const labels: Record<string, string> = {
           <p class="kicker">{copy.kicker}</p>
           <h2>{copy.title}</h2>
         </div>
-        <p>{copy.text}</p>
+        <p data-nosnippet>{copy.text}</p>
       </div>
     )}
     <div class="xdir__bar" role="search">
@@ -112,17 +115,17 @@ const labels: Record<string, string> = {
     </div>
     <p class="xdir__count" aria-live="polite"><span>{labels.results}</span> <b data-count>0</b></p>
     <ul class="xdir__grid" data-list></ul>
-    <p class="xdir__empty" data-empty hidden>{labels.empty}</p>
+    <p class="xdir__empty" data-empty hidden data-nosnippet>{labels.empty}</p>
     <div class="xdir__foot">
       <button type="button" class="btn btn--ghost" data-more hidden>{labels.more}</button>
       {portalHref && (
-        <p class="xdir__join">
+        <p class="xdir__join" data-nosnippet>
           {ru ? 'Вы участник? Добавьте страницу компании и материалы в кабинете экспонента.' : 'Exhibiting? Add your company page and materials in the exhibitor account.'}{' '}
           <a href={portalHref}><span>{ru ? "Кабинет экспонента" : "Exhibitor account"}</span> →</a>
         </p>
       )}
     </div>
-    <div hidden data-labels>
+    <div hidden data-labels data-nosnippet>
       {Object.entries(labels).map(([key, value]) => <span data-l={key}>{value}</span>)}
     </div>
   </div>

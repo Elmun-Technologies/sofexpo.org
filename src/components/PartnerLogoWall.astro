@@ -70,7 +70,9 @@ const L = {
           <>
             <span class="pwl__mark">
               {box ? (
-                <img class="pwl__logo" src={partnerSrc(p.id)} alt={name} width={box.width} height={box.height} loading="lazy" decoding="async" />
+                /* the partner's name is printed right under the logo, so the image would only
+                   repeat it to a screen reader — it is marked decorative and the name is read */
+                <img class="pwl__logo" src={partnerSrc(p.id)} alt="" aria-hidden="true" width={box.width} height={box.height} loading="lazy" decoding="async" />
               ) : (
                 /* no artwork yet: the name itself is the wordmark — two-letter "PE", "TI"
                    initials read as placeholders, not as partners (docs/15 §11) */

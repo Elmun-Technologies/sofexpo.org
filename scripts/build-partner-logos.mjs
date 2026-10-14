@@ -21,10 +21,14 @@ const OUT = 'public/images/partners';
 const RULES = {
   agromir: { plate: 34 },
   artel: { plate: 34, keepTop: 0.66 },
+  expomap: { plate: 30 },
   'grand-plaza': { plate: 46 },
+  'hotel-partner': { plate: 30 },
+  iimps: { plate: 30 },
   reikartz: { plate: 26 },
   sag: { plate: 34 },
   sibeco: { plate: 30 },
+  totalexpo: { plate: 30 },
 };
 const MAX_H = 160; /* 2× the tallest a wall draws a logo (72px), rounded up */
 

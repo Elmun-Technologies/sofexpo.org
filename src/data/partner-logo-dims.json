@@ -9,9 +9,29 @@
     "h": 59,
     "ext": "webp"
   },
+  "cci-uz": {
+    "w": 345,
+    "h": 160,
+    "ext": "webp"
+  },
+  "expomap": {
+    "w": 206,
+    "h": 62,
+    "ext": "webp"
+  },
   "grand-plaza": {
     "w": 93,
     "h": 112,
+    "ext": "webp"
+  },
+  "hotel-partner": {
+    "w": 116,
+    "h": 91,
+    "ext": "webp"
+  },
+  "iimps": {
+    "w": 143,
+    "h": 54,
     "ext": "webp"
   },
   "led-master": {
@@ -49,9 +69,14 @@
     "h": 38,
     "ext": "webp"
   },
+  "totalexpo": {
+    "w": 176,
+    "h": 160,
+    "ext": "webp"
+  },
   "uza": {
-    "w": 166,
-    "h": 92,
+    "w": 200,
+    "h": 64,
     "ext": "svg"
   },
   "uzauto-motors": {

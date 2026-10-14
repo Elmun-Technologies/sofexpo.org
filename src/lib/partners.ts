@@ -44,21 +44,21 @@ const SHARED: Partner[] = [
   /* Real artwork pending — the client provides the logos (docs/08 §7 Q4). */
   { id: 'reikartz', kind: 'hotel', show: 'site', hasLogo: true, name: { ru: 'Рекарц (Reikartz)', en: 'Reikartz' }, note: { ru: 'отель-партнёр · −15%', en: 'partner hotel · −15%' } },
   { id: 'ticketon', kind: 'service', show: 'site', name: { ru: 'Ticketon.uz', en: 'Ticketon.uz' }, note: { ru: 'билетный оператор', en: 'ticketing' } },
-  { id: 'cci-uz', kind: 'state', show: 'site', name: { ru: 'Торгово-промышленная палата', en: 'Chamber of Commerce & Industry' } },
-  { id: 'hotel-partner', kind: 'hotel', show: 'site', name: { ru: 'Hilton Samarkand', en: 'Hilton Samarkand' }, note: { ru: 'рекомендованный отель', en: 'recommended hotel' } },
+  { id: 'cci-uz', kind: 'state', show: 'site', hasLogo: true, name: { ru: 'Торгово-промышленная палата', en: 'Chamber of Commerce & Industry' } },
+  { id: 'hotel-partner', kind: 'hotel', show: 'site', hasLogo: true, name: { ru: 'Hilton Samarkand', en: 'Hilton Samarkand' }, note: { ru: 'рекомендованный отель', en: 'recommended hotel' } },
   /* The centre's own partner list, as published by the organiser (sofexpo.uz, 2026).
      Names and links come from there; artwork still arrives per partner, so every tile
      keeps the monogram until the real file is dropped in. */
   { id: 'samarkand-region', kind: 'state', show: 'site', hasLogo: true, name: { ru: 'Хокимият Самаркандской области', en: 'Samarkand Regional Administration' }, note: { ru: 'при поддержке', en: 'with support of' }, url: 'https://samarkand.uz/' },
   { id: 'uza', kind: 'media', show: 'site', hasLogo: true, name: { ru: 'UzA — Национальное информационное агентство Узбекистана', en: 'UzA — National News Agency of Uzbekistan' }, note: { ru: 'информационный партнёр', en: 'media partner' }, url: 'https://uza.uz/' },
   { id: 'tashkent-times', kind: 'media', show: 'site', hasLogo: true, name: { ru: 'The Tashkent Times', en: 'The Tashkent Times' }, note: { ru: 'информационный партнёр', en: 'media partner' }, url: 'https://tashkenttimes.uz/' },
-  { id: 'expomap', kind: 'org', show: 'site', name: { ru: 'Expomap', en: 'Expomap' }, note: { ru: 'отраслевой каталог', en: 'industry directory' }, url: 'https://expomap.ru/' },
+  { id: 'expomap', kind: 'org', show: 'site', hasLogo: true, name: { ru: 'Expomap', en: 'Expomap' }, note: { ru: 'отраслевой каталог', en: 'industry directory' }, url: 'https://expomap.ru/' },
   { id: 'exposale', kind: 'service', show: 'site', name: { ru: 'Exposale', en: 'Exposale' }, note: { ru: 'отраслевой каталог', en: 'industry directory' }, url: 'https://exposale.net/en' },
-  { id: 'totalexpo', kind: 'org', show: 'site', name: { ru: 'TotalExpo', en: 'TotalExpo' }, note: { ru: 'отраслевой каталог', en: 'industry directory' }, url: 'https://totalexpo.ru/' },
+  { id: 'totalexpo', kind: 'org', show: 'site', hasLogo: true, name: { ru: 'TotalExpo', en: 'TotalExpo' }, note: { ru: 'отраслевой каталог', en: 'industry directory' }, url: 'https://totalexpo.ru/' },
   { id: 'worldexpo', kind: 'org', show: 'site', name: { ru: 'WorldExpo', en: 'WorldExpo' }, note: { ru: 'отраслевой каталог', en: 'industry directory' }, url: 'https://worldexpo.pro/' },
   { id: 'advantour', kind: 'service', show: 'site', name: { ru: 'Advantour', en: 'Advantour' }, url: 'https://www.advantour.com/' },
   { id: 'led-master', kind: 'service', show: 'site', hasLogo: true, name: { ru: 'LED Master', en: 'LED Master' }, url: 'https://www.instagram.com/ledmasteruz/' },
-  { id: 'iimps', kind: 'org', show: 'site', name: { ru: 'International Institute of Meta Professional', en: 'International Institute of Meta Professional' }, url: 'https://iimps.org/' },
+  { id: 'iimps', kind: 'org', show: 'site', hasLogo: true, name: { ru: 'International Institute of Meta Professional', en: 'International Institute of Meta Professional' }, url: 'https://iimps.org/' },
 ];
 
 const EVENT: Partner[] = [
@@ -107,9 +107,15 @@ export function partnerSrc(id: string): string {
  * the same visible AREA instead, then is held inside the cell's box:
  *   h = √(area / ratio), w = h · ratio, clamped to maxW × maxH.
  */
+/* equal area still over-weights a logo that is solid ink edge to edge (UzA's heavy capitals
+   fill their whole box, while most marks are a thin emblem plus small type) — such logos get
+   a smaller share of the area so the wall reads even */
+const DENSITY: Record<string, number> = { uza: 0.62 };
+
 export function logoBox(id: string, { area = 7600, maxW = 180, maxH = 68 }: { area?: number; maxW?: number; maxH?: number } = {}) {
   const d = DIMS[id];
   const ratio = d ? d.w / d.h : 2.5;
+  area *= DENSITY[id] ?? 1;
   let h = Math.min(maxH, Math.sqrt(area / ratio));
   let w = h * ratio;
   if (w > maxW) { w = maxW; h = w / ratio; }

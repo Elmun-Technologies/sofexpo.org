@@ -291,12 +291,13 @@
   function leadsTable(rows, { compact = false } = {}) {
     if (!rows?.length) return '<div class="empty-state"><strong>Hozircha ariza yo‘q</strong>Yangi murojaatlar kelishi bilan shu yerda ko‘rinadi.</div>';
     const head = compact
-      ? '<th>MIJOZ</th><th>FORMA / TADBIR</th><th>SANA</th><th>BOSQICH</th>'
+      ? '<th>MIJOZ</th><th>FORMA / TADBIR</th><th>BOSQICH</th>'
       : '<th>MIJOZ</th><th>FORMA / TADBIR</th><th>BOSQICH</th><th>MAS’UL</th><th>KEYINGI QADAM</th><th class="num">SUMMA</th><th>SANA</th>';
     const body = rows.map((row) => {
       const overdue = row.nextActionAt && new Date(row.nextActionAt) < new Date() && !['won', 'lost', 'spam'].includes(row.status);
       const form = `${escapeHtml(formLabels[row.formType] || row.formType || 'Umumiy')}<span class="sub">${escapeHtml(row.event || '—')}</span>`;
-      if (compact) return `<tr><td>${personCell(row)}</td><td>${form}</td><td class="nowrap">${escapeHtml(formatDate(row.createdAt))}</td><td>${statusBadge(row.status)}</td></tr>`;
+      /* the dashboard card is narrow: stage and date share a cell, so nothing hides behind a scroll */
+      if (compact) return `<tr><td>${personCell(row)}</td><td>${form}</td><td class="nowrap">${statusBadge(row.status)}<span class="sub">${escapeHtml(formatDate(row.createdAt))}</span></td></tr>`;
       return `<tr class="${overdue ? 'row-overdue' : ''}"><td>${personCell(row)}</td><td>${form}</td><td>${statusBadge(row.status)}${row.priority === 'high' ? `<span class="sub">${priorityBadge('high')}</span>` : ''}</td>
         <td><span class="truncate" title="${escapeHtml(row.assignee || '')}">${escapeHtml(row.assignee || '—')}</span></td>
         <td>${row.nextAction ? `<span>${escapeHtml(row.nextAction)}</span>` : '<span class="muted">—</span>'}${row.nextActionAt ? `<span class="sub">${dueChip(row.nextActionAt)}</span>` : ''}</td>
@@ -748,7 +749,7 @@
     const daily = data.daily || [];
     const stageDays = (data.stageDays || []).map((item) => ({ key: statusLabels[item.stage], count: item.days ?? 0 }));
     content.innerHTML = `${pageIntro('Savdo analitikasi', 'Arizadan sotuvgacha: qayerdan kelgan mijozlar sotib oladi, qayerda yo‘qotamiz va jamoa qanchalik tez ishlaydi.', `${state.days} KUN`)}
-      <div class="metrics-grid">
+      <div class="metrics-grid metrics-grid--4">
         ${metricCard('Arizalar', number(totals.leads), `${number(totals.spam)} spam hisobga olinmagan`, '▤')}
         ${metricCard('Sotildi', number(totals.won), money(totals.revenue, 'summa kiritilmagan'), '✓', { tone: 'accent' })}
         ${metricCard('Yutish ulushi', percent(totals.winRate), `${number(totals.won)} sotildi / ${number(totals.lost)} yo‘qotildi`, '◔')}
@@ -766,7 +767,7 @@
         <section class="panel"><div class="panel-head"><div><h3>Arizalar va sotuvlar</h3><p>Kunlik kelgan arizalar va yopilgan sotuvlar</p></div><div class="chart-legend"><span><i class="legend-dot"></i>Arizalar</span><span><i class="legend-dot is-won"></i>Sotildi</span></div></div><div class="chart-wrap">${chartSvg(daily, { second: 'won', label: 'Arizalar va sotuvlar' })}</div>${chartLabels(daily)}</section>
         <section class="panel"><div class="panel-head"><div><h3>Ochiq bitimlar yoshi</h3><p>Joriy bosqichda qancha vaqtdan beri turibdi</p></div></div>${renderBarList(data.aging, 'Ochiq bitim yo‘q.', 'is-warn')}<div class="flow-divider"></div><h3 style="font-size:14px;margin-bottom:10px">Bosqichda o‘rtacha (kun)</h3>${renderBarList(stageDays, 'Hali yetarli ma’lumot yo‘q.')}</section>
       </div>
-      <div class="grid-2">
+      <div class="grid-2 grid-tables">
         ${breakdownTable(data.channels, { title: 'Kanallar: qayerdan kelgan mijoz sotib oladi', format: channelLabel })}
         ${breakdownTable(data.campaigns, { title: 'Reklama kampaniyalari (UTM)', label: 'KAMPANIYA', format: (key) => key === '—' ? 'Kampaniyasiz' : key })}
         ${breakdownTable(data.events, { title: 'Ko‘rgazmalar', label: 'TADBIR', format: (key) => key === '—' ? 'Tadbir ko‘rsatilmagan' : key })}

@@ -29,6 +29,7 @@
     "telegram:backfill": "node --env-file-if-exists=.env scripts/telegram-backfill.mjs",
     "admin:reset-password": "node --env-file-if-exists=.env scripts/backend/admin-cli.mjs reset-password",
     "test:backend": "node --test tests/backend.test.mjs",
+    "backend:demo": "node scripts/backend/demo.mjs",
     "typecheck": "astro sync && tsc --noEmit -p .",
     "logos": "node scripts/build-logos.mjs"
   },

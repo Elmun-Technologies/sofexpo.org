@@ -73,6 +73,7 @@ const labels: Record<string, string> = {
   image: ru ? 'Фото продукции' : 'Product photo',
   other: ru ? 'Материал' : 'Material',
   upcoming: ru ? 'Участвует' : 'Exhibiting',
+  stand: ru ? 'Стенд' : 'Stand',
   about: ru ? 'О компании' : 'About the company',
   website: ru ? 'Сайт' : 'Website',
   more: ru ? 'Показать ещё' : 'Show more',
@@ -129,7 +130,7 @@ const labels: Record<string, string> = {
 
 <script>
   type Material = { id: string; kind: string; title: string; mime: string; size: number; url: string };
-  type Edition = { event: string; year: number; label: string; upcoming: boolean };
+  type Edition = { event: string; year: number; label: string; upcoming: boolean; stand?: string };
   type Company = {
     slug: string; name: string; tagline: string; about: string; category: string; country: string; city: string;
     website: string; socials: Record<string, string>; logo: string | null; participation: Edition[]; materials: Material[];
@@ -192,6 +193,8 @@ const labels: Record<string, string> = {
       for (const ed of c.participation.filter((p) => !show || p.event === show)) {
         const chip = make('li', ed.upcoming ? 'xcard__ed xcard__ed--now' : 'xcard__ed', ed.label);
         chip.translate = false;
+        /* the coming edition carries the stand number — what a visitor needs in the hall */
+        if (ed.upcoming && ed.stand) chip.append(make('span', 'xcard__stand', ` · ${label('stand')} ${ed.stand}`));
         if (ed.upcoming) chip.title = label('upcoming');
         editions.append(chip);
       }
@@ -475,6 +478,10 @@ const labels: Record<string, string> = {
     font-size: 0.78rem;
     font-weight: 600;
     color: var(--ink-60);
+  }
+  .xdir__grid :global(.xcard__stand) {
+    font-weight: 500;
+    opacity: 0.85;
   }
   .xdir__grid :global(.xcard__ed--now) {
     background: var(--evergreen);

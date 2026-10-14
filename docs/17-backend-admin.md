@@ -209,6 +209,27 @@ Bu foydalanuvchining barcha oldingi sessiyalarini bekor qiladi. Parolni qayta ti
 reset env qatorlarini o‘chiring. Yangi foydalanuvchini admin panelning “Jamoa va ruxsatlar”
 bo‘limidan yarating.
 
+### Demo ma’lumotlar bilan
+
+CRM, kabinet va saytdagi eksponentlar katalogini haqiqiy bazasiz ko‘rsatish uchun:
+
+```bash
+npm run backend:demo              # :8790, har startda vaqtinchalik yangi SQLite (chiqishda o‘chadi)
+PUBLIC_EXHIBITORS_API=http://127.0.0.1:8790 PUBLIC_PORTAL_URL=http://127.0.0.1:8790 \
+PUBLIC_LEAD_ENDPOINT=http://127.0.0.1:8790/lead PUBLIC_ANALYTICS_ENDPOINT=http://127.0.0.1:8790/event \
+npm run build && npm run preview
+```
+
+`scripts/backend/demo.mjs` quyidagilarni yaratadi:
+- 9 ta eksponent kompaniya, logotip va PDF materiallari bilan. 8 tasi chop etilgan, 1 tasi moderatsiyani kutadi.
+- 12 ta ariza: barcha bosqichlarda, muddati o‘tgan, yo‘qotilgan va sotilganlari bilan.
+- 2 ta menejer.
+
+Kirish ma’lumotlari start logida chiqadi: admin `admin@sof-expo.com` / `admin-password-2026`, eksponent
+`aziz@beton.uz` / `exhibitor-password-2026`. Boshqa host’dan ochilsa (masalan, preview domeni),
+`DEMO_HOST=0.0.0.0` va sayt origin’ini `DEMO_ORIGINS` ga vergul bilan bering. Skript hech qachon
+`DB_PATH` dagi haqiqiy bazaga tegmaydi.
+
 ## 6. Production sozlash
 
 1. Production backend Fly.io’da ishlaydi: app `sofexpo-api`, region `ist`, bitta 512 MB machine va

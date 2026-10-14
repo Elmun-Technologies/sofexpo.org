@@ -106,7 +106,7 @@ test('legacy lead formatter and summary stay backward-compatible', () => {
 
 test('CORS preflight admits every production host for lead and analytics endpoints', async (t) => {
   const origins = [
-    'https://sof-expo.com', 'https://foodera.sof-expo.com', 'https://buildpro.sof-expo.com',
+    'https://sof-expo.com', 'https://www.sof-expo.com', 'https://foodera.sof-expo.com', 'https://buildpro.sof-expo.com',
     'https://agropro.sof-expo.com', 'https://worldedu.sof-expo.com', 'https://ecomretail.sof-expo.com',
   ];
   const { base } = await startBackend(t, { origins });

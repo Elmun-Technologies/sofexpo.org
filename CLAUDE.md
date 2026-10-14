@@ -17,14 +17,14 @@ subdomains) from shared sources — see `docs/05-subdomains.md` and `docs/06-dep
   (`createLeadServer`), SQLite via built-in `node:sqlite` (`scripts/backend/db.mjs`,
   `BackendStore`). No framework, no npm runtime deps on purpose — keep it that way.
   Static admin panel `scripts/backend/admin/` (vanilla JS, session cookie + CSRF header).
-- **Deploy:** static output. Primary host today: **Vercel** — one project for the root domain
-  (**`sof-expo.com`** — the .org was unavailable), zero-config via `vercel.json`,
-  `PUBLIC_HOSTS_MODE=alias` (everything on the root host; exhibition subdomains come later).
-  The Cloudflare Pages multi-host flow (one Pages project per hostname,
-  `PUBLIC_HOSTS_MODE=subdomain`, `.github/workflows/deploy.yml`) stays maintained for when
-  subdomains are connected — host topology lives in `src/data/host-map.json`.
-  Backend runs as a long-lived process with a persistent disk (`.data/sofexpo.sqlite`) —
-  see `docs/17-backend-admin.md`; it is NOT deployed by CI.
+- **Deploy:** the static site runs on **Vercel** at `sof-expo.com` (`vercel.json`,
+  `PUBLIC_HOSTS_MODE=alias`). The Cloudflare Pages multi-host flow (one Pages project per
+  hostname, `PUBLIC_HOSTS_MODE=subdomain`, `.github/workflows/deploy.yml`) stays maintained
+  for when exhibition subdomains are connected — host topology lives in `src/data/host-map.json`.
+  The backend is a separate long-lived Node service on **Fly.io** (`sofexpo-api`, Istanbul,
+  one machine with the persistent `/data/sofexpo.sqlite` volume); it is not deployed by Vercel
+  or the static-site CI. Follow `docs/20-fly-deploy.md` for production provisioning and
+  `docs/17-backend-admin.md` for backend architecture.
 - **Tests:** `node:test` (`npm test` → `tests/*.test.mjs`), Playwright for e2e
   (`npm run test:e2e`). There is **no** Jest/Vitest — use `node:test` + `node:assert`.
 
@@ -76,8 +76,8 @@ subdomains) from shared sources — see `docs/05-subdomains.md` and `docs/06-dep
 200 → async `TgBlogSync.ingestUpdate()` → entities→HTML (UTF-16 aware) → media download
 via Bot API → SQLite upsert → markdown written to `src/content/<collection>/<locale>/`
 + media to `public/images/telegram/` → debounced `git commit && pull --rebase && push`
-→ Cloudflare Pages rebuilds. There is no `revalidatePath` in a static build — **the git
-push is the revalidation**.
+→ static-host rebuild. There is no `revalidatePath` in a static build — **the git push is the
+revalidation** (Vercel is the current production host).
 
 Decisions & pitfalls (do not re-litigate):
 
@@ -97,8 +97,8 @@ Decisions & pitfalls (do not re-litigate):
 - **Webhook returns 200 even on processing errors** (Telegram retries otherwise; secret
   or payload validation failures are the only non-200 cases).
 - `BLOG_SYNC_GIT_PUSH=0` (default) materializes files without pushing — enable explicitly
-  on the server that owns the checkout + credentials; `BLOG_SYNC_DEPLOY_HOOK_URLS` fires
-  Cloudflare deploy hooks after pushes.
+  on the server that owns the checkout + credentials; `BLOG_SYNC_DEPLOY_HOOK_URLS` can fire
+  optional hosting deploy hooks after pushes.
 - Backfill (`scripts/telegram-backfill.mjs`) reuses the same pipeline from the public
   `t.me/s/<user>` mirror — **run it where the production SQLite lives** so edit-webhooks
   can later dedupe by message id; `--dry-run` first.

@@ -21,7 +21,7 @@ SQLite’da saqlaydi, Telegram/CRM’ga navbat bilan uzatadi va birinchi tomon a
 ## 1. Tuzilma
 
 ```text
-Static public site (Cloudflare Pages / CDN)
+Static public site (Vercel / CDN)
   ├─ POST PUBLIC_LEAD_ENDPOINT ───────────────┐
   ├─ POST PUBLIC_ANALYTICS_ENDPOINT ──────────┤ CORS: exact site-origin allow-list
   └─ PUBLIC_PORTAL_URL → /cabinet             │
@@ -181,25 +181,24 @@ bo‘limidan yarating.
 
 ## 6. Production sozlash
 
-1. Node 22.18+ server/VPS yoki persistent volume’li runtime’da backendni ishga tushiring.
-2. DNS/TLS: masalan `api.sof-expo.com` → Node backend; reverse proxy HTTP’ni backendga uzatsin va
-   `X-Forwarded-Proto`, `X-Forwarded-Host`, `X-Forwarded-For` ni o‘zi yozsin. Faqat ishonchli
-   proxy bo‘lsa `LEAD_WEBHOOK_TRUST_PROXY=1` qiling; to‘g‘ridan-to‘g‘ri internetga ochiq serverda
-   bu qiymat `0` qolsin.
-3. `LEAD_WEBHOOK_DB` ni persistent diskka qo‘ying, fayl ruxsatini faqat backend useriga bering,
-   diskni shifrlang va muntazam backup qiling. `.data/` Git’ga kirmaydi.
-4. `.env` da haqiqiy `ADMIN_EMAIL`, uzun random `ADMIN_PASSWORD`, `LEAD_WEBHOOK_ORIGINS` (aniq
-   `https://sof-expo.com`, `https://foodera.sof-expo.com` … va `https://api.sof-expo.com`), Telegram
-   token/chat yoki `CRM_WEBHOOK_URL`/token sozlang. Bot/CRM sirlari faqat backend env’da bo‘ladi.
-5. `.github/workflows/deploy.yml` Cloudflare Pages uchun statik saytni quradi. Standart ochiq manzillar
-   `PUBLIC_LEAD_ENDPOINT=https://api.sof-expo.com/lead`,
-   `PUBLIC_ANALYTICS_ENDPOINT=https://api.sof-expo.com/event` va `PUBLIC_PORTAL_URL=https://api.sof-expo.com`;
-   boshqa backend domeni ishlatilsa, GitHub repository variables’da mos qiymatlarni belgilang.
-   `PUBLIC_*` qiymatlari build vaqtida HTML/JS’ga kiradi — ularga secret token qo‘ymang. Deploy workflow
-   Cloudflare `CLOUDFLARE_API_TOKEN` va `CLOUDFLARE_ACCOUNT_ID` secrets’larini talab qiladi,
-   nashrdan oldin `/health`, `/api/portal/options` va `/cabinet` ni tekshiradi, ammo **Node backendni
-   o‘zi deploy qilmaydi**. Shu sabab Pages’ni nashr etishdan oldin API server, persistent DB, TLS, CORS,
-   admin bootstrap hamda Telegram/CRM yetkazish sozlamalari production’da ishga tushganini tekshiring.
+1. Production backend Fly.io’da ishlaydi: app `sofexpo-api`, region `ist`, bitta 512 MB machine va
+   `/data` persistent volume. App/volume yaratish hamda deploy tartibi `docs/20-fly-deploy.md` da.
+2. `api.sof-expo.com` DNS/TLS’ni Fly app’iga ulang (Namecheap va sertifikat qadamlari docs/20’da).
+   Fly Proxy orqali keladigan so‘rovlar uchun `LEAD_WEBHOOK_TRUST_PROXY=1`; bevosita internetga
+   ochiladigan boshqa runtime’da faqat ishonchli reverse proxy forwarded header’larni yozsa yoqing.
+3. `LEAD_WEBHOOK_DB` persistent volume’dagi `/data/sofexpo.sqlite` bo‘lsin; `.data/` Git’ga kirmaydi.
+   SQLite bitta machine/single-writer uchun: volume’ni bir nechta backend process’iga ulamang va
+   muntazam snapshot hamda alohida backup/restore tartibini saqlang (`docs/20-fly-deploy.md` §7).
+4. Fly secrets’da haqiqiy `ADMIN_EMAIL`, uzun random `ADMIN_PASSWORD`, Telegram bot/webhook secrets
+   hamda kerak bo‘lsa CRM URL/token’ni sozlang. `LEAD_WEBHOOK_ORIGINS` secret emas: production
+   saytining aniq origin’lari Fly config’da beriladi. Bot/CRM credentials’larini public/static env’ga
+   qo‘ymang.
+5. Statik saytning asosiy deploy’i **Vercel**’da (`vercel.json`, `PUBLIC_HOSTS_MODE=alias`). Vercel
+   Production env’da `PUBLIC_LEAD_ENDPOINT=https://api.sof-expo.com/lead`,
+   `PUBLIC_ANALYTICS_ENDPOINT=https://api.sof-expo.com/event` va `PUBLIC_PORTAL_URL=https://api.sof-expo.com`
+   qiymatlarini belgilang; `PUBLIC_*` build-time qiymatlar, ularga secret token qo‘ymang. Fly backend
+   Vercel tomonidan deploy qilinmaydi. Cloudflare Pages workflow keyingi multi-host topology uchun
+   saqlanadi, current root-domain deployment o‘rnini bosmaydi.
 6. Admin panel: `https://api.sof-expo.com/admin`; portal login/registratsiya: `https://api.sof-expo.com/cabinet`.
    Ular public statik hostda emas, API server domenida. `LEAD_WEBHOOK_ORIGIN` eski bitta-origin
    sozlamasi qabul qilinadi, lekin yangi deploy’da bir nechta domen uchun `LEAD_WEBHOOK_ORIGINS` ishlating.

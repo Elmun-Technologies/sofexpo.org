@@ -25,34 +25,37 @@
   /* palette — a specification sheet, not a mood board: white paper, cool neutral sheets,
      one deep green, ONE structural rule colour. The old cream/gold pastel wash is what made the
      whole site look like it came out of the same generator as the renders. */
-  /* 2026-10 redesign (docs/18): a grey canvas, white rounded panels, black ink, one brand
-     blue and one acid-yellow reserved for the booking action. The token NAMES are the old
-     ones on purpose — every existing rule flips with the values. Contrast is annotated
-     against the ground the token is used on. */
+  /* 2026-10 redesign (docs/18) with the centre wearing its own brand colours (docs/21,
+     2026-10-14): the grey canvas and white rounded panels stay, but the ink is now a
+     green-black, the dark panels the logo's deep green, links the logo blue (darkened for
+     AA) and the booking CTA the logo red. The token NAMES are the old ones on purpose —
+     every existing rule flips with the values. Contrast is annotated against the ground
+     the token is used on. */
   --paper: #ffffff; /* panels */
   --cream: #e4e4e4; /* the canvas between panels */
   --cream-2: #f2f2f2; /* secondary panels, chips, list rows */
-  --ink: #0a0a0a;
+  --ink: #0b1f14; /* green-black ink, 17.2:1 on white */
   /* the design's #6B6B6B is 4.2:1 on the canvas; #5E5E5E keeps AA on canvas, white and #F2F2F2 */
   --ink-60: #5e5e5e;
   --ink-40: #5e5e5e;
   --line: #dcdcdc;
   --line-strong: #cfcfcf;
-  /* "evergreen" is now the ink panel / primary button, "moss" the brand blue (links, focus) */
-  --evergreen: #0a0a0a;
-  --evergreen-2: #2a2a2a;
-  --moss: #0063e4; /* 5.4:1 on white */
+  /* "evergreen" is the centre's deep brand green: ink panels, footer, primary buttons */
+  --evergreen: #123b25; /* white on it: 12.5:1 */
+  --evergreen-2: #1b4d2e; /* white on it: 9.8:1 */
+  --moss: #257087; /* the logo blue deepened to AA: 5.6:1 on white (raw logo blue is used only graphically) */
   --sage: #f2f2f2;
-  /* yellow is for the primary booking CTA and "registration open" only — never under long text */
-  --accent: #f4fd10; /* ink on it: 17.8:1 */
-  --accent-soft: #fbffc2;
+  /* the logo red is for the primary booking CTA and "registration open" — never under long text */
+  --accent: #c03030; /* white on it: 5.7:1 */
+  --accent-ink: #ffffff; /* what sits ON --accent; shows override it with their own ink */
+  --accent-soft: #eef4ee; /* a whisper of the brand green on light grounds (logo tiles) */
   --ornament: #f2f2f2;
   --brand-mark: var(--evergreen);
-  /* the old brass accent rules become brand blue */
-  --gold: #0063e4;
-  --gold-ink: #0057c8; /* small blue text on light grounds, ≥5.1:1 on the canvas */
-  /* the light accent ON dark grounds: the yellow, 17:1 on ink */
-  --gold-soft: #f4fd10;
+  /* the old brass accent rules become the brand blue */
+  --gold: #257087;
+  --gold-ink: #1e6478; /* small blue text on light grounds, 6.7:1; also a fill with white text */
+  /* the light accent ON dark grounds: light green of the logo family, 12:1 on evergreen */
+  --gold-soft: #b7e3b0;
   --danger: #c4320a;
   --success: #1f8a4c;
 
@@ -468,11 +471,8 @@ h1 > .kicker {
 
 .btn--accent {
   --btn-bg: var(--accent);
-  --btn-fg: #1d1204;
-}
-
-.btn--accent:hover {
-  background: #c5903a;
+  /* who sits on the accent: white on the centre's red, the show's own ink on its accent */
+  --btn-fg: var(--accent-ink, #ffffff);
 }
 
 .btn--gold {
@@ -1140,10 +1140,21 @@ a.chip:hover {
 }
 
 .nav__item:hover .mega,
-.nav__item:focus-within .mega {
+.nav__item:focus-within .mega,
+.nav__item[data-keyboard-open] .mega {
   opacity: 1;
   visibility: visible;
   transform: none;
+}
+
+/* the script's dismiss flag must actually close the panel: it used to be written to the DOM
+   with no CSS behind it, so Escape only moved focus while the panel stayed open */
+.nav__item[data-dismissed] .mega,
+.nav__item[data-dismissed]:hover .mega,
+.nav__item[data-dismissed]:focus-within .mega {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
 }
 
 .mnav__ctas {
@@ -1331,6 +1342,28 @@ body.nav-open .mnav {
   overflow: hidden;
   background: var(--evergreen);
   color: rgba(255, 255, 255, 0.86);
+}
+
+/* the centre's signature tricolour (the show's own band under data-brand) across the top
+   of every dark section hero — the event hero has carried this from the start, now the
+   whole centre speaks it (docs/21 §5) */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 1;
+  height: 6px;
+  background: var(--brand-stripe);
+}
+
+/* a short tricolour rule under a headline on light panels (home hero and friends) */
+.brandrule {
+  display: block;
+  width: 96px;
+  height: 4px;
+  border: 0;
+  border-radius: 4px;
+  background: var(--brand-stripe);
 }
 
 .hero__media {

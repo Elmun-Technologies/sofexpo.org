@@ -35,7 +35,8 @@ const INDUSTRY_COLOR: Record<string, string> = {
   automotive: '#3c556e',
   ecommerce: '#6e4a63',
   education: '#2f5d76',
-  company: '#0f2b1c',
+  /* the centre's own note keeps the current deep brand green, not the retired evergreen */
+  company: '#123b25',
   guide: '#4b5350',
   market: '#4b5350',
 };

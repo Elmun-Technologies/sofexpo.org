@@ -384,7 +384,8 @@ a.feature:hover .feature__media img {
   }
   .btn--accent:hover,
   .btn--gold:hover {
-    box-shadow: 0 14px 30px -14px rgba(200, 136, 44, 0.7);
+    /* the glow follows the page's own accent instead of the retired bronze */
+    box-shadow: 0 14px 30px -14px color-mix(in srgb, var(--accent) 70%, transparent);
   }
 }
 

@@ -233,5 +233,9 @@ test('thank-you confirmation route is noindex and translated for every edition',
     const html = readFileSync(dist(`${locale}/thank-you/index.html`), 'utf8');
     assert.match(html, /name="robots" content="noindex/, `${locale} confirmation page must stay out of search results`);
     assert.ok(html.includes(`<h1 class="h1"`) && html.includes(heading), `${locale} confirmation heading exists`);
+    const title = html.match(/<title[^>]*>([\s\S]*?)<\/title>/)?.[1]?.trim() || '';
+    const description = html.match(/<meta name="description" content="([^"]*)"/)?.[1] || '';
+    assert.ok(title.length >= (locale === 'zh' ? 8 : 22), `${locale} page title should meet SEO length limits`);
+    assert.ok(description.length >= (locale === 'zh' ? 24 : 60), `${locale} meta description should meet SEO length limits`);
   }
 });

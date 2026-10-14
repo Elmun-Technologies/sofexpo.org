@@ -19,12 +19,21 @@ const copy = locale === 'ru'
       description: 'Request received. An account manager will contact you within 24 hours.',
       home: 'Back to home',
     };
+const metadata = locale === 'ru'
+  ? {
+      title: 'Заявка отправлена | SOF EXPO',
+      description: 'Ваша заявка поступила команде SOF EXPO. Менеджер свяжется с вами в течение 24 часов, чтобы обсудить запрос и дальнейшие шаги.',
+    }
+  : {
+      title: 'Request received | SOF EXPO',
+      description: 'Your request has reached the SOF EXPO team. An account manager will contact you within 24 hours to discuss the request and next steps.',
+    };
 ---
 
 <Base
   {locale}
-  title={copy.title}
-  description={copy.description}
+  title={metadata.title}
+  description={metadata.description}
   path="/thank-you/"
   noindex
 >

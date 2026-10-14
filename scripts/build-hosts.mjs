@@ -3,8 +3,8 @@
  * Build the site once per hostname.
  *
  * `npm run build:hosts -- --mode subdomain` produces:
- *   dist-hosts/sofexpo.org/            the centre: venue, hubs, calendar, editorial, legal
- *   dist-hosts/foodera.sofexpo.org/    FOODERA's cluster at the root of its own host
+ *   dist-hosts/sof-expo.com/            the centre: venue, hubs, calendar, editorial, legal
+ *   dist-hosts/foodera.sof-expo.com/    FOODERA's cluster at the root of its own host
  *   …
  * Each host gets its own robots.txt (own Sitemap line), its own sitemap and — on the root
  * host — a `_redirects` file so the legacy `/events/{slug}/…` URLs 301 to the new hostname

@@ -76,8 +76,8 @@ test('download metadata is consistent and cannot bless a placeholder as a final 
 
 test('download status applies only to explicitly owned assets, including query and fragment variants', () => {
   assert.ok(downloadInfo('/files/sof-expo-regulations.pdf'));
-  assert.deepEqual(downloadInfo('https://foodera.sofexpo.org/files/sof-expo-regulations.pdf?v=2#page=1'), downloadInfo('/files/sof-expo-regulations.pdf'));
-  assert.equal(downloadInfo('https://sofexpo.org.evil.example/files/sof-expo-regulations.pdf'), undefined);
+  assert.deepEqual(downloadInfo('https://foodera.sof-expo.com/files/sof-expo-regulations.pdf?v=2#page=1'), downloadInfo('/files/sof-expo-regulations.pdf'));
+  assert.equal(downloadInfo('https://sof-expo.com.evil.example/files/sof-expo-regulations.pdf'), undefined);
   assert.equal(downloadInfo('/files/not-registered.pdf'), undefined);
-  assert.equal(isSampleDownload('mailto:info@sofexpo.org'), false);
+  assert.equal(isSampleDownload('mailto:info@sof-expo.com'), false);
 });

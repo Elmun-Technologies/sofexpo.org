@@ -5,6 +5,10 @@ import { extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { BackendStore, LEAD_PRIORITIES, LEAD_STATUSES, USER_ROLES } from './db.mjs';
 import { createSecret, hashToken, normalizeEmail, validEmail, validPassword, verifyPassword } from './auth.mjs';
+import { loadTgBlogConfig } from './tgblog/config.mjs';
+import { TgBlogStore } from './tgblog/store.mjs';
+import { TgBlogSync } from './tgblog/sync.mjs';
+import { GitPublisher } from './tgblog/publish.mjs';
 
 const ADMIN_DIR = fileURLToPath(new URL('./admin/', import.meta.url));
 const PORTAL_DIR = fileURLToPath(new URL('./portal/', import.meta.url));
@@ -331,7 +335,7 @@ export function createLeadServer(options = {}) {
   const adminEmail = options.adminEmail ?? process.env.ADMIN_EMAIL ?? '';
   const adminPassword = options.adminPassword ?? process.env.ADMIN_PASSWORD ?? '';
   const dbPath = options.dbPath ?? process.env.LEAD_WEBHOOK_DB ?? '.data/sofexpo.sqlite';
-  const origins = parseOriginList(options.origins ?? process.env.LEAD_WEBHOOK_ORIGINS ?? process.env.LEAD_WEBHOOK_ORIGIN ?? 'https://sofexpo.org');
+  const origins = parseOriginList(options.origins ?? process.env.LEAD_WEBHOOK_ORIGINS ?? process.env.LEAD_WEBHOOK_ORIGIN ?? 'https://sof-expo.com');
   const allowedOrigins = new Set(origins.map(originOf).filter(Boolean));
   const wildcardOrigin = origins.includes('*');
   const trustProxy = options.trustProxy ?? process.env.LEAD_WEBHOOK_TRUST_PROXY === '1';
@@ -355,6 +359,23 @@ export function createLeadServer(options = {}) {
   const rateBuckets = new Map();
   const loginFailures = new Map();
   let workerActive = false;
+
+  /* Telegram → blog sync (docs/telegram-blog-sync.md): the canonical state lives in the
+     same SQLite file; markdown+media are materialized into the repo and a debounced git
+     push triggers the Cloudflare Pages rebuild — the static-site equivalent of
+     revalidation. Disabled unless token + webhook secret + channel id are all set. */
+  const tgBlogConfig = loadTgBlogConfig(options.tgBlog ?? {});
+  const tgBlogStore = tgBlogConfig.ready ? new TgBlogStore(store.db) : null;
+  const tgBlogPublisher = tgBlogConfig.ready ? new GitPublisher({
+    repoDir: tgBlogConfig.repoDir,
+    remote: tgBlogConfig.gitRemote,
+    branch: tgBlogConfig.gitBranch,
+    debounceMs: tgBlogConfig.pushDebounceMs,
+    pushEnabled: tgBlogConfig.gitPush,
+    deployHooks: tgBlogConfig.deployHooks,
+    gitRunner: tgBlogConfig.gitRunner,
+  }) : null;
+  const tgBlog = tgBlogStore ? new TgBlogSync({ config: tgBlogConfig, store: tgBlogStore, publisher: tgBlogPublisher }) : null;
 
   const getClientAddress = (req) => {
     if (trustProxy && req.headers['x-forwarded-for']) return String(req.headers['x-forwarded-for']).split(',')[0].trim().slice(0, 100);
@@ -624,6 +645,17 @@ export function createLeadServer(options = {}) {
       return sendJson(res, 202, { ok: true, stored });
     }
 
+    /* Telegram posts webhook. ACK fast (200) and process asynchronously: on any
+       processing failure we still return 200 so Telegram does not retry forever.
+       Only signature/secret and payload validation may answer non-200 (spec). */
+    if (tgBlog && req.method === 'POST' && path === tgBlogConfig.webhookPath) {
+      const secret = String(req.headers['x-telegram-bot-api-secret-token'] || '');
+      if (!secureEqual(secret, tgBlogConfig.secret)) throw new HttpError(401, 'Webhook kaliti noto‘g‘ri.');
+      const update = await readJson(req, 1_000_000);
+      void tgBlog.ingestUpdate(update);
+      return sendJson(res, 200, { ok: true });
+    }
+
     if (req.method === 'GET' && path === '/stats') {
       const session = getSession(req);
       const bearer = String(req.headers.authorization || '').replace(/^Bearer\s+/i, '');
@@ -891,6 +923,50 @@ export function createLeadServer(options = {}) {
         return;
       }
 
+      /* Telegram-synced blog posts: list + publish/unpublish/delete (Bot API never
+         reports deletions, so editorial control lives here — docs/telegram-blog-sync.md). */
+      if (req.method === 'GET' && path === '/api/admin/blog-posts') {
+        if (!tgBlog) throw new HttpError(503, 'Telegram blog sinxronizatsiyasi sozlanmagan.');
+        const status = cleanText(url.searchParams.get('status'), 20);
+        return sendJson(res, 200, {
+          ok: true,
+          ...tgBlog.listPosts({
+            page: clamp(url.searchParams.get('page'), 1, 1_000_000, 1),
+            limit: clamp(url.searchParams.get('limit'), 1, 100, 25),
+            status,
+          }),
+          sync: {
+            channel: tgBlogConfig.channelUsername ? `@${tgBlogConfig.channelUsername}` : tgBlogConfig.channelId,
+            mode: tgBlogConfig.mode,
+            collection: tgBlogConfig.collection,
+            locale: tgBlogConfig.locale,
+            gitPush: tgBlogConfig.gitPush,
+          },
+        });
+      }
+
+      const blogMatch = path.match(/^\/api\/admin\/blog-posts\/(\d{1,10})(?:\/(publish|unpublish))?$/);
+      if (blogMatch) {
+        if (!tgBlog) throw new HttpError(503, 'Telegram blog sinxronizatsiyasi sozlanmagan.');
+        const postId = Number(blogMatch[1]);
+        if (req.method === 'POST' && blogMatch[2]) {
+          verifyCsrf(req, session);
+          const status = blogMatch[2] === 'publish' ? 'published' : 'unpublished';
+          const post = await tgBlog.setPostStatus(postId, status, session.email);
+          if (!post) throw new HttpError(404, 'Maqola topilmadi.');
+          store.audit(session.email, `blog.${blogMatch[2]}`, 'tg_blog_post', String(postId), { slug: post.slug });
+          return sendJson(res, 200, { ok: true, post: { id: post.id, slug: post.slug, status: post.status } });
+        }
+        if (req.method === 'DELETE' && !blogMatch[2]) {
+          requireAdmin(session);
+          verifyCsrf(req, session);
+          const post = await tgBlog.deletePost(postId, session.email);
+          if (!post) throw new HttpError(404, 'Maqola topilmadi.');
+          store.audit(session.email, 'blog.delete', 'tg_blog_post', String(postId), { slug: post.slug });
+          return sendJson(res, 200, { ok: true, removed: post.removed });
+        }
+      }
+
       const leadMatch = path.match(/^\/api\/admin\/leads\/([a-f0-9-]{36})(?:\/(notes))?$/i);
       if (leadMatch) {
         const leadId = leadMatch[1];
@@ -1047,6 +1123,8 @@ export function createLeadServer(options = {}) {
   server.requestTimeout = 20_000;
   server.keepAliveTimeout = 5_000;
   server.backendStore = store;
+  server.tgBlog = tgBlog;
+  server.tgBlogConfig = tgBlogConfig;
   server.processOutbox = processOutbox;
   server.listenBackend = () => new Promise((resolve, reject) => {
     server.once('error', reject);
@@ -1069,6 +1147,7 @@ export function createLeadServer(options = {}) {
   server.on('close', () => {
     clearInterval(workerTimer);
     clearInterval(retentionTimer);
+    if (tgBlogPublisher) void tgBlogPublisher.stop();
   });
   return server;
 }

@@ -7,7 +7,7 @@
  * otherwise it would point at a page that was never built. The SEO audit already fails on a
  * relative link to a missing page, so a missed case cannot ship silently.
  *
- * usage: node scripts/rewrite-host-links.mjs --dist dist --host sofexpo.org --mode subdomain
+ * usage: node scripts/rewrite-host-links.mjs --dist dist --host sof-expo.com --mode subdomain
  */
 import { readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";

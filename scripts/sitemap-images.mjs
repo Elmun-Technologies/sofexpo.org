@@ -4,7 +4,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 const ROOT = process.argv[2] || 'dist';
-const SITE = (process.env.SITE || 'https://sofexpo.org').replace(/\/+$/, '');
+const SITE = (process.env.SITE || 'https://sof-expo.com').replace(/\/+$/, '');
 const file = join(ROOT, 'sitemap-0.xml');
 if (existsSync(file)) {
   let src = readFileSync(file, 'utf8');

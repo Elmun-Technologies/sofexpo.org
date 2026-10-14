@@ -9,7 +9,7 @@
  * not a template rewrite.
  *
  * Modes:
- *  'alias'     — everything on `sofexpo.org`; vanity subdomains (if registered) are pure 301s
+ *  'alias'     — everything on `sof-expo.com`; vanity subdomains (if registered) are pure 301s
  *                to `/events/{slug}/`. DEFAULT: output is byte-identical to the single-host build.
  *  'subdomain' — each recurring exhibition owns a hostname. Its 4-page cluster lives there
  *                (`/`, `/exhibitors/`, `/visitors/`, `/program/`); the centre keeps the venue,
@@ -79,7 +79,7 @@ export const EVENT_HOSTS: HostDef[] = map.hosts as HostDef[];
 
 export const ALL_HOSTS: HostDef[] = allHosts() as HostDef[];
 
-/** Host this build produces, e.g. `sofexpo.org` or `foodera.sofexpo.org`. */
+/** Host this build produces, e.g. `sof-expo.com` or `foodera.sof-expo.com`. */
 export const CURRENT_HOST: string = (() => {
   const raw = envValue("SITE") || `https://${ROOT_HOST}/`;
   return raw.replace(/^https?:\/\//, "").replace(/\/+$/, "") || ROOT_HOST;

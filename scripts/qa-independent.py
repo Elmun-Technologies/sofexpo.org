@@ -5,7 +5,7 @@ import json, os, re, statistics, sys, hashlib
 from collections import Counter, defaultdict
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # repo root, wherever it is checked out
-HOSTS = {'sofexpo.org (alias, dist/)': f'{ROOT}/dist'}
+HOSTS = {'sof-expo.com (alias, dist/)': f'{ROOT}/dist'}
 _shared = f'{ROOT}/dist-hosts'
 if os.path.isdir(_shared):  # absent until `npm run build:hosts` has been run once
     for h in sorted(os.listdir(_shared)):
@@ -131,7 +131,7 @@ for label, d in HOSTS.items():
                         findings['relative link resolves on this host'].append(f'{label} {url} → {target}')
                     elif target and not target.endswith('/') and not os.path.splitext(target)[1]:
                         findings['trailing slash on internal links'].append(f'{label} {url} → {target}')
-                elif href.startswith('https://') and 'sofexpo.org' in href:
+                elif href.startswith('https://') and 'sof-expo.com' in href:
                     tgt = re.sub(r'https?://', '', href.split('#')[0].split('?')[0])
                     host, _, path = tgt.partition('/')
                     dd = os.path.join(ROOT, 'dist-hosts', host)

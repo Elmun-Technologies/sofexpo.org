@@ -11,7 +11,7 @@ O'rganilgan saytlar: [Gulfood](https://www.gulfood.com/),
 [WorldFood Istanbul](https://worldfood-istanbul.com/),
 [Summer Fancy Food Show](https://www.specialtyfood.com/fancy-food-shows/summer/).
 
-> **Eslatma.** Bu hujjatda "biz" = SOF EXPO Samarkand sayti (`sofexpo.org`) va uning
+> **Eslatma.** Bu hujjatda "biz" = SOF EXPO Samarkand sayti (`sof-expo.com`) va uning
 > oziq-ovqat ko'rgazmasi **FOODERA EXPO**. Takliflarning aksari FOODERA uchun yozilgan,
 > lekin mexanika bir xil bo'lgani uchun BUILDPRO / AGROPRO / WORLD EDU / ECOM & RETAIL ga
 > ham ko'chiriladi.
@@ -277,7 +277,7 @@ FOODEX patternini to'g'ridan-to'g'ri moslashtirish:
 - `src/data/events.ts` → `ExpoEvent` ga yangi maydon: `buyerProgram?: { intro, steps[{label,date,text}], privileges[], deadline, formHref }` (RU/EN).
 - Yangi sahifa: `src/data/pages/event-pages.ts` ga `"foodera-expo/buyers"` yozuvi
   (path `/events/foodera-expo/buyers/`), `src/data/host-map.json` → `sections` ga `"buyers"`
-  qo'shiladi (subdomen rejimida `foodera.sofexpo.org/buyers/` bo'lib chiqadi).
+  qo'shiladi (subdomen rejimida `foodera.sof-expo.com/buyers/` bo'lib chiqadi).
 - Bloklar: `steps` (raqamli jadval) + `featureGrid` (imtiyozlar) + `form` (LeadForm,
   `conversion.ts` da yangi forma turi `buyer-program`) + `faq`.
 - `EventNav.astro` ga 5-tugma qo'shiladi; `docs/03-link-map.md` va `check-hosts` avtomatik
@@ -463,7 +463,7 @@ Quyidagilar kodda qilingan — `npm run check` va `npm run check:hosts` yashil.
 | 6 | **`award`** tipi + **`/events/<slug>/award/` sahifasi** — 4 nominatsiya, muddatlar, sovrin, ariza | `event-pages.ts` |
 | 7 | Nav'da 5- va 6-tugma — faqat ma'lumoti bor ko'rgazmalarda paydo bo'ladi | `EventNav.astro` |
 | 8 | Har bir sahifa uchun alohida CTA matni (`buyers`, `award`) | `EventPage.astro` |
-| 9 | `host-map.json` → `sections` ga `buyers`, `award` qo'shildi; subdomen rejimida `foodera.sofexpo.org/buyers/` | `src/data/host-map.json` |
+| 9 | `host-map.json` → `sections` ga `buyers`, `award` qo'shildi; subdomen rejimida `foodera.sof-expo.com/buyers/` | `src/data/host-map.json` |
 | 10 | Ko'chirilgan sahifalar uchun 301 faqat haqiqatan qurilgan bo'limlarga yoziladi | `scripts/host-rules.mjs` (`movedRedirectsAsync`) |
 | 11 | Tarjimalar: yangi 118 ta satr × zh/tr/uz | `src/i18n/catalogs/*.json` |
 
@@ -508,11 +508,11 @@ yoziladi, shablonlashtirilmaydi. Segment sahifalari — *direktoriya oilasi*: re
 matn har bir segmentga alohida yozilgan, takrorlanuvchi paragraf yo'q (`page-audit` buni
 tekshiradi va 2 marta ogohlantirdi — kiker va CTA matni segment nomi bilan farqlanadigan
 qilindi). Sahifalar **har doim markaz domenida** qoladi: subdomen rejimida
-`foodera.sofexpo.org` dagi havolalar `localize()` orqali mutlaq (`https://sofexpo.org/…`)
+`foodera.sof-expo.com` dagi havolalar `localize()` orqali mutlaq (`https://sof-expo.com/…`)
 bo'ladi — direktoriya ikkilanmaydi, havola uzilmaydi.
 
 **Tekshiruv:** `npm run check` yashil (356 sahifa, SEO audit 0 muammo, tarjimalar
-3681 × 2, 28/28 test). `npm run check:hosts` yashil: 6 host, `sofexpo.org` 422 sahifa
+3681 × 2, 28/28 test). `npm run check:hosts` yashil: 6 host, `sof-expo.com` 422 sahifa
 (+60 = 12 × 5), 27 950 mutlaq + 42 822 nisbiy havola tekshirildi.
 
 ## 13. Amalga oshirildi — 3-partiya (2026-09-29): post-show report
@@ -535,7 +535,7 @@ qiladi). Bu ro'yxat — P0-5 ning asl og'ir qismi: hisobot shabloni koddan ko'ra
 *tashkilotchining kun tartibi*.
 
 **Tekshiruv:** `npm run check` yashil (376 sahifa, SEO 0 muammo, 3700 × 2 tarjima,
-28/28 test). `npm run check:hosts` yashil: `sofexpo.org` 447 sahifa (+25 = 5 × 5),
+28/28 test). `npm run check:hosts` yashil: `sof-expo.com` 447 sahifa (+25 = 5 × 5),
 28 450 mutlaq + 45 202 nisbiy havola.
 
 ### Segment direktoriyasi: barcha 5 ta ko'rgazma (2026-09-30)

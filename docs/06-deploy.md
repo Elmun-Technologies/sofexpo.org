@@ -19,16 +19,16 @@
 | Build command          | `node scripts/build-one-host.mjs <hostname>`                  |
 | Build output directory | `dist`                                                        |
 | Environment variables  | `PUBLIC_HOSTS_MODE=subdomain` (SITE подставляет сам скрипт)   |
-| Custom domains         | `sofexpo.org`, `foodera.sofexpo.org`, … (по одному на проект) |
+| Custom domains         | `sof-expo.com`, `foodera.sof-expo.com`, … (по одному на проект) |
 
 Готовые значения для 5 поддоменов:
 
-    node scripts/build-one-host.mjs foodera.sofexpo.org
-    node scripts/build-one-host.mjs buildpro.sofexpo.org
-    node scripts/build-one-host.mjs agropro.sofexpo.org
-    node scripts/build-one-host.mjs worldedu.sofexpo.org
-    node scripts/build-one-host.mjs ecomretail.sofexpo.org
-    node scripts/build-one-host.mjs sofexpo.org
+    node scripts/build-one-host.mjs foodera.sof-expo.com
+    node scripts/build-one-host.mjs buildpro.sof-expo.com
+    node scripts/build-one-host.mjs agropro.sof-expo.com
+    node scripts/build-one-host.mjs worldedu.sof-expo.com
+    node scripts/build-one-host.mjs ecomretail.sof-expo.com
+    node scripts/build-one-host.mjs sof-expo.com
 
 Центральный проект дополнительно кладёт `dist/_redirects` (301 на поддомены + правило
 корня) — Pages их подхватывает автоматически, руками ничего не вклеивается.
@@ -43,9 +43,9 @@
 **Redirect Rule** (Cloudflare Rules → Redirect Rules) — она сработает раньше `_redirects`:
 
 ```
-Expression:  (http.host in {"sofexpo.org","www.sofexpo.org","foodera.sofexpo.org",
-                            "buildpro.sofexpo.org","agropro.sofexpo.org",
-                            "worldedu.sofexpo.org","ecomretail.sofexpo.org"}
+Expression:  (http.host in {"sof-expo.com","www.sof-expo.com","foodera.sof-expo.com",
+                            "buildpro.sof-expo.com","agropro.sof-expo.com",
+                            "worldedu.sof-expo.com","ecomretail.sof-expo.com"}
               and http.request.uri.path == "/"
               and http.request.headers.accept_language["ru"] =~ "ru")
 Action:      Static Redirect
@@ -62,14 +62,14 @@ Status code: 301 (Permanent)
 матрицы, шесть каталогов, ноль лимитов.
 
     npm run check:hosts          # собирает все 6 хостов в dist-hosts/<host>/ и прогоняет аудиты
-    rsync -a --delete dist-hosts/sofexpo.org/            /srv/sites/centre/
-    rsync -a --delete dist-hosts/foodera.sofexpo.org/    /srv/sites/foodera/
+    rsync -a --delete dist-hosts/sof-expo.com/            /srv/sites/centre/
+    rsync -a --delete dist-hosts/foodera.sof-expo.com/    /srv/sites/foodera/
     # …по одному на хост
 
 Caddy (автоматический TLS, wildcard не обязателен — сертификат на каждый sub.domain бесплатно):
 
-    *.sofexpo.org {
-        @foodera host foodera.sofexpo.org
+    *.sof-expo.com {
+        @foodera host foodera.sof-expo.com
         handle @foodera { root * /srv/sites/foodera; try_files {path}/ {path}/index.html; file_server }
         handle { root * /srv/sites/centre; try_files {path}/ {path}/index.html; file_server }
     }
@@ -79,17 +79,17 @@ nginx — по одному `server`-блоку на `server_name`, `root` на 
 
     location = / { return 301 /en/; }
 
-Остальные 301 (переехавшие пути) лежат в `dist-hosts/sofexpo.org/_redirects` (`from to 301`)
+Остальные 301 (переехавшие пути) лежат в `dist-hosts/sof-expo.com/_redirects` (`from to 301`)
 и конвертируются на месте (строку корня пропустить — она уже в `location = /`):
 
-    awk '$1 != "/" {print "rewrite ^" $1 "$ " $2 " permanent;"}' dist-hosts/sofexpo.org/_redirects
+    awk '$1 != "/" {print "rewrite ^" $1 "$ " $2 " permanent;"}' dist-hosts/sof-expo.com/_redirects
 
 ## 3. DNS
 
 | Тип     | Имя                                                        | Значение                                                            |
 | ------- | ---------------------------------------------------------- | ------------------------------------------------------------------- |
 | CNAME   | `foodera`, `buildpro`, `agropro`, `worldedu`, `ecomretail` | на цель Pages (`sofexpo-foodera.pages.dev` и т.д.) или A-запись VPS |
-| A/ALIAS | `sofexpo.org`, `www`                                       | как сейчас                                                          |
+| A/ALIAS | `sof-expo.com`, `www`                                       | как сейчас                                                          |
 | AAAA    | —                                                          | только если хостинг отдаёт IPv6                                     |
 
 TTL на время переключения — 300 с, потом поднять.
@@ -99,17 +99,17 @@ TTL на время переключения — 300 с, потом поднят
 1. Собрать и проверить всё: `npm run check:hosts` (должно быть «✓ hosts agree» + 6 зелёных аудитов).
 2. Залить/задеплоить **сначала поддомены**, потом центр: иначе первые часы центр будет ссылаться
    на несуществующие хосты.
-3. Проверить по одному URL каждого хоста: `curl -sI https://foodera.sofexpo.org/ru/` → 200,
-   `curl -s https://sofexpo.org/ru/events/foodera-expo/ | grep canonical` → canonical на
-   `foodera.sofexpo.org`.
-4. Проверить 301: `curl -sI https://sofexpo.org/ru/events/foodera-expo/exhibitors/` → 301 на
-   `https://foodera.sofexpo.org/ru/exhibitors/`.
-5. Search Console: domain-property `sofexpo.org` + по URL-prefix на каждый поддомен; отправить
+3. Проверить по одному URL каждого хоста: `curl -sI https://foodera.sof-expo.com/ru/` → 200,
+   `curl -s https://sof-expo.com/ru/events/foodera-expo/ | grep canonical` → canonical на
+   `foodera.sof-expo.com`.
+4. Проверить 301: `curl -sI https://sof-expo.com/ru/events/foodera-expo/exhibitors/` → 301 на
+   `https://foodera.sof-expo.com/ru/exhibitors/`.
+5. Search Console: domain-property `sof-expo.com` + по URL-prefix на каждый поддомен; отправить
    `https://{host}/sitemap-index.xml` (у каждого свой — генерируется сборкой).
 6. robots каждого хоста уже корректен (`Sitemap:` и `Host:` подставлены по hostname'у).
 7. GA4: добавить измерение `hostname`, проверить, что `?event={slug}` в форме доживает до
    `page_location`. Заявки с поддомена не должны склеиться с центром.
-8. Только после этого — печать/баннеры с коротким адресом `foodera.sofexpo.org`.
+8. Только после этого — печать/баннеры с коротким адресом `foodera.sof-expo.com`.
 
 ## 5. Чего не делать
 
@@ -118,7 +118,7 @@ TTL на время переключения — 300 с, потом поднят
   архив и ноль ссылочного веса).
 - Не ставить `noindex` на главную хоста выставки — это единственная страница, которая должна
   ранжироваться по «{бренд} 2027».
-- Не плодить `www.foodera.sofexpo.org`: не добавляем в DNS — дешевле, чем редирект.
+- Не плодить `www.foodera.sof-expo.com`: не добавляем в DNS — дешевле, чем редирект.
 - Не включать локаль `uz`, пока клиент не подтвердит, что тексты на узбекском будет читать
   редактор (см. `docs/02` §3): структура к этому готова, контент — нет.
 - Не править `dist/` руками: всё, что должно измениться, меняется в `src/data/host-map.json`
@@ -126,6 +126,6 @@ TTL на время переключения — 300 с, потом поднят
 
 ## 6. Откат
 
-Один флаг: `PUBLIC_HOSTS_MODE=alias` → одна сборка, всё на `sofexpo.org`, поддомены отдаём 301
+Один флаг: `PUBLIC_HOSTS_MODE=alias` → одна сборка, всё на `sof-expo.com`, поддомены отдаём 301
 обратно (правила есть: `dist-hosts/redirects.vanity.md`). Данные и тексты при этом не меняются
 вообще — архитектура хостов отделена от контента специально.

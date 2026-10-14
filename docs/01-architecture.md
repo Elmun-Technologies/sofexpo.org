@@ -22,7 +22,7 @@ up to six hostnames from the same build (docs/05-subdomains.md).
 ## 2. Repository layout
 
 ```
-sofexpo.org/
+sof-expo.com/
 ├── astro.config.mjs        # static output, site URL, i18n, sitemap, @ alias, lastmod
 ├── tsconfig.json           # strict, paths: @/* → src/*
 ├── package.json            # dev / build / preview / audit:seo
@@ -109,7 +109,7 @@ Notes for whoever deploys:
 - Host any static origin with `/404.html` fallback **or** keep the folder-style output
   (`dist/ru/about/index.html`) — trailing-slash URLs resolve as directories on every host.
 - `site` in `astro.config.mjs` reads `SITE` from the environment and falls back to
-  `https://sofexpo.org/`. It is the single source of absolute URLs (canonical, OG, JSON-LD,
+  `https://sof-expo.com/`. It is the single source of absolute URLs (canonical, OG, JSON-LD,
   sitemap, RSS) **per host**: a build produces exactly one hostname, so a multi-host deploy is
   a loop of builds, not a config tree. Hostnames themselves live in `src/data/host-map.json`,
   which both the app (`src/data/hosts.ts`) and the Node scripts (`scripts/host-rules.mjs`)

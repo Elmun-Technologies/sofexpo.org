@@ -47,7 +47,7 @@ export function localizedURL(value, locale) {
     value = `${hostedTour[1]}/${tourLocale}/${hostedTour[2]}${hostedTour[3] ?? ''}`;
   }
   // Only owned locale-prefixed URLs; external assets, downloads and query values stay intact.
-  return value.replace(/(^|https?:\/\/(?:[a-z0-9-]+\.)?sofexpo\.org)\/en(?=\/|$|[?#])/g, `$1/${locale}`);
+  return value.replace(/(^|https?:\/\/(?:[a-z0-9-]+\.)?sof-expo\.com)\/en(?=\/|$|[?#])/g, `$1/${locale}`);
 }
 function dynamicText(text, locale, translate) {
   if (locale === 'uz') return dynamicUz(text, translate);

@@ -27,5 +27,5 @@ User-agent: meta-externalagent
 Allow: /
 Disallow: /*?utm_
 
-Sitemap: https://sofexpo.org/sitemap-index.xml
-# LLM-readable summary of the site: https://sofexpo.org/llms.txt
+Sitemap: https://sof-expo.com/sitemap-index.xml
+# LLM-readable summary of the site: https://sof-expo.com/llms.txt

@@ -21,7 +21,7 @@
     $$('.locale-select').forEach((select) => { select.value = state.locale; });
     $$('[data-public-link]').forEach((link) => {
       const page = link.dataset.publicLink === 'privacy' ? 'legal/privacy/' : '';
-      link.href = `https://sofexpo.org/${state.locale}/${page}`;
+      link.href = `https://sof-expo.com/${state.locale}/${page}`;
     });
     setAuthMode(state.authMode);
     if (state.events.length) populateEvents(state.events);

@@ -14,7 +14,7 @@ const dist = (path) => fileURLToPath(new URL(`../dist/${path}`, import.meta.url)
 const load = (path, { scripts = true, query = '' } = {}) => {
   const html = readFileSync(dist(path), 'utf8');
   const dom = new JSDOM(html, {
-    url: `https://sofexpo.org/${path.replace(/index\.html$/, '')}${query}`,
+    url: `https://sof-expo.com/${path.replace(/index\.html$/, '')}${query}`,
     runScripts: scripts ? 'dangerously' : undefined,
     // jsdom has no matchMedia; the header script calls it while the page parses
     beforeParse(window) {

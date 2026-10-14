@@ -12,6 +12,9 @@ const post = z.object({
   event: z.string().optional(),
   readingMinutes: z.number().default(4),
   draft: z.boolean().default(false),
+  // posts mirrored from the Telegram channel keep a "Read on Telegram" backlink
+  // (written by the tg-blog sync; never edited by hand) — docs/telegram-blog-sync.md
+  telegram: z.string().optional(),
 });
 
 export const collections = {

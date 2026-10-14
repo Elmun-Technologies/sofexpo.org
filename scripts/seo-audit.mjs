@@ -11,9 +11,9 @@
 import { readFileSync, existsSync, statSync, readdirSync } from "node:fs";
 import { join, relative, dirname, resolve } from "node:path";
 
-const SITE_URL = process.env.SITE_URL || "https://sofexpo.org";
+const SITE_URL = process.env.SITE_URL || "https://sof-expo.com";
 const ROOT = process.argv[2] ?? "dist";
-/** `--host foodera.sofexpo.org --peers dist-hosts`: count inbound links that arrive from the
+/** `--host foodera.sof-expo.com --peers dist-hosts`: count inbound links that arrive from the
  *  sibling hosts of a multi-host build, so a page linked only from the centre is not an orphan. */
 const argOf = (name, fallback = null) => {
   const i = process.argv.indexOf(`--${name}`);

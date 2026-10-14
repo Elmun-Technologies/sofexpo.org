@@ -13,9 +13,9 @@
  *   5. run the host-aware SEO audit before the output can be published
  *
  * usage:
- *   node scripts/build-one-host.mjs sofexpo.org              # the centre
- *   node scripts/build-one-host.mjs foodera.sofexpo.org      # a show hostname
- *   node scripts/build-one-host.mjs foodera.sofexpo.org --mode alias   # single-host build
+ *   node scripts/build-one-host.mjs sof-expo.com              # the centre
+ *   node scripts/build-one-host.mjs foodera.sof-expo.com      # a show hostname
+ *   node scripts/build-one-host.mjs foodera.sof-expo.com --mode alias   # single-host build
  */
 import { execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";

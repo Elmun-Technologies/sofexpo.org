@@ -12,9 +12,9 @@ Three permanent nodes are emitted on **every** indexable page (`Base.astro` buil
 
 | `@id`                               | Type               | Role                                                                                                                            |
 | ----------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
-| `https://sofexpo.org/#website`      | `WebSite`          | the site itself; `publisher` → `#organization`; `inLanguage: [ru, en]`                                                          |
-| `https://sofexpo.org/#organization` | `Organization`     | ООО «RESOF EXPO» — legal name, phone, e-mail, address, `sameAs` (IG/FB/TG), `subOrganization` → `#venue`                        |
-| `https://sofexpo.org/#venue`        | `ExhibitionCenter` | the physical centre: geo, `hasMap`, `areaServed`, `amenityFeature` (4 400 m², 5 000 m², 700 kW, Wi-Fi, parking, 350 café seats) |
+| `https://sof-expo.com/#website`      | `WebSite`          | the site itself; `publisher` → `#organization`; `inLanguage: [ru, en]`                                                          |
+| `https://sof-expo.com/#organization` | `Organization`     | ООО «RESOF EXPO» — legal name, phone, e-mail, address, `sameAs` (IG/FB/TG), `subOrganization` → `#venue`                        |
+| `https://sof-expo.com/#venue`        | `ExhibitionCenter` | the physical centre: geo, `hasMap`, `areaServed`, `amenityFeature` (4 400 m², 5 000 m², 700 kW, Wi-Fi, parking, 350 café seats) |
 
 `WebPage` on each page carries `isPartOf: #website` and `breadcrumb: #breadcrumbs`, so the
 page nodes join the same entity graph instead of floating free.
@@ -43,7 +43,7 @@ stand or ticket prices in markup that could not be matched on the page.
   <title>FOODERA EXPO 2026 — выставка продуктов и напитков, Самарканд</title>
   <meta name="description" content="…" />
   <!-- authored per page, per locale -->
-  <link rel="canonical" href="https://sofexpo.org/ru/events/foodera-expo/" />
+  <link rel="canonical" href="https://sof-expo.com/ru/events/foodera-expo/" />
   <meta
     name="robots"
     content="index,follow,max-image-preview:large,max-snippet:-1"
@@ -58,7 +58,7 @@ stand or ticket prices in markup that could not be matched on the page.
   <meta property="og:locale:alternate" content="en_US" />
   <meta
     property="og:image"
-    content="https://sofexpo.org/images/event-foodera.jpg"
+    content="https://sof-expo.com/images/event-foodera.jpg"
   />
   <meta property="og:image:width|height|alt" … />
   <!-- 1200×630, alt = page title -->
@@ -214,7 +214,7 @@ h2, body — failing the build when a money query drops below 70. A hero kicker 
 2. Validate one event page and one article in the Rich Results test (expect
    `ExhibitionEvent` + `BreadcrumbList`) and in the Schema.org validator (expect 0 warnings
    on the `@graph`).
-3. `curl -sI https://sofexpo.org/ru/about` → confirm the host (not the app) canonicalises to
+3. `curl -sI https://sof-expo.com/ru/about` → confirm the host (not the app) canonicalises to
    `/ru/about/`; if it 404s folder-less URLs, add the trailing-slash rewrite.
 4. Replace `public/files/*.pdf` with the real documents (same names), rerun
    `npm run build && npm run audit:seo`.

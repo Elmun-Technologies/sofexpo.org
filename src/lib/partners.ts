@@ -16,6 +16,8 @@
  * placeholder that renders until the real file is added.
  */
 
+import logoDims from '@/data/partner-logo-dims.json';
+
 export type PartnerKind = 'org' | 'media' | 'hotel' | 'service' | 'state';
 
 export interface Partner {
@@ -42,7 +44,6 @@ const SHARED: Partner[] = [
   /* Real artwork pending — the client provides the logos (docs/08 §7 Q4). */
   { id: 'reikartz', kind: 'hotel', show: 'site', hasLogo: true, name: { ru: 'Рекарц (Reikartz)', en: 'Reikartz' }, note: { ru: 'отель-партнёр · −15%', en: 'partner hotel · −15%' } },
   { id: 'ticketon', kind: 'service', show: 'site', name: { ru: 'Ticketon.uz', en: 'Ticketon.uz' }, note: { ru: 'билетный оператор', en: 'ticketing' } },
-  { id: 'uzexpo', kind: 'org', show: 'site', name: { ru: 'UzExpoCentre', en: 'UzExpoCentre' }, note: { ru: 'отраслевой партнёр', en: 'industry partner' } },
   { id: 'cci-uz', kind: 'state', show: 'site', name: { ru: 'Торгово-промышленная палата', en: 'Chamber of Commerce & Industry' } },
   { id: 'hotel-partner', kind: 'hotel', show: 'site', name: { ru: 'Hilton Samarkand', en: 'Hilton Samarkand' }, note: { ru: 'рекомендованный отель', en: 'recommended hotel' } },
   /* The centre's own partner list, as published by the organiser (sofexpo.uz, 2026).
@@ -91,10 +92,28 @@ export function partnersForEvent(slug?: string | null): Partner[] {
   return partners.filter((p) => p.show === 'event' && p.event === slug);
 }
 
+/* trimmed size of every logo file — written by scripts/build-partner-logos.mjs */
+const DIMS = logoDims as Record<string, { w: number; h: number; ext: 'webp' | 'svg' }>;
+
 export function partnerSrc(id: string): string {
-  /* 2026-10 (docs/18): the logos arrived as raster files; they are trimmed and stored as
-     112px-high WebP (2x of the 56px they are shown at), 1–17 KB each */
-  return `/images/partners/${id}.webp`;
+  /* the masters (images/partner-masters) are cut free of their plates and trimmed to the
+     ink by `npm run logos:partners`; a vector master stays an SVG */
+  return `/images/partners/${id}.${DIMS[id]?.ext ?? 'webp'}`;
+}
+
+/**
+ * Optical sizing for a logo wall. Logos of one height look wildly different — an 8:1
+ * newspaper masthead turns into a ribbon, a square badge into a stamp — so every logo gets
+ * the same visible AREA instead, then is held inside the cell's box:
+ *   h = √(area / ratio), w = h · ratio, clamped to maxW × maxH.
+ */
+export function logoBox(id: string, { area = 7600, maxW = 180, maxH = 68 }: { area?: number; maxW?: number; maxH?: number } = {}) {
+  const d = DIMS[id];
+  const ratio = d ? d.w / d.h : 2.5;
+  let h = Math.min(maxH, Math.sqrt(area / ratio));
+  let w = h * ratio;
+  if (w > maxW) { w = maxW; h = w / ratio; }
+  return { width: Math.round(w), height: Math.round(h) };
 }
 
 /**

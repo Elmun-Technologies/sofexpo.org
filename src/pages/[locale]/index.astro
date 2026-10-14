@@ -7,7 +7,7 @@ import { upcoming, events } from '@/data/events';
 import { CURRENT_EVENT } from '@/data/hosts';
 import { eventPages } from '@/data/pages/event-pages';
 import { neighbours } from '@/data/markets';
-import { homeLogos, partnerSrc } from '@/lib/partners';
+import { homeLogos, partnerSrc, logoBox } from '@/lib/partners';
 import EventPage from '@/components/EventPage.astro';
 import { getCollection } from 'astro:content';
 import { rootJsonLd, breadcrumbJsonLd, itemListJsonLd, faqJsonLd } from '@/lib/seo';
@@ -354,7 +354,11 @@ const jsonLd = [
       <a class="pill" href={P('/about/partners/')}>{copy.logosCta}</a>
     </div>
     <ul class="h-logos__grid">
-      {homeLogos.map((l) => <li><img src={partnerSrc(l.id)} alt={ru ? `Логотип ${l.name}` : `${l.name} logo`} loading="lazy" decoding="async" height="56" /></li>)}
+      {homeLogos.map((l) => {
+        /* optical sizing: equal visible area for wide and square logos (lib/partners.ts) */
+        const box = logoBox(l.id, { area: 8400, maxW: 168, maxH: 76 });
+        return <li><img src={partnerSrc(l.id)} alt={ru ? `Логотип ${l.name}` : `${l.name} logo`} loading="lazy" decoding="async" width={box.width} height={box.height} /></li>;
+      })}
     </ul>
   </section>
 
@@ -1027,10 +1031,9 @@ const jsonLd = [
     border-bottom: 1px solid var(--cream);
   }
   .h-logos__grid img {
-    width: auto;
-    max-width: 80%;
-    max-height: 56px;
-    object-fit: contain;
+    /* the size comes from logoBox() via width/height; narrow cells scale it down evenly */
+    max-width: 100%;
+    height: auto;
   }
 
   /* 8 · news */

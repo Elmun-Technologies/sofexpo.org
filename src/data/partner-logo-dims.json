@@ -1,0 +1,62 @@
+{
+  "agromir": {
+    "w": 302,
+    "h": 112,
+    "ext": "webp"
+  },
+  "artel": {
+    "w": 156,
+    "h": 59,
+    "ext": "webp"
+  },
+  "grand-plaza": {
+    "w": 93,
+    "h": 112,
+    "ext": "webp"
+  },
+  "led-master": {
+    "w": 112,
+    "h": 112,
+    "ext": "webp"
+  },
+  "reikartz": {
+    "w": 109,
+    "h": 112,
+    "ext": "webp"
+  },
+  "sag": {
+    "w": 320,
+    "h": 106,
+    "ext": "webp"
+  },
+  "samarkand-region": {
+    "w": 320,
+    "h": 88,
+    "ext": "webp"
+  },
+  "sellers-association": {
+    "w": 70,
+    "h": 112,
+    "ext": "webp"
+  },
+  "sibeco": {
+    "w": 320,
+    "h": 91,
+    "ext": "webp"
+  },
+  "tashkent-times": {
+    "w": 320,
+    "h": 38,
+    "ext": "webp"
+  },
+  "uza": {
+    "w": 166,
+    "h": 92,
+    "ext": "svg"
+  },
+  "uzauto-motors": {
+    "w": 268,
+    "h": 112,
+    "ext": "webp"
+  }
+}

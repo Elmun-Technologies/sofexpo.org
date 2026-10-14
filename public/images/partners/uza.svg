@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 166 92" role="img" aria-label="UzA">
+  <!-- UzA mark redrawn in vector: the received raster was a 114px navy square holding a
+       ~70px mark, too small to show sharply. Same composition — white letters over the red
+       disc on the agency navy; the small tagline is left out, it is unreadable at wall size. Swap for the agency's official vector when it arrives. -->
+  <rect width="166" height="92" rx="10" fill="#112a56"/>
+  <circle cx="112" cy="46" r="34" fill="#d3131b"/>
+  <g fill="none" stroke="#fff" stroke-width="7" stroke-linecap="square" stroke-linejoin="miter">
+    <path d="M24 31v19a12 12 0 0 0 24 0V31"/>
+    <path d="M60 31h24L60 63h24"/>
+    <path d="M96 63l13-32 13 32"/>
+  </g>
+  <path d="M109 53l5 10h-10z" fill="#fff"/>
+</svg>

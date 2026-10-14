@@ -110,7 +110,7 @@ for (const host of hosts) {
         continue;
       if (/^https?:\/\//.test(href)) {
         const u = new URL(href);
-        if (!u.hostname.endsWith("sofexpo.org") && u.hostname !== map.root)
+        if (!u.hostname.endsWith("sof-expo.com") && u.hostname !== map.root)
           continue;
         if (!known.has(u.hostname)) {
           warn(`${shown}: link to an unregistered hostname ${u.hostname}`);

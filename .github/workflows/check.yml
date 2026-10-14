@@ -27,7 +27,7 @@ jobs:
       - run: npm run check
         env:
           # Keep the account menu present in CI builds so tests cover its production hrefs.
-          PUBLIC_PORTAL_URL: https://api.sofexpo.org
+          PUBLIC_PORTAL_URL: https://api.sof-expo.com
 
   hosts:
     runs-on: ubuntu-latest
@@ -41,7 +41,7 @@ jobs:
       - run: npm ci
       - run: npm run check:hosts
         env:
-          PUBLIC_PORTAL_URL: https://api.sofexpo.org
+          PUBLIC_PORTAL_URL: https://api.sof-expo.com
 
   # Browser suite against the static build: 5 locales, forms, menus, tables,
   # responsive layouts and the axe WCAG 2.1 AA audit (tests/browser/a11y.spec.ts).
@@ -58,7 +58,7 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm run build
         env:
-          PUBLIC_PORTAL_URL: https://api.sofexpo.org
+          PUBLIC_PORTAL_URL: https://api.sof-expo.com
       - name: Serve dist/
         run: |
           npx astro preview --host 127.0.0.1 --port 4321 &
@@ -66,5 +66,5 @@ jobs:
       - run: npx playwright test
         env:
           BASE_URL: http://127.0.0.1:4321
-          PUBLIC_PORTAL_URL: https://api.sofexpo.org
+          PUBLIC_PORTAL_URL: https://api.sof-expo.com
           CI: 'true'

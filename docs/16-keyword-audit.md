@@ -152,7 +152,7 @@ title'lari, menyu, ariza formasi. Google uchun bu bitta entity'ning ikki nomi.
 
 **Tuzatish:** `events.ts`, `site.ts` (menyu), `ExhibitorForm` → «BUILD PRO EXPO 2026». Kataloglarda
 eski kalitlar saqlangan, yangi yozilishdagi nusxasi qo'shilgan (tarjima yo'qolmaydi).
-Hostname (`buildpro.sofexpo.org`) va slug (`buildpro-expo`) o'zgarmadi — URL'lar barqaror.
+Hostname (`buildpro.sof-expo.com`) va slug (`buildpro-expo`) o'zgarmadi — URL'lar barqaror.
 
 ### 2.6 Kannibalizatsiya
 

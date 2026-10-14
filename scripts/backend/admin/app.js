@@ -16,10 +16,12 @@
     portalFilters: { q: '', type: '', active: '' },
     auditPage: 1,
     auditFilters: { q: '', actor: '', entity: '', from: '', to: '' },
+    blogPage: 1,
+    blogStatus: '',
     toastTimer: null,
   };
   const labels = {
-    dashboard: 'Umumiy ko‘rinish', leads: 'Arizalar', portalAccounts: 'Kabinet akkauntlari', analytics: 'Analitika',
+    dashboard: 'Umumiy ko‘rinish', leads: 'Arizalar', blog: 'Blog · Telegram', portalAccounts: 'Kabinet akkauntlari', analytics: 'Analitika',
     integrations: 'Integratsiyalar', activity: 'Faoliyat tarixi', users: 'Jamoa va ruxsatlar',
   };
   const auditActionLabels = {
@@ -27,7 +29,9 @@
     'portal_account.activate': 'Kabinet faollashtirildi', 'portal_account.deactivate': 'Kabinet bloklandi',
     'portal_profile.update': 'Profil yangilandi', 'user.create': 'Jamoa hisobi yaratildi',
     'user.update': 'Jamoa ruxsati yangilandi', 'outbox.retry': 'Yetkazish qayta navbatga qo‘yildi',
+    'blog.publish': 'Maqola e’lon qilindi', 'blog.unpublish': 'Maqola yashirildi', 'blog.delete': 'Maqola o‘chirildi',
   };
+  const blogStatusLabels = { draft: 'Qoralama', published: 'E’lon qilingan', unpublished: 'Yashirilgan' };
   const statusLabels = {
     new: 'Yangi', contacted: 'Bog‘lanildi', qualified: 'Malakali', won: 'Yakunlandi', lost: 'Bekor qilindi', spam: 'Spam',
   };
@@ -413,7 +417,7 @@
     content.innerHTML = `<div class="skeleton"></div>`;
     const data = await api('/api/admin/users');
     content.innerHTML = `${pageIntro('Jamoa va ruxsatlar', 'Menejerlarga alohida hisob oching. Hisoblar parol bilan himoyalangan.', 'ADMIN ONLY')}
-      <section class="panel" style="margin-bottom:15px"><div class="panel-head"><div><h3>Yangi foydalanuvchi</h3><p>Parol kamida 12 belgidan iborat bo‘lishi kerak.</p></div></div><form id="user-create" class="user-create"><div class="field"><label for="user-email">EMAIL</label><input id="user-email" name="email" type="email" required placeholder="manager@sofexpo.org" /></div><div class="field"><label for="user-password">VAQTINCHALIK PAROL</label><input id="user-password" name="password" type="password" minlength="12" required placeholder="Kamida 12 belgi" /></div><div class="field"><label for="user-role">HUQUQ</label><select id="user-role" name="role"><option value="manager">Menejer</option><option value="admin">Administrator</option></select></div><button class="button button-primary" type="submit">Hisob yaratish</button></form></section>
+      <section class="panel" style="margin-bottom:15px"><div class="panel-head"><div><h3>Yangi foydalanuvchi</h3><p>Parol kamida 12 belgidan iborat bo‘lishi kerak.</p></div></div><form id="user-create" class="user-create"><div class="field"><label for="user-email">EMAIL</label><input id="user-email" name="email" type="email" required placeholder="manager@sof-expo.com" /></div><div class="field"><label for="user-password">VAQTINCHALIK PAROL</label><input id="user-password" name="password" type="password" minlength="12" required placeholder="Kamida 12 belgi" /></div><div class="field"><label for="user-role">HUQUQ</label><select id="user-role" name="role"><option value="manager">Menejer</option><option value="admin">Administrator</option></select></div><button class="button button-primary" type="submit">Hisob yaratish</button></form></section>
       <section class="panel table-panel"><div class="panel-head" style="padding:17px 18px 0"><div><h3>Foydalanuvchilar</h3><p>${number(data.users.length)} ta hisob</p></div></div><div class="table-wrap"><table class="data-table"><thead><tr><th>FOYDALANUVCHI</th><th>HUQUQ</th><th>OXIRGI KIRISH</th><th>HOLAT</th><th>AMAL</th></tr></thead><tbody>${data.users.map((user) => `<tr><td><div class="person-info"><strong>${escapeHtml(user.email)}</strong><small>Qo‘shilgan: ${escapeHtml(formatDate(user.createdAt, false))}</small></div></td><td><select class="filter-select" data-role-select="${escapeHtml(user.id)}"><option value="manager" ${user.role === 'manager' ? 'selected' : ''}>Menejer</option><option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Administrator</option></select></td><td>${escapeHtml(user.lastLoginAt ? formatDate(user.lastLoginAt) : 'Hali kirmagan')}</td><td>${Number(user.active) ? '<span class="status-badge status-won">Faol</span>' : '<span class="status-badge status-lost">O‘chirilgan</span>'}</td><td><button type="button" class="button ${Number(user.active) ? 'button-danger' : 'button-secondary'}" data-user-toggle="${escapeHtml(user.id)}" data-active="${Number(user.active) ? '1' : '0'}">${Number(user.active) ? 'O‘chirish' : 'Faollashtirish'}</button></td></tr>`).join('')}</tbody></table></div></section>`;
     $('#user-create').addEventListener('submit', async (event) => {
       event.preventDefault();
@@ -446,6 +450,67 @@
 
   function detailItem(label, value) {
     return `<div class="detail-item"><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value || '—')}</dd></div>`;
+  }
+
+  /* Telegram → blog sync management. Bot API hech qachon delete hodisasini yubormaydi,
+     shuning uchun e’lon/yashirish/o‘chirish shu yerda boshqariladi. */
+  async function renderBlog() {
+    const content = $('#content');
+    content.innerHTML = '<div class="loading-line">Ma’lumot yuklanmoqda…</div>';
+    let data;
+    try {
+      data = await api(`/api/admin/blog-posts?page=${state.blogPage}&status=${encodeURIComponent(state.blogStatus)}`);
+    } catch (error) {
+      if (error.status === 503) {
+        content.innerHTML = `${pageIntro('Blog · Telegram', 'Telegram kanalidagi postlar sayt blogiga avtomatik tushadi.', 'SOZLANMAGAN')}
+          <section class="panel table-panel"><div class="empty-state"><strong>Sinxronizatsiya yoqilmagan</strong>Backend <code>.env</code> faylida <code>TELEGRAM_BOT_TOKEN</code>, <code>TELEGRAM_WEBHOOK_SECRET</code> va <code>TELEGRAM_CHANNEL_ID</code> to‘ldirilgach bu ro‘yxat ishga tushadi. Qo‘llanma: <code>docs/telegram-blog-sync.md</code>.</div></section>`;
+        return;
+      }
+      throw error;
+    }
+    const sync = data.sync || {};
+    const statusChip = (status) => `<span class="status-badge status-${escapeHtml(status)}">${escapeHtml(blogStatusLabels[status] || status)}</span>`;
+    const rowBtn = 'style="min-height:34px;padding:7px 11px;font-size:10px"';
+    const rows = (data.items || []).map((post) => {
+      const actions = [
+        post.status !== 'published' ? `<button class="button button-primary" ${rowBtn} type="button" data-blog-action="publish" data-id="${post.id}">E’lon qilish</button>` : '',
+        post.status === 'published' ? `<button class="button button-secondary" ${rowBtn} type="button" data-blog-action="unpublish" data-id="${post.id}">Yashirish</button>` : '',
+        state.user?.role === 'admin' ? `<button class="button button-danger" ${rowBtn} type="button" data-blog-action="delete" data-id="${post.id}" data-title="${escapeHtml(post.title)}">O‘chirish</button>` : '',
+      ].filter(Boolean).join(' ');
+      const tg = post.tgLink ? `<a href="${escapeHtml(post.tgLink)}" target="_blank" rel="noopener">Telegram ↗</a>` : '—';
+      const site = post.status === 'published' ? `<a href="/${escapeHtml(post.locale)}/${escapeHtml(post.collection)}/${escapeHtml(post.slug)}/" target="_blank" rel="noopener">Sayt ↗</a>` : `<code>/${escapeHtml(post.collection)}/${escapeHtml(post.slug)}/</code>`;
+      return `<tr>
+        <td><strong>${escapeHtml(post.title)}</strong><small style="display:block;color:#98a198;margin-top:4px">${escapeHtml(post.excerpt || '')}</small></td>
+        <td>${escapeHtml(formatDate(post.postedAt || post.createdAt))}${post.editedAt ? `<small style="display:block;color:#98a198">tahrir: ${escapeHtml(formatDate(post.editedAt))}</small>` : ''}</td>
+        <td>${statusChip(post.status)}</td>
+        <td>${(post.tags || []).map((tag) => `<span class="status-badge" style="background:#eef3ee">${escapeHtml(tag)}</span>`).join(' ') || '—'}</td>
+        <td>${tg}<br />${site}</td>
+        <td style="min-width:170px">${actions}</td>
+      </tr>`;
+    }).join('');
+    content.innerHTML = `${pageIntro('Blog · Telegram', `Kanal ${escapeHtml(sync.channel || '')} · rejim: ${escapeHtml(sync.mode || '—')} · bo‘lim: /${escapeHtml(sync.collection || 'news')}/ · til: ${escapeHtml(sync.locale || '—')} · git push: ${sync.gitPush ? 'yoqilgan' : 'o‘chiq'}`, `${number(data.total)} TA MAQOLA`)}
+      <div class="lead-toolbar"><div class="filters"><select class="filter-select" id="blog-status" aria-label="Holat bo‘yicha filtr"><option value="">Barcha holatlar</option>${Object.entries(blogStatusLabels).map(([value, label]) => `<option value="${value}" ${state.blogStatus === value ? 'selected' : ''}>${label}</option>`).join('')}</select></div></div>
+      <section class="panel table-panel">
+      <div class="table-wrap">${rows ? `<table class="data-table"><thead><tr><th>MAQOLA</th><th>SANA</th><th>HOLAT</th><th>TEGLAR</th><th>HAVOLA</th><th>AMALLAR</th></tr></thead><tbody>${rows}</tbody></table>` : '<div class="empty-state"><strong>Hozircha maqola yo‘q</strong>Kanalda post chiqqach u avtomatik shu yerda ko‘rinadi. Filtr tanlangan bo‘lsa, holatni o‘zgartirib ko‘ring.</div>'}</div>
+      <div class="pagination"><span>${data.total ? `${number((data.page - 1) * 25 + 1)}–${number(Math.min(data.page * 25, data.total))} / ${number(data.total)}` : ''}</span><div class="pagination-actions"><button type="button" id="blog-prev" ${data.page <= 1 ? 'disabled' : ''}>← Oldingi</button><span style="padding:7px 5px">${data.page} / ${data.pages}</span><button type="button" id="blog-next" ${data.page >= data.pages ? 'disabled' : ''}>Keyingi →</button></div></div></section>`;
+    $('#blog-status')?.addEventListener('change', (event) => { state.blogStatus = event.target.value; state.blogPage = 1; renderBlog().catch(showError); });
+    $('#blog-prev')?.addEventListener('click', () => { state.blogPage -= 1; renderBlog().catch(showError); });
+    $('#blog-next')?.addEventListener('click', () => { state.blogPage += 1; renderBlog().catch(showError); });
+    $$('[data-blog-action]', content).forEach((button) => button.addEventListener('click', async () => {
+      const action = button.dataset.blogAction;
+      const id = button.dataset.id;
+      try {
+        if (action === 'delete') {
+          if (!window.confirm(`«${button.dataset.title}» maqolasi o‘chirilsinmi? Fayli va rasmlari repodan ham olib tashlanadi.`)) return;
+          await api(`/api/admin/blog-posts/${id}`, { method: 'DELETE' });
+          showToast('Maqola o‘chirildi.');
+        } else {
+          await api(`/api/admin/blog-posts/${id}/${action}`, { method: 'POST' });
+          showToast(action === 'publish' ? 'Maqola e’lon qilindi.' : 'Maqola yashirildi.');
+        }
+        await renderBlog();
+      } catch (error) { showError(error); }
+    }));
   }
 
   async function openLead(id) {
@@ -513,7 +578,7 @@
     $$('.nav-item').forEach((item) => item.classList.toggle('active', item.dataset.view === view));
     $('#sidebar').classList.remove('mobile-open');
     $('#mobile-scrim')?.classList.remove('active');
-    const renderers = { dashboard: renderDashboard, leads: renderLeads, portalAccounts: renderPortalAccounts, analytics: renderAnalytics, integrations: renderIntegrations, activity: renderActivity, users: renderUsers };
+    const renderers = { dashboard: renderDashboard, leads: renderLeads, blog: renderBlog, portalAccounts: renderPortalAccounts, analytics: renderAnalytics, integrations: renderIntegrations, activity: renderActivity, users: renderUsers };
     renderers[view]().catch(showError);
   }
 

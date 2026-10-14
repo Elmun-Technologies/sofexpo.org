@@ -5,7 +5,7 @@
  */
 
 export const site = {
-  domain: "https://sofexpo.org",
+  domain: "https://sof-expo.com",
   brand: {
     ru: "SOF EXPO SAMARKAND",
     en: "SOF EXPO SAMARKAND",

@@ -70,8 +70,8 @@ async function waitFor(predicate, timeoutMs = 1000) {
 test('lead normalization validates required contacts and strips tracking queries from URLs', () => {
   const lead = normalizeLead({
     name: '   Test Exhibitor ', company: 'ACME', phone: '+998 90 123 45 67', email: 'team@example.com',
-    formType: 'exhibitor', industry: 'Food', area: '18 м²', locale: 'uz', page: 'https://sofexpo.org/uz/request-stand/?utm_source=secret',
-    landing: 'https://sofexpo.org/uz/?utm_campaign=launch', referrer: 'https://search.example/result?q=private',
+    formType: 'exhibitor', industry: 'Food', area: '18 м²', locale: 'uz', page: 'https://sof-expo.com/uz/request-stand/?utm_source=secret',
+    landing: 'https://sof-expo.com/uz/?utm_campaign=launch', referrer: 'https://search.example/result?q=private',
     utm_source: 'newsletter', utm_campaign: 'october', comment: 'Interested in a 18 m² stand', consent: 'yes',
   });
   assert.equal(lead.name, 'Test Exhibitor');
@@ -106,8 +106,8 @@ test('legacy lead formatter and summary stay backward-compatible', () => {
 
 test('CORS preflight admits every production host for lead and analytics endpoints', async (t) => {
   const origins = [
-    'https://sofexpo.org', 'https://foodera.sofexpo.org', 'https://buildpro.sofexpo.org',
-    'https://agropro.sofexpo.org', 'https://worldedu.sofexpo.org', 'https://ecomretail.sofexpo.org',
+    'https://sof-expo.com', 'https://foodera.sof-expo.com', 'https://buildpro.sof-expo.com',
+    'https://agropro.sof-expo.com', 'https://worldedu.sof-expo.com', 'https://ecomretail.sof-expo.com',
   ];
   const { base } = await startBackend(t, { origins });
   for (const endpoint of ['/lead', '/event']) {
@@ -129,10 +129,10 @@ test('CORS preflight admits every production host for lead and analytics endpoin
 });
 
 test('public lead API persists valid requests and rejects invalid/cross-origin submissions', async (t) => {
-  const { server, base } = await startBackend(t, { origins: ['https://sofexpo.org'] });
+  const { server, base } = await startBackend(t, { origins: ['https://sof-expo.com'] });
   let result = await jsonRequest(base, '/lead', {
     method: 'POST',
-    origin: 'https://sofexpo.org',
+    origin: 'https://sof-expo.com',
     body: {
       name: 'QA Lead', company: 'Samarkand Foods', phone: '+998 90 555 55 55', email: 'qa@example.com',
       formType: 'exhibitor', event: 'FOODERA EXPO 2026', industry: 'Food', area: '18 м²', consent: 'on', locale: 'uz', page: '/uz/request-stand/',
@@ -154,7 +154,7 @@ test('public lead API persists valid requests and rejects invalid/cross-origin s
   assert.equal(result.response.status, 403);
 
   result = await jsonRequest(base, '/lead', {
-    method: 'POST', origin: 'https://sofexpo.org', body: { name: 'Missing phone' },
+    method: 'POST', origin: 'https://sof-expo.com', body: { name: 'Missing phone' },
   });
   assert.equal(result.response.status, 422);
   assert.equal(server.backendStore.listLeads().total, 1);
@@ -228,7 +228,7 @@ test('first-party analytics omits IP, full URL, and referrer query; dashboard ag
     method: 'POST',
     body: {
       events: [
-        { event: 'page_view', sessionId: 'anon-session-1', locale: 'uz', path: '/uz/request-stand/?email=private', url: 'https://sofexpo.org/?private=1', referrer: 'https://search.example/?user=secret', utm: { source: 'newsletter', campaign: 'october' } },
+        { event: 'page_view', sessionId: 'anon-session-1', locale: 'uz', path: '/uz/request-stand/?email=private', url: 'https://sof-expo.com/?private=1', referrer: 'https://search.example/?user=secret', utm: { source: 'newsletter', campaign: 'october' } },
         { event: 'cta_click', sessionId: 'anon-session-1', locale: 'uz', path: '/uz/request-stand/', cta: 'book-stand', source: 'hero' },
         { event: 'form_start', sessionId: 'anon-session-1', locale: 'uz', path: '/uz/request-stand/', form: 'exhibitor', channel: 'website' },
         { event: 'form_submit', sessionId: 'anon-session-1', locale: 'uz', path: '/uz/request-stand/', form: 'exhibitor', success: true, fallback: false },

@@ -184,9 +184,9 @@ test('visitor deep links open registration, show only visitor fields, and privac
     assert.equal(document.querySelector('#register-interests').disabled, false);
     assert.equal(document.querySelector('#request-interest').required, true);
     assert.equal(document.querySelector('#request-area').disabled, true);
-    assert.match(document.querySelector('.register-consent a').href, /^https:\/\/sofexpo\.org\/uz\/legal\/privacy\//);
-    assert.equal(document.querySelector('.auth-story .brand').href, 'https://sofexpo.org/uz/');
-    assert.equal(document.querySelector('.back-link').href, 'https://sofexpo.org/uz/');
+    assert.match(document.querySelector('.register-consent a').href, /^https:\/\/sof-expo\.com\/uz\/legal\/privacy\//);
+    assert.equal(document.querySelector('.auth-story .brand').href, 'https://sof-expo.com/uz/');
+    assert.equal(document.querySelector('.back-link').href, 'https://sof-expo.com/uz/');
   } finally {
     dom.window.close();
   }
@@ -228,8 +228,8 @@ test('portal can switch across all five site languages and keeps its public link
       assert.equal(document.querySelector('#login-tab').textContent, login);
       assert.equal(document.querySelector('#request-title').textContent, visitTitle);
       assert.equal(document.querySelector('#request-event option[value="foodera-expo"]').textContent, eventOption);
-      assert.equal(document.querySelector('.register-consent a').href, `https://sofexpo.org/${locale}/legal/privacy/`);
-      assert.equal(document.querySelector('.back-link').href, `https://sofexpo.org/${locale}/`);
+      assert.equal(document.querySelector('.register-consent a').href, `https://sof-expo.com/${locale}/legal/privacy/`);
+      assert.equal(document.querySelector('.back-link').href, `https://sof-expo.com/${locale}/`);
       assert.equal(document.querySelector('#auth-locale').value, locale);
     } finally {
       dom.window.close();
@@ -244,7 +244,7 @@ test('portal can switch across all five site languages and keeps its public link
     select.dispatchEvent(new window.Event('change', { bubbles: true }));
     assert.equal(window.document.documentElement.lang, 'en');
     assert.equal(window.document.querySelector('#request-title').textContent, 'Plan your visit');
-    assert.equal(window.document.querySelector('.register-consent a').href, 'https://sofexpo.org/en/legal/privacy/');
+    assert.equal(window.document.querySelector('.register-consent a').href, 'https://sof-expo.com/en/legal/privacy/');
     assert.equal(new URL(window.location.href).searchParams.get('type'), 'visitor');
     assert.equal(new URL(window.location.href).searchParams.get('lang'), 'en');
     assert.equal(window.document.querySelector('#portal-locale').value, 'en');

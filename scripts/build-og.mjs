@@ -15,7 +15,7 @@ import { join, dirname } from 'node:path';
 import sharp from 'sharp';
 
 const DIST = process.argv[2] || 'dist';
-const SITE = new URL(process.env.SITE || 'https://sofexpo.org/').origin;
+const SITE = new URL(process.env.SITE || 'https://sof-expo.com/').origin;
 const W = 1200;
 const H = 630;
 
@@ -114,7 +114,7 @@ for (const file of files) {
   const [k, t, b] = await Promise.all([
     text(`<span foreground="#f3e3c9" letter_spacing="2048">${esc(kicker.toUpperCase())}</span>`, 900, 22),
     text(`<span foreground="#ffffff" weight="bold">${esc(title)}</span>`, 1000, size),
-    text(`<span foreground="#ffffff" weight="bold">SOF EXPO</span><span foreground="#ffffffb0">  ·  sofexpo.org</span>`, 700, 26),
+    text(`<span foreground="#ffffff" weight="bold">SOF EXPO</span><span foreground="#ffffffb0">  ·  sof-expo.com</span>`, 700, 26),
   ]);
   const out = join(DIST, 'og', rel.replace(/\/$/, '') || 'index') + '.jpg';
   mkdirSync(dirname(out), { recursive: true });

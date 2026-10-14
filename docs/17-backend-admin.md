@@ -139,7 +139,7 @@ Backenddagi `/cabinet` sahifasida alohida ro‘yxatdan o‘tish va kirish oqimi 
   email provayderi tanlangandan keyin alohida qo‘shiladi.
 
 Sayt headeridagi kabinet havolalari `PUBLIC_PORTAL_URL` build-time env o‘zgaruvchisi berilganda
-ko‘rinadi (masalan, `https://api.sofexpo.org`). Havola joriy sahifa tilini `lang` parametrida uzatadi;
+ko‘rinadi (masalan, `https://api.sof-expo.com`). Havola joriy sahifa tilini `lang` parametrida uzatadi;
 qo‘llab-quvvatlanadigan qiymatlar `uz`, `ru`, `en`, `tr`, `zh`, to‘g‘ridan-to‘g‘ri ochilganda esa o‘zbek
 tili tanlanadi. Foydalanuvchi kabinet ichida tilni o‘zgartirishi mumkin. Bo‘sh bo‘lsa noto‘g‘ri/localhost
 havola chiqarilmaydi; portalni API hostidagi `/cabinet` orqali ochish mumkin.
@@ -182,25 +182,25 @@ bo‘limidan yarating.
 ## 6. Production sozlash
 
 1. Node 22.18+ server/VPS yoki persistent volume’li runtime’da backendni ishga tushiring.
-2. DNS/TLS: masalan `api.sofexpo.org` → Node backend; reverse proxy HTTP’ni backendga uzatsin va
+2. DNS/TLS: masalan `api.sof-expo.com` → Node backend; reverse proxy HTTP’ni backendga uzatsin va
    `X-Forwarded-Proto`, `X-Forwarded-Host`, `X-Forwarded-For` ni o‘zi yozsin. Faqat ishonchli
    proxy bo‘lsa `LEAD_WEBHOOK_TRUST_PROXY=1` qiling; to‘g‘ridan-to‘g‘ri internetga ochiq serverda
    bu qiymat `0` qolsin.
 3. `LEAD_WEBHOOK_DB` ni persistent diskka qo‘ying, fayl ruxsatini faqat backend useriga bering,
    diskni shifrlang va muntazam backup qiling. `.data/` Git’ga kirmaydi.
 4. `.env` da haqiqiy `ADMIN_EMAIL`, uzun random `ADMIN_PASSWORD`, `LEAD_WEBHOOK_ORIGINS` (aniq
-   `https://sofexpo.org`, `https://foodera.sofexpo.org` … va `https://api.sofexpo.org`), Telegram
+   `https://sof-expo.com`, `https://foodera.sof-expo.com` … va `https://api.sof-expo.com`), Telegram
    token/chat yoki `CRM_WEBHOOK_URL`/token sozlang. Bot/CRM sirlari faqat backend env’da bo‘ladi.
 5. `.github/workflows/deploy.yml` Cloudflare Pages uchun statik saytni quradi. Standart ochiq manzillar
-   `PUBLIC_LEAD_ENDPOINT=https://api.sofexpo.org/lead`,
-   `PUBLIC_ANALYTICS_ENDPOINT=https://api.sofexpo.org/event` va `PUBLIC_PORTAL_URL=https://api.sofexpo.org`;
+   `PUBLIC_LEAD_ENDPOINT=https://api.sof-expo.com/lead`,
+   `PUBLIC_ANALYTICS_ENDPOINT=https://api.sof-expo.com/event` va `PUBLIC_PORTAL_URL=https://api.sof-expo.com`;
    boshqa backend domeni ishlatilsa, GitHub repository variables’da mos qiymatlarni belgilang.
    `PUBLIC_*` qiymatlari build vaqtida HTML/JS’ga kiradi — ularga secret token qo‘ymang. Deploy workflow
    Cloudflare `CLOUDFLARE_API_TOKEN` va `CLOUDFLARE_ACCOUNT_ID` secrets’larini talab qiladi,
    nashrdan oldin `/health`, `/api/portal/options` va `/cabinet` ni tekshiradi, ammo **Node backendni
    o‘zi deploy qilmaydi**. Shu sabab Pages’ni nashr etishdan oldin API server, persistent DB, TLS, CORS,
    admin bootstrap hamda Telegram/CRM yetkazish sozlamalari production’da ishga tushganini tekshiring.
-6. Admin panel: `https://api.sofexpo.org/admin`; portal login/registratsiya: `https://api.sofexpo.org/cabinet`.
+6. Admin panel: `https://api.sof-expo.com/admin`; portal login/registratsiya: `https://api.sof-expo.com/cabinet`.
    Ular public statik hostda emas, API server domenida. `LEAD_WEBHOOK_ORIGIN` eski bitta-origin
    sozlamasi qabul qilinadi, lekin yangi deploy’da bir nechta domen uchun `LEAD_WEBHOOK_ORIGINS` ishlating.
 

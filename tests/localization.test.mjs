@@ -21,7 +21,7 @@ test('public and host routing support four locales', () => {
   assert.deepEqual(LOCALES,['ru','en','zh','tr']);
   assert.equal(stripLocale('/zh/events/foodera-expo/'),'/events/foodera-expo/');
   assert.equal(joinLocale('tr','/zh/events/foodera-expo/'),'/tr/events/foodera-expo/');
-  assert.equal(localizedURL('https://foodera.sofexpo.org/en/visitors/?a=1#faq','zh'),'https://foodera.sofexpo.org/zh/visitors/?a=1#faq');
+  assert.equal(localizedURL('https://foodera.sof-expo.com/en/visitors/?a=1#faq','zh'),'https://foodera.sof-expo.com/zh/visitors/?a=1#faq');
   assert.equal(localizedURL('https://my.cybermuseum.art/en/tour/sofexpo','uz'),'https://my.cybermuseum.art/uz/tour/sofexpo');
   assert.equal(localizedURL('https://my.cybermuseum.art/ru/pano/x36rtq6ggm','tr'),'https://my.cybermuseum.art/en/pano/x36rtq6ggm');
   assert.equal(localizedURL('https://example.org/en/file.pdf','tr'),'https://example.org/en/file.pdf');
@@ -45,11 +45,11 @@ test('dates, changing countdowns and trade names are deterministic', () => {
 });
 
 test('translate semantics, not selectors, classes, markup or language switches', () => {
-  const html=`<!doctype html><html lang="en"><head><title>Book a stand</title><link rel="canonical" href="https://sofexpo.org/en/venue/"><link rel="alternate" hreflang="en" href="https://sofexpo.org/en/venue/"></head><body><a href="/en/venue/">The centre</a><a href="/en/venue/" hreflang="en">English</a><form data-err="Please complete the required fields."></form><script>document.querySelector('body form'); form.className='form__msg form__ok'; const message='Please complete the required fields.'; const index=[{title:'Contacts',href:'/en/contacts/',kind:'page'}];</script></body></html>`;
+  const html=`<!doctype html><html lang="en"><head><title>Book a stand</title><link rel="canonical" href="https://sof-expo.com/en/venue/"><link rel="alternate" hreflang="en" href="https://sof-expo.com/en/venue/"></head><body><a href="/en/venue/">The centre</a><a href="/en/venue/" hreflang="en">English</a><form data-err="Please complete the required fields."></form><script>document.querySelector('body form'); form.className='form__msg form__ok'; const message='Please complete the required fields.'; const index=[{title:'Contacts',href:'/en/contacts/',kind:'page'}];</script></body></html>`;
   const out=localizeHTML(html,'tr',{strict:true});
   assert.match(out,/<html lang="tr">/);
-  assert.match(out,/rel="canonical" href="https:\/\/sofexpo.org\/tr\/venue\/"/);
-  assert.match(out,/hreflang="en" href="https:\/\/sofexpo.org\/en\/venue\/"/);
+  assert.match(out,/rel="canonical" href="https:\/\/sof-expo.com\/tr\/venue\/"/);
+  assert.match(out,/hreflang="en" href="https:\/\/sof-expo.com\/en\/venue\/"/);
   assert.match(out,/<a href="\/en\/venue\/" hreflang="en">English<\/a>/);
   assert.match(out,/form.className='form__msg form__ok'/);
   assert.match(out,/querySelector\('body form'\)/);
@@ -68,9 +68,9 @@ test('embedded virtual-tour URLs follow the best available provider language', (
 test('structured data, RSS and the JSON search endpoint carry the target language', () => {
   const json=JSON.parse(localizeSearchJSON(JSON.stringify({locale:'en',count:1,items:[{title:'Contacts',text:'Book a stand',href:'/en/contacts/',kind:'page'}]}),'zh',{strict:true}));
   assert.equal(json.locale,'zh');assert.equal(json.count,1);assert.equal(json.items[0].href,'/zh/contacts/');assert.equal(json.items[0].kind,'page');assert.equal(json.items[0].title,'联系我们');
-  const rss=localizeRSS('<rss><channel><title>News</title><language>en</language><item><link>https://sofexpo.org/en/news/</link><pubDate>Wed, 23 Sep 2026 00:00:00 GMT</pubDate></item></channel></rss>','tr',{strict:true});
+  const rss=localizeRSS('<rss><channel><title>News</title><language>en</language><item><link>https://sof-expo.com/en/news/</link><pubDate>Wed, 23 Sep 2026 00:00:00 GMT</pubDate></item></channel></rss>','tr',{strict:true});
   assert.match(rss,/<title>Haberler<\/title>/);assert.match(rss,/<language>tr<\/language>/);assert.match(rss,/\/tr\/news\//);assert.match(rss,/Wed, 23 Sep 2026/);
-  const graph={name:'Contacts',inLanguage:'en',url:'https://sofexpo.org/en/contacts/',isPartOf:{inLanguage:['ru','en','zh-CN','tr']}};
+  const graph={name:'Contacts',inLanguage:'en',url:'https://sof-expo.com/en/contacts/',isPartOf:{inLanguage:['ru','en','zh-CN','tr']}};
   const out=localizeHTML(`<script type="application/ld+json">${JSON.stringify(graph)}</script>`,'zh',{strict:true});
   assert.match(out,/"inLanguage":"zh-CN"/);assert.match(out,/"inLanguage":\["ru","en","zh-CN","tr"\]/);
 });
@@ -113,7 +113,7 @@ test('all built pages, inline scripts, feeds and search indexes have locale pari
     const source=read(file),output=read(target);
     if(file.endsWith('.html')) {
       /* every edition owns its social card (scripts/build-og.mjs): /og/<locale>/… */
-      const own=s=>s.trimEnd().replace(new RegExp(`https://sofexpo\\.org/og/${locale}([/.])`,'g'),'https://sofexpo.org/og/en$1');
+      const own=s=>s.trimEnd().replace(new RegExp(`https://sof-expo\\.com/og/${locale}([/.])`,'g'),'https://sof-expo.com/og/en$1');
       /* scripts/fit-meta.mjs trims <title>/description to SERP length after the editions are
          built, so those two fields are compared separately (length-checked by the SEO audit) */
       const serp=s=>s.replace(/<title>[^<]*<\/title>/,'<title></title>').replace(/(<meta name="description" content=")[^"]*"/,'$1"');

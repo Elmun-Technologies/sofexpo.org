@@ -54,7 +54,7 @@ export function buildEventIcs(e, stampValue) {
     'METHOD:PUBLISH',
     `X-WR-CALNAME:${e.brand.en} — SOF EXPO Samarkand`,
     'BEGIN:VEVENT',
-    `UID:${e.slug}-${e.dates.start}@sofexpo.org`,
+    `UID:${e.slug}-${e.dates.start}@sof-expo.com`,
     `DTSTAMP:${s}`,
     `DTSTART;VALUE=DATE:${fmtDate(e.dates.start)}`,
     `DTEND;VALUE=DATE:${endExclusive(e.dates.end)}`,
@@ -85,7 +85,7 @@ export function buildIcs() {
   for (const e of events) {
     lines.push(
       'BEGIN:VEVENT',
-      `UID:${e.slug}-${e.dates.start}@sofexpo.org`,
+      `UID:${e.slug}-${e.dates.start}@sof-expo.com`,
       `DTSTAMP:${stamp}`,
       `DTSTART;VALUE=DATE:${fmtDate(e.dates.start)}`,
       `DTEND;VALUE=DATE:${endExclusive(e.dates.end)}`,

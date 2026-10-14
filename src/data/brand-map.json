@@ -15,7 +15,7 @@
   "hosts": {
     "foodera-expo": {
       "id": "foodera",
-      "host": "foodera.sofexpo.org",
+      "host": "foodera.sof-expo.com",
       "name": {
         "ru": "FOODERA",
         "en": "FOODERA"
@@ -51,7 +51,7 @@
     },
     "buildpro-expo": {
       "id": "buildpro",
-      "host": "buildpro.sofexpo.org",
+      "host": "buildpro.sof-expo.com",
       "name": {
         "ru": "BUILDPRO",
         "en": "BUILDPRO"
@@ -87,7 +87,7 @@
     },
     "agropro-expo": {
       "id": "agropro",
-      "host": "agropro.sofexpo.org",
+      "host": "agropro.sof-expo.com",
       "name": {
         "ru": "AGROPRO",
         "en": "AGROPRO"
@@ -123,7 +123,7 @@
     },
     "world-edu-expo": {
       "id": "world-edu",
-      "host": "worldedu.sofexpo.org",
+      "host": "worldedu.sof-expo.com",
       "name": {
         "ru": "WORLD EDU",
         "en": "WORLD EDU"
@@ -159,7 +159,7 @@
     },
     "ecom-retail-expo": {
       "id": "ecom-retail",
-      "host": "ecomretail.sofexpo.org",
+      "host": "ecomretail.sof-expo.com",
       "name": {
         "ru": "ECOM & RETAIL",
         "en": "ECOM & RETAIL"
@@ -195,7 +195,7 @@
     },
     "promotors-show-samarkand": {
       "id": "promotors",
-      "host": "sofexpo.org/events/promotors-show-samarkand",
+      "host": "sof-expo.com/events/promotors-show-samarkand",
       "name": {
         "ru": "PROMOTORS SHOW",
         "en": "PROMOTORS SHOW"

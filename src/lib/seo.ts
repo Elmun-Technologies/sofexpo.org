@@ -2,7 +2,7 @@ import { alternates, localize, supportedLocales, localeMeta, type SourceLocale a
 import { site } from '@/data/site';
 import { CURRENT_BRAND } from '@/data/hosts';
 
-export const SITE = (import.meta.env.SITE || 'https://sofexpo.org').replace(/\/$/, '');
+export const SITE = (import.meta.env.SITE || 'https://sof-expo.com').replace(/\/$/, '');
 export const ORG = 'SOF EXPO Samarkand';
 
 /** Absolute URL for a path. */

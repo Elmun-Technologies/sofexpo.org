@@ -8,7 +8,7 @@ import { icsIntegration } from './scripts/ics.mjs';
 // Static output (SSG): fastest Core Web Vitals, CDN friendly, no client JS framework.
 // One project, many hostnames: `SITE` picks the host and `PUBLIC_HOSTS_MODE` the topology.
 // `npm run build:hosts` builds every host; see docs/05-subdomains.md.
-const SITE = process.env.SITE || 'https://sofexpo.org/';
+const SITE = process.env.SITE || 'https://sof-expo.com/';
 
 export default defineConfig({
   site: SITE,

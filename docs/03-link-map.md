@@ -217,8 +217,8 @@ are the other link sources; each page ends up with 46–52 distinct internal tar
 
 **Editorial split by host (решение клиента, 2026-09-18).** Поле `event` решает не только полосу
 «Читать по теме», но и **хост, на котором текст публикуется**: в `PUBLIC_HOSTS_MODE=subdomain`
-новость и лонгрид FOODERA строятся на `foodera.sofexpo.org`, два текста AGROPRO — на
-`agropro.sofexpo.org`, `buildpro-2026-plan-zala` — на `buildpro.sofexpo.org`. Без тега (`«Групповые
+новость и лонгрид FOODERA строятся на `foodera.sof-expo.com`, два текста AGROPRO — на
+`agropro.sof-expo.com`, `buildpro-2026-plan-zala` — на `buildpro.sof-expo.com`. Без тега (`«Групповые
 заявки…»`) текст остаётся у центра. Индексы `/news/` и `/articles/` при этом живут только в центре и
 перечисляют всё — карточки уехавших текстов ведут на их хост абсолютной ссылкой, поэтому переезд не
 лишает текст входящих. Реестр — генерируемый `src/data/editorial-owners.json`; его же использует

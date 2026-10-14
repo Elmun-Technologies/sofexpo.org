@@ -154,7 +154,7 @@ Foydalanuvchi qanday chiqib ketmasin, bizda uning kontakti qolishi kerak. Har bi
 **EN auditoriya (xalqaro):**
 - WhatsApp — xalqaro standart
 - Telegram — tech auditoriya
-- Email — rasmiy, info@sofexpo.org
+- Email — rasmiy, info@sof-expo.com
 - Prefill: "Hello! Interested in exhibiting at SOF EXPO"
 
 **Qo'shimcha kanallar (kelajak):**
@@ -269,7 +269,7 @@ formType yo'q → eski LeadForm (backward compat)
 
 ### 7.3 Endpointlar
 
-- `PUBLIC_LEAD_ENDPOINT` — backend’ga forma leadlari (`POST /lead`), masalan `https://api.sofexpo.org/lead`
+- `PUBLIC_LEAD_ENDPOINT` — backend’ga forma leadlari (`POST /lead`), masalan `https://api.sof-expo.com/lead`
 - `PUBLIC_ANALYTICS_ENDPOINT` — birinchi tomon analitikasi (`POST /event`)
 - `npm run lead-webhook` — Node + SQLite backend, API va `/admin` paneli (`docs/17`)
 - `PUBLIC_LIVECHAT_PROVIDER` — Crisp/Tawk (kelajak; uchinchi tomon chat hozir yoqilmagan)

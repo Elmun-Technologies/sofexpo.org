@@ -43,7 +43,7 @@
   /* "evergreen" is the centre's deep brand green: ink panels, footer, primary buttons */
   --evergreen: #123b25; /* white on it: 12.5:1 */
   --evergreen-2: #1b4d2e; /* white on it: 9.8:1 */
-  --moss: #257087; /* the logo blue deepened to AA: 5.6:1 on white (raw logo blue is used only graphically) */
+  --moss: #21687e; /* the logo blue deepened to AA on BOTH white and the grey canvas: 4.9:1 / 6.3:1 (raw logo blue is used only graphically) */
   --sage: #f2f2f2;
   /* the logo red is for the primary booking CTA and "registration open" — never under long text */
   --accent: #c03030; /* white on it: 5.7:1 */
@@ -52,7 +52,7 @@
   --ornament: #f2f2f2;
   --brand-mark: var(--evergreen);
   /* the old brass accent rules become the brand blue */
-  --gold: #257087;
+  --gold: #21687e;
   --gold-ink: #1e6478; /* small blue text on light grounds, 6.7:1; also a fill with white text */
   /* the light accent ON dark grounds: light green of the logo family, 12:1 on evergreen */
   --gold-soft: #b7e3b0;

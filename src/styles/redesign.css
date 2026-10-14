@@ -685,7 +685,7 @@ input[type="radio"] {
 .ftr__about {
   max-width: 34ch;
   margin: 1rem 0 0;
-  color: #9a9a9a;
+  color: #a6a6a6;
 }
 .ftr h3 {
   font-family: var(--f-body);
@@ -693,7 +693,7 @@ input[type="radio"] {
   font-weight: 500;
   letter-spacing: 0;
   text-transform: none;
-  color: #9a9a9a;
+  color: #a6a6a6;
 }
 .ftr ul {
   gap: 10px;
@@ -718,7 +718,7 @@ input[type="radio"] {
   color: var(--ink);
 }
 .ftr__bottom {
-  color: #9a9a9a;
+  color: #a6a6a6;
   border-top-color: rgba(255, 255, 255, 0.14);
 }
 

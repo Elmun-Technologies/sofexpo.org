@@ -28,6 +28,7 @@ interface PostData {
   hero?: string;
   event?: string;
   readingMinutes: number;
+  telegram?: string;
 }
 interface Post {
   id: string;
@@ -146,6 +147,12 @@ const Content = body;
         <p class="small muted">
           {ru ? 'Вопросы и запрос на комментарий:' : 'Questions and interview requests:'} <a href={`mailto:${site.contacts.email}`}>{site.contacts.email}</a> · <a href={telHref(site.contacts.phoneMain)}>{site.contacts.phoneMain}</a> · <a href={site.contacts.telegramChannel}>Telegram</a>
         </p>
+        {post.data.telegram && (
+          <p class="small muted">
+            {ru ? 'Этот материал впервые вышел в нашем канале —' : 'This post first appeared in our Telegram channel —'}{' '}
+            <a href={post.data.telegram} target="_blank" rel="noopener">{ru ? 'читать в Telegram' : 'read it on Telegram'}</a>
+          </p>
+        )}
       </div>
     </footer>
   </article>

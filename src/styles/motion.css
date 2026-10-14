@@ -65,15 +65,15 @@
 /* ---------- 2 · staggered children inside revealed sections ---------- */
 .reveal-pending :is(.grid, .gallery, .stats, .steps, .checks) > * {
   opacity: 0;
-  transform: translateY(16px);
+  transform: translateY(8px);
 }
 .reveal-in :is(.grid, .gallery, .stats, .steps, .checks) > * {
   opacity: 1;
   transform: none;
   transition:
-    opacity 700ms var(--ease-out),
-    transform 700ms var(--ease-out);
-  transition-delay: calc(var(--i, 0) * 70ms + 120ms);
+    opacity 240ms var(--ease-out),
+    transform 240ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 35ms + 40ms);
 }
 
 /* ---------- 3 · header: condenses and gains a shadow once the page scrolls ---------- */
@@ -384,7 +384,8 @@ a.feature:hover .feature__media img {
   }
   .btn--accent:hover,
   .btn--gold:hover {
-    box-shadow: 0 14px 30px -14px rgba(200, 136, 44, 0.7);
+    /* the glow follows the page's own accent instead of the retired bronze */
+    box-shadow: 0 14px 30px -14px color-mix(in srgb, var(--accent) 70%, transparent);
   }
 }
 

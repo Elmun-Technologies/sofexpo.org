@@ -188,8 +188,9 @@
         if (success) {
           if (msg) {
             msg.textContent = form.dataset.ok || 'Request received!';
-            msg.style.background = '#e7efe8';
-            msg.style.borderColor = 'var(--sage, #dfe8e0)';
+            /* the brand-tinted success sheet stays in whatever palette the page wears */
+            msg.style.background = 'color-mix(in srgb, var(--success, #1f8a4c) 12%, #fff)';
+            msg.style.borderColor = 'color-mix(in srgb, var(--success, #1f8a4c) 30%, transparent)';
             msg.style.color = 'var(--evergreen-2, #14402a)';
             msg.style.display = 'block';
           }

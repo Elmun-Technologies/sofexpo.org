@@ -152,7 +152,7 @@ const preload = props.preload
     <title>{meta.title}</title>
     <meta name="description" content={meta.description} />
     <link rel="canonical" href={meta.canonical} />
-    <meta name="theme-color" content={PAGE_BRAND?.palette.evergreen ?? "#0f2b1c"} />
+    <meta name="theme-color" content={PAGE_BRAND?.palette.evergreen ?? "#123b25"} />
     <meta name="format-detection" content="telephone=no" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="robots" content={meta.noindex ? 'noindex,follow,max-image-preview:large' : 'index,follow,max-image-preview:large,max-snippet:-1'} />
@@ -263,9 +263,40 @@ const preload = props.preload
                 }
               }
             },
-            { rootMargin: '0px 0px -8% 0px', threshold: 0.05 },
+            /* fire ~12% of a viewport BEFORE the section scrolls into view so
+               the entrance is already done by the time the user sees the
+               section — no blank band on fast scrolling (2026-10 fix) */
+            { rootMargin: '0px 0px 12% 0px', threshold: 0.01 },
           );
           els.forEach((el) => io.observe(el));
+          /* Chromium keeps observers only WEAKLY from the document: an observer
+             with no JS reference can be garbage-collected mid-session, which
+             silently stops callbacks and leaves later sections invisible
+             forever. Retain every observer for the page lifetime. */
+          ((window as any).__sofIO ??= []).push(io);
+          /* Safety net: the IO alone can miss a section that is jumped over in a
+             single instant scroll (ratio 0 → 0 between samples, no entry ever).
+             Sweep on every scroll frame: anything whose top has reached the
+             viewport reveals immediately — no section can stay invisible. */
+          const revealNow = (el: Element) => {
+            if (el.classList.contains('reveal-in')) return;
+            el.classList.add('reveal-in');
+            io.unobserve(el);
+          };
+          let sweeping = false;
+          const sweep = () => {
+            if (sweeping) return;
+            sweeping = true;
+            requestAnimationFrame(() => {
+              sweeping = false;
+              const bottom = window.innerHeight;
+              for (const el of els) {
+                if (el.getBoundingClientRect().top < bottom * 0.96) revealNow(el);
+              }
+            });
+          };
+          window.addEventListener('scroll', sweep, { passive: true });
+          sweep();
         }
       }
       /* stagger index for children of revealed grids (consumed by motion.css) */
@@ -348,6 +379,9 @@ const preload = props.preload
           { threshold: 0.6 },
         );
         nums.forEach((n) => cio.observe(n));
+        /* keep the observer reachable — unreferenced observers may be GC'd
+           and the count-up would never run (same pitfall as the reveal io) */
+        ((window as any).__sofIO ??= []).push(cio);
       }
     </script>
     <TableEnhancements />

@@ -23,9 +23,9 @@ const PORTAL_DIR = fileURLToPath(new URL('./portal/', import.meta.url));
 /* the 2026-10 design layer shared by /admin and /cabinet, and the site's own fonts and mark,
    served from an allow-list (never a path taken from the request) */
 const SHARED_FILES = {
-  '/admin/theme.css': fileURLToPath(new URL('./shared/theme.css', import.meta.url)),
   '/cabinet/theme.css': fileURLToPath(new URL('./shared/theme.css', import.meta.url)),
-  '/brand-assets/sofexpo-logo.png': fileURLToPath(new URL('../../public/brand/sofexpo-logo.png', import.meta.url)),
+  '/brand-assets/sofexpo-logo.png': fileURLToPath(new URL('../../public/brand/sofexpo-horizontal.png', import.meta.url)),
+  '/brand-assets/sofexpo-logo-white.png': fileURLToPath(new URL('../../public/brand/sofexpo-horizontal-white.png', import.meta.url)),
   ...Object.fromEntries(['manrope', 'onest'].flatMap((face) => ['latin', 'latin-ext', 'cyrillic'].map((subset) => [
     `/brand-fonts/${face}-${subset}.woff2`,
     fileURLToPath(new URL(`../../public/fonts/${face}-${subset}.woff2`, import.meta.url)),
@@ -1110,6 +1110,7 @@ export function createLeadServer(options = {}) {
           ok: true,
           team: store.listTeam(),
           events: [...new Set([...PORTAL_EVENTS.map((item) => item.name), ...SHOWS.map((show) => show.name)])],
+          shows: SHOWS,
           currencies: CURRENCIES,
           noteKinds: NOTE_KINDS,
           statuses: LEAD_STATUSES,

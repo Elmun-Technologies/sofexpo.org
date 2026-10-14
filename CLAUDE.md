@@ -40,7 +40,7 @@ subdomains) from shared sources — see `docs/05-subdomains.md` and `docs/06-dep
   `scripts/gen-editorial-map.mjs` (runs before every build) — new markdown files need no
   manual registration.
 - `scripts/backend/` — the Node backend: `server.mjs` (routing in one `handleRequest`),
-  `db.mjs` (schema + store methods), `auth.mjs`, `admin/`, `portal/`, `shared/`,
+  `db.mjs` (schema + store methods), `auth.mjs`, `shows.mjs`, `showcase.mjs`, `admin/`, `portal/`,
   `tgblog/` (Telegram → blog sync, see below).
 - `scripts/` — build/audit tooling (`.mjs`, run via `node`); site scripts read the same
   conventions as the app.

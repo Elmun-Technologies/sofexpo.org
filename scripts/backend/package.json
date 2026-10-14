@@ -1,0 +1,9 @@
+{
+  "name": "sofexpo-backend-runtime",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "parse5": "7.3.0"
+  }
+}

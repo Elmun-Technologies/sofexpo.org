@@ -30,6 +30,13 @@
     blogStatus: '',
     meta: { team: [], events: [], currencies: ['USD', 'UZS', 'EUR', 'RUB'], shows: [] },
     toastTimer: null,
+    /* new-lead notifications: a quiet poll, a toast, and an opt-in chime */
+    notificationTimer: null,
+    notificationPollBusy: false,
+    notificationBaselineReady: false,
+    knownLeadIds: new Set(),
+    soundEnabled: (() => { try { return localStorage.getItem('sofexpo.admin.sound') === '1'; } catch { return false; } })(),
+    audioContext: null,
   };
 
   const labels = {
@@ -158,6 +165,127 @@
     showToast(error?.message || 'Kutilmagan xatolik yuz berdi.', 'error');
   }
 
+  /* ---------------- new-lead notifications ----------------
+     Every 12 s (and whenever the tab comes back) the newest leads are compared with the ones
+     already seen; a fresh one raises a toast, an optional chime, and refreshes the counter —
+     the open view is redrawn only when nobody is working in it (lead card, dialog, a field). */
+  const LAST_LEAD_ID_KEY = 'sofexpo.admin.lastLeadId';
+  const SOUND_KEY = 'sofexpo.admin.sound';
+
+  function updateSoundToggle() {
+    const button = $('#sound-toggle');
+    if (!button) return;
+    const on = state.soundEnabled;
+    $('span[aria-hidden="true"]', button).textContent = on ? '🔔' : '🔕';
+    $('.notice-label', button).textContent = on ? 'Ovoz yoqilgan' : 'Ovozni yoqish';
+    button.setAttribute('aria-pressed', String(on));
+    button.setAttribute('aria-label', on ? 'Tovushli xabarnomani o‘chirish' : 'Tovushli xabarnomani yoqish');
+    button.title = on ? 'Yangi ariza ovozli signal bilan bildiriladi' : 'Yangi ariza uchun tovushli signalni yoqish';
+  }
+
+  async function unlockLeadAudio() {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return null;
+    if (!state.audioContext) state.audioContext = new AudioContextClass();
+    if (state.audioContext.state === 'suspended') await state.audioContext.resume();
+    return state.audioContext;
+  }
+
+  function playLeadChime() {
+    const context = state.audioContext;
+    if (!state.soundEnabled || !context || context.state !== 'running') return;
+    for (const [frequency, offset] of [[880, 0], [1174, 0.13], [1568, 0.26]]) {
+      const start = context.currentTime + offset;
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(frequency, start);
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(0.12, start + 0.025);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.19);
+      oscillator.connect(gain);
+      gain.connect(context.destination);
+      oscillator.start(start);
+      oscillator.stop(start + 0.2);
+    }
+  }
+
+  async function refreshNewLeadCount() {
+    try {
+      const data = await api(`/api/admin/dashboard?days=${state.days}`);
+      updateNewCount(data.newLeads);
+    } catch { /* a notification must never break the current view */ }
+  }
+
+  /** true while someone is mid-task: a lead card or dialog is open, or a field has focus */
+  function adminIsBusy() {
+    if ($('#lead-drawer')?.classList.contains('open')) return true;
+    if ($('#modal-root')?.innerHTML) return true;
+    const active = document.activeElement;
+    return Boolean(active && $('#content')?.contains(active) && active.matches('input, textarea, select, [contenteditable="true"]'));
+  }
+
+  function announceNewLeads(leads) {
+    if (!leads.length) return;
+    showToast(leads.length === 1
+      ? `Yangi ariza: ${leads[0].name || 'Yangi murojaat'}`
+      : `${number(leads.length)} ta yangi ariza kelib tushdi`);
+    playLeadChime();
+    const redraw = { dashboard: renderDashboard, leads: renderLeads, pipeline: renderPipeline }[state.view];
+    if (redraw && !adminIsBusy()) redraw().catch(showError);
+    else refreshNewLeadCount();
+  }
+
+  function stopLeadNotifications() {
+    if (state.notificationTimer) clearInterval(state.notificationTimer);
+    state.notificationTimer = null;
+    state.notificationBaselineReady = false;
+    state.knownLeadIds = new Set();
+  }
+
+  function rememberNewest(ids) {
+    if (!ids[0]) return;
+    try { localStorage.setItem(LAST_LEAD_ID_KEY, ids[0]); } catch { /* private mode */ }
+  }
+
+  async function pollNewLeads() {
+    if (!state.user || state.notificationPollBusy) return;
+    state.notificationPollBusy = true;
+    try {
+      /* newest first (sort=created); 100 is the API's page ceiling */
+      const data = await api('/api/admin/leads?limit=100&sort=created');
+      const leads = Array.isArray(data.items) ? data.items : [];
+      const ids = leads.map((lead) => String(lead.id || '')).filter(Boolean);
+      if (!state.notificationBaselineReady) {
+        /* first poll after sign-in: everything on screen is "known"; leads that arrived since
+           this browser last looked are announced once */
+        state.notificationBaselineReady = true;
+        state.knownLeadIds = new Set(ids);
+        let lastLeadId = '';
+        try { lastLeadId = localStorage.getItem(LAST_LEAD_ID_KEY) || ''; } catch { /* private mode */ }
+        const lastSeenIndex = ids.indexOf(lastLeadId);
+        if (lastLeadId && lastSeenIndex > 0) announceNewLeads(leads.slice(0, lastSeenIndex));
+        rememberNewest(ids);
+        return;
+      }
+      const fresh = leads.filter((lead) => lead.id && !state.knownLeadIds.has(String(lead.id)));
+      ids.forEach((id) => state.knownLeadIds.add(id));
+      if (state.knownLeadIds.size > 250) state.knownLeadIds = new Set(ids);
+      rememberNewest(ids);
+      if (fresh.length) announceNewLeads(fresh);
+    } catch (error) {
+      if (error?.status === 401) stopLeadNotifications();
+    } finally {
+      state.notificationPollBusy = false;
+    }
+  }
+
+  function startLeadNotifications() {
+    stopLeadNotifications();
+    pollNewLeads();
+    state.notificationTimer = window.setInterval(pollNewLeads, 12_000);
+  }
+
   /** small dialog asking for one value; resolves to the text or null when cancelled */
   function askValue({ title, text = '', label = '', value = '', required = false, confirm = 'Saqlash', type = 'text', options = [] }) {
     return new Promise((resolve) => {
@@ -186,6 +314,7 @@
     $('#auth').hidden = !visible;
     $('#app').hidden = visible;
     if (visible) {
+      stopLeadNotifications();
       state.user = null;
       state.csrf = '';
     }
@@ -1180,6 +1309,7 @@
     setAuthVisible(false);
     await loadMeta();
     navigate(initialView());
+    startLeadNotifications();
   }
 
   async function loadSession() {
@@ -1260,6 +1390,27 @@
     if ($('#modal-root').innerHTML) return;
     closeDrawer();
   });
+  updateSoundToggle();
+  $('#sound-toggle').addEventListener('click', async () => {
+    state.soundEnabled = !state.soundEnabled;
+    try { localStorage.setItem(SOUND_KEY, state.soundEnabled ? '1' : '0'); } catch { /* private mode */ }
+    updateSoundToggle();
+    if (!state.soundEnabled) return;
+    try {
+      if (!(await unlockLeadAudio())) throw new Error('AudioContext is unavailable');
+      playLeadChime();
+    } catch {
+      state.soundEnabled = false;
+      try { localStorage.setItem(SOUND_KEY, '0'); } catch { /* private mode */ }
+      updateSoundToggle();
+      showToast('Tovush yoqilmadi. Brauzer ruxsatini tekshiring.', 'error');
+    }
+  });
+  /* browsers only start audio after a gesture: the first click anywhere re-arms the chime */
+  document.addEventListener('pointerdown', () => {
+    if (state.soundEnabled && (!state.audioContext || state.audioContext.state === 'suspended')) unlockLeadAudio().catch(() => {});
+  }, { passive: true });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) pollNewLeads(); });
 
   initialize();
 })();

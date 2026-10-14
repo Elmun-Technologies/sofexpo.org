@@ -9,7 +9,7 @@ qiladi.
 | Sozlama | Qiymat |
 |---|---|
 | Fly app | `sofexpo-api` |
-| Region | `ist` (Istanbul) |
+| Region | `fra` (Frankfurt; available in the Fly account used for setup) |
 | Machine | 1 ta shared CPU, 512 MB RAM |
 | SQLite volume | `sofexpo_data` → `/data` |
 | Health check | `GET /health` |
@@ -27,12 +27,12 @@ bo‘yicha o‘rnating. Yangi akkaunt bo‘lsa `flyctl auth signup`, mavjud akka
 
 ```sh
 flyctl apps create sofexpo-api
-flyctl volumes create sofexpo_data --region ist --size 1 --snapshot-retention 7 --app sofexpo-api
+flyctl volumes create sofexpo_data --region fra --size 1 --snapshot-retention 7 --app sofexpo-api
 ```
 
 Volume hajmi bu yerda 1 GB, scheduled snapshot’lar yoqilgan va retention 7 kun. App va volume bir xil
-Fly organization’da, volume esa `ist` regionida bo‘lishi shart. Repo ildizidagi `fly.toml` shu
-app/volume nomlariga bog‘langan; nomlarni o‘zgartirsangiz, config’dagi qiymatlarni ham birga o‘zgartiring.
+Fly organization’da, volume esa `fra` regionida bo‘lishi shart. Joriy Fly CLI region ro‘yxatida `ist`
+topilmadi, `fra` mavjud edi. Repo ildizidagi `fly.toml` app va volume nomlariga mos bo‘lishi kerak.
 
 ## 2. Fly secrets (qiymatlarni faqat operator kiritadi)
 
@@ -77,8 +77,8 @@ flyctl machines list --app sofexpo-api
 flyctl logs --app sofexpo-api
 ```
 
-Dockerfile `node:22-slim` va `git` ishlatadi; backend Node built-in’laridan boshqa runtime
-dependency’ga ega emas, shuning uchun `npm install` / `npm ci` konteyner uchun kerak emas.
+Dockerfile `node:22-slim` va `git` ishlatadi. Telegram blog HTML parseri uchun backend’ga `parse5` kerak;
+u `scripts/backend/` dagi alohida lockfile orqali image’ga o‘rnatiladi. Astro sayt dependency’lari image’ga o‘rnatilmaydi.
 `.dockerignore` lokal `.env` faylini build context’dan chiqaradi, lekin `.git` va tracked repo
 fayllarini saqlaydi — Telegram publisher maqola/media’ni shu checkout’da commit qilib `main` ga
 push qilishi uchun. `GITHUB_TOKEN` Docker build vaqtida emas, Fly secret sifatida runtime’da beriladi.
@@ -135,8 +135,8 @@ Bular public/build-time qiymatlar; token yoki boshqa secret qo‘ymang. `vercel.
 `PUBLIC_HOSTS_MODE=alias` ni saqlang. Env’larni saqlagach Vercel’da production redeploy qiling —
 ular yangi build’da HTML/JS’ga kiradi.
 
-Backend’da `LEAD_WEBHOOK_ORIGINS` aniq ruxsat etilgan origin’larni allaqachon o‘z ichiga oladi.
-CORS’ni production browser origin’i bilan tekshirish:
+Backend’dagi `LEAD_WEBHOOK_ORIGINS` ro‘yxatida `https://sof-expo.com` va `https://www.sof-expo.com`
+aniq origin sifatida bor; wildcard ishlatilmaydi. CORS’ni production browser origin’i bilan tekshirish:
 
 ```sh
 curl -i -X OPTIONS https://api.sof-expo.com/lead \
@@ -190,7 +190,7 @@ Git yoki Vercel `PUBLIC_*` o‘zgaruvchilariga kirmasligi kerak.
   mavjudligini `flyctl volumes list --app sofexpo-api` va
   `flyctl volumes snapshots list <VOLUME_ID> --app sofexpo-api` orqali tekshiring. Restore kerak
   bo‘lsa, yozuvlarni vaqtincha to‘xtating va snapshot’dan alohida volume yarating, masalan:
-  `flyctl volumes create sofexpo_data_restore --region ist --size 1 --snapshot-id <SNAPSHOT_ID> --app sofexpo-api`.
+  `flyctl volumes create sofexpo_data_restore --region fra --size 1 --snapshot-id <SNAPSHOT_ID> --app sofexpo-api`.
   So‘ng `fly.toml` dagi mount source’ini tanlangan volume nomiga moslab deploy qiling; volume’ni
   faqat bitta machine’ga ulang. Avval tiklangan bazada
   admin/portal va `/health` ni tekshirib, keyin webhook’ni qayta faollashtiring.

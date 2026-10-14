@@ -1,0 +1,77 @@
+---
+import Base from '@/layouts/Base.astro';
+import { localize, type SourceLocale as Locale } from '@/i18n/config';
+import { localePaths } from '@/lib/pages';
+
+export function getStaticPaths() {
+  return localePaths();
+}
+
+const { locale } = Astro.params as { locale: Locale };
+const copy = locale === 'ru'
+  ? {
+      title: 'Заявка отправлена',
+      description: 'Спасибо! Менеджер свяжется с вами в течение 24 часов.',
+      home: 'На главную',
+    }
+  : {
+      title: 'Request received!',
+      description: 'Request received. An account manager will contact you within 24 hours.',
+      home: 'Back to home',
+    };
+const metadata = locale === 'ru'
+  ? {
+      title: 'Заявка отправлена | SOF EXPO',
+      description: 'Ваша заявка поступила команде SOF EXPO. Менеджер свяжется с вами в течение 24 часов, чтобы обсудить запрос и дальнейшие шаги.',
+    }
+  : {
+      title: 'Request received | SOF EXPO',
+      description: 'Your request has reached the SOF EXPO team. An account manager will contact you within 24 hours to discuss the request and next steps.',
+    };
+---
+
+<Base
+  {locale}
+  title={metadata.title}
+  description={metadata.description}
+  path="/thank-you/"
+  noindex
+>
+  <section class="sec sec--paper thank-page">
+    <div class="wrap thank-page__inner">
+      <div class="thank-page__mark" aria-hidden="true">✓</div>
+      <h1 class="h1">{copy.title}</h1>
+      <p class="lead">{copy.description}</p>
+      <a class="btn btn--gold" href={localize(locale, '/')}>{copy.home}</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .thank-page {
+    min-height: 56vh;
+    display: grid;
+    align-items: center;
+    padding-block: clamp(4rem, 10vw, 8rem);
+  }
+  .thank-page__inner {
+    width: min(100%, 760px);
+    text-align: center;
+  }
+  .thank-page__mark {
+    display: grid;
+    place-items: center;
+    width: 66px;
+    height: 66px;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    background: #e7efe8;
+    color: #14402a;
+    font-size: 2rem;
+    font-weight: 700;
+  }
+  .thank-page__inner .lead {
+    max-width: 52ch;
+    margin: 1rem auto 2rem;
+  }
+</style>

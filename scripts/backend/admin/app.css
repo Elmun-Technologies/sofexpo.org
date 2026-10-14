@@ -177,6 +177,13 @@ input[type='checkbox'] { width: 16px; height: 16px; accent-color: var(--blue); }
 .range-control select { width: auto; min-height: 38px; border-radius: 999px; }
 .live-indicator { display: inline-flex; align-items: center; gap: 7px; color: var(--muted); font-size: 12px; white-space: nowrap; }
 .live-indicator i { width: 7px; height: 7px; border-radius: 50%; background: var(--success); }
+/* new-lead chime switch (app.js → new-lead notifications); icon-only on phones */
+.notice-toggle { gap: 7px; min-height: 36px; padding: 7px 11px; border: 1px solid var(--line); white-space: nowrap; font-size: 12px; }
+.notice-toggle[aria-pressed="true"] { border-color: var(--blue); background: var(--blue-soft); color: var(--blue-ink); }
+@media (max-width: 760px) {
+  .notice-toggle { width: 36px; min-width: 36px; padding: 0; justify-content: center; font-size: 15px; }
+  .notice-toggle .notice-label { display: none; }
+}
 .mobile-menu { display: none; }
 .content-area { flex: 1; width: 100%; max-width: 1480px; padding: 26px 28px 56px; }
 .mobile-scrim { position: fixed; inset: 0; z-index: 39; background: rgba(10, 10, 10, .45); opacity: 0; pointer-events: none; transition: opacity .2s; }

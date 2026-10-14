@@ -84,8 +84,9 @@ export function brandCss(brand: HostBrand | null): string {
     `--line:${p.line};--line-strong:${p.lineStrong};`,
     `--cream:${p.cream};--cream-2:${p.cream2};`,
     `--gold:${p.gold};--gold-soft:${p.goldSoft};--ornament:${p.ornament};--brand-mark:${p.mark};`,
-    /* the 2026-10 design's yellow accent (booking CTA, call-outs) becomes the show's own accent */
-    `--accent:${p.goldSoft};`,
+    /* the 2026-10 design's booking accent (CTA, call-outs) becomes the show's own accent,
+       and what sits on it is that show's ink (the pair is AA-verified by check-brand-contrast) */
+    `--accent:${p.goldSoft};--accent-ink:${p.ink};`,
     /* the rest of the centre's black/blue/yellow ladder, so none of it leaks onto a show page:
        small accent text, the pale accent ground, neutral chips and the keyboard focus ring */
     `--gold-ink:${p.gold};--accent-soft:color-mix(in srgb,${p.goldSoft} 22%,#fff);--sage:${p.cream2};`,

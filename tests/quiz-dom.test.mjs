@@ -220,3 +220,22 @@ test('quiz: ru build keeps source copy and the header opens the dialog', { skip:
   assert.equal(dialog.open, false, 'close button closes the dialog');
   dom.window.close();
 });
+
+test('thank-you confirmation route is noindex and translated for every edition', { skip: !existsSync(dist('en/thank-you/index.html')) && 'dist missing — run npm run build' }, () => {
+  const expected = {
+    en: 'Request received!',
+    ru: 'Заявка отправлена',
+    zh: '请求已收到！',
+    tr: 'Talebiniz alındı!',
+    uz: 'Ariza qabul qilindi!',
+  };
+  for (const [locale, heading] of Object.entries(expected)) {
+    const html = readFileSync(dist(`${locale}/thank-you/index.html`), 'utf8');
+    assert.match(html, /name="robots" content="noindex/, `${locale} confirmation page must stay out of search results`);
+    assert.ok(html.includes(`<h1 class="h1"`) && html.includes(heading), `${locale} confirmation heading exists`);
+    const title = html.match(/<title[^>]*>([\s\S]*?)<\/title>/)?.[1]?.trim() || '';
+    const description = html.match(/<meta name="description" content="([^"]*)"/)?.[1] || '';
+    assert.ok(title.length >= (locale === 'zh' ? 8 : 22), `${locale} page title should meet SEO length limits`);
+    assert.ok(description.length >= (locale === 'zh' ? 24 : 60), `${locale} meta description should meet SEO length limits`);
+  }
+});

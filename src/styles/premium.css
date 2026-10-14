@@ -14,8 +14,7 @@ h1, h2, h3 { text-wrap: balance; }
 p { text-wrap: pretty; }
 a, button, summary { -webkit-tap-highlight-color: transparent; }
 .btn { min-height: 48px; border-radius: 6px; padding: .85rem 1.4rem; gap: .8rem; }
-.btn--accent { --btn-bg: var(--accent); --btn-fg: #1d1204; }
-.btn--accent:hover { background: #c5903a; color: #1d1204; }
+.btn--accent { --btn-bg: var(--accent); --btn-fg: var(--accent-ink, #ffffff); }
 .kicker, .mono-label { letter-spacing: .12em; }
 .sec-head { flex-wrap: wrap; gap: 1rem; align-items: end; }
 .sec-head p { max-width: 60ch; }

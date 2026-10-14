@@ -32,7 +32,18 @@ function createAdminPage({ signedIn = true } = {}) {
   const dom = new JSDOM(html, { runScripts: 'outside-only', url: 'https://api.sofexpo.test/admin' });
   const { window } = dom;
   const calls = [];
+  const intervals = [];
+  let latestLeads = [];
+  let audioSignals = 0;
   let active = 1;
+  window.setInterval = (callback, delay) => { intervals.push({ callback, delay }); return intervals.length; };
+  window.clearInterval = () => {};
+  window.AudioContext = class {
+    constructor() { this.state = 'running'; this.currentTime = 0; this.destination = {}; }
+    createOscillator() { return { frequency: { setValueAtTime() {} }, connect() {}, start() { audioSignals += 1; }, stop() {} }; }
+    createGain() { return { gain: { setValueAtTime() {}, exponentialRampToValueAtTime() {} }, connect() {} }; }
+    resume() { this.state = 'running'; return Promise.resolve(); }
+  };
   window.confirm = () => true;
   window.fetch = async (path, options = {}) => {
     const call = {
@@ -53,6 +64,7 @@ function createAdminPage({ signedIn = true } = {}) {
       daily: [{ day: '2026-10-11', leads: 1, sessions: 5 }],
       statuses: [{ key: 'new', count: 1 }], forms: [{ key: 'visitor', count: 1 }], sources: [], outbox: { pending: 0, failed: 0 },
     });
+    if (call.path === '/api/admin/leads?limit=100') return jsonResponse({ ok: true, items: latestLeads, total: latestLeads.length, page: 1, limit: 100, pages: 1 });
     if (call.path === '/api/admin/leads?limit=6') return jsonResponse({ ok: true, items: [], total: 0, page: 1, limit: 6, pages: 1 });
     if (call.path.startsWith('/api/admin/portal-accounts?')) return jsonResponse({
       ok: true, items: [{ ...account(active), requestCount: 1, newRequests: 1, latestRequestAt: '2026-10-11T10:00:00.000Z' }],
@@ -89,7 +101,14 @@ function createAdminPage({ signedIn = true } = {}) {
     throw new Error(`Unexpected admin API request: ${call.method} ${call.path}`);
   };
   window.eval(app);
-  return { dom, window, calls };
+  return {
+    dom,
+    window,
+    calls,
+    intervals,
+    setLatestLeads(value) { latestLeads = value; },
+    get audioSignals() { return audioSignals; },
+  };
 }
 
 async function waitFor(window, predicate, message = 'admin UI did not settle') {
@@ -157,6 +176,30 @@ test('signing in renders the dashboard (the form is kept across the await)', asy
     assert.ok(calls.some((call) => call.path === '/api/admin/login' && call.method === 'POST'));
     assert.equal(document.querySelector('#login-email').value, '', 'the login form is reset');
     assert.ok(document.querySelector('#login-error').hidden, 'no error after a successful login');
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('admin polls for new leads and plays an opt-in sound alert', async () => {
+  const page = createAdminPage();
+  const { dom, window, calls, intervals, setLatestLeads } = page;
+  try {
+    const document = window.document;
+    await waitFor(window, () => document.querySelector('#content .metrics-grid'));
+    await waitFor(window, () => intervals.length === 1 && calls.some((call) => call.path === '/api/admin/leads?limit=100'));
+    assert.equal(intervals[0].delay, 12_000, 'new leads are checked every 12 seconds');
+
+    const soundToggle = document.querySelector('#sound-toggle');
+    soundToggle.click();
+    await waitFor(window, () => soundToggle.getAttribute('aria-pressed') === 'true');
+    await waitFor(window, () => page.audioSignals >= 3, 'enabling sound should play a confirmation chime');
+
+    setLatestLeads([{ id: 'lead-new-1', name: 'New Lead', status: 'new', createdAt: '2026-10-14T12:00:00.000Z' }]);
+    await intervals[0].callback();
+    await waitFor(window, () => document.querySelector('#toast').classList.contains('show'));
+    assert.equal(document.querySelector('#toast').textContent, 'Yangi ariza: New Lead');
+    assert.ok(page.audioSignals >= 6, 'a new lead plays the chime after sound is enabled');
   } finally {
     dom.window.close();
   }

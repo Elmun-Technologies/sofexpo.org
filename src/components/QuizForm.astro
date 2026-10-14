@@ -455,6 +455,12 @@ const mailto = `mailto:${site.contacts.email}?subject=${encodeURIComponent(ru ? 
             all.push(payload);
             localStorage.setItem(key, JSON.stringify(all));
           } catch (err) {}
+        } else {
+          try { window.sofFlush && window.sofFlush(); } catch (err) {}
+          var rawLocale = (document.documentElement.lang || 'en').toLowerCase().split(/[-_]/)[0];
+          var locale = ['ru', 'en', 'zh', 'tr', 'uz'].indexOf(rawLocale) >= 0 ? rawLocale : 'en';
+          window.setTimeout(function () { window.location.assign('/' + locale + '/thank-you/'); }, 350);
+          return;
         }
         var fill = function (name, value) {
           var slot = done && done.querySelector('[data-quiz-summary=' + name + ']');

@@ -9,3 +9,6 @@
 .status-badge.status-draft { background: #f3ecdc; color: #7a6333; }
 .status-badge.status-published { background: #e0efe2; color: #25633b; }
 .status-badge.status-unpublished { background: #ececeb; color: #9c3930; }
+.notice-toggle { gap: 8px; min-height: 36px; padding: 7px 10px; white-space: nowrap; font-size: 10px; }
+.notice-toggle[aria-pressed="true"] { border-color: #b7cfba; background: #e9f2ea; color: #145332; }
+@media (max-width: 520px) { .notice-toggle { width: 34px; min-width: 34px; padding: 0; overflow: hidden; justify-content: center; font-size: 16px; } .notice-toggle .notice-label { display: none; } }

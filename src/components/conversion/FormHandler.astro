@@ -17,8 +17,18 @@
     const ENDPOINT = (import.meta.env.PUBLIC_LEAD_ENDPOINT || '').trim();
     const LEADS_KEY = 'sofexpo.leads';
     const FORMS_SELECTOR = 'form[data-lead-form]';
+    const THANK_YOU_LOCALES = new Set(['ru', 'en', 'zh', 'tr', 'uz']);
 
     const getForms = () => Array.from(document.querySelectorAll(FORMS_SELECTOR));
+    const thankYouPath = () => {
+      const language = (document.documentElement.lang || 'en').toLowerCase().split(/[-_]/)[0];
+      const locale = THANK_YOU_LOCALES.has(language) ? language : 'en';
+      return `/${locale}/thank-you/`;
+    };
+    const redirectToThankYou = () => {
+      try { window.sofFlush?.(); } catch {}
+      window.setTimeout(() => window.location.assign(thankYouPath()), 350);
+    };
 
     /* The manager reads the relayed message, so its labels are Russian whatever the
        page language; unknown keys pass through as they are. */
@@ -193,8 +203,10 @@
           form.querySelectorAll('select').forEach(el => { el.selectedIndex = 0; });
 
           try { window.sofTrack?.('form_submit', { form: formType, source, id: form.id, success: true }); } catch {}
+          // Catalog submissions start a download; keep that flow on-page. Every other
+          // successfully stored lead goes to the localized confirmation page.
+          if (formType !== 'catalog') redirectToThankYou();
 
-          // Optional: show thank you popup or redirect
           // If catalog form, trigger download
           if (formType === 'catalog') {
             setTimeout(() => {

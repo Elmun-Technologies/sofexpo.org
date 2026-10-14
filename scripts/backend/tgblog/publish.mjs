@@ -1,7 +1,7 @@
 /**
  * Debounced repo publisher: after one or more syncs, commits content/media changes and
- * pushes once, then pings Cloudflare deploy hooks. On a static site the push IS the
- * revalidation — Cloudflare Pages rebuilds on push.
+ * pushes once, then pings optional hosting deploy hooks. On a static site the push triggers
+ * the hosting rebuild (= revalidation).
  *
  * Serialized via a promise queue; failures are logged, never thrown into the webhook
  * path (the files stay on disk and the next sync tries again).
@@ -65,7 +65,7 @@ export class GitPublisher {
     if (this.pushEnabled) {
       await this.run('git', ['-C', this.repoDir, 'pull', '--rebase', this.remote, this.branch]);
       await this.run('git', ['-C', this.repoDir, 'push', this.remote, `HEAD:${this.branch}`]);
-      this.logger.info?.('[tg-blog] pushed to %s/%s — Cloudflare Pages rebuild triggered', this.remote, this.branch);
+      this.logger.info?.('[tg-blog] pushed to %s/%s — hosting rebuild triggered on push', this.remote, this.branch);
     } else {
       this.logger.info?.('[tg-blog] committed locally (BLOG_SYNC_GIT_PUSH off) — %s', title);
     }

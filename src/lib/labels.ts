@@ -36,7 +36,7 @@ const INDUSTRY_COLOR: Record<string, string> = {
   ecommerce: '#6e4a63',
   education: '#2f5d76',
   /* the centre's own note keeps the current deep brand green, not the retired evergreen */
-  company: '#123b25',
+  company: '#00475a',
   guide: '#4b5350',
   market: '#4b5350',
 };

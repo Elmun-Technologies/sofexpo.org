@@ -152,6 +152,12 @@ yaqinlashuvi edi; `--brand-stripe` va `--sx-*` endi bayroq qiymatlarida. Matn/ha
 qizili — bayroq qizili `#CE1126` (oq matn 5.6:1). Admin va kabinet: `#0063E4` ko'k va kislotali
 sariq `#F4FD10` o'rniga bayroq samoviysi (`#00738C`, qora yon panelda `#5CCFE3`).
 
+Ikkinchi qadam (o'sha kun): saytda eng ko'p ko'rinadigan rang hali ham to'q yashil `#123B25` edi
+(tugmalar, to'q bloklar, footer) — sayt bayroqqa o'xshamasdi. Endi `--evergreen` = bayroq samoviysining
+tungi tusi `#00475A` (oq matn 10.2:1), `--evergreen-2` `#005F73`, siyoh `--ink` `#0B1C22` (ko'k-qora),
+to'q fondagi och urg'u `--gold-soft` `#8FDCEC`, `--accent-soft` `#E3F4F8`; `theme-color`, manifest va
+OG kartochka ham shu rangda. Yashil va qizil bayroqdagidek: chiziqlar va urg'u (qizil — bron tugmasi).
+
 **FOODERA naqshi.** FOODERA'ning naqshi uning badge'ida: tilla islimiy jingalak gullar halqasi.
 `images/brand-masters/foodera-naqsh-ring.png` — badge'dan kesilgan (yulduz va yozuv olib
 tashlangan) halqa; `public/brand/foodera/naqsh.webp` maska sifatida: hero'ning o'ng yuqori

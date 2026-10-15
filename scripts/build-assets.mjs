@@ -17,7 +17,7 @@ const H = 630;
    for its own sake (docs/07 §7). The exterior panel is the photographer's daylight frame of the
    building (2026-10-15; it used to be a render). */
 const overlay = `<svg width="${W}" height="${H}">
-  <rect width="${W}" height="${H}" fill="#0f2b1c"/>
+  <rect width="${W}" height="${H}" fill="#00475a"/>
   <rect x="70" y="132" width="34" height="34" fill="none" stroke="#ffffff" stroke-width="2"/>
   <rect x="112" y="132" width="34" height="34" fill="#ffffff"/>
   <text x="68" y="300" font-family="Helvetica, Arial, sans-serif" font-size="66" font-weight="700" fill="#ffffff" letter-spacing="-2">SOF EXPO</text>
@@ -34,7 +34,7 @@ const panel = await sharp("public/images/venue-exterior.jpg")
   .resize(panelW, H, { fit: "cover", position: "centre" })
   .toBuffer();
 await sharp({
-  create: { width: W, height: H, channels: 3, background: "#0f2b1c" },
+  create: { width: W, height: H, channels: 3, background: "#00475a" },
 })
   .composite([
     { input: Buffer.from(overlay) },

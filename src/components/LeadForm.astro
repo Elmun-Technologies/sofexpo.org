@@ -188,6 +188,7 @@ const Hf = level === 2 ? 'h2' : 'h3';
       const payload = Object.fromEntries(data.entries());
       payload.page = location.pathname;
       payload.ts = new Date().toISOString();
+      try { payload.sessionId = window.sofSessionId || sessionStorage.getItem('sofexpo.session') || ''; } catch {}
       if (form.dataset.formType) payload.formType = form.dataset.formType;
       msg.hidden = false;
       msg.className = 'form__msg form__ok';

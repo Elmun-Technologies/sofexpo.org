@@ -31,6 +31,9 @@ const endpoint = (import.meta.env.PUBLIC_ANALYTICS_ENDPOINT ?? '').trim();
     } catch {
       sessionId = `${Date.now()}-nosession`;
     }
+    /* lead forms send the same id, so a lead in the CRM carries the visit that produced it
+       (pages seen, CTAs clicked — the lead journey, docs/17) */
+    window.sofSessionId = sessionId;
 
     // UTM & referrer
     const params = new URLSearchParams(location.search);

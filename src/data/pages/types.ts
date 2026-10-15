@@ -37,7 +37,11 @@ export type BlockType =
   /* The team wall: 17 finished 1:1 poster artboards grouped by role, rendered by
      `src/components/TeamWall.astro`. The block carries no items of its own — the wall
      reads `src/data/team.ts` so a hire or a departure is a one-line edit. */
-  | "team";
+  | "team"
+  /* The live exhibitor directory (company pages and materials exhibitors publish from the
+     exhibitor account), fetched at runtime by `src/components/ExhibitorDirectory.astro`;
+     hidden until the backend answers. `event` narrows it to one show. */
+  | "directory";
 
 export interface BlockAction {
   label: string;

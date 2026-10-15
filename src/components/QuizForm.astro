@@ -432,6 +432,7 @@ const mailto = `mailto:${site.contacts.email}?subject=${encodeURIComponent(ru ? 
             if (v) payload[k] = v;
           });
         } catch (err) {}
+        try { payload.sessionId = window.sofSessionId || sessionStorage.getItem('sofexpo.session') || ''; } catch (err) {}
         track('quiz_submit', { show: payload.event, goal: payload.goal, area: payload.area, channel: payload.channel, src: payload.src || 'inline' });
         var endpoint = root.dataset.endpoint;
         if (msg) {

@@ -3,14 +3,26 @@
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
   const i18n = window.SOFEXPO_PORTAL_I18N;
   const supportedLocales = Object.keys(i18n.locales);
-  const state = { csrf: '', user: null, events: [], toastTimer: 0, locale: 'uz', authMode: 'login' };
+  const state = {
+    csrf: '', user: null, events: [], toastTimer: 0, locale: 'uz', authMode: 'login', tab: 'requests',
+    options: { shows: [], fileKinds: ['catalog', 'brochure', 'flyer', 'presentation', 'pricelist', 'image', 'other'], socials: ['instagram', 'telegram', 'facebook', 'linkedin', 'youtube', 'tiktok'], limits: {} },
+    showcase: null, files: [], uploads: [], showcaseLoaded: false,
+  };
   const apiRoot = '/api/portal';
-  const statusKeys = { new: 'statusNew', contacted: 'statusContacted', qualified: 'statusQualified', won: 'statusWon', lost: 'statusLost', spam: 'statusLost' };
+  const statusKeys = { new: 'statusNew', contacted: 'statusContacted', qualified: 'statusQualified', proposal: 'statusQualified', negotiation: 'statusQualified', won: 'statusWon', lost: 'statusLost', spam: 'statusLost' };
+  const showcaseStatusKeys = { draft: 'scStatusDraft', pending: 'scStatusPending', published: 'scStatusPublished', rejected: 'scStatusRejected', hidden: 'scStatusHidden' };
+  const showcaseStatusCopyKeys = { draft: 'scStatusDraftCopy', pending: 'scStatusPendingCopy', published: 'scStatusPublishedCopy', rejected: 'scStatusRejectedCopy', hidden: 'scStatusHiddenCopy' };
+  const fileKindKeys = { catalog: 'kindCatalog', brochure: 'kindBrochure', flyer: 'kindFlyer', presentation: 'kindPresentation', pricelist: 'kindPricelist', image: 'kindImage', other: 'kindOther', logo: 'kindLogo' };
+  const socialLabels = { instagram: 'Instagram', telegram: 'Telegram', facebook: 'Facebook', linkedin: 'LinkedIn', youtube: 'YouTube', tiktok: 'TikTok' };
+  const LIMITS = { pdfBytes: 20 * 1024 * 1024, imageBytes: 5 * 1024 * 1024, filesPerAccount: 30 };
+  const IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
 
   function t(key) {
     return i18n.locales[state.locale]?.[key] ?? i18n.locales.uz[key] ?? key;
   }
+  const format = (key, values) => t(key).replace(/\{(\w+)\}/g, (match, name) => (values[name] ?? match));
 
+  /* ======================= LOCALE ======================= */
   function setLocale(locale, updateUrl = true) {
     state.locale = supportedLocales.includes(String(locale).toLowerCase()) ? String(locale).toLowerCase() : 'uz';
     document.documentElement.lang = i18n.htmlLocales[state.locale];
@@ -23,12 +35,14 @@
       const page = link.dataset.publicLink === 'privacy' ? 'legal/privacy/' : '';
       link.href = `https://sof-expo.com/${state.locale}/${page}`;
     });
+    $('#showcase-live-link').href = `https://sof-expo.com/${state.locale}/exhibitors/catalogue/`;
     setAuthMode(state.authMode);
     if (state.events.length) populateEvents(state.events);
     if (state.user) {
       $('#account-role').textContent = state.user.accountType === 'exhibitor' ? t('exhibitorAccount') : t('visitorAccount');
     }
-    setAccountType(state.user?.accountType || $('#register-type').value || 'visitor');
+    setAccountType(state.user?.accountType || selectedRegisterType());
+    if (state.showcaseLoaded) renderShowcase({ keepForm: true });
     if (updateUrl && typeof history !== 'undefined' && history.replaceState) {
       const params = new URLSearchParams(location.search);
       params.set('lang', state.locale);
@@ -50,14 +64,23 @@
       'Kompaniya sayti http:// yoki https:// bilan boshlansin.': 'badWebsite',
       'Ro‘yxatdan o‘tish urinishlari ko‘p. Keyinroq qayta urinib ko‘ring.': 'rateLimited',
       'So‘rovlar soni ko‘p. Birozdan keyin urinib ko‘ring.': 'rateLimited',
+      'Juda ko‘p saqlash. Birozdan keyin urinib ko‘ring.': 'rateLimited',
+      'Fayllar soni ko‘p. Birozdan keyin urinib ko‘ring.': 'rateLimited',
       'Urinishlar vaqtincha bloklandi. 10 daqiqadan so‘ng qayta urinib ko‘ring.': 'accountLocked',
       'Ro‘yxatdan tadbirni tanlang.': 'eventRequired',
       'Ushbu murojaatni yuborishga rozilik bering.': 'requestConsentRequired',
       'Maydonni 1–10 000 m² oralig‘ida kiriting.': 'areaInvalid',
       'Ishtirok formatini tanlang.': 'packageRequired',
       'Qiziqish yo‘nalishini kiriting.': 'interestRequired',
+      'Ba’zi maydonlar noto‘g‘ri to‘ldirilgan.': 'scFieldsInvalid',
+      'Faqat PDF, PNG, JPG yoki WEBP fayl yuklash mumkin.': 'uploadType',
+      'Logotip PNG, JPG yoki WEBP rasm bo‘lishi kerak.': 'logoType',
+      'Rasm hajmi 5 MB dan oshmasin.': 'imageTooBig',
     };
-    return keys[message] ? t(keys[message]) : (status >= 500 ? t('serverError') : t('requestFallbackError'));
+    if (keys[message]) return t(keys[message]);
+    if (/ta fayl yuklash mumkin/.test(String(message || ''))) return t('tooManyFiles');
+    if (status === 413) return t('fileTooBig');
+    return status >= 500 ? t('serverError') : t('requestFallbackError');
   }
 
   function escapeHtml(value) {
@@ -73,9 +96,19 @@
     state.toastTimer = setTimeout(() => node.classList.remove('show'), 3400);
   }
 
+  function fileSize(bytes) {
+    const value = Number(bytes) || 0;
+    if (value >= 1024 * 1024) return `${(value / 1024 / 1024).toFixed(value >= 10 * 1024 * 1024 ? 0 : 1)} MB`;
+    return `${Math.max(1, Math.round(value / 1024))} KB`;
+  }
+
+  /* ======================= AUTH ======================= */
   function showAuth(mode = 'login') {
     state.user = null;
     state.csrf = '';
+    state.showcase = null;
+    state.files = [];
+    state.showcaseLoaded = false;
     $('#auth-view').hidden = false;
     $('#portal-view').hidden = true;
     setAuthMode(mode);
@@ -89,11 +122,20 @@
     $('#auth-title').textContent = t(register ? 'registerTitle' : 'loginTitle');
     $('#auth-description').textContent = t(register ? 'registerDescription' : 'loginDescription');
     $$('.auth-tab').forEach((tab) => {
-      const active = tab.dataset.authTab === mode;
+      const active = tab.dataset.authTab === state.authMode;
       tab.classList.toggle('active', active);
       tab.setAttribute('aria-selected', String(active));
       tab.tabIndex = active ? 0 : -1;
     });
+  }
+
+  function selectedRegisterType() {
+    return $('#register-type-exhibitor').checked ? 'exhibitor' : 'visitor';
+  }
+
+  function setRegisterType(type) {
+    $('#register-type-exhibitor').checked = type === 'exhibitor';
+    $('#register-type-visitor').checked = type !== 'exhibitor';
   }
 
   function toggleFields(selector, visible) {
@@ -101,21 +143,29 @@
     if (!group) return;
     group.hidden = !visible;
     $$('input,select,textarea', group).forEach((field) => { field.disabled = !visible; });
+    if (group.matches('input,select,textarea')) group.disabled = !visible;
   }
 
+  /** what changes between a guest and an exhibitor: required fields, copy, sections */
   function setAccountType(type) {
     const exhibitor = type === 'exhibitor';
+    /* registration (only while signed out) */
     toggleFields('[data-role-fields="exhibitor"]', exhibitor);
-    toggleFields('[data-role-fields="visitor"]', !exhibitor);
     $('#register-company').required = exhibitor;
     $('#register-industry').required = exhibitor;
+    $$('[data-visitor-only]').forEach((node) => { node.hidden = exhibitor; });
+    /* cabinet */
     toggleFields('.exhibitor-profile-fields', exhibitor);
-    toggleFields('.visitor-profile-fields', !exhibitor);
+    $('#profile-company').required = exhibitor;
+    $('#profile-industry').required = exhibitor;
     toggleFields('.exhibitor-request-fields', exhibitor);
     toggleFields('.visitor-request-fields', !exhibitor);
     $('#request-area').required = exhibitor;
     $('#request-package').required = exhibitor;
-    $('#request-interest').required = !exhibitor;
+    $('#request-interest').required = false;
+    const signedInExhibitor = exhibitor && state.user?.accountType === 'exhibitor';
+    $('#tab-showcase').hidden = !signedInExhibitor;
+    $('#tab-requests-label').textContent = t(exhibitor ? 'tabRequestsExhibitor' : 'tabRequestsVisitor');
     if (exhibitor) {
       const name = state.user?.profile?.company || state.user?.profile?.name || t('partnerFallback');
       $('#welcome-kicker').textContent = t('welcomeExhibitorKicker');
@@ -137,26 +187,33 @@
     }
   }
 
+  /* ======================= API ======================= */
   async function api(path, options = {}) {
     const method = options.method || 'GET';
     const headers = { ...(options.headers || {}) };
+    const raw = options.raw !== undefined;
     if (options.body !== undefined) headers['Content-Type'] = 'application/json';
+    if (raw) headers['Content-Type'] = options.contentType || 'application/octet-stream';
     if (method !== 'GET' && method !== 'HEAD' && state.csrf) headers['X-CSRF-Token'] = state.csrf;
     const response = await fetch(path, {
       method,
       credentials: 'same-origin',
       headers,
-      body: options.body === undefined ? undefined : JSON.stringify(options.body),
+      body: raw ? options.raw : options.body === undefined ? undefined : JSON.stringify(options.body),
     });
     const contentType = response.headers.get('content-type') || '';
     const data = contentType.includes('application/json') ? await response.json() : {};
     if (!response.ok) {
       if (response.status === 401 && path !== `${apiRoot}/login` && path !== `${apiRoot}/register`) showAuth('login');
-      throw new Error(localizedServerError(data?.error, response.status));
+      const error = new Error(localizedServerError(data?.error, response.status));
+      error.details = data?.details;
+      error.status = response.status;
+      throw error;
     }
     return data;
   }
 
+  /* ======================= REQUESTS ======================= */
   function populateEvents(events) {
     state.events = Array.isArray(events) ? events : [];
     const select = $('#request-event');
@@ -195,7 +252,7 @@
     if (item.requestType === 'exhibitor') {
       return [details.industry, details.area, details.package, details.message].filter(Boolean).join(' · ');
     }
-    const interest = interestKeys[details.interest] ? t(interestKeys[details.interest]) : details.interest;
+    const interest = interestKeys[details.interest] ? t(interestKeys[details.interest]) : (details.interest === 'visit' ? '' : details.interest);
     return [interest, details.message].filter(Boolean).join(' · ');
   }
 
@@ -217,18 +274,35 @@
       const detail = requestDetail(item);
       const status = item.status || 'new';
       const requestType = item.requestType === 'exhibitor' ? t('exhibitorRequestType') : t('visitorRequestType');
-      return `<article class="request-item"><div><h3>${escapeHtml(localizedEventName(item.event))}</h3><p>${escapeHtml(dateLabel(item.createdAt))} · ${escapeHtml(requestType)}</p>${detail ? `<p class="request-detail">${escapeHtml(detail)}</p>` : ''}</div><span class="request-status status-${escapeHtml(status)}">${escapeHtml(t(statusKeys[status]) || status)}</span></article>`;
+      return `<article class="request-item"><div class="request-main"><h3>${escapeHtml(localizedEventName(item.event))}</h3><p>${escapeHtml(dateLabel(item.createdAt))} · ${escapeHtml(requestType)}</p>${detail ? `<p class="request-detail">${escapeHtml(detail)}</p>` : ''}</div><span class="request-status status-${escapeHtml(statusKeys[status] ? status : 'new')}">${escapeHtml(t(statusKeys[status] || 'statusNew'))}</span></article>`;
     }).join('');
   }
 
+  /* ======================= PROFILE ======================= */
   function fillProfile(profile) {
     $('#profile-name').value = profile.name || '';
     $('#profile-phone').value = profile.phone || '';
-    $('#profile-country').value = profile.country || '';
     $('#profile-company').value = profile.company || '';
     $('#profile-industry').value = profile.industry || '';
-    $('#profile-website').value = profile.website || '';
-    $('#profile-interests').value = profile.interests || '';
+  }
+
+  /* ======================= CABINET TABS ======================= */
+  function availableTabs() {
+    return state.user?.accountType === 'exhibitor' ? ['showcase', 'requests', 'profile'] : ['requests', 'profile'];
+  }
+
+  function setTab(tab, focus = false) {
+    const tabs = availableTabs();
+    state.tab = tabs.includes(tab) ? tab : tabs[0];
+    $$('.portal-tab').forEach((button) => {
+      const active = button.dataset.portalTab === state.tab;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-selected', String(active));
+      button.tabIndex = active ? 0 : -1;
+      if (active && focus) button.focus();
+    });
+    $$('.portal-panel').forEach((panel) => { panel.hidden = panel.id !== `panel-${state.tab}`; });
+    if (state.tab === 'showcase' && !state.showcaseLoaded) loadShowcase().catch((error) => toast(error.message, true));
   }
 
   async function openPortal(user, csrf) {
@@ -237,21 +311,298 @@
     $('#auth-view').hidden = true;
     $('#portal-view').hidden = false;
     $('#account-email').textContent = user.email;
+    $('#account-email').title = user.email;
     $('#account-role').textContent = user.accountType === 'exhibitor' ? t('exhibitorAccount') : t('visitorAccount');
     fillProfile(user.profile || {});
     setAccountType(user.accountType);
     $('#request-form').reset();
     $('#profile-feedback').textContent = '';
+    setTab(user.accountType === 'exhibitor' ? 'showcase' : 'requests');
     try { await loadRequests(); } catch { toast(t('requestsLoadToast'), true); }
   }
 
-  function eventLocale() {
-    return state.locale;
+  /* ======================= COMPANY PAGE (exhibitors) ======================= */
+  const showcaseFields = ['name', 'tagline', 'about', 'category', 'country', 'city', 'website', 'phone', 'email'];
+
+  function emptyShowcase() {
+    return { name: state.user?.profile?.company || '', tagline: '', about: '', category: state.user?.profile?.industry || '', country: state.user?.profile?.country || '', city: '', website: state.user?.profile?.website || '', phone: '', email: '', socials: {}, participation: [], logoFileId: '' };
   }
 
+  async function loadShowcase() {
+    const data = await api(`${apiRoot}/showcase`);
+    state.showcase = data.showcase;
+    state.files = data.showcase.files || [];
+    state.showcaseLoaded = true;
+    renderShowcase();
+  }
+
+  function draft() {
+    return { ...emptyShowcase(), ...(state.showcase?.draft || {}) };
+  }
+
+  /** read the form into the draft shape the API expects */
+  function collectShowcase() {
+    const value = { socials: {}, participation: [] };
+    for (const field of showcaseFields) value[field] = $(`#sc-${field}`).value.trim();
+    $$('[data-social]').forEach((input) => { if (input.value.trim()) value.socials[input.dataset.social] = input.value.trim(); });
+    $$('.edition-chip[aria-pressed="true"]').forEach((chip) => {
+      const stand = $(`[data-stand="${chip.dataset.edition}"]`);
+      value.participation.push({ event: chip.dataset.show, year: Number(chip.dataset.year), stand: stand ? stand.value.trim() : '' });
+    });
+    return value;
+  }
+
+  function renderShowcase({ keepForm = false } = {}) {
+    const current = keepForm ? { ...draft(), ...collectShowcase() } : draft();
+    if (!keepForm) for (const field of showcaseFields) $(`#sc-${field}`).value = current[field] || '';
+    renderSocials(current.socials || {});
+    renderParticipation(current.participation || []);
+    renderLogo();
+    renderMaterials();
+    renderStatus();
+    updateCounters();
+    updateCompleteness();
+  }
+
+  function renderSocials(values) {
+    $('#socials-grid').innerHTML = state.options.socials.map((network) => `<div class="field social-field" data-field="social.${network}">
+      <label for="sc-social-${network}"><span class="social-badge social-${network}" aria-hidden="true">${escapeHtml(socialLabels[network].slice(0, 2))}</span>${escapeHtml(socialLabels[network] || network)}</label>
+      <input id="sc-social-${network}" data-social="${network}" maxlength="200" value="${escapeHtml(values[network] || '')}" placeholder="${escapeHtml(t('socialPlaceholder'))}" autocomplete="off" />
+      <p class="field-error" hidden></p></div>`).join('');
+  }
+
+  function renderParticipation(selected) {
+    const picked = new Map(selected.map((item) => [`${item.event}:${item.year}`, item]));
+    const shows = state.options.shows || [];
+    if (!shows.length) {
+      $('#participation-picker').innerHTML = `<p class="muted">${escapeHtml(t('loading'))}</p>`;
+      return;
+    }
+    $('#participation-picker').innerHTML = shows.map((show) => {
+      const editions = show.editions.map((edition) => {
+        const key = `${show.slug}:${edition.year}`;
+        const on = picked.has(key);
+        return `<button type="button" class="edition-chip${edition.upcoming ? ' is-upcoming' : ''}" data-show="${escapeHtml(show.slug)}" data-year="${edition.year}" data-edition="${escapeHtml(key)}" aria-pressed="${on}">${edition.year}${edition.upcoming ? ` <small>${escapeHtml(t('upcomingShort'))}</small>` : ''}</button>`;
+      }).join('');
+      const stands = show.editions.filter((edition) => picked.has(`${show.slug}:${edition.year}`)).map((edition) => {
+        const key = `${show.slug}:${edition.year}`;
+        return `<label class="stand-field"><span>${edition.year} · ${escapeHtml(t('standLabel'))}</span><input data-stand="${escapeHtml(key)}" maxlength="20" value="${escapeHtml(picked.get(key)?.stand || '')}" placeholder="A-12" /></label>`;
+      }).join('');
+      return `<div class="show-row"><strong class="show-name">${escapeHtml(show.name)}</strong><div class="edition-chips">${editions}</div>${stands ? `<div class="stand-fields">${stands}</div>` : ''}</div>`;
+    }).join('');
+  }
+
+  function logoFile() {
+    const id = state.showcase?.draft?.logoFileId;
+    return state.files.find((file) => file.id === id && file.kind === 'logo') || null;
+  }
+
+  function renderLogo() {
+    const file = logoFile();
+    const image = $('#logo-preview');
+    image.hidden = !file;
+    $('#logo-placeholder').hidden = Boolean(file);
+    $('#logo-remove').hidden = !file;
+    $('#logo-frame').classList.toggle('has-logo', Boolean(file));
+    if (file && image.getAttribute('src') !== file.url) image.src = file.url;
+    if (!file) image.removeAttribute('src');
+    $('#logo-upload-label span').textContent = t(file ? 'logoReplace' : 'logoUpload');
+  }
+
+  function materialFiles() {
+    return state.files.filter((file) => file.kind !== 'logo');
+  }
+
+  function renderMaterials() {
+    const files = materialFiles();
+    $('#materials-count').textContent = `${state.files.length}/${state.options.limits.filesPerAccount || LIMITS.filesPerAccount}`;
+    const kinds = state.options.fileKinds.filter((kind) => kind !== 'logo');
+    const rows = files.map((file) => {
+      const pdf = file.mime === 'application/pdf';
+      return `<li class="material" data-file="${escapeHtml(file.id)}">
+        <span class="material-thumb ${pdf ? 'is-pdf' : ''}">${pdf ? 'PDF' : `<img src="${escapeHtml(file.url)}" alt="" loading="lazy" />`}</span>
+        <div class="material-body">
+          <input class="material-title" data-title="${escapeHtml(file.id)}" value="${escapeHtml(file.title)}" maxlength="120" aria-label="${escapeHtml(t('materialTitleAria'))}" />
+          <div class="material-meta">
+            <select data-kind="${escapeHtml(file.id)}" aria-label="${escapeHtml(t('materialKindAria'))}">${kinds.map((kind) => `<option value="${kind}"${kind === file.kind ? ' selected' : ''}>${escapeHtml(t(fileKindKeys[kind] || 'kindOther'))}</option>`).join('')}</select>
+            <span>${escapeHtml(fileSize(file.size))}</span>
+            ${file.published ? `<span class="tag tag-live">${escapeHtml(t('materialLive'))}</span>` : `<span class="tag">${escapeHtml(t('materialNew'))}</span>`}
+          </div>
+        </div>
+        <div class="material-actions">
+          <a class="icon-link" href="${escapeHtml(file.url)}" target="_blank" rel="noopener" aria-label="${escapeHtml(t('materialOpen'))}" title="${escapeHtml(t('materialOpen'))}">↗</a>
+          <button type="button" class="icon-link danger" data-delete="${escapeHtml(file.id)}" aria-label="${escapeHtml(t('materialDelete'))}" title="${escapeHtml(t('materialDelete'))}">✕</button>
+        </div>
+      </li>`;
+    });
+    const pending = state.uploads.map((upload) => `<li class="material is-uploading"><span class="material-thumb">…</span><div class="material-body"><strong class="truncate">${escapeHtml(upload.name)}</strong><div class="material-meta"><span>${escapeHtml(t('uploading'))} · ${escapeHtml(fileSize(upload.size))}</span></div></div></li>`);
+    $('#materials-list').innerHTML = rows.concat(pending).join('') || `<li class="materials-empty">${escapeHtml(t('materialsEmpty'))}</li>`;
+  }
+
+  function renderStatus() {
+    const showcase = state.showcase || { status: 'draft' };
+    const status = showcase.status || 'draft';
+    const chip = $('#showcase-status');
+    chip.className = `status-chip sc-${status}`;
+    chip.textContent = t(showcaseStatusKeys[status] || 'scStatusDraft');
+    let copy = t(showcaseStatusCopyKeys[status] || 'scStatusDraftCopy');
+    if (showcase.live && showcase.hasChanges) copy = `${copy} ${t('scHasChanges')}`;
+    $('#showcase-status-copy').textContent = copy;
+    const note = $('#showcase-note');
+    note.hidden = !(status === 'rejected' && showcase.reviewNote);
+    note.textContent = showcase.reviewNote ? `${t('scReviewNote')}: ${showcase.reviewNote}` : '';
+    $('#showcase-live-link').hidden = !showcase.live;
+    $('#showcase-submit span').textContent = t(showcase.live ? 'scSubmitChanges' : 'scSubmit');
+  }
+
+  function completenessItems(value = collectShowcase()) {
+    return [
+      ['scCheckLogo', Boolean(logoFile())],
+      ['scCheckName', Boolean(value.name)],
+      ['scCheckAbout', Boolean(value.about && value.about.length >= 40)],
+      ['scCheckContacts', Boolean(value.website || value.phone || value.email)],
+      ['scCheckSocials', Object.keys(value.socials).length > 0],
+      ['scCheckParticipation', value.participation.length > 0],
+      ['scCheckMaterials', materialFiles().length > 0],
+    ];
+  }
+
+  function updateCompleteness() {
+    const items = completenessItems();
+    const done = items.filter(([, ok]) => ok).length;
+    const percent = Math.round((done / items.length) * 100);
+    $('#completeness-value').textContent = `${percent}%`;
+    $('#completeness-bar').style.width = `${percent}%`;
+    $('#completeness-list').innerHTML = items.map(([key, ok]) => `<li class="${ok ? 'is-done' : ''}"><span aria-hidden="true">${ok ? '✓' : ''}</span>${escapeHtml(t(key))}</li>`).join('');
+  }
+
+  function updateCounters() {
+    $$('[data-counter-for]').forEach((counter) => {
+      const input = $(`#${counter.dataset.counterFor}`);
+      counter.textContent = `${input.value.length}/${input.maxLength}`;
+    });
+  }
+
+  function clearFieldErrors() {
+    $$('#showcase-form .field-error').forEach((node) => { node.hidden = true; node.textContent = ''; });
+    $$('#showcase-form .has-error').forEach((node) => node.classList.remove('has-error'));
+  }
+
+  function showFieldErrors(details = {}) {
+    const codes = { url: 'errUrl', email: 'errEmail', phone: 'errPhone', edition: 'errEdition', required: 'errRequired' };
+    let first = null;
+    for (const [key, code] of Object.entries(details)) {
+      const fieldKey = key.startsWith('participation') ? 'participation' : key;
+      const field = $(`#showcase-form [data-field="${fieldKey}"]`);
+      if (!field) continue;
+      field.classList.add('has-error');
+      const message = $('.field-error', field);
+      if (message) { message.textContent = t(codes[code] || 'errRequired'); message.hidden = false; }
+      first ||= field;
+    }
+    first?.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
+    $('input,textarea', first || document.createElement('div'))?.focus?.({ preventScroll: true });
+  }
+
+  async function saveShowcase(submit) {
+    const feedback = $('#showcase-feedback');
+    const buttons = [$('#showcase-save'), $('#showcase-submit')];
+    clearFieldErrors();
+    feedback.classList.remove('error');
+    feedback.textContent = t('profileSaving');
+    buttons.forEach((button) => { button.disabled = true; });
+    try {
+      const result = await api(`${apiRoot}/showcase`, { method: 'PUT', body: { showcase: collectShowcase(), submit } });
+      state.showcase = result.showcase;
+      state.files = result.showcase.files || state.files;
+      renderShowcase();
+      feedback.textContent = t(submit ? 'scSubmitted' : 'scSaved');
+      toast(t(submit ? 'scSubmitted' : 'scSaved'));
+    } catch (error) {
+      feedback.textContent = error.message;
+      feedback.classList.add('error');
+      if (error.details) showFieldErrors(error.details);
+    } finally {
+      buttons.forEach((button) => { button.disabled = false; });
+    }
+  }
+
+  /** client-side checks mirror the server's (it re-checks the bytes) */
+  function uploadProblem(file, { logo = false } = {}) {
+    const image = IMAGE_TYPES.includes(file.type);
+    const pdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+    if (logo && !image) return t('logoType');
+    if (!image && !pdf) return t('uploadType');
+    if (image && file.size > LIMITS.imageBytes) return t('imageTooBig');
+    if (file.size > LIMITS.pdfBytes) return t('fileTooBig');
+    return '';
+  }
+
+  async function uploadFile(file, kind) {
+    const params = new URLSearchParams({ kind, name: file.name });
+    const result = await api(`${apiRoot}/files?${params}`, { method: 'POST', raw: file, contentType: file.type || 'application/octet-stream' });
+    return result.file;
+  }
+
+  async function uploadMaterials(fileList) {
+    const files = [...fileList];
+    if (!files.length) return;
+    const limit = state.options.limits.filesPerAccount || LIMITS.filesPerAccount;
+    const room = limit - state.files.length;
+    if (files.length > room) toast(t('tooManyFiles'), true);
+    for (const file of files.slice(0, Math.max(0, room))) {
+      const problem = uploadProblem(file);
+      if (problem) { toast(`${file.name}: ${problem}`, true); continue; }
+      const upload = { name: file.name, size: file.size };
+      state.uploads.push(upload);
+      renderMaterials();
+      try {
+        const kind = IMAGE_TYPES.includes(file.type) ? 'image' : 'catalog';
+        const stored = await uploadFile(file, kind);
+        state.files.push(stored);
+      } catch (error) {
+        toast(`${file.name}: ${error.message}`, true);
+      } finally {
+        state.uploads = state.uploads.filter((item) => item !== upload);
+        renderMaterials();
+        updateCompleteness();
+      }
+    }
+  }
+
+  async function uploadLogo(file) {
+    const problem = uploadProblem(file, { logo: true });
+    if (problem) { toast(problem, true); return; }
+    $('#logo-frame').classList.add('is-busy');
+    try {
+      const stored = await uploadFile(file, 'logo');
+      state.files = state.files.filter((item) => item.kind !== 'logo' || item.published).concat(stored);
+      state.showcase = { ...(state.showcase || {}), draft: { ...draft(), ...collectShowcase(), logoFileId: stored.id } };
+      renderLogo();
+      updateCompleteness();
+      toast(t('logoUploaded'));
+    } catch (error) {
+      toast(error.message, true);
+    } finally {
+      $('#logo-frame').classList.remove('is-busy');
+    }
+  }
+
+  async function deleteFile(id) {
+    await api(`${apiRoot}/files/${id}`, { method: 'DELETE', body: {} });
+    state.files = state.files.filter((file) => file.id !== id);
+    if (state.showcase?.draft?.logoFileId === id) state.showcase.draft.logoFileId = '';
+  }
+
+  async function patchFile(id, change) {
+    const result = await api(`${apiRoot}/files/${id}`, { method: 'PATCH', body: change });
+    state.files = state.files.map((file) => (file.id === id ? result.file : file));
+  }
+
+  /* ======================= EVENTS ======================= */
   $$('.auth-tab').forEach((tab) => tab.addEventListener('click', () => {
     setAuthMode(tab.dataset.authTab);
-    if (tab.dataset.authTab === 'register') setAccountType($('#register-type').value);
+    if (tab.dataset.authTab === 'register') setAccountType(selectedRegisterType());
   }));
   $('#auth-tabs').addEventListener('keydown', (event) => {
     const tabs = $$('.auth-tab');
@@ -262,10 +613,21 @@
       : (current + (event.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length;
     const tab = tabs[next];
     setAuthMode(tab.dataset.authTab);
-    if (tab.dataset.authTab === 'register') setAccountType($('#register-type').value);
+    if (tab.dataset.authTab === 'register') setAccountType(selectedRegisterType());
     tab.focus();
   });
-  $('#register-type').addEventListener('change', (event) => setAccountType(event.currentTarget.value));
+  $$('input[name="accountType"]').forEach((input) => input.addEventListener('change', () => setAccountType(selectedRegisterType())));
+
+  $$('.portal-tab').forEach((tab) => tab.addEventListener('click', () => setTab(tab.dataset.portalTab)));
+  $('#portal-tabs').addEventListener('keydown', (event) => {
+    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+    const tabs = availableTabs();
+    const current = tabs.indexOf(state.tab);
+    event.preventDefault();
+    const next = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1
+      : (current + (event.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length;
+    setTab(tabs[next], true);
+  });
 
   $('#login-form').addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -294,7 +656,9 @@
       const form = Object.fromEntries(new FormData(formElement));
       const result = await api(`${apiRoot}/register`, { method: 'POST', body: form });
       await openPortal(result.user, result.csrfToken);
+      const type = selectedRegisterType();
       formElement.reset();
+      setRegisterType(type);
     } catch (cause) {
       error.textContent = cause.message;
       error.hidden = false;
@@ -329,8 +693,8 @@
     button.disabled = true;
     try {
       const form = Object.fromEntries(new FormData(formElement));
-      form.locale = eventLocale();
-      const result = await api(`${apiRoot}/requests`, { method: 'POST', body: form });
+      form.locale = state.locale;
+      await api(`${apiRoot}/requests`, { method: 'POST', body: form });
       formElement.reset();
       toast(t('requestSent'));
       await loadRequests();
@@ -338,6 +702,65 @@
       error.textContent = cause.message;
       error.hidden = false;
     } finally { button.disabled = false; }
+  });
+
+  /* company page */
+  $('#showcase-form').addEventListener('submit', (event) => { event.preventDefault(); saveShowcase(true); });
+  $('#showcase-save').addEventListener('click', () => saveShowcase(false));
+  $('#showcase-form').addEventListener('input', (event) => {
+    if (event.target.matches('[data-title]')) return;
+    updateCounters();
+    updateCompleteness();
+    const field = event.target.closest('.field.has-error');
+    if (field) { field.classList.remove('has-error'); const message = $('.field-error', field); if (message) message.hidden = true; }
+  });
+  $('#participation-picker').addEventListener('click', (event) => {
+    const chip = event.target.closest('.edition-chip');
+    if (!chip) return;
+    chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+    renderParticipation(collectShowcase().participation);
+    $(`.edition-chip[data-edition="${chip.dataset.edition}"]`)?.focus();
+    $('[data-field="participation"]').classList.remove('has-error');
+    $('[data-field="participation"] .field-error').hidden = true;
+    updateCompleteness();
+  });
+  $('#logo-input').addEventListener('change', (event) => {
+    const [file] = event.currentTarget.files || [];
+    if (file) uploadLogo(file);
+    event.currentTarget.value = '';
+  });
+  $('#logo-remove').addEventListener('click', async () => {
+    const file = logoFile();
+    if (!file) return;
+    try { await deleteFile(file.id); renderLogo(); updateCompleteness(); } catch (error) { toast(error.message, true); }
+  });
+  $('#materials-input').addEventListener('change', (event) => {
+    uploadMaterials(event.currentTarget.files || []);
+    event.currentTarget.value = '';
+  });
+  const drop = $('#materials-drop');
+  ['dragenter', 'dragover'].forEach((name) => drop.addEventListener(name, (event) => { event.preventDefault(); drop.classList.add('is-over'); }));
+  ['dragleave', 'drop'].forEach((name) => drop.addEventListener(name, (event) => { event.preventDefault(); drop.classList.remove('is-over'); }));
+  drop.addEventListener('drop', (event) => uploadMaterials(event.dataTransfer?.files || []));
+  $('#materials-list').addEventListener('click', async (event) => {
+    const button = event.target.closest('[data-delete]');
+    if (!button) return;
+    const file = state.files.find((item) => item.id === button.dataset.delete);
+    if (!file || !window.confirm(format('materialDeleteConfirm', { name: file.title }))) return;
+    try { await deleteFile(file.id); renderMaterials(); updateCompleteness(); } catch (error) { toast(error.message, true); }
+  });
+  $('#materials-list').addEventListener('change', async (event) => {
+    const title = event.target.closest('[data-title]');
+    const kind = event.target.closest('[data-kind]');
+    try {
+      if (title) {
+        const value = title.value.trim();
+        if (!value) { title.value = state.files.find((file) => file.id === title.dataset.title)?.title || ''; return; }
+        await patchFile(title.dataset.title, { title: value });
+        toast(t('materialSaved'));
+      }
+      if (kind) { await patchFile(kind.dataset.kind, { kind: kind.value }); toast(t('materialSaved')); }
+    } catch (error) { toast(error.message, true); }
   });
 
   $('#refresh-requests').addEventListener('click', () => loadRequests().catch((error) => toast(error.message, true)));
@@ -352,14 +775,17 @@
   async function initialize() {
     const params = new URLSearchParams(location.search);
     const requestedLocale = params.get('lang') || String(document.documentElement.lang || 'uz').toLowerCase().split('-')[0];
-    setLocale(requestedLocale);
     const preferredType = params.get('type');
-    if (['visitor', 'exhibitor'].includes(preferredType)) $('#register-type').value = preferredType;
-    setAccountType($('#register-type').value);
+    if (['visitor', 'exhibitor'].includes(preferredType)) setRegisterType(preferredType);
+    setLocale(requestedLocale);
     try {
       const options = await api(`${apiRoot}/options`);
       populateEvents(options.events);
-    } catch (error) {
+      if (Array.isArray(options.shows)) state.options.shows = options.shows;
+      if (Array.isArray(options.fileKinds)) state.options.fileKinds = options.fileKinds;
+      if (Array.isArray(options.socials)) state.options.socials = options.socials;
+      if (options.limits) state.options.limits = options.limits;
+    } catch {
       $('#request-event').innerHTML = `<option value="">${escapeHtml(t('eventLoadError'))}</option>`;
     }
     try {

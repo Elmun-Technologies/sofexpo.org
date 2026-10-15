@@ -131,6 +131,7 @@
         payload.locale = document.documentElement.lang || 'ru';
         payload.url = location.href;
         payload.referrer = document.referrer || '';
+        try { payload.sessionId = window.sofSessionId || sessionStorage.getItem('sofexpo.session') || ''; } catch {}
         // UTM
         try {
           const params = new URLSearchParams(location.search);

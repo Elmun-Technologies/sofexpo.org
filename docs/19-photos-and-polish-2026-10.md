@@ -163,3 +163,12 @@ OG kartochka ham shu rangda. Yashil va qizil bayroqdagidek: chiziqlar va urg'u (
 tashlangan) halqa; `public/brand/foodera/naqsh.webp` maska sifatida: hero'ning o'ng yuqori
 burchagida badge oltini `#CCA878` bilan, CTA-band va footer'da `--gold-soft` bilan. Avvalgi
 geometrik kvadrat-yulduz plitkasi FOODERA'da shu medalyon bilan almashtirildi.
+
+**Qotib turgan panellar va qo'shilib ketgan ranglar (o'sha kun).** Telefonda ko'rgazma sahifasida
+bir vaqtda shapka + tablar + pastki "Stend bron qilish" paneli turardi (~30% ekran), boshqa
+sahifalarda ham pastki panel doim turardi. `StickyCtaBar` va ko'rgazmaning `.m-cta` paneli olib
+tashlandi — bron tugmasi shapkada, hero'da va har sahifaning CTA-blokida bor. Endi pastga
+o'qiyotganda ekranda hech narsa qotmaydi (ko'rgazma sahifasida faqat tablar). Shapka va tablar oq,
+tagidagi panellar ham oq edi — skroll paytida bir oq blokka qo'shilib ketardi: ularga ingichka
+chegara va yumshoq soya qo'shildi. Bosh sahifadagi Samarqand bloki to'q samoviy (`--evergreen`) —
+yonidagi ikkita och samoviy blok bilan qo'shilib ketmaydi.

@@ -21,8 +21,9 @@ import StandQuizModal from '@/components/StandQuizModal.astro';
 /* 2026-09-24 design pass: the eye-catching widgets were removed.
    LiveChat + PopupSystem + FloatingContacts were rejected and deleted (2026-10-04,
    docs/15) — booking goes through the on-page forms/CTA only.
-   StickyCtaBar and smart CTA/quiz stay: they are part of the page, not floating chrome. */
-import StickyCtaBar from '@/components/conversion/StickyCtaBar.astro';
+   2026-10-15: StickyCtaBar is gone too — on a phone it stacked under the header (and the show
+   tabs) and the client read it as one more stuck panel; the header and every page carry the
+   booking action already. The smart CTA/quiz stays: it is part of the page. */
 import Tracking from '@/components/conversion/Tracking.astro';
 import FormHandler from '@/components/conversion/FormHandler.astro';
 
@@ -247,7 +248,6 @@ const preload = props.preload
     <!-- Conversion system: CTA tracking and form handling only (no popups/livechat) -->
     <Tracking locale={locale} path={path} />
     <FormHandler />
-    <StickyCtaBar locale={locale} pageType={path.includes('/exhibitors/') ? 'exhibitors' : path.includes('/visitors/') ? 'visitors' : path.includes('/organizers/') ? 'organizers' : path.includes('/events/') ? 'event' : path === '/' ? 'home' : 'other'} />
     <script>
       /* Subtle scroll reveal (user-approved 2026-09-22): fade + 8px over 200ms for
          sections below the first view only. JS-gated — without JavaScript the

@@ -1,5 +1,5 @@
 /**
- * Messenger and phone contacts used by the on-page CTA (SmartCta, StickyCtaBar) and by
+ * Messenger and phone contacts used by the on-page CTA (SmartCta) and by
  * FormHandler's relay, which hands an undelivered lead to WhatsApp / email.
  *
  * The popup, live-chat and floating-contacts widgets this file once configured were

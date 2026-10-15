@@ -41,28 +41,30 @@
   --paper: #ffffff; /* panels */
   --cream: #e4e4e4; /* the canvas between panels */
   --cream-2: #f2f2f2; /* secondary panels, chips, list rows */
-  --ink: #0b1f14; /* green-black ink, 17.2:1 on white */
+  --ink: #0b1c22; /* azure-black ink, 17.5:1 on white */
   /* the design's #6B6B6B is 4.2:1 on the canvas; #5E5E5E keeps AA on canvas, white and #F2F2F2 */
   --ink-60: #5e5e5e;
   --ink-40: #5e5e5e;
   --line: #dcdcdc;
   --line-strong: #cfcfcf;
-  /* "evergreen" is the centre's deep brand green: ink panels, footer, primary buttons */
-  --evergreen: #123b25; /* white on it: 12.5:1 */
-  --evergreen-2: #1b4d2e; /* white on it: 9.8:1 */
+  /* "evergreen" is the centre's deep brand colour: ink panels, footer, primary buttons. 2026-10-15:
+     the flag's azure taken to night (it was a deep green, so the site read green, not like the
+     flag); green and red stay as the flag uses them — bands and accents (docs/19 §7) */
+  --evergreen: #00475a; /* white on it: 10.2:1 */
+  --evergreen-2: #005f73; /* white on it: 7.3:1 */
   --moss: #00738c; /* the flag's azure #0099B5 at full saturation, one step deeper for AA text: 5.5:1 on white, 4.9:1 on the canvas (the raw azure is used only graphically). It was #21687E, a greyed petrol that read as nobody's blue. */
   --sage: #f2f2f2;
   /* the logo red is for the primary booking CTA and "registration open" — never under long text */
   --accent: #ce1126; /* the flag's red; white on it: 5.6:1 */
   --accent-ink: #ffffff; /* what sits ON --accent; shows override it with their own ink */
-  --accent-soft: #eef4ee; /* a whisper of the brand green on light grounds (logo tiles) */
+  --accent-soft: #e3f4f8; /* a whisper of the flag azure on light grounds (logo tiles) */
   --ornament: #f2f2f2;
   --brand-mark: var(--evergreen);
   /* the old brass accent rules become the brand blue */
   --gold: #00738c;
   --gold-ink: #006e86; /* small azure text on light grounds, 5.9:1 on white / 5.3:1 on the canvas; also a fill with white text */
-  /* the light accent ON dark grounds: light green of the logo family, 12:1 on evergreen */
-  --gold-soft: #b7e3b0;
+  /* the light accent ON dark grounds: the flag azure lightened, 6.6:1 on evergreen */
+  --gold-soft: #8fdcec;
   --danger: #c4320a;
   --success: #1f8a4c;
 

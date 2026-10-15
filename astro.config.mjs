@@ -29,7 +29,9 @@ export default defineConfig({
         defaultLocale: 'en',
         locales: { ru: 'ru-RU', en: 'en-US', zh: 'zh-CN', tr: 'tr-TR' },
       },
-      serialize: (item) => ({ ...item, lastmod: '2026-09-23' }),
+      /* lastmod = the day the site was built: a date pinned in the config (it said 2026-09-23 for
+         every page for weeks) is one Google learns to ignore */
+      serialize: (item) => ({ ...item, lastmod: new Date().toISOString().slice(0, 10) }),
     }),
     /* /sofexpo-calendar.ics — the line-up as an iCal file, kept in sync with events.ts */
     icsIntegration(),

@@ -8,5 +8,13 @@
       "SITE": "https://sof-expo.com",
       "PUBLIC_HOSTS_MODE": "alias"
     }
-  }
+  },
+  "trailingSlash": true,
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/en/",
+      "statusCode": 301
+    }
+  ]
 }

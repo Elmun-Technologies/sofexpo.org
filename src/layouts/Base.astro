@@ -21,8 +21,9 @@ import StandQuizModal from '@/components/StandQuizModal.astro';
 /* 2026-09-24 design pass: the eye-catching widgets were removed.
    LiveChat + PopupSystem + FloatingContacts were rejected and deleted (2026-10-04,
    docs/15) — booking goes through the on-page forms/CTA only.
-   StickyCtaBar and smart CTA/quiz stay: they are part of the page, not floating chrome. */
-import StickyCtaBar from '@/components/conversion/StickyCtaBar.astro';
+   2026-10-15: StickyCtaBar is gone too — on a phone it stacked under the header (and the show
+   tabs) and the client read it as one more stuck panel; the header and every page carry the
+   booking action already. The smart CTA/quiz stays: it is part of the page. */
 import Tracking from '@/components/conversion/Tracking.astro';
 import FormHandler from '@/components/conversion/FormHandler.astro';
 
@@ -157,7 +158,7 @@ const preload = props.preload
     <title>{meta.title}</title>
     <meta name="description" content={meta.description} />
     <link rel="canonical" href={meta.canonical} />
-    <meta name="theme-color" content={PAGE_BRAND?.palette.evergreen ?? "#123b25"} />
+    <meta name="theme-color" content={PAGE_BRAND?.palette.evergreen ?? "#00475a"} />
     <meta name="format-detection" content="telephone=no" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="robots" content={meta.noindex ? 'noindex,follow,max-image-preview:large' : 'index,follow,max-image-preview:large,max-snippet:-1'} />
@@ -177,8 +178,12 @@ const preload = props.preload
     {[`/fonts/manrope-${locale === 'ru' ? 'cyrillic' : 'latin'}.woff2`, `/fonts/onest-${locale === 'ru' ? 'cyrillic' : 'latin'}.woff2`].map((href) => (
       <link rel="preload" as="font" type="font/woff2" href={href} crossorigin="anonymous" />
     ))}
-    <link rel="icon" href={`${ICON}/favicon.svg`} type="image/svg+xml" />
+    {/* Google shows this icon next to every search result: a square of a multiple of 48px plus
+        a crawlable /favicon.ico; the centre's icon is the SOF EXPO mark (scripts/build-assets.mjs) */}
+    {!ICON && <link rel="icon" href="/favicon.ico" sizes="48x48" />}
     <link rel="icon" href={`${ICON}/favicon.png`} type="image/png" sizes="512x512" />
+    {!ICON && <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192" />}
+    <link rel="icon" href={`${ICON}/favicon.svg`} type="image/svg+xml" />
     <link rel="apple-touch-icon" href={`${ICON}/apple-touch-icon.png`} />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
@@ -247,7 +252,6 @@ const preload = props.preload
     <!-- Conversion system: CTA tracking and form handling only (no popups/livechat) -->
     <Tracking locale={locale} path={path} />
     <FormHandler />
-    <StickyCtaBar locale={locale} pageType={path.includes('/exhibitors/') ? 'exhibitors' : path.includes('/visitors/') ? 'visitors' : path.includes('/organizers/') ? 'organizers' : path.includes('/events/') ? 'event' : path === '/' ? 'home' : 'other'} />
     <script>
       /* Subtle scroll reveal (user-approved 2026-09-22): fade + 8px over 200ms for
          sections below the first view only. JS-gated — without JavaScript the

@@ -1443,3 +1443,13 @@ html.hdr-away main > .evnav { top: 6px; }
 @media (max-width: 480px) {
   h1, h2 { hyphens: auto; -webkit-hyphens: auto; overflow-wrap: break-word; }
 }
+
+/* 2026-10-15: the header pill and the show's tab bar are white, and so are the panels they
+   slide over — while scrolling the three read as one white block. A hairline and a soft
+   shadow keep the floating bars visibly above the page. */
+.hdr__in {
+  box-shadow: 0 0 0 1px var(--line), 0 8px 22px rgba(11, 28, 34, 0.08);
+}
+main > .evnav {
+  box-shadow: 0 0 0 1px var(--line), 0 8px 22px rgba(11, 28, 34, 0.08);
+}

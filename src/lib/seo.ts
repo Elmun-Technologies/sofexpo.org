@@ -65,6 +65,8 @@ export function organizationJsonLd() {
     name: 'SOF EXPO Samarkand',
     legalName: 'ООО «RESOF EXPO»',
     url: `${SITE}/`,
+    logo: `${SITE}/brand/sofexpo-logo-600.png`,
+    image: [`${SITE}/images/venue-exterior.jpg`, `${SITE}/images/hall-panorama.jpg`, `${SITE}/images/venue-foyer.jpg`],
     telephone: '+998557050705',
     email: site.contacts.email,
     sameAs: [
@@ -114,10 +116,10 @@ export function eventJsonLd(e: {
       : {}),
     description: e.intro[t],
     eventAttendanceMode: 'https://schema.org/OnSiteEventAttendanceMode',
-    eventStatus:
-      new Date(`${e.dates.end}T23:59:59+05:00`).getTime() < Date.now()
-        ? 'https://schema.org/EventCompleted'
-        : 'https://schema.org/EventScheduled',
+    url: `${SITE}/${t}/events/${e.slug}/`,
+    /* schema.org has no "EventCompleted": a past edition that took place as planned stays
+       EventScheduled (the dates say it is over); the invented value failed Google's validator */
+    eventStatus: 'https://schema.org/EventScheduled',
     startDate: `${e.dates.start}T09:00:00+05:00`,
     endDate: `${e.dates.end}T18:00:00+05:00`,
     image: abs(e.heroImage),
@@ -245,7 +247,14 @@ export function rootJsonLd() {
       name: 'RESOF EXPO',
       legalName: 'ООО «RESOF EXPO»',
       url: `${SITE}${localize('en', '/about/')}`,
-      logo: `${SITE}/favicon.svg`,
+      alternateName: ['SOF EXPO', 'SOF EXPO Samarkand'],
+      /* Google's logo feature reads PNG/JPG/WebP of 112px and up, never SVG */
+      logo: {
+        '@type': 'ImageObject',
+        url: `${SITE}/brand/sofexpo-logo-600.png`,
+        width: 600,
+        height: 646,
+      },
         email: site.contacts.email,
       telephone: '+998557050705',
       address: {
@@ -281,8 +290,15 @@ export function entityNodes() {
       '@type': 'Organization',
       '@id': `${SITE}/#organization`,
       name: 'RESOF EXPO',
+      alternateName: ['SOF EXPO', 'SOF EXPO Samarkand'],
       legalName: 'ООО «RESOF EXPO»',
       url: `${SITE}${localize('en', '/about/')}`,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${SITE}/brand/sofexpo-logo-600.png`,
+        width: 600,
+        height: 646,
+      },
       email: site.contacts.email,
       telephone: '+998557050705',
       address: {

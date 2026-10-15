@@ -152,8 +152,44 @@ yaqinlashuvi edi; `--brand-stripe` va `--sx-*` endi bayroq qiymatlarida. Matn/ha
 qizili — bayroq qizili `#CE1126` (oq matn 5.6:1). Admin va kabinet: `#0063E4` ko'k va kislotali
 sariq `#F4FD10` o'rniga bayroq samoviysi (`#00738C`, qora yon panelda `#5CCFE3`).
 
+Ikkinchi qadam (o'sha kun): saytda eng ko'p ko'rinadigan rang hali ham to'q yashil `#123B25` edi
+(tugmalar, to'q bloklar, footer) — sayt bayroqqa o'xshamasdi. Endi `--evergreen` = bayroq samoviysining
+tungi tusi `#00475A` (oq matn 10.2:1), `--evergreen-2` `#005F73`, siyoh `--ink` `#0B1C22` (ko'k-qora),
+to'q fondagi och urg'u `--gold-soft` `#8FDCEC`, `--accent-soft` `#E3F4F8`; `theme-color`, manifest va
+OG kartochka ham shu rangda. Yashil va qizil bayroqdagidek: chiziqlar va urg'u (qizil — bron tugmasi).
+
 **FOODERA naqshi.** FOODERA'ning naqshi uning badge'ida: tilla islimiy jingalak gullar halqasi.
 `images/brand-masters/foodera-naqsh-ring.png` — badge'dan kesilgan (yulduz va yozuv olib
 tashlangan) halqa; `public/brand/foodera/naqsh.webp` maska sifatida: hero'ning o'ng yuqori
 burchagida badge oltini `#CCA878` bilan, CTA-band va footer'da `--gold-soft` bilan. Avvalgi
 geometrik kvadrat-yulduz plitkasi FOODERA'da shu medalyon bilan almashtirildi.
+
+**Qotib turgan panellar va qo'shilib ketgan ranglar (o'sha kun).** Telefonda ko'rgazma sahifasida
+bir vaqtda shapka + tablar + pastki "Stend bron qilish" paneli turardi (~30% ekran), boshqa
+sahifalarda ham pastki panel doim turardi. `StickyCtaBar` va ko'rgazmaning `.m-cta` paneli olib
+tashlandi — bron tugmasi shapkada, hero'da va har sahifaning CTA-blokida bor. Endi pastga
+o'qiyotganda ekranda hech narsa qotmaydi (ko'rgazma sahifasida faqat tablar). Shapka va tablar oq,
+tagidagi panellar ham oq edi — skroll paytida bir oq blokka qo'shilib ketardi: ularga ingichka
+chegara va yumshoq soya qo'shildi. Bosh sahifadagi Samarqand bloki to'q samoviy (`--evergreen`) —
+yonidagi ikkita och samoviy blok bilan qo'shilib ketmaydi.
+
+## 8. Ikonka va SEO tuzatishlari (2026-10-15)
+
+- **Favicon.** Saytning ikonkasi (Google natijasida domen yonida ko'rinadi) to'q yashil kvadratda
+  abstrakt "zal" belgisi edi — SOF EXPO'ga aloqasi yo'q. Endi u logotipning o'zi: uchta rangli yoy va
+  kulrang "SOF EXPO" doirasi (`images/brand-masters/sof-expo-logo.png` dan, SAMARKAND qatorisiz),
+  oq fonda, Google'ning doira kesimiga sig'adigan chekka bilan. `scripts/build-assets.mjs` yozadi:
+  `favicon.ico` (16/32/48), `favicon-48.png`, `icon-192.png`, `favicon.png` (512), `apple-touch-icon.png`
+  (180), `favicon.svg`. `/favicon.ico` endi bor (Google uni so'raydi). Manifest'dagi noto'g'ri o'lchamlar
+  (512 px faylni 180 deb yozgan, OG rasmni ikonka qilgan) tuzatildi.
+- **Logotip schema'da.** `Organization.logo` `favicon.svg` edi — Google logotip uchun SVG o'qimaydi.
+  Endi `ImageObject` `/brand/sofexpo-logo-600.png` (600×646). `ExhibitionCenter`ga `logo` va `image`
+  (bino, zal, foye) qo'shildi; `alternateName` "SOF EXPO", "SOF EXPO Samarkand".
+- **Event schema.** O'tgan nashr uchun `EventCompleted` yozilardi — schema.org'da bunday qiymat yo'q
+  (validator xatosi). Endi doim `EventScheduled` (sanalar o'tganini ko'rsatadi); `url` qo'shildi.
+- **Sitemap `lastmod`** config'da `2026-09-23` qilib qotirilgan edi — endi build sanasi.
+- **Vercel.** `_redirects` Cloudflare formati, Vercel uni o'qimaydi: `/` → `/en/` 301 jonli saytda
+  ishlamasdi (faqat meta-refresh). `vercel.json`ga `redirects` (301) va `trailingSlash: true`
+  (`/ru/venue` → `/ru/venue/`, bitta URL) qo'shildi.
+- Tekshiruv: 635 indekslanadigan sahifada canonical o'ziga, OG rasm fayli bor, hreflang ru/en/x-default
+  (+uz/tr/zh), `<html lang>` to'g'ri, `<main>` dagi har `<img>` alt va width bilan.

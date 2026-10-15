@@ -389,9 +389,11 @@ const preload = props.preload
 </html>
 
 <style is:global>
-  main {
-    display: block;
-  }
+  /* `main` is the 10px column of panels from redesign.css (`display: flex` + `gap: var(--gap)`,
+     docs/18 §4). A later global `main { display: block }` here used to win over it and silently
+     dropped every gutter: the panels fused into each other on the home, and the joined blocks
+     (`margin-top: calc(-1 * var(--gap))`) overlapped their neighbour by 10px on the section
+     pages. Do not re-add a `display` for `main` — the frame owns it. */
   .wrap + .wrap {
     margin-top: 0;
   }

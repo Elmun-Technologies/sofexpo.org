@@ -42,9 +42,9 @@
   const labels = {
     dashboard: 'Umumiy ko‘rinish', pipeline: 'Savdo voronkasi', leads: 'Arizalar', sales: 'Savdo analitikasi',
     showcases: 'Kompaniya sahifalari', portalAccounts: 'Kabinetlar', analytics: 'Sayt analitikasi', blog: 'Blog · Telegram',
-    integrations: 'Integratsiyalar', activity: 'Faoliyat tarixi', users: 'Jamoa va ruxsatlar',
+    integrations: 'Integratsiyalar', siteTags: 'Analitika va SEO kodlari', activity: 'Faoliyat tarixi', users: 'Jamoa va ruxsatlar',
   };
-  const ADMIN_VIEWS = ['integrations', 'activity', 'users'];
+  const ADMIN_VIEWS = ['integrations', 'siteTags', 'activity', 'users'];
   const STAGES = ['new', 'contacted', 'qualified', 'proposal', 'negotiation', 'won'];
   const statusLabels = {
     new: 'Yangi', contacted: 'Bog‘lanildi', qualified: 'Malakali', proposal: 'Taklif yuborildi',
@@ -73,7 +73,7 @@
     'portal_account.activate': 'Kabinet faollashtirildi', 'portal_account.deactivate': 'Kabinet bloklandi',
     'portal_profile.update': 'Profil yangilandi', 'user.create': 'Jamoa hisobi yaratildi',
     'user.update': 'Jamoa ruxsati yangilandi', 'outbox.retry': 'Yetkazish qayta navbatga qo‘yildi',
-    'blog.publish': 'Maqola e’lon qilindi', 'blog.unpublish': 'Maqola yashirildi', 'blog.delete': 'Maqola o‘chirildi',
+    'site_tags.update': 'Sayt kodlari yangilandi', 'blog.publish': 'Maqola e’lon qilindi', 'blog.unpublish': 'Maqola yashirildi', 'blog.delete': 'Maqola o‘chirildi',
     'showcase.save': 'Kompaniya sahifasi saqlandi', 'showcase.submit': 'Sahifa moderatsiyaga yuborildi',
     'showcase.publish': 'Kompaniya sahifasi nashr qilindi', 'showcase.reject': 'Sahifa rad etildi', 'showcase.hide': 'Sahifa saytdan yashirildi',
     'portal_file.upload': 'Material yuklandi', 'portal_file.delete': 'Material o‘chirildi',
@@ -346,6 +346,7 @@
       if (response.status === 401 && path !== '/api/admin/login') setAuthVisible(true);
       const error = new Error(data?.error || `Server xatosi (${response.status})`);
       error.status = response.status;
+      error.details = data?.details;
       throw error;
     }
     return data || {};
@@ -1157,6 +1158,95 @@
     });
   }
 
+  /* ======================= SITE TAGS (docs/22) =======================
+     Search Console / Webmaster tasdiqlash kodlari, analitika va reklama piksellari.
+     Saqlash → server JSON faylni repoga yozib push qiladi → sayt 2–3 daqiqada qayta yig‘iladi. */
+  const SITE_TAG_GROUPS = [
+    ['verify', 'Qidiruv tizimlarida tasdiqlash', 'Xizmat bergan meta-tegni to‘liq nusxalab qo‘ying — kod o‘zi ajratib olinadi. Bir nechta sayt/property bo‘lsa, vergul bilan.'],
+    ['analytics', 'Analitika', 'ID yoki xizmat bergan butun kodni qo‘ying — sayt kodni o‘zi joylaydi. Faqat sof-expo.com va uning subdomenlarida ishlaydi.'],
+    ['ads', 'Reklama piksellari', 'Ariza yuborish “Lead/SubmitForm”, telefon va messenjer bosish “Contact” hodisasi sifatida avtomatik yuboriladi.'],
+    ['custom', 'Qo‘shimcha kod', 'Ro‘yxatda yo‘q xizmatlar uchun (masalan, Telegram Ads, VK, boshqa piksellar). Kod barcha sahifalarning <head> qismiga qo‘yiladi — faqat ishonchli manbadan olingan kodni kiriting.'],
+  ];
+  const SITE_TAG_HELP = {
+    googleVerification: 'search.google.com/search-console → Add property → URL prefix → HTML tag. (Domain turi DNS orqali tasdiqlanadi — bu maydon kerak emas.)',
+    yandexVerification: 'webmaster.yandex.ru → Sayt qo‘shish → “Meta-teg” usuli.',
+    bingVerification: 'bing.com/webmasters → Add site → HTML Meta Tag. Yoki “Import from Google Search Console” — kod kerak bo‘lmaydi.',
+    baiduVerification: 'ziyuan.baidu.com → 用户中心 → 站点管理 → 添加网站 → HTML标签验证.',
+    facebookVerification: 'business.facebook.com → Brand Safety → Domains → Meta-tag usuli.',
+    ga4Id: 'analytics.google.com → Admin → Data streams → Web → Measurement ID (G-…).',
+    gtmId: 'tagmanager.google.com → Container ID (GTM-…). GA4 ni GTM ichida ham ulasangiz, yuqoridagi GA4 maydonini bo‘sh qoldiring (ikki marta sanalmasin).',
+    yandexMetrikaId: 'metrika.yandex.ru → Hisoblagich qo‘shish → raqami (masalan 98765432).',
+    yandexWebvisor: 'Foydalanuvchi sessiyalarining video-yozuvi (Metrika → Vebvizor).',
+    baiduTongjiId: 'tongji.baidu.com → 代码获取 → hm.js? dan keyingi 32 belgili kod.',
+    googleAdsId: 'ads.google.com → Tools → Conversions → Google tag (AW-…).',
+    metaPixelId: 'business.facebook.com → Events Manager → Data sources → Pixel ID (15–16 raqam).',
+    tiktokPixelId: 'ads.tiktok.com → Assets → Events → Web Events → Pixel ID.',
+    customHead: '<script>, <meta>, <noscript> teglari. Noto‘g‘ri kod sayt ishini buzishi mumkin.',
+  };
+
+  async function renderSiteTags(errors = {}, draft = null) {
+    const content = $('#content');
+    if (!draft) content.innerHTML = '<div class="skeleton"></div>';
+    const data = await api('/api/admin/site-tags');
+    const tags = draft || data.tags || {};
+    const saved = data.tags || {};
+    const fieldHtml = (field) => {
+      const id = `tag-${field.key}`;
+      const value = tags[field.key];
+      const on = field.kind === 'bool' ? saved[field.key] !== false : Boolean(saved[field.key]);
+      const err = errors[field.key] ? `<p class="form-error" role="alert">${escapeHtml(errors[field.key])}</p>` : '';
+      const help = SITE_TAG_HELP[field.key] ? `<p class="field-help">${escapeHtml(SITE_TAG_HELP[field.key])}</p>` : '';
+      if (field.kind === 'bool') {
+        return `<div class="field tag-field"><label class="check-row" for="${id}"><input id="${id}" name="${field.key}" type="checkbox" ${value !== false ? 'checked' : ''} /> <span>${escapeHtml(field.label)}</span></label>${help}</div>`;
+      }
+      const status = `<span class="connection ${on ? 'on' : ''}"><i></i>${on ? 'Ulangan' : 'Bo‘sh'}</span>`;
+      const control = field.kind === 'code'
+        ? `<textarea id="${id}" name="${field.key}" class="code-input" rows="6" spellcheck="false" placeholder="<script>…</script>">${escapeHtml(value || '')}</textarea>`
+        : `<input id="${id}" name="${field.key}" value="${escapeHtml(value || '')}" autocomplete="off" spellcheck="false" placeholder="${escapeHtml(field.example || (field.meta ? `<meta name="${field.meta}" content="…" />` : ''))}" />`;
+      return `<div class="field tag-field ${field.kind === 'code' ? 'span-2' : ''}"><div class="tag-field-head"><label for="${id}">${escapeHtml(field.label)}</label>${status}</div>${control}${help}${err}</div>`;
+    };
+    const groups = SITE_TAG_GROUPS.map(([group, title, note]) => {
+      const fields = (data.fields || []).filter((field) => field.group === group);
+      return `<section class="panel tag-panel"><div class="panel-head"><div><h3>${escapeHtml(title)}</h3><p>${escapeHtml(note)}</p></div></div><div class="tag-grid">${fields.map(fieldHtml).join('')}</div></section>`;
+    }).join('');
+    const pushNote = data.publish?.gitPush
+      ? `Saqlangach sayt avtomatik qayta yig‘iladi (odatda 2–3 daqiqa).`
+      : `Diqqat: serverda avtomatik push o‘chiq (BLOG_SYNC_GIT_PUSH=0) — saqlangan kodlar saytga faqat keyingi deploy bilan chiqadi.`;
+    const last = data.updatedAt ? `Oxirgi o‘zgarish: ${escapeHtml(new Date(data.updatedAt).toLocaleString('uz-UZ'))}${data.updatedBy ? ` · ${escapeHtml(data.updatedBy)}` : ''}` : 'Hali saqlanmagan.';
+    content.innerHTML = `${pageIntro('Analitika va SEO kodlari', 'Google, Yandex, Bing, Baidu, Meta, TikTok kodlarini dasturchisiz ulang.', 'SAYT')}
+      <form id="site-tags-form" novalidate>
+        <div class="tag-notice ${data.publish?.gitPush ? '' : 'is-warn'}"><strong>${escapeHtml(pushNote)}</strong><span>${last}</span></div>
+        ${groups}
+        <div class="form-actions sticky-actions"><button class="button button-primary" type="submit">Saqlash va saytga chiqarish</button></div>
+      </form>`;
+    $('#site-tags-form')?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const body = {};
+      for (const field of data.fields || []) {
+        const input = form.elements.namedItem(field.key);
+        if (!input) continue;
+        body[field.key] = field.kind === 'bool' ? input.checked : input.value;
+      }
+      const button = form.querySelector('button[type=submit]');
+      button.disabled = true;
+      try {
+        const result = await api('/api/admin/site-tags', { method: 'PUT', body: { tags: body } });
+        if (!result.changed?.length) showToast('O‘zgarish yo‘q — hammasi avvalgidek.');
+        else showToast(result.publish?.gitPush ? 'Saqlandi. Sayt 2–3 daqiqada yangilanadi.' : 'Saqlandi. Saytga keyingi deploy bilan chiqadi.');
+        await renderSiteTags();
+      } catch (error) {
+        if (error.status === 422 && error.details) {
+          showError(error);
+          await renderSiteTags(error.details, body);
+          return;
+        }
+        showError(error);
+        button.disabled = false;
+      }
+    });
+  }
+
   /* ======================= ACTIVITY ======================= */
   async function renderActivity() {
     const content = $('#content');
@@ -1287,7 +1377,7 @@
   /* ======================= NAVIGATION ======================= */
   const renderers = {
     dashboard: renderDashboard, pipeline: renderPipeline, leads: renderLeads, sales: renderSales, showcases: renderShowcases,
-    portalAccounts: renderPortalAccounts, analytics: renderAnalytics, blog: renderBlog, integrations: renderIntegrations,
+    portalAccounts: renderPortalAccounts, analytics: renderAnalytics, blog: renderBlog, integrations: renderIntegrations, siteTags: renderSiteTags,
     activity: renderActivity, users: renderUsers,
   };
 

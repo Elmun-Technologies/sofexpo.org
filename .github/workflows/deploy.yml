@@ -7,6 +7,8 @@ name: deploy
 #   CLOUDFLARE_ACCOUNT_ID  the account that owns the sofexpo* Pages projects
 # Optional repository variables override the production API defaults:
 #   PUBLIC_LEAD_ENDPOINT, PUBLIC_ANALYTICS_ENDPOINT, PUBLIC_PORTAL_URL.
+# Search engines / web analytics, unset = not loaded (docs/22): PUBLIC_GA4_ID, PUBLIC_YM_ID,
+#   PUBLIC_GOOGLE_SITE_VERIFICATION, PUBLIC_YANDEX_VERIFICATION, PUBLIC_BING_VERIFICATION.
 # The defaults assume the API runs at https://api.sof-expo.com.
 on:
   workflow_run:
@@ -104,6 +106,12 @@ jobs:
           PUBLIC_LEAD_ENDPOINT: ${{ vars.PUBLIC_LEAD_ENDPOINT || 'https://api.sof-expo.com/lead' }}
           PUBLIC_ANALYTICS_ENDPOINT: ${{ vars.PUBLIC_ANALYTICS_ENDPOINT || 'https://api.sof-expo.com/event' }}
           PUBLIC_PORTAL_URL: ${{ vars.PUBLIC_PORTAL_URL || 'https://api.sof-expo.com' }}
+          # docs/22: repository Variables, empty = not loaded
+          PUBLIC_GA4_ID: ${{ vars.PUBLIC_GA4_ID }}
+          PUBLIC_YM_ID: ${{ vars.PUBLIC_YM_ID }}
+          PUBLIC_GOOGLE_SITE_VERIFICATION: ${{ vars.PUBLIC_GOOGLE_SITE_VERIFICATION }}
+          PUBLIC_YANDEX_VERIFICATION: ${{ vars.PUBLIC_YANDEX_VERIFICATION }}
+          PUBLIC_BING_VERIFICATION: ${{ vars.PUBLIC_BING_VERIFICATION }}
       - name: Publish to Cloudflare Pages
         if: env.HAS_SECRETS == 'true'
         run: npx --yes wrangler@4 pages deploy dist --project-name=${{ matrix.project }} --branch=main --commit-dirty=true

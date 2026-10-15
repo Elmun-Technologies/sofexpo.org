@@ -1,0 +1,136 @@
+---
+/**
+ * Analytics and ad pixels in <head>, configured from the admin panel (docs/22).
+ * Only the real hosts (sof-expo.com and its show subdomains) load them: Vercel previews and
+ * local builds must not count as visits. window.sofTag hands the site's own conversion events
+ * (Tracking/FormHandler/QuizForm) to every connected tool under the same names.
+ */
+import { siteTags, hasTrackers } from '@/lib/analytics';
+import { SITE } from '@/lib/seo';
+
+const tags = {
+  root: new URL(SITE).hostname,
+  ga4: siteTags.ga4Id ?? '',
+  ads: siteTags.googleAdsId ?? '',
+  gtm: siteTags.gtmId ?? '',
+  ym: siteTags.yandexMetrikaId ? Number(siteTags.yandexMetrikaId) : 0,
+  webvisor: siteTags.yandexWebvisor !== false,
+  baidu: siteTags.baiduTongjiId ?? '',
+  meta: siteTags.metaPixelId ?? '',
+  tiktok: siteTags.tiktokPixelId ?? '',
+};
+const customHead = siteTags.customHead ?? '';
+---
+
+{hasTrackers && (
+  <script is:inline define:vars={{ tags }}>
+    (function () {
+      var w = window;
+      var d = document;
+      var host = location.hostname;
+      if (host !== tags.root && !host.endsWith('.' + tags.root)) return;
+      var load = function (src) {
+        var s = d.createElement('script');
+        s.async = true;
+        s.src = src;
+        d.head.appendChild(s);
+      };
+      w.dataLayer = w.dataLayer || [];
+      if (tags.ga4 || tags.ads) {
+        w.gtag = function () { w.dataLayer.push(arguments); };
+        w.gtag('js', new Date());
+        if (tags.ga4) w.gtag('config', tags.ga4);
+        if (tags.ads) w.gtag('config', tags.ads);
+        load('https://www.googletagmanager.com/gtag/js?id=' + (tags.ga4 || tags.ads));
+      }
+      if (tags.gtm) {
+        w.dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' });
+        load('https://www.googletagmanager.com/gtm.js?id=' + tags.gtm);
+      }
+      if (tags.ym) {
+        w.ym = w.ym || function () { (w.ym.a = w.ym.a || []).push(arguments); };
+        w.ym.l = Date.now();
+        load('https://mc.yandex.ru/metrika/tag.js');
+        w.ym(tags.ym, 'init', { clickmap: true, trackLinks: true, accurateTrackBounce: true, webvisor: tags.webvisor });
+      }
+      if (tags.baidu) {
+        w._hmt = w._hmt || [];
+        load('https://hm.baidu.com/hm.js?' + tags.baidu);
+      }
+      if (tags.meta && !w.fbq) {
+        var fbq = (w.fbq = function () {
+          if (fbq.callMethod) fbq.callMethod.apply(fbq, arguments);
+          else fbq.queue.push(arguments);
+        });
+        if (!w._fbq) w._fbq = fbq;
+        fbq.push = fbq;
+        fbq.loaded = true;
+        fbq.version = '2.0';
+        fbq.queue = [];
+        load('https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', tags.meta);
+        fbq('track', 'PageView');
+      }
+      if (tags.tiktok) {
+        /* TikTok's own base code, unrolled */
+        w.TiktokAnalyticsObject = 'ttq';
+        var ttq = (w.ttq = w.ttq || []);
+        ttq.methods = ['page', 'track', 'identify', 'instances', 'debug', 'on', 'off', 'once', 'ready', 'alias', 'group', 'enableCookie', 'disableCookie', 'holdConsent', 'revokeConsent', 'grantConsent'];
+        ttq.setAndDefer = function (t, e) {
+          t[e] = function () { t.push([e].concat(Array.prototype.slice.call(arguments, 0))); };
+        };
+        for (var i = 0; i < ttq.methods.length; i++) ttq.setAndDefer(ttq, ttq.methods[i]);
+        ttq.instance = function (t) {
+          for (var e = ttq._i[t] || [], n = 0; n < ttq.methods.length; n++) ttq.setAndDefer(e, ttq.methods[n]);
+          return e;
+        };
+        ttq.load = function (e, n) {
+          var r = 'https://analytics.tiktok.com/i18n/pixel/events.js';
+          ttq._i = ttq._i || {};
+          ttq._i[e] = [];
+          ttq._i[e]._u = r;
+          ttq._t = ttq._t || {};
+          ttq._t[e] = Date.now();
+          ttq._o = ttq._o || {};
+          ttq._o[e] = n || {};
+          load(r + '?sdkid=' + e + '&lib=ttq');
+        };
+        ttq.load(tags.tiktok);
+        ttq.page();
+      }
+
+      /* conversion events → every connected tool; page views, scroll and timers are counted
+         natively by each tool, so they are not forwarded twice */
+      var native = /^(page_view|page_hide|page_unload|time_\d+s|scroll_\d+)$/;
+      var contact = /^(phone_click|email_click|channel_click)$/;
+      w.sofTag = function (name, data) {
+        if (!name || native.test(name)) return;
+        var params = {};
+        for (var k in data || {}) {
+          var v = data[k];
+          if (v === null || typeof v !== 'object') params[k] = v;
+        }
+        var lead = name === 'form_submit' || name === 'quiz_submit';
+        try { if (w.gtag && tags.ga4) w.gtag('event', name, params); } catch (e) {}
+        /* the quiz pushes its own dataLayer entries (QuizForm.astro) — GTM must not see them twice */
+        try { if (tags.gtm && !params.quiz) w.dataLayer.push(Object.assign({ event: name }, params)); } catch (e) {}
+        try { if (tags.ym) w.ym(tags.ym, 'reachGoal', name, params); } catch (e) {}
+        try { if (tags.baidu) w._hmt.push(['_trackEvent', 'sofexpo', name, params.form || params.source || '']); } catch (e) {}
+        try {
+          if (w.fbq && tags.meta) {
+            if (lead) w.fbq('track', 'Lead', params);
+            else if (contact.test(name)) w.fbq('track', 'Contact', params);
+            else w.fbq('trackCustom', name, params);
+          }
+        } catch (e) {}
+        try {
+          if (w.ttq && tags.tiktok) {
+            if (lead) w.ttq.track('SubmitForm');
+            else if (contact.test(name)) w.ttq.track('Contact');
+          }
+        } catch (e) {}
+      };
+    })();
+  </script>
+)}
+{customHead && <Fragment set:html={customHead} />}

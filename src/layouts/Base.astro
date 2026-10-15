@@ -26,6 +26,8 @@ import StandQuizModal from '@/components/StandQuizModal.astro';
    booking action already. The smart CTA/quiz stays: it is part of the page. */
 import Tracking from '@/components/conversion/Tracking.astro';
 import FormHandler from '@/components/conversion/FormHandler.astro';
+import SiteTags from '@/components/conversion/SiteTags.astro';
+import { verificationMeta } from '@/lib/analytics';
 
 interface Props {
   locale: Locale;
@@ -161,6 +163,7 @@ const preload = props.preload
     <meta name="theme-color" content={PAGE_BRAND?.palette.evergreen ?? "#00475a"} />
     <meta name="format-detection" content="telephone=no" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
+    {verificationMeta.map((v) => <meta name={v.name} content={v.content} />)}
     <meta name="robots" content={meta.noindex ? 'noindex,follow,max-image-preview:large' : 'index,follow,max-image-preview:large,max-snippet:-1'} />
     {
       meta.hreflang.map((h) => (
@@ -215,6 +218,7 @@ const preload = props.preload
     <meta name="twitter:title" content={meta.og.title} />
     <meta name="twitter:description" content={meta.og.description} />
     <meta name="twitter:image" content={meta.og.image} />
+    {!props.redirect && <SiteTags />}
     <script type="application/ld+json" is:inline set:html={JSON.stringify(graph)} />
     {/* a show host repaints the same token ladder with its own identity (src/data/brands.ts) —
         html[data-brand] is more specific than :root, so order of stylesheets does not matter */}

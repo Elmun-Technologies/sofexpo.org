@@ -306,6 +306,12 @@ export class BackendStore {
         created_at TEXT NOT NULL
       );
       CREATE INDEX IF NOT EXISTS portal_files_account_idx ON portal_files(account_id, created_at);
+      CREATE TABLE IF NOT EXISTS site_settings (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        updated_by TEXT NOT NULL DEFAULT ''
+      );
     `);
     // If the old JSONL process was interrupted mid-send, let the new worker safely resume it.
     this.db.prepare("UPDATE delivery_outbox SET state = 'pending', next_attempt_at = ? WHERE state = 'sending'").run(nowIso());
@@ -724,6 +730,22 @@ export class BackendStore {
 
   countActiveAdmins() {
     return Number(this.db.prepare("SELECT COUNT(*) AS n FROM users WHERE role = 'admin' AND active = 1").get().n);
+  }
+
+  /* small JSON settings the admin edits (site tags, docs/22); value is stored as JSON text */
+  getSiteSetting(key) {
+    const row = this.db.prepare('SELECT value, updated_at, updated_by FROM site_settings WHERE key = ?').get(key);
+    if (!row) return null;
+    let value = null;
+    try { value = JSON.parse(row.value); } catch { value = null; }
+    return { value, updatedAt: row.updated_at, updatedBy: row.updated_by };
+  }
+
+  setSiteSetting(key, value, actorEmail = '') {
+    this.db.prepare(`INSERT INTO site_settings (key, value, updated_at, updated_by) VALUES (?, ?, ?, ?)
+      ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at, updated_by = excluded.updated_by`)
+      .run(key, JSON.stringify(value), nowIso(), String(actorEmail || '').slice(0, 200));
+    return this.getSiteSetting(key);
   }
 
   recordAudit(actorEmail, action, entityType, entityId, details = {}) {

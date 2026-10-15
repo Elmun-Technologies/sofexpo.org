@@ -390,7 +390,7 @@ test('git publisher: commit + push + deploy hooks (faked runner)', async () => {
     deployHooks: ['https://api.cloudflare.com/hook/1'],
     gitRunner: async (cmd, args) => {
       calls.push(`${cmd} ${args.join(' ')}`);
-      return { stdout: args.includes('status') ? ' M src/content/news/ru/x.md' : '', stderr: '' };
+      return { stdout: args.includes('--cached') ? 'src/content/news/ru/x.md' : '', stderr: '' };
     },
     fetchImpl: async (url) => { hooks.push(String(url)); return { status: 200 }; },
     logger: { info() {}, error(msg) { throw new Error(`unexpected: ${msg}`); } },
@@ -417,7 +417,7 @@ test('git publisher: clean tree → no commit; push disabled → local commit on
   });
   await publisher.flush();
   assert.ok(calls.some((c) => c.includes('add -- src/content')));
-  assert.ok(!calls.some((c) => c.includes('commit -m')), 'empty porcelain → nothing to commit');
+  assert.ok(!calls.some((c) => c.includes('commit -m')), 'nothing staged → nothing to commit');
   assert.ok(!calls.some((c) => c.includes('push origin')));
   await publisher.stop();
 });

@@ -87,3 +87,57 @@ Umumiy karkas — SOF EXPO; har bir ko'rgazma sahifasi o'z logotipi ranglarini o
   mijoz paketidagi `content/` (sofexpo.uz'dan yig'ilgan) bilan solishtirildi: sanalar,
   bo'limlar soni, kontaktlar, jamoa va paketlar sayt bilan mos. PROMOTORS SHOW 2027
   (12–13 sentabr 2027) paketda ham tasdiqlanmagan — qo'shilmadi.
+
+## 6. Fotograf arxivi va rasm formatlari (2026-10-15)
+
+**Manba.** Mijoz 10 ta arxiv yubordi (113 fayl, ko'pi takror): **133 ta noyob** 2560 px kadr —
+PROMOTORS SHOW, WORLD EDU 2024, BUILD PRO EXPO, AGROPRO EXPO 2024, PROM PRO EXPO 2024 (boshqa
+tashkilotchining sanoat yarmarkasi), bino, foye, kafe, ochiq maydon, Registon. Takror va
+bir-biriga juda o'xshash kadrlar ajratilib, **86 tasi** `images/client-2026-10-15/` ga 2048 px
+master sifatida saqlandi (EXIF/GPS olib tashlangan, mozjpeg q84). Fayl nomlari mazmunni aytadi:
+`promotors-drift-aerial`, `agropro-irrigation-stand`, `venue-foyer` — bu nom saytdagi URL ham.
+
+**Kuchsiz manbalar almashtirildi** (`scripts/build-photos.mjs` → `MAP`): `venue-exterior` (render
+edi), `cafe-interior`, `conference-room`, `hall-aisle-red` (300 px CMS eskizlari), `hall-crowd`
+(768 px'dan AI-kattalashtirilgan), `event-agropro`, `event-promotors`, `event-worldedu`,
+`conference-audience`, `officials-tour`, `outdoor-area` — endi fotografning 2560 px kadrlari.
+
+**Formatlar.**
+- Har bir rasm uchun WebP + **AVIF** narvoni (640/1024/1600/2048); AVIF bir xil sifatda ~30%
+  yengil. `<Photo>` avval AVIF, keyin WebP, oxirida JPEG beradi; LCP preload ham AVIF.
+- Narvon pog'onalari endi **rasmning o'z nisbatida** (avval hammasi 16:10 ga qirqilardi): baland
+  kartochka (4:5) kadrning tepasi va pastini yo'qotmaydi, `sizes` ham haqiqiy nisbatdan hisoblanadi.
+- **Fokus nuqtasi** libvips `attention` bilan topiladi va `object-position` bo'ladi — CSS qirqqanda
+  stend, mashina yoki ma'ruzachi kadrda qoladi. Ma'lumot: `src/data/photo-meta.json`
+  (`r` nisbat, `p` fokus, `a` AVIF bor).
+- Fotograf kadrlari allaqachon rang/ekspozitsiyadan o'tgan: ularga faqat yengil sharpen, eski
+  telefon kadrlariga avvalgidek tone pass.
+- `npm run photos` 3 oqimda ishlaydi (AVIF sekin kodlanadi).
+
+**Sahifalar.**
+- PROMOTORS, WORLD EDU, BUILD PRO, AGROPRO asosiy sahifalarida **fotoreportaj** bloki (albomlar
+  bilan); ichki sahifalar (eksponentlar, tashrifchilar, dastur) bir xil hero o'rniga o'z kadrini oladi.
+- `/venue/gallery/`: foye, kofexona, ochiq maydon, forum, shartnoma imzolash, Registon va yangi
+  albom "Boshqa tashkilotchilarning tarmoq yarmarkalari" (PROM PRO EXPO 2024). Bino albomida bitta
+  rasm ikki marta turardi — tuzatildi.
+- `/organizers/`: PROM PRO EXPO 2024 kadrlari (boshqa tashkilotchi tadbiri — isbot sifatida).
+- Barcha izoh/alt ru/en'da yozilgan, uz/tr/zh katalogga qo'shilgan (73 qator).
+- Galereyaning birinchi rasmi faqat sahifa boshida bo'lsa eager yuklanadi (o'rtadagi galereya LCP'ni
+  o'g'irlamaydi).
+
+**SEO.**
+- uz tilidagi 11 ta sahifa (FOODERA, BUILD PRO, AGROPRO, WORLD EDU, ECOM va ularning
+  eksponentlar sahifalari, katalog) `noindex` edi: eksponentlar katalogi skriptidagi
+  `'noopener nofollow'` satri "tarjima qilinmagan matn" deb o'qilardi, ustiga 4 ta description
+  uz'da yo'q edi. Ikkalasi tuzatildi — sahifalar uz'da indeksga va hreflang klasteriga qaytadi.
+- PROMOTORS SHOW asosiy sahifasi indeksga ochildi (fotoreportaj bilan endi to'liq sahifa; brend
+  qidiruvi shu sahifaga tushadi). Ichki arxiv sahifalari `noindex` qoladi.
+- Image sitemap bir sahifadan 40 tagacha rasm beradi (avval 10): galereya sahifalari Google
+  Images'da to'liq ko'rinadi.
+
+**Ochiq.** Samarqand bo'yicha stok/litsenziyasiz rasmlar (Wikimedia Commons, Unsplash, Pexels)
+muhit tarmog'ida bloklangan — ruxsat berilgach qo'shiladi.
+
+**Shapka.** Hide-on-scroll endi kompyuterda ham: pastga o'qiganda shapka yashirinadi, tepaga
+aylantirganda qaytadi; mega-menyu yoki til ro'yxati ochiq bo'lsa yashirinmaydi. Ko'rgazma
+sahifasida shapka + tablar 138 px o'rniga faqat tablar qoladi.

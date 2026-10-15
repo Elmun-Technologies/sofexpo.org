@@ -336,7 +336,7 @@ const galleryGroups = (b: Block): BlockAlbum[] =>
                     <div class="gal" data-cols={galLayout((album.items ?? []).length).cols}>
                       {((album.items ?? []) as BlockShot[]).map((g, i) => (
                         <div class:list={['gal__item', { 'gal__item--wd': i < galLayout((album.items ?? []).length).wideD, 'gal__item--wt': i < galLayout((album.items ?? []).length).wideT }]}>
-                          <Photo src={g.src} alt={g.alt ?? g.caption ?? ''} ratio="4/3" zoom priority={gi === 0 && i === 0} sizes={i < Math.max(galLayout((album.items ?? []).length).wideD, galLayout((album.items ?? []).length).wideT) ? '(max-width: 680px) 100vw, 66vw' : '(max-width: 680px) 100vw, (max-width: 1080px) 50vw, 33vw'} />
+                          <Photo src={g.src} alt={g.alt ?? g.caption ?? ''} ratio="4/3" zoom priority={idx < 2 && gi === 0 && i === 0} sizes={i < Math.max(galLayout((album.items ?? []).length).wideD, galLayout((album.items ?? []).length).wideT) ? '(max-width: 680px) 100vw, 66vw' : '(max-width: 680px) 100vw, (max-width: 1080px) 50vw, 33vw'} />
                           {g.caption && <p class="gal__cap">{g.caption}</p>}
                         </div>
                       ))}

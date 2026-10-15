@@ -13,6 +13,7 @@
  * aspect ratio so the layout never shifts while the bytes are in flight.
  */
 import photos from '@/data/photos.json';
+import photoMeta from '@/data/photo-meta.json';
 
 const {
   src,
@@ -24,7 +25,7 @@ const {
   rounded = true,
   zoom = false,
   fit = 'cover',
-  position = 'center',
+  position,
   loading,
 } = Astro.props as {
   src: string;
@@ -47,16 +48,24 @@ const name = m?.[1];
    produced for each photo, so a 768px original never advertises a 1600w candidate (a 404 per
    card) and a 2048px one is not capped at 1024 for no reason. */
 const rungs: number[] = (name && (photos as Record<string, number[]>)[name]) || [];
+/* photo-meta.json (scripts/build-photos.mjs): the rungs' own aspect, the focal point libvips
+   found, and whether an AVIF ladder exists next to the WebP one */
+const info = (name && (photoMeta as Record<string, { r?: number; p?: string; a?: number }>)[name]) || {};
 const srcset = rungs.length
   ? rungs.map((w) => `/images/${name}-${w}.webp ${w}w`).join(', ')
   : undefined;
+const avifSet = rungs.length && info.a
+  ? rungs.map((w) => `/images/${name}-${w}.avif ${w}w`).join(', ')
+  : undefined;
+const objectPosition = position ?? info.p ?? 'center';
 const fallback = name ? `/images/${name}.jpg` : src;
 const [rw, rh] = ratio.split('/').map((n) => Number(n.trim()) || 1);
-/* Every rung is a 16:10 crop. A taller frame with object-fit: cover shows only the middle of
-   it, so the browser needs a wider file than the frame's own width: a 300px-wide 4:5 card
-   on a 2x screen needs 1200 source pixels, not 600. `sizes` is scaled by that crop factor
-   (calc() is valid inside sizes), which is what kept portrait cards soft on retina. */
-const crop = fit === 'cover' ? 1.6 / (rw / rh) : 1;
+/* A frame taller than the photograph shows only its middle with object-fit: cover, so the
+   browser needs a wider file than the frame's own width: a 300px-wide 4:5 card of a 3:2
+   photo on a 2x screen needs 1125 source pixels, not 600. `sizes` is scaled by that crop
+   factor (calc() is valid inside sizes), which is what kept portrait cards soft on retina.
+   Rungs keep the photo's own aspect (info.r); legacy 16:10 rungs fall back to 1.6. */
+const crop = fit === 'cover' ? (info.r ?? 1.6) / (rw / rh) : 1;
 const finalSizes =
   crop > 1.05
     ? sizes
@@ -71,9 +80,10 @@ const finalSizes =
 
 <figure
   class:list={['ph', klass, { 'ph--round': rounded, 'ph--zoom': zoom }]}
-  style={`--ph-ratio:${rw} / ${rh};--ph-fit:${fit};--ph-pos:${position}`}
+  style={`--ph-ratio:${rw} / ${rh};--ph-fit:${fit};--ph-pos:${objectPosition}`}
 >
   <picture>
+    {avifSet && <source type="image/avif" srcset={avifSet} sizes={finalSizes} />}
     {srcset && <source type="image/webp" srcset={srcset} sizes={finalSizes} />}
     <img
       src={fallback}

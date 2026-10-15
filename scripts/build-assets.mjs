@@ -14,8 +14,8 @@ const W = 1200;
 const H = 630;
 /* The calmest version of the card: flat brand ground, one rule, typeset facts, and the exterior
    as a plain panel. No grid texture, no desaturation, no accent colour — those were decoration
-   for its own sake (docs/07 §7). The exterior is still a render, so the card says nothing about
-   it being photography. */
+   for its own sake (docs/07 §7). The exterior panel is the photographer's daylight frame of the
+   building (2026-10-15; it used to be a render). */
 const overlay = `<svg width="${W}" height="${H}">
   <rect width="${W}" height="${H}" fill="#0f2b1c"/>
   <rect x="70" y="132" width="34" height="34" fill="none" stroke="#ffffff" stroke-width="2"/>

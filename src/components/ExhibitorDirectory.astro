@@ -234,7 +234,7 @@ const labels: Record<string, string> = {
         const a = make('a', 'xcard__link xcard__link--site', label('website'));
         a.href = site;
         a.target = '_blank';
-        a.rel = 'noopener nofollow';
+        a.relList.add('noopener', 'nofollow');
         links.append(a);
       }
       for (const [network, url] of Object.entries(c.socials || {})) {
@@ -243,7 +243,7 @@ const labels: Record<string, string> = {
         const a = make('a', 'xcard__link', NETWORKS[network]);
         a.href = href;
         a.target = '_blank';
-        a.rel = 'noopener nofollow';
+        a.relList.add('noopener', 'nofollow');
         a.translate = false;
         links.append(a);
       }

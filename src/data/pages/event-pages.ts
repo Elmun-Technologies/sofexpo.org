@@ -908,6 +908,27 @@ eventPages["buildpro-expo"] = {
             },
           ],
         },
+        {
+          type: "h2",
+          kicker: "Фотоотчёт",
+          title: "Как проходит BUILD PRO EXPO",
+        },
+        {
+          type: "gallery",
+          albums: [
+            {
+              title: "Экспозиция",
+              items: [
+                { src: "/images/buildpro-visitors.jpg", caption: "Посетители в павильоне BUILD PRO EXPO" },
+                { src: "/images/buildpro-stand-interior.jpg", caption: "Стенд застройщика: материалы и отделка" },
+                { src: "/images/buildpro-stone-meeting.jpg", caption: "Переговоры на стенде производителя натурального камня" },
+                { src: "/images/buildpro-roofing-meeting.jpg", caption: "Переговоры на стенде кровельных материалов" },
+                { src: "/images/buildpro-paints-stand.jpg", caption: "Экспозиция декоративных красок" },
+                { src: "/images/buildpro-poster-2022.jpg", caption: "Афиша BUILD PRO EXPO 2022 на фасаде павильона" },
+              ],
+            },
+          ],
+        },
       ],
       en: [
         {
@@ -971,6 +992,27 @@ eventPages["buildpro-expo"] = {
               icon: "megaphone",
               title: "Hall advertising",
               text: "Banners, media surfaces, session sponsorship — for brands working on awareness rather than direct sales.",
+            },
+          ],
+        },
+        {
+          type: "h2",
+          kicker: "Photo report",
+          title: "What BUILD PRO EXPO looks like",
+        },
+        {
+          type: "gallery",
+          albums: [
+            {
+              title: "The exhibition",
+              items: [
+                { src: "/images/buildpro-visitors.jpg", caption: "Visitors in the BUILD PRO EXPO hall" },
+                { src: "/images/buildpro-stand-interior.jpg", caption: "A developer's stand: materials and finishes" },
+                { src: "/images/buildpro-stone-meeting.jpg", caption: "A meeting at a natural stone producer's stand" },
+                { src: "/images/buildpro-roofing-meeting.jpg", caption: "A meeting at a roofing materials stand" },
+                { src: "/images/buildpro-paints-stand.jpg", caption: "A display of decorative paints" },
+                { src: "/images/buildpro-poster-2022.jpg", caption: "The BUILD PRO EXPO 2022 poster on the hall's facade" },
+              ],
             },
           ],
         },
@@ -1133,7 +1175,7 @@ eventPages["buildpro-expo"] = {
   },
   visitors: {
     path: "/events/buildpro-expo/visitors/",
-    image: "/images/event-buildpro.jpg",
+    image: "/images/buildpro-visitors.jpg",
     meta: {
       ru: {
         title: "Посетителям BUILD PRO 2026: форум, демо-площадка, контакты",
@@ -1488,6 +1530,36 @@ eventPages["agropro-expo"] = {
           text: "Мы помогаем найти дилера, переводчика и согласовать демонстрацию техники на улице. Языки деловой программы — русский, английский, турецкий, нидерландский, немецкий.",
           action: { label: "Запросить условия", href: "/contacts/" },
         },
+        {
+          type: "h2",
+          kicker: "Фотоотчёт",
+          title: "Как проходит AGROPRO EXPO",
+        },
+        {
+          type: "gallery",
+          albums: [
+            {
+              title: "Экспозиция",
+              items: [
+                { src: "/images/agropro-hall-entrance.jpg", caption: "Вход в павильон AGROPRO EXPO 2024" },
+                { src: "/images/agropro-tractor-cab.jpg", caption: "Посетители осматривают трактор на открытой площадке" },
+                { src: "/images/agropro-irrigation-stand.jpg", caption: "Стенд систем полива: насосы и трубы" },
+                { src: "/images/agropro-crop-stand-team.jpg", caption: "Команда производителя средств защиты растений" },
+                { src: "/images/agropro-fertiliser-stand.jpg", caption: "Удобрения и биопрепараты: консультация на стенде" },
+                { src: "/images/agropro-crop-protection.jpg", caption: "Стенды агрохимии и защиты растений" },
+                { src: "/images/agropro-beekeeping.jpg", caption: "Пчеловодство: ульи и инвентарь" },
+                { src: "/images/agropro-lavender-farm.jpg", caption: "Фермерская продукция: лавандовое хозяйство" },
+              ],
+            },
+            {
+              title: "Деловая программа",
+              items: [
+                { src: "/images/agropro-forum.jpg", caption: "Деловая сессия AGROPRO EXPO 2024: дехканские хозяйства Узбекистана" },
+                { src: "/images/agropro-agrochem-stand.jpg", caption: "Переговоры на стенде агрохолдинга" },
+              ],
+            },
+          ],
+        },
       ],
       en: [
         {
@@ -1547,6 +1619,36 @@ eventPages["agropro-expo"] = {
           title: "This market enters through a partner",
           text: "We help find a dealer and an interpreter and approve a machinery demo outdoors. Programme languages: Russian, English, Turkish, Dutch, German.",
           action: { label: "Request conditions", href: "/contacts/" },
+        },
+        {
+          type: "h2",
+          kicker: "Photo report",
+          title: "What AGROPRO EXPO looks like",
+        },
+        {
+          type: "gallery",
+          albums: [
+            {
+              title: "The exhibition",
+              items: [
+                { src: "/images/agropro-hall-entrance.jpg", caption: "The entrance to the AGROPRO EXPO 2024 hall" },
+                { src: "/images/agropro-tractor-cab.jpg", caption: "Visitors inspecting a tractor on the open-air area" },
+                { src: "/images/agropro-irrigation-stand.jpg", caption: "An irrigation stand: pumps and pipes" },
+                { src: "/images/agropro-crop-stand-team.jpg", caption: "A crop protection producer's team" },
+                { src: "/images/agropro-fertiliser-stand.jpg", caption: "Fertilisers and biologicals: a consultation at the stand" },
+                { src: "/images/agropro-crop-protection.jpg", caption: "Agrochemical and crop protection stands" },
+                { src: "/images/agropro-beekeeping.jpg", caption: "Beekeeping: hives and equipment" },
+                { src: "/images/agropro-lavender-farm.jpg", caption: "Farm produce: a lavender farm" },
+              ],
+            },
+            {
+              title: "Business programme",
+              items: [
+                { src: "/images/agropro-forum.jpg", caption: "An AGROPRO EXPO 2024 session on Uzbekistan's dehkan farms" },
+                { src: "/images/agropro-agrochem-stand.jpg", caption: "A meeting at an agricultural group's stand" },
+              ],
+            },
+          ],
         },
       ],
     },
@@ -1702,7 +1804,7 @@ eventPages["agropro-expo"] = {
   },
   visitors: {
     path: "/events/agropro-expo/visitors/",
-    image: "/images/event-agropro.jpg",
+    image: "/images/agropro-tractor-cab.jpg",
     meta: {
       ru: {
         title: "AGROPRO 2027 для хозяйств: групповой вход и маршрут",
@@ -1777,7 +1879,7 @@ eventPages["agropro-expo"] = {
   },
   program: {
     path: "/events/agropro-expo/program/",
-    image: "/images/venue-conference.jpg",
+    image: "/images/agropro-forum.jpg",
     meta: {
       ru: {
         title: "Программа AGROPRO EXPO 2027: орошение, субсидии, экспорт",
@@ -1841,8 +1943,8 @@ eventPages["agropro-expo"] = {
           tone: "sand",
           title: "Языки программы",
           text: "Основные сессии идут на русском и узбекском с синхронным переводом на английский для иностранных делегаций.",
-          image: "/images/conference-audience.jpg",
-          imageAlt: "Сессия AGROPRO EXPO с синхронным переводом",
+          image: "/images/agropro-forum.jpg",
+          imageAlt: "Деловая сессия AGROPRO EXPO 2024: дехканские хозяйства Узбекистана",
         },
       ],
       en: [
@@ -1882,8 +1984,8 @@ eventPages["agropro-expo"] = {
           tone: "sand",
           title: "Programme languages",
           text: "Core sessions run in Russian and Uzbek with simultaneous English interpreting for foreign delegations.",
-          image: "/images/conference-audience.jpg",
-          imageAlt: "AGROPRO EXPO session with simultaneous interpreting",
+          image: "/images/agropro-forum.jpg",
+          imageAlt: "An AGROPRO EXPO 2024 session on Uzbekistan's dehkan farms",
         },
       ],
     },
@@ -1907,7 +2009,6 @@ eventPages["promotors-show-samarkand"] = {
           "Archive of the 12–13 September 2026 edition: drift, SPL audio, detailing, retro builds, soapbox racing, a 10/6/4 million UZS prize fund and the automotive expo.",
       },
     },
-    noindex: true,
     hero: {
       kicker: {
         ru: "Прошедшая редакция · архив",
@@ -1981,6 +2082,47 @@ eventPages["promotors-show-samarkand"] = {
           title: "Даты и условия участия — по запросу",
           text: "Пишите, если хотите получить бриф следующей редакции, статистику посещаемости 2026 года и прайс на спонсорство.",
           action: { label: "Запросить материалы", href: "/contacts/" },
+        },
+        {
+          type: "h2",
+          kicker: "Фотоотчёт",
+          title: "Как проходит PROMOTORS SHOW SAMARKAND",
+        },
+        {
+          type: "gallery",
+          albums: [
+            {
+              title: "Дрифт и шоу-программа",
+              items: [
+                { src: "/images/promotors-drift-aerial.jpg", caption: "Дрифт-арена с высоты: заезды и зрители вокруг трассы" },
+                { src: "/images/promotors-burnout.jpg", caption: "Бёрнаут на открытой площадке" },
+                { src: "/images/promotors-bmw-e30-drift.jpg", caption: "BMW E30 в заносе перед зрителями" },
+                { src: "/images/promotors-mustang-drift.jpg", caption: "Ford Mustang Shelby на дрифт-трассе" },
+                { src: "/images/promotors-motorbikes.jpg", caption: "Мотошоу: спортбайки на площадке" },
+                { src: "/images/promotors-stage.jpg", caption: "Сцена фестиваля: розыгрыши и награждение" },
+              ],
+            },
+            {
+              title: "Автовыставка и тюнинг",
+              items: [
+                { src: "/images/promotors-hall-crowd.jpg", caption: "Автовыставка в павильоне: посетители у машин участников" },
+                { src: "/images/promotors-evakor-stand.jpg", caption: "Стенд тюнинг-студии с промо-командой" },
+                { src: "/images/promotors-engine-bay.jpg", caption: "Тюнинг моторного отсека: работа участника конкурса" },
+                { src: "/images/promotors-maybach.jpg", caption: "Mercedes-Maybach в экспозиции фестиваля" },
+                { src: "/images/promotors-maserati.jpg", caption: "Maserati Ghibli в зоне автовыставки" },
+                { src: "/images/promotors-lamborghini.jpg", caption: "Lamborghini Gallardo на автопараде фестиваля" },
+              ],
+            },
+            {
+              title: "Самарканд и участники",
+              items: [
+                { src: "/images/promotors-parade-samarkand.jpg", caption: "Автопарад по улицам Самарканда" },
+                { src: "/images/promotors-bmw-m5-samarkand.jpg", caption: "BMW M5 на автопараде у исторического центра Самарканда" },
+                { src: "/images/promotors-samarkand-group.jpg", caption: "Участники фестиваля в историческом центре Самарканда" },
+                { src: "/images/promotors-participants.jpg", caption: "Общее фото участников у главной сцены" },
+              ],
+            },
+          ],
         },
         {
           type: "files",
@@ -2064,6 +2206,47 @@ eventPages["promotors-show-samarkand"] = {
           action: { label: "Request materials", href: "/contacts/" },
         },
         {
+          type: "h2",
+          kicker: "Photo report",
+          title: "What PROMOTORS SHOW SAMARKAND looks like",
+        },
+        {
+          type: "gallery",
+          albums: [
+            {
+              title: "Drift and the show programme",
+              items: [
+                { src: "/images/promotors-drift-aerial.jpg", caption: "The drift arena from above: runs and the crowd around the track" },
+                { src: "/images/promotors-burnout.jpg", caption: "A burnout on the open-air arena" },
+                { src: "/images/promotors-bmw-e30-drift.jpg", caption: "A BMW E30 sliding past the spectators" },
+                { src: "/images/promotors-mustang-drift.jpg", caption: "A Ford Mustang Shelby on the drift track" },
+                { src: "/images/promotors-motorbikes.jpg", caption: "Motorcycle show: sport bikes on the arena" },
+                { src: "/images/promotors-stage.jpg", caption: "The festival stage: prize draws and awards" },
+              ],
+            },
+            {
+              title: "Car exhibition and tuning",
+              items: [
+                { src: "/images/promotors-hall-crowd.jpg", caption: "The car exhibition in the hall: visitors around the entrants' cars" },
+                { src: "/images/promotors-evakor-stand.jpg", caption: "A tuning studio's stand with its promo team" },
+                { src: "/images/promotors-engine-bay.jpg", caption: "A tuned engine bay entered in the contest" },
+                { src: "/images/promotors-maybach.jpg", caption: "A Mercedes-Maybach in the festival display" },
+                { src: "/images/promotors-maserati.jpg", caption: "A Maserati Ghibli in the car exhibition area" },
+                { src: "/images/promotors-lamborghini.jpg", caption: "A Lamborghini Gallardo in the festival parade" },
+              ],
+            },
+            {
+              title: "Samarkand and the participants",
+              items: [
+                { src: "/images/promotors-parade-samarkand.jpg", caption: "The car parade through the streets of Samarkand" },
+                { src: "/images/promotors-bmw-m5-samarkand.jpg", caption: "A BMW M5 in the parade by Samarkand's historic centre" },
+                { src: "/images/promotors-samarkand-group.jpg", caption: "Festival participants in Samarkand's historic centre" },
+                { src: "/images/promotors-participants.jpg", caption: "The participants' group photo at the main stage" },
+              ],
+            },
+          ],
+        },
+        {
           type: "files",
           items: [
             {
@@ -2091,7 +2274,7 @@ eventPages["promotors-show-samarkand"] = {
   },
   exhibitors: {
     path: "/events/promotors-show-samarkand/exhibitors/",
-    image: "/images/event-promotors.jpg",
+    image: "/images/promotors-evakor-stand.jpg",
     meta: {
       ru: {
         title: "PROMOTORS SHOW: форматы участия для брендов автоиндустрии",
@@ -2173,7 +2356,7 @@ eventPages["promotors-show-samarkand"] = {
   },
   visitors: {
     path: "/events/promotors-show-samarkand/visitors/",
-    image: "/images/event-promotors.jpg",
+    image: "/images/promotors-hall-crowd.jpg",
     meta: {
       ru: {
         title: "PROMOTORS SHOW 2026: билеты и правила фестиваля",
@@ -2246,7 +2429,7 @@ eventPages["promotors-show-samarkand"] = {
   },
   program: {
     path: "/events/promotors-show-samarkand/program/",
-    image: "/images/event-promotors.jpg",
+    image: "/images/promotors-stage.jpg",
     meta: {
       ru: {
         title: "Программа PROMOTORS SHOW 2026: дрифт, SPL, награждение",
@@ -2421,13 +2604,43 @@ eventPages["world-edu-expo"] = {
             "Выставка проходит в апреле, когда решение уже созрело, но до подачи документов ещё есть время: это последний шанс изменить подготовку, а не просто посмотреть буклеты.",
             "Мы просим вузы приносить не только буклеты, а конкретные цифры: конкурс на направление, стоимость, стипендиальные места и требования к языку. Без этого разговор с абитуриентом не сложится.",
           ],
-          image: "/images/students-campus.jpg",
-          imageAlt: "Группа посетителей в зале SOF EXPO — аудитория WORLD EDU EXPO",
+          image: "/images/worldedu-consultant.jpg",
+          imageAlt: "Представитель университета отвечает на вопросы",
         },
         {
           type: "quote",
           text: "Самая дорогая ошибка абитуриента — год, потраченный на подготовку «в никуда». На выставке этот год можно сэкономить.",
           cite: "проектная команда WORLD EDU",
+        },
+        {
+          type: "h2",
+          kicker: "Фотоотчёт",
+          title: "Как проходит WORLD EDU EXPO",
+        },
+        {
+          type: "gallery",
+          albums: [
+            {
+              title: "Выставка",
+              items: [
+                { src: "/images/worldedu-hall.jpg", caption: "Зал WORLD EDU: стенды университетов и поток посетителей" },
+                { src: "/images/worldedu-siut-stand.jpg", caption: "Команда университета на своём стенде" },
+                { src: "/images/worldedu-students.jpg", caption: "Абитуриенты изучают буклеты программ" },
+                { src: "/images/worldedu-stand-consult.jpg", caption: "Консультация у стенда университета" },
+                { src: "/images/worldedu-registration.jpg", caption: "Запись на консультацию у стенда" },
+                { src: "/images/worldedu-university-stand.jpg", caption: "Стенд частного университета" },
+                { src: "/images/worldedu-consultant.jpg", caption: "Представитель университета отвечает на вопросы" },
+                { src: "/images/worldedu-tv-interview.jpg", caption: "Интервью телевидению на выставке" },
+              ],
+            },
+            {
+              title: "Форум",
+              items: [
+                { src: "/images/worldedu-forum-stage.jpg", caption: "Сессия форума WORLD EDU 2024" },
+                { src: "/images/worldedu-forum-audience.jpg", caption: "Зал форума во время сессии" },
+              ],
+            },
+          ],
         },
       ],
       en: [
@@ -2478,20 +2691,50 @@ eventPages["world-edu-expo"] = {
             "The show runs in April, when the decision has formed but applications are still ahead: it is the last chance to change your preparation, not just collect brochures.",
             "We ask universities to bring numbers, not only leaflets: competition per program, tuition, scholarship seats and language requirements. Without that, a conversation with an applicant does not happen.",
           ],
-          image: "/images/students-campus.jpg",
-          imageAlt: "A visitor group in the SOF EXPO hall — the WORLD EDU EXPO audience",
+          image: "/images/worldedu-consultant.jpg",
+          imageAlt: "A university representative answering questions",
         },
         {
           type: "quote",
           text: "The costliest mistake of an applicant is a year spent preparing for nothing. At the show you can save that year.",
           cite: "the WORLD EDU project team",
         },
+        {
+          type: "h2",
+          kicker: "Photo report",
+          title: "What WORLD EDU EXPO looks like",
+        },
+        {
+          type: "gallery",
+          albums: [
+            {
+              title: "The exhibition",
+              items: [
+                { src: "/images/worldedu-hall.jpg", caption: "The WORLD EDU hall: university stands and the flow of visitors" },
+                { src: "/images/worldedu-siut-stand.jpg", caption: "A university team at its stand" },
+                { src: "/images/worldedu-students.jpg", caption: "Applicants reading programme brochures" },
+                { src: "/images/worldedu-stand-consult.jpg", caption: "A consultation at a university stand" },
+                { src: "/images/worldedu-registration.jpg", caption: "Signing up for a consultation at a stand" },
+                { src: "/images/worldedu-university-stand.jpg", caption: "A private university's stand" },
+                { src: "/images/worldedu-consultant.jpg", caption: "A university representative answering questions" },
+                { src: "/images/worldedu-tv-interview.jpg", caption: "A television interview at the exhibition" },
+              ],
+            },
+            {
+              title: "The forum",
+              items: [
+                { src: "/images/worldedu-forum-stage.jpg", caption: "A WORLD EDU 2024 forum session" },
+                { src: "/images/worldedu-forum-audience.jpg", caption: "The forum hall during a session" },
+              ],
+            },
+          ],
+        },
       ],
     },
   },
   exhibitors: {
     path: "/events/world-edu-expo/exhibitors/",
-    image: "/images/venue-conference.jpg",
+    image: "/images/worldedu-siut-stand.jpg",
     meta: {
       ru: {
         title: "Вузам и консультантам: участие в WORLD EDU 2027",
@@ -2554,7 +2797,7 @@ eventPages["world-edu-expo"] = {
             "Мы публикуем каталог участников на сайте выставки и в онлайновом каталоге: карточка вуза с программами, стоимостью и контактами приёмной комиссии. Заявки на каталог закрываются за три недели до открытия.",
             "Для иностранных вузов помогаем с визовой поддержкой, переводом презентаций и размещением делегации.",
           ],
-          image: "/images/students-campus.jpg",
+          image: "/images/worldedu-stand-consult.jpg",
           imageAlt: "Стенды вузов на WORLD EDU EXPO",
         },
         {
@@ -2606,7 +2849,7 @@ eventPages["world-edu-expo"] = {
             "We publish the exhibitor catalogue on the show page and in the online catalogue: a university card with programs, tuition and admissions contacts. Catalogue entries close three weeks before opening.",
             "Foreign universities get help with visa support, translation of presentations and delegation accommodation.",
           ],
-          image: "/images/students-campus.jpg",
+          image: "/images/worldedu-stand-consult.jpg",
           imageAlt: "University stands at WORLD EDU EXPO",
         },
         {
@@ -2629,7 +2872,7 @@ eventPages["world-edu-expo"] = {
   },
   visitors: {
     path: "/events/world-edu-expo/visitors/",
-    image: "/images/event-worldedu.jpg",
+    image: "/images/worldedu-students.jpg",
     meta: {
       ru: {
         title: "Абитуриентам WORLD EDU 2027: регистрация и маршрут",
@@ -2733,7 +2976,7 @@ eventPages["world-edu-expo"] = {
   },
   program: {
     path: "/events/world-edu-expo/program/",
-    image: "/images/venue-conference.jpg",
+    image: "/images/worldedu-forum-stage.jpg",
     meta: {
       ru: {
         title: "Программа WORLD EDU 2027: презентации вузов и тесты",
@@ -2797,8 +3040,8 @@ eventPages["world-edu-expo"] = {
           tone: "sand",
           title: "Школам — отдельный слот",
           text: "Для организованных групп проводим экскурсию по стендам и профориентационный практикум: 60 минут без очереди на общую сессию.",
-          image: "/images/students-campus.jpg",
-          imageAlt: "Школьная группа на WORLD EDU EXPO",
+          image: "/images/worldedu-forum-audience.jpg",
+          imageAlt: "Зал форума во время сессии",
         },
       ],
       en: [
@@ -2830,8 +3073,8 @@ eventPages["world-edu-expo"] = {
           tone: "sand",
           title: "A slot for schools",
           text: "Organized groups get a stand tour and a guidance workshop: 60 minutes without queueing at the general session.",
-          image: "/images/students-campus.jpg",
-          imageAlt: "School group at WORLD EDU EXPO",
+          image: "/images/worldedu-forum-audience.jpg",
+          imageAlt: "The forum hall during a session",
         },
       ],
     },

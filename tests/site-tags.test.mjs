@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createLeadServer } from '../scripts/lead-webhook.mjs';
@@ -175,4 +175,17 @@ test('site tags: a saved value whose file got lost is re-materialized on boot', 
   await start(t, directory, repoDir, calls);
   const file = JSON.parse(readFileSync(join(repoDir, 'src/data/site-tags.json'), 'utf8'));
   assert.equal(file.metaPixelId, '1234567890123456');
+});
+
+test('site tags: before the first save the panel shows the codes already in the repo file', async (t) => {
+  const directory = mkdtempSync(join(tmpdir(), 'sofexpo-sitetags-seed-'));
+  const repoDir = join(directory, 'repo');
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  mkdirSync(join(repoDir, 'src/data'), { recursive: true });
+  writeFileSync(join(repoDir, 'src/data/site-tags.json'), '{"googleVerification": "tok_seeded123"}\n');
+  const { base } = await start(t, directory, repoDir, []);
+  const admin = await login(base);
+  const { data } = await call(base, '/api/admin/site-tags', { cookie: admin.cookie });
+  assert.equal(data.tags.googleVerification, 'tok_seeded123');
+  assert.equal(data.updatedAt, null);
 });

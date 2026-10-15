@@ -25,11 +25,21 @@ export class SiteTagsService {
 
   get() {
     const row = this.store.getSiteSetting(SETTING_KEY);
-    return {
-      tags: row?.value && typeof row.value === 'object' ? row.value : {},
-      updatedAt: row?.updatedAt ?? null,
-      updatedBy: row?.updatedBy ?? null,
-    };
+    if (row?.value && typeof row.value === 'object') {
+      return { tags: row.value, updatedAt: row.updatedAt ?? null, updatedBy: row.updatedBy ?? null };
+    }
+    /* nothing saved in the panel yet: show what the repo file already carries (a code added
+       before the panel existed), so the first save keeps it instead of wiping it */
+    return { tags: this.readFile(), updatedAt: null, updatedBy: null };
+  }
+
+  readFile() {
+    try {
+      const parsed = JSON.parse(readFileSync(this.file, 'utf8'));
+      return parsed && typeof parsed === 'object' ? normalizeSiteTags(parsed).value : {};
+    } catch {
+      return {};
+    }
   }
 
   /** @returns {{ ok: true, tags, changed: string[], fileChanged: boolean } | { ok: false, errors }} */

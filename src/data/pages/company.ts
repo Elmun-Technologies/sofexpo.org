@@ -1132,7 +1132,7 @@ export const companyPages: PageDef[] = [
             },
             {
               title: "Cookies и аналитика",
-              text: "Публичный сайт не использует рекламных трекеров. Кабинет устанавливает необходимую first-party cookie для входа и защиты сессии. Обезличенная статистика (просмотры страниц, нажатия кнопок, отправки форм — без имени, телефона и IP-адреса) собирается на собственном сервере центра.",
+              text: "Публичный сайт не использует рекламных трекеров. Кабинет устанавливает необходимую first-party cookie для входа и защиты сессии. Обезличенная статистика (просмотры страниц, нажатия кнопок, отправки форм — без имени, телефона и IP-адреса) собирается на собственном сервере центра. Для подсчёта посещаемости сайт также использует Google Analytics и Яндекс Метрику (включая Вебвизор): эти сервисы ставят свои cookie, их можно отключить в настройках браузера.",
             },
             {
               title: "Ваши права",
@@ -1177,7 +1177,7 @@ export const companyPages: PageDef[] = [
             },
             {
               title: "Cookies and analytics",
-              text: "The public site uses no advertising trackers. The cabinet sets an essential first-party session cookie for login and security. Anonymous statistics (page views, button clicks, form submissions — without name, phone or IP address) are collected on the centre's own server.",
+              text: "The public site uses no advertising trackers. The cabinet sets an essential first-party session cookie for login and security. Anonymous statistics (page views, button clicks, form submissions — without name, phone or IP address) are collected on the centre's own server. To measure traffic the site also uses Google Analytics and Yandex Metrica (including Webvisor): these services set their own cookies, which you can block in your browser settings.",
             },
             {
               title: "Your rights",

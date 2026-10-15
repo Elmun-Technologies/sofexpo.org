@@ -81,6 +81,9 @@ const endpoint = (import.meta.env.PUBLIC_ANALYTICS_ENDPOINT ?? '').trim();
         } catch {}
       }
 
+      // GA4 / Yandex Metrica, when the build carries their ids (Base.astro, docs/22)
+      try { window.sofTag?.(event, data); } catch {}
+
       // console in dev
       if (location.hostname === 'localhost' || location.hostname.includes('e2b')) {
         console.debug('[SOF Track]', event, data);

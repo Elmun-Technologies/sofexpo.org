@@ -289,12 +289,13 @@ const mailto = `mailto:${site.contacts.email}?subject=${encodeURIComponent(ru ? 
       var mode = root.dataset.quizMode || '4';
       var started = false;
 
-      /* funnel telemetry: safe without any tag manager — GA4/Yandex Metrika pick
-         these up from window.dataLayer as soon as a container is added */
+      /* funnel telemetry: safe without any tag manager — window.sofTag (Base.astro) hands the
+         steps to GA4 and Yandex Metrica when their ids are set; dataLayer stays for a GTM later */
       var track = function (name, data) {
         try {
           window.dataLayer = window.dataLayer || [];
           window.dataLayer.push(Object.assign({ event: name, quiz: 'stand' }, data || {}));
+          if (window.sofTag) window.sofTag(name, Object.assign({ quiz: 'stand' }, data || {}));
         } catch (err) {}
       };
 

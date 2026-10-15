@@ -2,6 +2,71 @@
   "afrosiyob-train": [
     640
   ],
+  "agropro-agrochem-stand": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "agropro-beekeeping": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "agropro-crop-protection": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "agropro-crop-stand-team": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "agropro-fertiliser-stand": [
+    640,
+    1024,
+    1600
+  ],
+  "agropro-forum": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "agropro-hall-entrance": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "agropro-hall-stands": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "agropro-irrigation-stand": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "agropro-lavender-farm": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "agropro-tractor-cab": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
   "b2b-meeting": [
     640,
     1024,
@@ -12,7 +77,48 @@
     1024,
     1600
   ],
+  "buildpro-paints-stand": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "buildpro-poster-2022": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "buildpro-roofing-meeting": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "buildpro-stand-interior": [
+    640,
+    1024,
+    1600
+  ],
+  "buildpro-stone-meeting": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "buildpro-visitors": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
   "buyers-talk": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "cafe-coffee-corner": [
     640,
     1024,
     1600,
@@ -21,7 +127,8 @@
   "cafe-interior": [
     640,
     1024,
-    1600
+    1600,
+    2048
   ],
   "car-road": [
     640,
@@ -38,7 +145,8 @@
   "conference-room": [
     640,
     1024,
-    1600
+    1600,
+    2048
   ],
   "conference-rows": [
     640,
@@ -49,6 +157,36 @@
     640,
     1024,
     1600
+  ],
+  "contract-signing": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "crafts-carpet-master": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "crafts-carpets": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "crafts-miniatures": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "delegation-visit": [
+    640,
+    1024,
+    1600,
+    2048
   ],
   "documents": [
     640,
@@ -114,6 +252,29 @@
     1600,
     2048
   ],
+  "forum-question": [
+    640,
+    1024,
+    1600
+  ],
+  "forum-speaker": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "foyer-visitors": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "furniture-outdoor-stand": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
   "greenhouse-tomatoes": [
     640,
     1024,
@@ -135,7 +296,8 @@
   "hall-aisle-red": [
     640,
     1024,
-    1600
+    1600,
+    2048
   ],
   "hall-busy": [
     640,
@@ -152,6 +314,12 @@
     640,
     1024,
     1600
+  ],
+  "hall-main-aisle": [
+    640,
+    1024,
+    1600,
+    2048
   ],
   "hall-panorama": [
     640,
@@ -199,7 +367,43 @@
     1024,
     1600
   ],
+  "industry-appliances": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "industry-oil-display": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "industry-workwear-stand": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
   "machinery-outdoor": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "materials-roofing-panels": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "materials-tiles-stand": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "materials-windows-stand": [
     640,
     1024,
     1600,
@@ -217,7 +421,8 @@
   "officials-tour": [
     640,
     1024,
-    1600
+    1600,
+    2048
   ],
   "opening-ceremony": [
     640,
@@ -230,18 +435,187 @@
     1024,
     1600
   ],
+  "opening-guests": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
   "outdoor-area": [
     640,
     1024,
-    1600
+    1600,
+    2048
   ],
   "outdoor-tractors": [
     640,
     1024,
     1600
   ],
+  "outdoor-vehicles": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
   "plane-window": [
     640
+  ],
+  "promotors-amg-yellow": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "promotors-bmw-e30-drift": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "promotors-bmw-m5-samarkand": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "promotors-burnout": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "promotors-drift-aerial": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "promotors-engine-bay": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "promotors-evakor-stand": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "promotors-hall-crowd": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "promotors-lamborghini": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "promotors-maserati": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "promotors-maybach": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "promotors-motorbikes": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "promotors-mustang-drift": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "promotors-mustang-shelby": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "promotors-parade-samarkand": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "promotors-participants": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "promotors-samarkand-group": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "promotors-stage": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "prompro-appliances-stand": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "prompro-campers": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "prompro-dairy-stand": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "prompro-forum-stage": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "prompro-group": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "prompro-led-cube": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "prompro-meat-stand": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "prompro-workwear": [
+    640,
+    1024,
+    1600,
+    2048
   ],
   "registan-night": [
     640,
@@ -255,6 +629,12 @@
   "samarkand-real": [
     640,
     1024
+  ],
+  "samarkand-registan-flag": [
+    640,
+    1024,
+    1600,
+    2048
   ],
   "site-plan": [
     640,
@@ -369,6 +749,12 @@
     1024,
     1600
   ],
+  "textile-buyers": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
   "venue-aerial": [
     640,
     1024,
@@ -384,7 +770,8 @@
   "venue-exterior": [
     640,
     1024,
-    1600
+    1600,
+    2048
   ],
   "venue-facade": [
     640,
@@ -396,7 +783,73 @@
     1024,
     1600
   ],
+  "venue-foyer": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
   "visitors-flowers": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "worldedu-consultant": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "worldedu-forum-audience": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "worldedu-forum-stage": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "worldedu-hall": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "worldedu-registration": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "worldedu-siut-stand": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "worldedu-stand-consult": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "worldedu-students": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "worldedu-tv-interview": [
+    640,
+    1024,
+    1600,
+    2048
+  ],
+  "worldedu-university-stand": [
     640,
     1024,
     1600,

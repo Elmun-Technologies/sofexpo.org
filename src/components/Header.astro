@@ -277,17 +277,17 @@ const featured: Record<string, { img: string; alt: string; kicker: string; date?
       if (picker?.open) { picker.open = false; picker.querySelector('summary').focus(); }
       if (accountPicker?.open) { accountPicker.open = false; accountPicker.querySelector('summary').focus(); }
     });
-    /* hide-on-scroll for the compact header (≤1280px): down = away, up = back, never while
-       the phone menu is open or near the top of the page */
+    /* hide-on-scroll at every width: down = away, up = back, never while the phone menu is
+       open, a mega panel or picker is in use, or near the top of the page */
     {
-      const compact = matchMedia('(max-width: 1280px)');
       let lastY = scrollY;
       let ticking = false;
       const update = () => {
         ticking = false;
         const y = scrollY;
         const root = document.documentElement;
-        if (!compact.matches || document.body.classList.contains('nav-open') || y < 160) root.classList.remove('hdr-away');
+        const busy = document.body.classList.contains('nav-open') || !!document.querySelector('.hdr:hover, .hdr:focus-within, .nav__item[data-keyboard-open]');
+        if (busy || y < 160) root.classList.remove('hdr-away');
         else if (y > lastY + 6) root.classList.add('hdr-away');
         else if (y < lastY - 6) root.classList.remove('hdr-away');
         lastY = y;

@@ -11,6 +11,7 @@ import { CURRENT_BRAND, isRootHost } from '@/data/hosts';
 import { brandCss, type HostBrand } from '@/data/brands';
 import { useUI } from '@/i18n/ui';
 import photos from '@/data/photos.json';
+import photoMeta from '@/data/photo-meta.json';
 import photoDims from '@/data/photo-dims.json';
 import TableEnhancements from '@/components/TableEnhancements.astro';
 import Header from '@/components/Header.astro';
@@ -130,14 +131,18 @@ const ogSize: [number, number] = (ogName && (photoDims as Record<string, [number
 
 const preloadName = props.preload ? /^\/images\/([a-z0-9-]+)\./.exec(props.preload)?.[1] : undefined;
 const preloadRungs: number[] = (preloadName && (photos as Record<string, number[]>)[preloadName]) || [];
+/* <Photo> offers AVIF first when the ladder exists, so the hint names the same format —
+   a WebP preload would be a second download for every browser that takes the AVIF */
+const preloadExt = preloadName && (photoMeta as Record<string, { a?: number }>)[preloadName]?.a ? 'avif' : 'webp';
 const preload = props.preload
   ? {
       href: preloadRungs.length
-        ? `/images/${preloadName}-${preloadRungs[preloadRungs.length - 1]}.webp`
+        ? `/images/${preloadName}-${preloadRungs[preloadRungs.length - 1]}.${preloadExt}`
         : props.preload,
       srcset: preloadRungs.length
-        ? preloadRungs.map((w) => `/images/${preloadName}-${w}.webp ${w}w`).join(', ')
+        ? preloadRungs.map((w) => `/images/${preloadName}-${w}.${preloadExt} ${w}w`).join(', ')
         : undefined,
+      type: preloadRungs.length ? `image/${preloadExt}` : undefined,
     }
   : undefined;
 ---
@@ -184,6 +189,7 @@ const preload = props.preload
         href={preload.href}
         imagesrcset={preload.srcset}
         imagesizes={preload.srcset ? '100vw' : undefined}
+        type={preload.type}
         fetchpriority="high"
       />
     )}

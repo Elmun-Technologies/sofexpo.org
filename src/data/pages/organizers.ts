@@ -125,6 +125,14 @@ export const organizerPages: PageDef[] = [
               caption: "Церемония открытия: официальная часть на красной дорожке",
             },
             {
+              src: "/images/prompro-forum-stage.jpg",
+              caption: "PROM PRO EXPO 2024: межотраслевая ярмарка стороннего организатора",
+            },
+            {
+              src: "/images/prompro-group.jpg",
+              caption: "Организаторы и участники PROM PRO EXPO 2024",
+            },
+            {
               src: "/images/venue-aerial.jpg",
               caption: "Комплекс целиком: павильон, гостиница и парковки",
             },
@@ -292,6 +300,14 @@ export const organizerPages: PageDef[] = [
             {
               src: "/images/opening-ceremony.jpg",
               caption: "Opening ceremony: the official part on the red carpet",
+            },
+            {
+              src: "/images/prompro-forum-stage.jpg",
+              caption: "PROM PRO EXPO 2024: an inter-industry fair run by another organiser",
+            },
+            {
+              src: "/images/prompro-group.jpg",
+              caption: "Organisers and participants of PROM PRO EXPO 2024",
             },
             {
               src: "/images/venue-aerial.jpg",

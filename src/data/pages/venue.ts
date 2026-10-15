@@ -1482,6 +1482,10 @@ export const venuePages: PageDef[] = [
                   caption: "Крупногабаритная техника на открытой площадке",
                 },
                 {
+                  src: "/images/outdoor-vehicles.jpg",
+                  caption: "Открытая площадка: коммерческий транспорт и спецтехника",
+                },
+                {
                   src: "/images/stand-agro.jpg",
                   caption: "Стенд агротехники: демонстрация мотоблоков и навесного",
                 },
@@ -1501,6 +1505,14 @@ export const venuePages: PageDef[] = [
                 {
                   src: "/images/officials-tour.jpg",
                   caption: "Официальная делегация на обходе экспозиции",
+                },
+                {
+                  src: "/images/forum-speaker.jpg",
+                  caption: "Доклад на отраслевом форуме",
+                },
+                {
+                  src: "/images/contract-signing.jpg",
+                  caption: "Подписание договора на стенде",
                 },
               ],
             },
@@ -1529,7 +1541,7 @@ export const venuePages: PageDef[] = [
               title: "Здание, кафе и территория",
               items: [
                 {
-                  src: "/images/venue-facade.jpg",
+                  src: "/images/venue-exterior.jpg",
                   caption: "Входная группа и парковка",
                 },
                 {
@@ -1544,6 +1556,71 @@ export const venuePages: PageDef[] = [
                   src: "/images/cafe-interior.jpg",
                   caption: "Кафе в павильоне",
                 },
+                {
+                  src: "/images/venue-foyer.jpg",
+                  caption: "Фойе: мраморный холл и стойка регистрации",
+                },
+                {
+                  src: "/images/foyer-visitors.jpg",
+                  caption: "Фойе в день выставки: поток посетителей",
+                },
+                {
+                  src: "/images/cafe-coffee-corner.jpg",
+                  caption: "Кофейня в павильоне",
+                },
+              ],
+            },
+            {
+              title: "Отраслевые ярмарки сторонних организаторов",
+              items: [
+                {
+                  src: "/images/prompro-forum-stage.jpg",
+                  caption: "PROM PRO EXPO 2024: открытие межотраслевой промышленной ярмарки",
+                },
+                {
+                  src: "/images/prompro-group.jpg",
+                  caption: "Участники и организаторы PROM PRO EXPO 2024",
+                },
+                {
+                  src: "/images/prompro-appliances-stand.jpg",
+                  caption: "Стенд производителя бытовой техники",
+                },
+                {
+                  src: "/images/prompro-dairy-stand.jpg",
+                  caption: "Стенд производителя молочной продукции",
+                },
+                {
+                  src: "/images/prompro-meat-stand.jpg",
+                  caption: "Стенд мясокомбината",
+                },
+                {
+                  src: "/images/prompro-workwear.jpg",
+                  caption: "Экспозиция спецодежды и средств защиты",
+                },
+                {
+                  src: "/images/prompro-led-cube.jpg",
+                  caption: "LED-экраны и рекламные конструкции",
+                },
+                {
+                  src: "/images/prompro-campers.jpg",
+                  caption: "Автодома на открытой площадке",
+                },
+                {
+                  src: "/images/industry-oil-display.jpg",
+                  caption: "Экспозиция растительного масла",
+                },
+                {
+                  src: "/images/crafts-carpets.jpg",
+                  caption: "Ковры и текстиль ручной работы",
+                },
+                {
+                  src: "/images/crafts-miniatures.jpg",
+                  caption: "Миниатюры и прикладное искусство",
+                },
+                {
+                  src: "/images/furniture-outdoor-stand.jpg",
+                  caption: "Садовая мебель на стенде",
+                },
               ],
             },
             {
@@ -1552,6 +1629,10 @@ export const venuePages: PageDef[] = [
                 {
                   src: "/images/samarkand.jpg",
                   caption: "Самарканд: город, в который приезжает аудитория выставок",
+                },
+                {
+                  src: "/images/samarkand-registan-flag.jpg",
+                  caption: "Регистан, Самарканд: медресе Шердор",
                 },
               ],
             },
@@ -1633,6 +1714,10 @@ export const venuePages: PageDef[] = [
                   caption: "Large machinery on the open-air area",
                 },
                 {
+                  src: "/images/outdoor-vehicles.jpg",
+                  caption: "The open-air area: commercial vehicles and special machinery",
+                },
+                {
                   src: "/images/stand-agro.jpg",
                   caption: "Agri-machinery stand: power tillers and implements on show",
                 },
@@ -1652,6 +1737,14 @@ export const venuePages: PageDef[] = [
                 {
                   src: "/images/officials-tour.jpg",
                   caption: "An official delegation touring the exhibition",
+                },
+                {
+                  src: "/images/forum-speaker.jpg",
+                  caption: "A talk at an industry forum",
+                },
+                {
+                  src: "/images/contract-signing.jpg",
+                  caption: "A contract signed at a stand",
                 },
               ],
             },
@@ -1680,7 +1773,7 @@ export const venuePages: PageDef[] = [
               title: "Building, cafe and grounds",
               items: [
                 {
-                  src: "/images/venue-facade.jpg",
+                  src: "/images/venue-exterior.jpg",
                   caption: "Entrance and parking",
                 },
                 {
@@ -1695,6 +1788,71 @@ export const venuePages: PageDef[] = [
                   src: "/images/cafe-interior.jpg",
                   caption: "The cafe inside the pavilion",
                 },
+                {
+                  src: "/images/venue-foyer.jpg",
+                  caption: "The foyer: marble hall and registration desk",
+                },
+                {
+                  src: "/images/foyer-visitors.jpg",
+                  caption: "The foyer on a show day: visitor flow",
+                },
+                {
+                  src: "/images/cafe-coffee-corner.jpg",
+                  caption: "The coffee corner inside the pavilion",
+                },
+              ],
+            },
+            {
+              title: "Industry fairs held by other organisers",
+              items: [
+                {
+                  src: "/images/prompro-forum-stage.jpg",
+                  caption: "PROM PRO EXPO 2024: opening of the inter-industry fair",
+                },
+                {
+                  src: "/images/prompro-group.jpg",
+                  caption: "Participants and organisers of PROM PRO EXPO 2024",
+                },
+                {
+                  src: "/images/prompro-appliances-stand.jpg",
+                  caption: "A household appliance maker's stand",
+                },
+                {
+                  src: "/images/prompro-dairy-stand.jpg",
+                  caption: "A dairy producer's stand",
+                },
+                {
+                  src: "/images/prompro-meat-stand.jpg",
+                  caption: "A meat processor's stand",
+                },
+                {
+                  src: "/images/prompro-workwear.jpg",
+                  caption: "A display of workwear and protective gear",
+                },
+                {
+                  src: "/images/prompro-led-cube.jpg",
+                  caption: "LED screens and advertising structures",
+                },
+                {
+                  src: "/images/prompro-campers.jpg",
+                  caption: "Camper trailers on the open-air area",
+                },
+                {
+                  src: "/images/industry-oil-display.jpg",
+                  caption: "A vegetable oil display",
+                },
+                {
+                  src: "/images/crafts-carpets.jpg",
+                  caption: "Handmade carpets and textiles",
+                },
+                {
+                  src: "/images/crafts-miniatures.jpg",
+                  caption: "Miniatures and applied art",
+                },
+                {
+                  src: "/images/furniture-outdoor-stand.jpg",
+                  caption: "Garden furniture at a stand",
+                },
               ],
             },
             {
@@ -1703,6 +1861,10 @@ export const venuePages: PageDef[] = [
                 {
                   src: "/images/samarkand.jpg",
                   caption: "Samarkand: the city the show audience travels to",
+                },
+                {
+                  src: "/images/samarkand-registan-flag.jpg",
+                  caption: "The Registan, Samarkand: the Sher-Dor madrasa",
                 },
               ],
             },

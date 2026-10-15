@@ -13,7 +13,7 @@
  * Nothing in the markup has to know which photograph is behind a name: swapping a source
  * here re-skins the whole site. Run with `npm run photos`.
  */
-import { mkdirSync, existsSync, statSync, writeFileSync, unlinkSync } from 'node:fs';
+import { mkdirSync, existsSync, readFileSync, statSync, writeFileSync, unlinkSync } from 'node:fs';
 import { readdir } from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';
@@ -26,26 +26,26 @@ const WIDTHS = [640, 1024, 1600, 2048];
 const MAP = {
   /* ── the hall, the building, the floor ───────────────────────────── */
   'hero-hall': ['sofexpo-uz/hall-aerial.jpg', 'centre'],
-  'hall-crowd': ['1-3-768x432.jpg', 'centre'],
+  'hall-crowd': ['client-2026-10-15/hall-entrance-visitors.jpg', 'centre'],
   'hall-stand': ['sofexpo-uz/stand-glass.jpg', 'centre'],
   'hall-walk': ['sofexpo-uz/hall-panorama.jpg', 'centre'],
   'hall-empty': ['20220624_144816-scaled-1-1536x865.jpg', 'centre'],
   'hall-windows': ['20220624_144839-scaled-1-1536x865.jpg', 'centre'],
-  'venue-exterior': ['IMG_20220514_220651-1-scaled-1-1536x755.jpg', 'centre'],
+  'venue-exterior': ['client-2026-10-15/venue-front-day.jpg', 'centre'],
   /* 2026-10-04 (docs/15 §10): every name below now shows what it says — several pointed at
      stock frames or at another show's stand */
   'venue-facade': ['sofexpo-uz/exterior-1.jpg', 'centre'],
   'venue-conference': ['sofexpo-uz/speaker.jpg', 'centre'],
-  'conference-audience': ['sofexpo-uz/speaker.jpg', 'centre'],
-  'outdoor-area': ['client-2026-10/outdoor-area-3.jpg', 'centre'],
+  'conference-audience': ['client-2026-10-15/forum-audience.jpg', 'centre'],
+  'outdoor-area': ['client-2026-10-15/outdoor-trucks-cranes.jpg', 'centre'],
 
   /* ── the shows ───────────────────────────────────────────────────── */
   'event-foodera': ['client-2026-10/non.jpg', 'centre'],
-  'event-agropro': ['sofexpo-uz/agro-machines.jpg', 'centre'],
+  'event-agropro': ['client-2026-10-15/agropro-tractors-outdoor.jpg', 'centre'],
   'event-buildpro': ['sofexpo-uz/stand-berat.jpg', 'centre'],
   'event-ecom': ['client-2026-10/ecom.jpg', 'centre'],
-  'event-promotors': ['client-2026-10/drift.jpg', 'centre'],
-  'event-worldedu': ['sofexpo-uz/edu-crowd.jpg', 'centre'],
+  'event-promotors': ['client-2026-10-15/promotors-drift-evakor.jpg', 'centre'],
+  'event-worldedu': ['client-2026-10-15/worldedu-crowd.jpg', 'centre'],
 
   /* ── people, product, service ────────────────────────────────────── */
   'food-tasting': ['client-2026-10/chefs.jpg', 'centre'],
@@ -54,7 +54,7 @@ const MAP = {
   'greenhouse-tomatoes': ['client-2026-10/food.jpg', 'centre'],
   'students-campus': ['sofexpo-uz/hall-crowd-world-edu.jpg', 'centre'],
   'office-people': ['sofexpo-uz/meeting-room-2.jpg', 'centre'],
-  'officials-tour': ['sofexpo-uz/opening-officials.jpg', 'centre'],
+  'officials-tour': ['client-2026-10-15/officials-stand-tour.jpg', 'centre'],
   'stand-equipment': ['sofexpo-uz/stand-equip.jpg', 'centre'],
   'stand-agro': ['sofexpo-uz/stand-talk.jpg', 'centre'],
   'stand-modern': ['12.webp', 'centre'],
@@ -74,9 +74,9 @@ const MAP = {
   'opening-ceremony': ['sofexpo-uz/opening.jpg', 'centre'],
   'stand-fertilizer': ['sofexpo-uz/stand-agro-2.jpg', 'centre'],
   'stand-industrial': ['sofexpo-uz/stand-equip.jpg', 'centre'],
-  'conference-room': ['sofexpo-uz/conf-room.jpg', 'centre'],
-  'hall-aisle-red': ['client-2026-10/hall-wide-5.jpg', 'centre'],
-  'cafe-interior': ['sofexpo-uz/cafe-restaurant.jpg', 'centre'],
+  'conference-room': ['client-2026-10-15/meeting-lounge.jpg', 'centre'],
+  'hall-aisle-red': ['client-2026-10-15/hall-red-aisle.jpg', 'centre'],
+  'cafe-interior': ['client-2026-10-15/cafe-hall.jpg', 'centre'],
   'venue-aerial': ['sofexpo-uz/hall-aerial2.jpg', 'centre'],
 
   /* ── plans and identity ─────────────────────────────────────────── */
@@ -118,6 +118,85 @@ const MAP = {
   'b2b-meeting': ['site-2026-10/b2b-meeting-2.jpg', 'centre'],
   'stand-exhibitor': ['site-2026-10/stand-1.jpg', 'centre'],
   'opening-crowd': ['site-2026-10/opening-crowd.jpg', 'centre'],
+
+  /* ── 2026-10-15: the client's photographer archive (images/client-2026-10-15/, 2048px
+     masters of 2560px frames). The names above that sat on render, thumbnail or AI-upscaled
+     sources now point here too; the names below give every show its own record ── */
+  'venue-foyer': ['client-2026-10-15/venue-foyer.jpg', 'centre'],
+  'cafe-coffee-corner': ['client-2026-10-15/cafe-coffee-corner.jpg', 'centre'],
+  'foyer-visitors': ['client-2026-10-15/foyer-visitors.jpg', 'centre'],
+  'hall-main-aisle': ['client-2026-10-15/hall-main-aisle.jpg', 'centre'],
+  'outdoor-vehicles': ['client-2026-10-15/outdoor-vehicles.jpg', 'centre'],
+  'forum-speaker': ['client-2026-10-15/forum-speaker.jpg', 'centre'],
+  'forum-question': ['client-2026-10-15/forum-question.jpg', 'centre'],
+  'contract-signing': ['client-2026-10-15/contract-signing.jpg', 'centre'],
+  'delegation-visit': ['client-2026-10-15/delegation-visit.jpg', 'centre'],
+  'opening-guests': ['client-2026-10-15/opening-guests.jpg', 'centre'],
+  'samarkand-registan-flag': ['client-2026-10-15/samarkand-registan-flag.jpg', 'centre'],
+  'promotors-samarkand-group': ['client-2026-10-15/promotors-samarkand-group.jpg', 'centre'],
+  'promotors-parade-samarkand': ['client-2026-10-15/promotors-parade-samarkand.jpg', 'centre'],
+  'promotors-bmw-m5-samarkand': ['client-2026-10-15/promotors-bmw-m5-samarkand.jpg', 'centre'],
+  'promotors-burnout': ['client-2026-10-15/promotors-burnout.jpg', 'centre'],
+  'promotors-drift-aerial': ['client-2026-10-15/promotors-drift-aerial.jpg', 'centre'],
+  'promotors-participants': ['client-2026-10-15/promotors-participants.jpg', 'centre'],
+  'promotors-lamborghini': ['client-2026-10-15/promotors-lamborghini.jpg', 'centre'],
+  'promotors-maybach': ['client-2026-10-15/promotors-maybach.jpg', 'centre'],
+  'promotors-mustang-shelby': ['client-2026-10-15/promotors-mustang-shelby.jpg', 'centre'],
+  'promotors-mustang-drift': ['client-2026-10-15/promotors-mustang-drift.jpg', 'centre'],
+  'promotors-bmw-e30-drift': ['client-2026-10-15/promotors-bmw-e30-drift.jpg', 'centre'],
+  'promotors-motorbikes': ['client-2026-10-15/promotors-motorbikes.jpg', 'centre'],
+  'promotors-evakor-stand': ['client-2026-10-15/promotors-evakor-stand.jpg', 'centre'],
+  'promotors-engine-bay': ['client-2026-10-15/promotors-engine-bay.jpg', 'centre'],
+  'promotors-hall-crowd': ['client-2026-10-15/promotors-hall-crowd.jpg', 'centre'],
+  'promotors-stage': ['client-2026-10-15/promotors-stage.jpg', 'centre'],
+  'promotors-maserati': ['client-2026-10-15/promotors-maserati.jpg', 'centre'],
+  'promotors-amg-yellow': ['client-2026-10-15/promotors-amg-yellow.jpg', 'centre'],
+  'worldedu-hall': ['client-2026-10-15/worldedu-hall.jpg', 'centre'],
+  'worldedu-siut-stand': ['client-2026-10-15/worldedu-siut-stand.jpg', 'centre'],
+  'worldedu-registration': ['client-2026-10-15/worldedu-registration.jpg', 'centre'],
+  'worldedu-tv-interview': ['client-2026-10-15/worldedu-tv-interview.jpg', 'centre'],
+  'worldedu-students': ['client-2026-10-15/worldedu-students.jpg', 'centre'],
+  'worldedu-stand-consult': ['client-2026-10-15/worldedu-stand-consult.jpg', 'centre'],
+  'worldedu-university-stand': ['client-2026-10-15/worldedu-university-stand.jpg', 'centre'],
+  'worldedu-consultant': ['client-2026-10-15/worldedu-consultant.jpg', 'centre'],
+  'worldedu-forum-stage': ['client-2026-10-15/worldedu-forum-stage.jpg', 'centre'],
+  'worldedu-forum-audience': ['client-2026-10-15/worldedu-forum-audience.jpg', 'centre'],
+  'buildpro-poster-2022': ['client-2026-10-15/buildpro-poster-2022.jpg', 'centre'],
+  'buildpro-visitors': ['client-2026-10-15/buildpro-visitors.jpg', 'centre'],
+  'buildpro-stand-interior': ['client-2026-10-15/buildpro-stand-interior.jpg', 'centre'],
+  'buildpro-stone-meeting': ['client-2026-10-15/buildpro-stone-meeting.jpg', 'centre'],
+  'buildpro-roofing-meeting': ['client-2026-10-15/buildpro-roofing-meeting.jpg', 'centre'],
+  'buildpro-paints-stand': ['client-2026-10-15/buildpro-paints-stand.jpg', 'centre'],
+  'materials-windows-stand': ['client-2026-10-15/materials-windows-stand.jpg', 'centre'],
+  'materials-roofing-panels': ['client-2026-10-15/materials-roofing-panels.jpg', 'centre'],
+  'materials-tiles-stand': ['client-2026-10-15/materials-tiles-stand.jpg', 'centre'],
+  'agropro-tractor-cab': ['client-2026-10-15/agropro-tractor-cab.jpg', 'centre'],
+  'agropro-forum': ['client-2026-10-15/agropro-forum.jpg', 'centre'],
+  'agropro-hall-entrance': ['client-2026-10-15/agropro-hall-entrance.jpg', 'centre'],
+  'agropro-irrigation-stand': ['client-2026-10-15/agropro-irrigation-stand.jpg', 'centre'],
+  'agropro-crop-stand-team': ['client-2026-10-15/agropro-crop-stand-team.jpg', 'centre'],
+  'agropro-beekeeping': ['client-2026-10-15/agropro-beekeeping.jpg', 'centre'],
+  'agropro-agrochem-stand': ['client-2026-10-15/agropro-agrochem-stand.jpg', 'centre'],
+  'agropro-fertiliser-stand': ['client-2026-10-15/agropro-fertiliser-stand.jpg', 'centre'],
+  'agropro-crop-protection': ['client-2026-10-15/agropro-crop-protection.jpg', 'centre'],
+  'agropro-lavender-farm': ['client-2026-10-15/agropro-lavender-farm.jpg', 'centre'],
+  'agropro-hall-stands': ['client-2026-10-15/agropro-hall-stands.jpg', 'centre'],
+  'prompro-group': ['client-2026-10-15/prompro-group.jpg', 'centre'],
+  'prompro-forum-stage': ['client-2026-10-15/prompro-forum-stage.jpg', 'centre'],
+  'prompro-appliances-stand': ['client-2026-10-15/prompro-appliances-stand.jpg', 'centre'],
+  'prompro-dairy-stand': ['client-2026-10-15/prompro-dairy-stand.jpg', 'centre'],
+  'prompro-meat-stand': ['client-2026-10-15/prompro-meat-stand.jpg', 'centre'],
+  'prompro-led-cube': ['client-2026-10-15/prompro-led-cube.jpg', 'centre'],
+  'prompro-workwear': ['client-2026-10-15/prompro-workwear.jpg', 'centre'],
+  'prompro-campers': ['client-2026-10-15/prompro-campers.jpg', 'centre'],
+  'industry-oil-display': ['client-2026-10-15/industry-oil-display.jpg', 'centre'],
+  'industry-appliances': ['client-2026-10-15/industry-appliances.jpg', 'centre'],
+  'industry-workwear-stand': ['client-2026-10-15/industry-workwear-stand.jpg', 'centre'],
+  'crafts-carpets': ['client-2026-10-15/crafts-carpets.jpg', 'centre'],
+  'crafts-carpet-master': ['client-2026-10-15/crafts-carpet-master.jpg', 'centre'],
+  'crafts-miniatures': ['client-2026-10-15/crafts-miniatures.jpg', 'centre'],
+  'furniture-outdoor-stand': ['client-2026-10-15/furniture-outdoor-stand.jpg', 'centre'],
+  'textile-buyers': ['client-2026-10-15/textile-buyers.jpg', 'centre'],
 };
 
 /* `node scripts/build-photos.mjs <name> …` rebuilds only those names (and the manifests),
@@ -172,6 +251,41 @@ const tone = (p, name) =>
         .modulate({ saturation: 1.1, brightness: 1.03 })
         .sharpen({ sigma: 0.7, m1: 0.5, m2: 1.2 });
 
+/* 2026-10-15: the client's photographer delivered graded 2560px frames (images/client-2026-10-15/).
+   They are already exposed and coloured; the percentile stretch above would only push them
+   harder, so they get the output sharpen alone. */
+const graded = (file) => file.startsWith('client-2026-10-15/');
+const finish = (p, name, file) => (graded(file) ? p.sharpen({ sigma: 0.6, m1: 0.4, m2: 1 }) : tone(p, name));
+
+/**
+ * Per-photo facts <Photo> needs beyond the rung widths (src/data/photo-meta.json):
+ *   r — the aspect of the rungs (width / height). Rungs keep the photograph's own shape now;
+ *       cropping every file to 16:10 threw away the top and bottom a tall card needs and
+ *       made the browser fetch a wider file than it had to.
+ *   p — the focal point as a CSS object-position, found by libvips' attention strategy, so a
+ *       card cropped by CSS keeps the stand, the car or the speaker in frame.
+ *   a — 1 when an AVIF ladder sits next to the WebP one (about a third lighter).
+ */
+const META_FILE = 'src/data/photo-meta.json';
+const photoMeta = existsSync(META_FILE) ? JSON.parse(readFileSync(META_FILE, 'utf8')) : {};
+const AVIF = true;
+
+async function focal(src) {
+  const at = async (w, h) => (await sharp(src, { failOn: 'none' }).rotate()
+    .resize(w, h, { fit: 'cover', position: 'attention' }).toBuffer({ resolveWithObject: true })).info;
+  const meta = await sharp(src).rotate().metadata();
+  const sw = meta.autoOrient?.width ?? meta.width;
+  const sh = meta.autoOrient?.height ?? meta.height;
+  const k = 400 / sh;
+  /* a square shows where the subject sits left to right, a 4:1 strip where it sits top to
+     bottom; the window centre is the focal point. Clamped so a card never shows only an edge. */
+  const x = (-(await at(400, 400)).cropOffsetLeft + 200) / (sw * k);
+  const strip = await at(800, 200);
+  const y = (-strip.cropOffsetTop + 100) / (sh * (800 / sw));
+  const pct = (v) => `${Math.round(Math.min(0.75, Math.max(0.25, v)) * 100)}%`;
+  return `${pct(x)} ${pct(y)}`;
+}
+
 /** images/hd/<stem>.jpg is the Real-ESRGAN 4x master of a small source (scripts/upscale-photos.py) */
 const hdOf = (file) => path.join(SRC, 'hd', file.replace(/\.[a-z]+$/i, '.jpg'));
 
@@ -199,16 +313,11 @@ async function one(name, [file]) {
   const crop = (w) => {
     const p = sharp(src, { failOn: 'none' }).rotate();
     if (NO_CROP.has(name)) return p.resize({ width: Math.min(w, maxW), withoutEnlargement: true });
-    const out = p.resize({
-      width: Math.min(w, maxW),
-      height: Math.round(Math.min(w, maxW) / ratio),
-      fit: 'cover',
-      position: 'attention',
-      kernel: 'lanczos3',
-      withoutEnlargement: !hero,
-    });
-    return tone(out, name);
+    /* the photograph's own shape: CSS object-fit frames it (see photo-meta.json above) */
+    const out = p.resize({ width: Math.min(w, maxW), kernel: 'lanczos3', withoutEnlargement: !hero });
+    return finish(out, name, file);
   };
+  for (const f of await readdir(OUT)) if (new RegExp(`^${name}-\\d+\\.avif$`).test(f)) unlinkSync(path.join(OUT, f));
 
   /* The JPEG has two jobs and neither of them needs 1600 pixels:
      1. the <picture> fallback, which in practice only fires for a browser with no WebP —
@@ -219,7 +328,7 @@ async function one(name, [file]) {
      actually receives — is untouched. */
   const JPEG_MAX = 1200;
   const jpg = path.join(OUT, `${name}.jpg`);
-  await tone(sharp(src, { failOn: 'none' })
+  await finish(sharp(src, { failOn: 'none' })
     .rotate()
     .resize(
       NO_CROP.has(name)
@@ -232,7 +341,7 @@ async function one(name, [file]) {
             kernel: 'lanczos3',
             withoutEnlargement: !hero,
           },
-    ), name)
+    ), name, file)
     .jpeg({ quality: 76, progressive: true, mozjpeg: true, chromaSubsampling: '4:2:0' })
     .toFile(jpg);
   bytes += statSync(jpg).size;
@@ -249,17 +358,33 @@ async function one(name, [file]) {
     const q = w >= 2048 ? 72 : w >= 1600 ? 74 : w >= 1024 ? 76 : 78;
     await crop(w).webp({ quality: q, effort: 6 }).toFile(out);
     bytes += statSync(out).size;
+    if (AVIF) {
+      const av = path.join(OUT, `${name}-${w}.avif`);
+      await crop(w).avif({ quality: w >= 1600 ? 48 : 52, effort: 4 }).toFile(av);
+      bytes += statSync(av).size;
+    }
   }
+  const sw2 = meta.autoOrient?.width ?? meta.width;
+  const sh2 = meta.autoOrient?.height ?? meta.height;
+  photoMeta[name] = NO_CROP.has(name)
+    ? { r: +(sw2 / sh2).toFixed(4) }
+    : { r: +(sw2 / sh2).toFixed(4), p: await focal(src), ...(AVIF ? { a: 1 } : {}) };
   return bytes;
 }
 
 mkdirSync(OUT, { recursive: true });
 const before = (await readdir(OUT)).length;
 let total = 0;
-for (const [name, def] of Object.entries(MAP)) {
-  if (ONLY.size && !ONLY.has(name)) continue;
-  total += await one(name, def);
-  process.stdout.write(`· ${name}\n`);
+/* three names at a time: AVIF encoding is single-threaded per image, the machine is not */
+{
+  const queue = Object.entries(MAP).filter(([name]) => !ONLY.size || ONLY.has(name));
+  const worker = async () => {
+    for (let job = queue.shift(); job; job = queue.shift()) {
+      total += await one(...job);
+      process.stdout.write(`· ${job[0]}\n`);
+    }
+  };
+  await Promise.all([worker(), worker(), worker()]);
 }
 console.log(
   `\n${Object.keys(MAP).length} names built from real photography · ${(total / 1024 / 1024).toFixed(2)} MB · ${before} → ${(await readdir(OUT)).length} files`,
@@ -361,6 +486,9 @@ for (const f of await readdir(OUT)) {
 }
 for (const k of Object.keys(manifest)) manifest[k].sort((a, b) => a - b);
 writeFileSync('src/data/photos.json', JSON.stringify(manifest, null, 2) + '\n');
+/* a name that left MAP keeps no stale facts */
+for (const k of Object.keys(photoMeta)) if (!MAP[k]) delete photoMeta[k];
+writeFileSync(META_FILE, JSON.stringify(Object.fromEntries(Object.entries(photoMeta).sort()), null, 2) + '\n');
 console.log(`manifest: ${Object.keys(manifest).length} photos`);
 
 /* The .jpg doubles as the og:image, and Facebook/Telegram/WhatsApp all trust the declared

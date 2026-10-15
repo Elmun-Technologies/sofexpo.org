@@ -1,0 +1,732 @@
+{
+  "agropro-agrochem-stand": {
+    "r": 1.5004,
+    "p": "33% 25%",
+    "a": 1
+  },
+  "agropro-beekeeping": {
+    "r": 1.5004,
+    "p": "47% 25%",
+    "a": 1
+  },
+  "agropro-crop-protection": {
+    "r": 1.5004,
+    "p": "67% 25%",
+    "a": 1
+  },
+  "agropro-crop-stand-team": {
+    "r": 1.5004,
+    "p": "44% 25%",
+    "a": 1
+  },
+  "agropro-fertiliser-stand": {
+    "r": 0.6664,
+    "p": "75% 56%",
+    "a": 1
+  },
+  "agropro-forum": {
+    "r": 1.5004,
+    "p": "33% 25%",
+    "a": 1
+  },
+  "agropro-hall-entrance": {
+    "r": 1.5004,
+    "p": "33% 37%",
+    "a": 1
+  },
+  "agropro-hall-stands": {
+    "r": 1.5004,
+    "p": "33% 50%",
+    "a": 1
+  },
+  "agropro-irrigation-stand": {
+    "r": 1.5004,
+    "p": "34% 37%",
+    "a": 1
+  },
+  "agropro-lavender-farm": {
+    "r": 1.5004,
+    "p": "67% 34%",
+    "a": 1
+  },
+  "agropro-tractor-cab": {
+    "r": 1.5004,
+    "p": "67% 69%",
+    "a": 1
+  },
+  "b2b-meeting": {
+    "r": 1.5,
+    "p": "41% 25%",
+    "a": 1
+  },
+  "badge-lanyard": {
+    "r": 1.7778,
+    "p": "59% 25%",
+    "a": 1
+  },
+  "buildpro-paints-stand": {
+    "r": 1.5004,
+    "p": "33% 25%",
+    "a": 1
+  },
+  "buildpro-poster-2022": {
+    "r": 1.5004,
+    "p": "47% 28%",
+    "a": 1
+  },
+  "buildpro-roofing-meeting": {
+    "r": 1.5004,
+    "p": "33% 75%",
+    "a": 1
+  },
+  "buildpro-stand-interior": {
+    "r": 0.6664,
+    "p": "75% 59%",
+    "a": 1
+  },
+  "buildpro-stone-meeting": {
+    "r": 1.5004,
+    "p": "37% 25%",
+    "a": 1
+  },
+  "buildpro-visitors": {
+    "r": 1.5004,
+    "p": "53% 75%",
+    "a": 1
+  },
+  "buyers-talk": {
+    "r": 1.7769,
+    "p": "31% 25%",
+    "a": 1
+  },
+  "cafe-coffee-corner": {
+    "r": 1.5004,
+    "p": "67% 69%",
+    "a": 1
+  },
+  "cafe-interior": {
+    "r": 1.5004,
+    "p": "33% 50%",
+    "a": 1
+  },
+  "car-road": {
+    "r": 1.7769,
+    "p": "72% 31%",
+    "a": 1
+  },
+  "conference-audience": {
+    "r": 1.5004,
+    "p": "53% 75%",
+    "a": 1
+  },
+  "conference-room": {
+    "r": 1.5004,
+    "p": "67% 62%",
+    "a": 1
+  },
+  "conference-rows": {
+    "r": 1.3333,
+    "p": "41% 34%",
+    "a": 1
+  },
+  "conference-stage": {
+    "r": 1.3333,
+    "p": "44% 28%",
+    "a": 1
+  },
+  "contract-signing": {
+    "r": 1.5004,
+    "p": "67% 28%",
+    "a": 1
+  },
+  "crafts-carpet-master": {
+    "r": 1.5004,
+    "p": "44% 47%",
+    "a": 1
+  },
+  "crafts-carpets": {
+    "r": 1.5004,
+    "p": "67% 25%",
+    "a": 1
+  },
+  "crafts-miniatures": {
+    "r": 1.5004,
+    "p": "33% 28%",
+    "a": 1
+  },
+  "delegation-visit": {
+    "r": 1.5004,
+    "p": "33% 41%",
+    "a": 1
+  },
+  "documents": {
+    "r": 1.7778,
+    "p": "50% 59%",
+    "a": 1
+  },
+  "event-agropro": {
+    "r": 1.5004,
+    "p": "62% 50%",
+    "a": 1
+  },
+  "event-buildpro": {
+    "r": 1.5,
+    "p": "33% 72%",
+    "a": 1
+  },
+  "event-ecom": {
+    "r": 1.3333,
+    "p": "62% 25%",
+    "a": 1
+  },
+  "event-foodera": {
+    "r": 1.25,
+    "p": "41% 25%",
+    "a": 1
+  },
+  "event-promotors": {
+    "r": 1.5004,
+    "p": "33% 53%",
+    "a": 1
+  },
+  "event-worldedu": {
+    "r": 1.5004,
+    "p": "33% 25%",
+    "a": 1
+  },
+  "expo-banner": {
+    "r": 1.5913
+  },
+  "floor-plan": {
+    "r": 1.4134
+  },
+  "food-tasting": {
+    "r": 1.5,
+    "p": "33% 25%",
+    "a": 1
+  },
+  "food-tasting-counter": {
+    "r": 1.25,
+    "p": "40% 59%",
+    "a": 1
+  },
+  "forum-question": {
+    "r": 0.6664,
+    "p": "75% 62%",
+    "a": 1
+  },
+  "forum-speaker": {
+    "r": 1.5004,
+    "p": "56% 34%",
+    "a": 1
+  },
+  "foyer-visitors": {
+    "r": 1.5004,
+    "p": "67% 31%",
+    "a": 1
+  },
+  "furniture-outdoor-stand": {
+    "r": 1.5004,
+    "p": "67% 28%",
+    "a": 1
+  },
+  "greenhouse-tomatoes": {
+    "r": 1.5,
+    "p": "50% 25%",
+    "a": 1
+  },
+  "hall-aerial": {
+    "r": 1.5,
+    "p": "59% 41%",
+    "a": 1
+  },
+  "hall-aerial-2": {
+    "r": 1.5,
+    "p": "66% 62%",
+    "a": 1
+  },
+  "hall-aisle-red": {
+    "r": 1.5004,
+    "p": "67% 25%",
+    "a": 1
+  },
+  "hall-busy": {
+    "r": 1.5,
+    "p": "33% 47%",
+    "a": 1
+  },
+  "hall-crowd": {
+    "r": 1.5004,
+    "p": "33% 37%",
+    "a": 1
+  },
+  "hall-empty": {
+    "r": 1.7757,
+    "p": "28% 53%",
+    "a": 1
+  },
+  "hall-main-aisle": {
+    "r": 1.5004,
+    "p": "47% 75%",
+    "a": 1
+  },
+  "hall-panorama": {
+    "r": 2.1186,
+    "p": "25% 47%",
+    "a": 1
+  },
+  "hall-plan": {
+    "r": 1.4497
+  },
+  "hall-stand": {
+    "r": 1.5005,
+    "p": "62% 34%",
+    "a": 1
+  },
+  "hall-walk": {
+    "r": 2.1186,
+    "p": "25% 47%",
+    "a": 1
+  },
+  "hall-wide": {
+    "r": 1.5,
+    "p": "66% 62%",
+    "a": 1
+  },
+  "hall-windows": {
+    "r": 1.7757,
+    "p": "41% 41%",
+    "a": 1
+  },
+  "hero-hall": {
+    "r": 1.5,
+    "p": "59% 41%",
+    "a": 1
+  },
+  "hotel-facade": {
+    "r": 1.7769,
+    "p": "28% 37%",
+    "a": 1
+  },
+  "hotel-room": {
+    "r": 1.7778,
+    "p": "72% 72%",
+    "a": 1
+  },
+  "industry-appliances": {
+    "r": 1.5004,
+    "p": "33% 25%",
+    "a": 1
+  },
+  "industry-oil-display": {
+    "r": 1.5004,
+    "p": "67% 25%",
+    "a": 1
+  },
+  "industry-workwear-stand": {
+    "r": 1.5004,
+    "p": "67% 25%",
+    "a": 1
+  },
+  "machinery-outdoor": {
+    "r": 1.5,
+    "p": "33% 53%",
+    "a": 1
+  },
+  "materials-roofing-panels": {
+    "r": 1.5004,
+    "p": "33% 75%",
+    "a": 1
+  },
+  "materials-tiles-stand": {
+    "r": 1.5004,
+    "p": "41% 75%",
+    "a": 1
+  },
+  "materials-windows-stand": {
+    "r": 1.5004,
+    "p": "53% 41%",
+    "a": 1
+  },
+  "meeting-room": {
+    "r": 1.3333,
+    "p": "62% 25%",
+    "a": 1
+  },
+  "office-people": {
+    "r": 1.3333,
+    "p": "62% 25%",
+    "a": 1
+  },
+  "officials-tour": {
+    "r": 1.5004,
+    "p": "34% 25%",
+    "a": 1
+  },
+  "opening-ceremony": {
+    "r": 1.5,
+    "p": "33% 44%",
+    "a": 1
+  },
+  "opening-crowd": {
+    "r": 1.5,
+    "p": "33% 44%",
+    "a": 1
+  },
+  "opening-guests": {
+    "r": 1.5004,
+    "p": "33% 44%",
+    "a": 1
+  },
+  "outdoor-area": {
+    "r": 1.5004,
+    "p": "33% 47%",
+    "a": 1
+  },
+  "outdoor-tractors": {
+    "r": 1.5,
+    "p": "33% 53%",
+    "a": 1
+  },
+  "outdoor-vehicles": {
+    "r": 1.5004,
+    "p": "59% 62%",
+    "a": 1
+  },
+  "promotors-amg-yellow": {
+    "r": 1.5004,
+    "p": "33% 41%",
+    "a": 1
+  },
+  "promotors-bmw-e30-drift": {
+    "r": 1.5004,
+    "p": "62% 50%",
+    "a": 1
+  },
+  "promotors-bmw-m5-samarkand": {
+    "r": 1.5004,
+    "p": "56% 25%",
+    "a": 1
+  },
+  "promotors-burnout": {
+    "r": 1.5004,
+    "p": "41% 59%",
+    "a": 1
+  },
+  "promotors-drift-aerial": {
+    "r": 1.7778,
+    "p": "44% 25%",
+    "a": 1
+  },
+  "promotors-engine-bay": {
+    "r": 1.5004,
+    "p": "33% 25%",
+    "a": 1
+  },
+  "promotors-evakor-stand": {
+    "r": 1.5004,
+    "p": "67% 62%",
+    "a": 1
+  },
+  "promotors-hall-crowd": {
+    "r": 1.5004,
+    "p": "33% 34%",
+    "a": 1
+  },
+  "promotors-lamborghini": {
+    "r": 1.5004,
+    "p": "33% 34%",
+    "a": 1
+  },
+  "promotors-maserati": {
+    "r": 1.5004,
+    "p": "33% 75%",
+    "a": 1
+  },
+  "promotors-maybach": {
+    "r": 1.5004,
+    "p": "33% 65%",
+    "a": 1
+  },
+  "promotors-motorbikes": {
+    "r": 1.5004,
+    "p": "44% 50%",
+    "a": 1
+  },
+  "promotors-mustang-drift": {
+    "r": 1.5004,
+    "p": "33% 41%",
+    "a": 1
+  },
+  "promotors-mustang-shelby": {
+    "r": 1.5004,
+    "p": "44% 25%",
+    "a": 1
+  },
+  "promotors-parade-samarkand": {
+    "r": 1.5004,
+    "p": "33% 75%",
+    "a": 1
+  },
+  "promotors-participants": {
+    "r": 1.7778,
+    "p": "28% 75%",
+    "a": 1
+  },
+  "promotors-samarkand-group": {
+    "r": 1.5004,
+    "p": "33% 59%",
+    "a": 1
+  },
+  "promotors-stage": {
+    "r": 1.5004,
+    "p": "67% 31%",
+    "a": 1
+  },
+  "prompro-appliances-stand": {
+    "r": 1.5004,
+    "p": "59% 28%",
+    "a": 1
+  },
+  "prompro-campers": {
+    "r": 1.5004,
+    "p": "62% 47%",
+    "a": 1
+  },
+  "prompro-dairy-stand": {
+    "r": 1.5004,
+    "p": "59% 47%",
+    "a": 1
+  },
+  "prompro-forum-stage": {
+    "r": 1.5004,
+    "p": "33% 62%",
+    "a": 1
+  },
+  "prompro-group": {
+    "r": 1.5004,
+    "p": "67% 47%",
+    "a": 1
+  },
+  "prompro-led-cube": {
+    "r": 1.5004,
+    "p": "67% 44%",
+    "a": 1
+  },
+  "prompro-meat-stand": {
+    "r": 1.5004,
+    "p": "62% 75%",
+    "a": 1
+  },
+  "prompro-workwear": {
+    "r": 1.5004,
+    "p": "59% 56%",
+    "a": 1
+  },
+  "registan-night": {
+    "r": 1.2498,
+    "p": "60% 69%",
+    "a": 1
+  },
+  "samarkand-registan-flag": {
+    "r": 1.5004,
+    "p": "53% 31%",
+    "a": 1
+  },
+  "site-plan": {
+    "r": 1.9345
+  },
+  "site-section": {
+    "r": 2.1603
+  },
+  "stand-agro": {
+    "r": 1.5,
+    "p": "41% 25%",
+    "a": 1
+  },
+  "stand-agro-chem": {
+    "r": 1.5,
+    "p": "56% 25%",
+    "a": 1
+  },
+  "stand-agro-hall": {
+    "r": 1.5,
+    "p": "33% 53%",
+    "a": 1
+  },
+  "stand-basalt": {
+    "r": 1.5005,
+    "p": "40% 41%",
+    "a": 1
+  },
+  "stand-building-models": {
+    "r": 1.7778,
+    "p": "31% 75%",
+    "a": 1
+  },
+  "stand-dark": {
+    "r": 1.5,
+    "p": "33% 72%",
+    "a": 1
+  },
+  "stand-equipment": {
+    "r": 1.5,
+    "p": "44% 41%",
+    "a": 1
+  },
+  "stand-exhibitor": {
+    "r": 1.5,
+    "p": "63% 28%",
+    "a": 1
+  },
+  "stand-falcon": {
+    "r": 1.5,
+    "p": "50% 72%",
+    "a": 1
+  },
+  "stand-fertilizer": {
+    "r": 1.5,
+    "p": "33% 53%",
+    "a": 1
+  },
+  "stand-green": {
+    "r": 1.4995,
+    "p": "33% 44%",
+    "a": 1
+  },
+  "stand-house-model": {
+    "r": 1.5,
+    "p": "33% 53%",
+    "a": 1
+  },
+  "stand-industrial": {
+    "r": 1.5,
+    "p": "44% 41%",
+    "a": 1
+  },
+  "stand-lights": {
+    "r": 1.5,
+    "p": "33% 34%",
+    "a": 1
+  },
+  "stand-modern": {
+    "r": 0.6669,
+    "p": "75% 41%",
+    "a": 1
+  },
+  "stand-nrg": {
+    "r": 1.7778,
+    "p": "28% 28%",
+    "a": 1
+  },
+  "stand-shell": {
+    "r": 1.5,
+    "p": "63% 28%",
+    "a": 1
+  },
+  "stand-two-level": {
+    "r": 1.5,
+    "p": "63% 28%",
+    "a": 1
+  },
+  "students-campus": {
+    "r": 1.5,
+    "p": "67% 31%",
+    "a": 1
+  },
+  "supermarket-aisle": {
+    "r": 1.5,
+    "p": "33% 34%",
+    "a": 1
+  },
+  "textile-buyers": {
+    "r": 1.5004,
+    "p": "59% 25%",
+    "a": 1
+  },
+  "venue-aerial": {
+    "r": 1.5,
+    "p": "66% 62%",
+    "a": 1
+  },
+  "venue-conference": {
+    "r": 1.7769,
+    "p": "72% 25%",
+    "a": 1
+  },
+  "venue-exterior": {
+    "r": 1.3333,
+    "p": "62% 53%",
+    "a": 1
+  },
+  "venue-facade": {
+    "r": 1.7778,
+    "p": "28% 75%",
+    "a": 1
+  },
+  "venue-flags": {
+    "r": 1.7778,
+    "p": "28% 75%",
+    "a": 1
+  },
+  "venue-foyer": {
+    "r": 1.5004,
+    "p": "67% 25%",
+    "a": 1
+  },
+  "visitors-flowers": {
+    "r": 1.5,
+    "p": "67% 25%",
+    "a": 1
+  },
+  "worldedu-consultant": {
+    "r": 1.5004,
+    "p": "50% 25%",
+    "a": 1
+  },
+  "worldedu-forum-audience": {
+    "r": 1.5004,
+    "p": "67% 25%",
+    "a": 1
+  },
+  "worldedu-forum-stage": {
+    "r": 1.5004,
+    "p": "67% 25%",
+    "a": 1
+  },
+  "worldedu-hall": {
+    "r": 1.5004,
+    "p": "53% 59%",
+    "a": 1
+  },
+  "worldedu-registration": {
+    "r": 1.5004,
+    "p": "33% 25%",
+    "a": 1
+  },
+  "worldedu-siut-stand": {
+    "r": 1.5004,
+    "p": "67% 75%",
+    "a": 1
+  },
+  "worldedu-stand-consult": {
+    "r": 1.5004,
+    "p": "33% 50%",
+    "a": 1
+  },
+  "worldedu-students": {
+    "r": 1.5004,
+    "p": "67% 25%",
+    "a": 1
+  },
+  "worldedu-tv-interview": {
+    "r": 1.5004,
+    "p": "33% 25%",
+    "a": 1
+  },
+  "worldedu-university-stand": {
+    "r": 1.5004,
+    "p": "47% 37%",
+    "a": 1
+  }
+}

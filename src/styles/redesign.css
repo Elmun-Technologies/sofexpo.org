@@ -1415,16 +1415,14 @@ main > .evnav {
   border-color: var(--ink);
 }
 
-/* phones and tablets: the header steps aside while you read down and comes back the moment
-   you scroll up, so header + bottom booking bar never hold 135px of an 844px screen at once.
-   The show's tab bar follows it to the top edge. Desktop keeps the sticky header (its mega
-   menus need it). */
-@media (max-width: 1280px) {
-  .hdr { transition: transform 0.28s ease; will-change: transform; }
-  html.hdr-away .hdr { transform: translateY(calc(-100% - 6px)); }
-  main > .evnav { transition: top 0.28s ease; }
-  html.hdr-away main > .evnav { top: 6px; }
-}
+/* every width: the header steps aside while you read down and comes back the moment you
+   scroll up, so the screen never holds more than one bar at once (header + bottom booking
+   bar on a phone, header + the show's tab bar on a desktop). The show's tab bar follows it to
+   the top edge. 2026-10-15: desktop too — header + tabs held 138px of a 900px screen. */
+.hdr { transition: transform 0.28s ease; will-change: transform; }
+html.hdr-away .hdr { transform: translateY(calc(-100% - 6px)); }
+main > .evnav { transition: top 0.28s ease; }
+html.hdr-away main > .evnav { top: 6px; }
 @media (prefers-reduced-motion: reduce) {
   .hdr, main > .evnav { transition: none; }
 }

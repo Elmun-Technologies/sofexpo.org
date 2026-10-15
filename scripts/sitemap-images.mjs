@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 /* Post-build: add <image:image> entries (Google image sitemap) to every sitemap URL —
-   content photos from the page itself (not icons/logos), so expo photos rank in Image Search. */
+   content photos from the page itself (not icons/logos), so expo photos rank in Image Search.
+   Up to 40 per page: a gallery page (/venue/gallery/, a show's photo report) is the page
+   those photos should rank from, and Google reads up to 1,000 per URL. */
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 const ROOT = process.argv[2] || 'dist';
@@ -21,7 +23,7 @@ if (existsSync(file)) {
     const seen = new Set();
     for (const m of main.matchAll(/<img[^>]*\ssrc="(\/images\/[^"]+\.(?:jpe?g|webp|png))"/g)) {
       seen.add(SITE + m[1]);
-      if (seen.size >= 10) break;
+      if (seen.size >= 40) break;
     }
     if (!seen.size) return block;
     total += seen.size;

@@ -289,8 +289,8 @@ const mailto = `mailto:${site.contacts.email}?subject=${encodeURIComponent(ru ? 
       var mode = root.dataset.quizMode || '4';
       var started = false;
 
-      /* funnel telemetry: safe without any tag manager — window.sofTag (Base.astro) hands the
-         steps to GA4 and Yandex Metrica when their ids are set; dataLayer stays for a GTM later */
+      /* funnel telemetry: dataLayer for GTM (works without any container), window.sofTag
+         (SiteTags.astro) for GA4, Metrica and the ad pixels connected in the admin panel */
       var track = function (name, data) {
         try {
           window.dataLayer = window.dataLayer || [];

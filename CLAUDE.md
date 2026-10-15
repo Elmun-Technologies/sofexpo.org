@@ -103,6 +103,14 @@ Decisions & pitfalls (do not re-litigate):
   `t.me/s/<user>` mirror — **run it where the production SQLite lives** so edit-webhooks
   can later dedupe by message id; `--dry-run` first.
 
+## Analytics & search-engine codes (docs/22)
+
+Verification meta tags, GA4/GTM/Metrica/Baidu and ad pixels are edited in `/admin` →
+"Analitika va SEO kodlari" (`GET/PUT /api/admin/site-tags`, admin only). Spec + validation live
+in `scripts/site-tags.mjs` (shared by backend and build); the backend materializes
+`src/data/site-tags.json` and pushes it through the shared `GitPublisher`. Do not hand-edit
+that JSON in production; `PUBLIC_*` env vars are only a fallback.
+
 ## Useful commands
 
 - `npm run dev` / `npm run build` / `npm run preview` — site

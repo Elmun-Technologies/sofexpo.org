@@ -17,6 +17,7 @@ import { loadTgBlogConfig } from './tgblog/config.mjs';
 import { TgBlogStore } from './tgblog/store.mjs';
 import { TgBlogSync } from './tgblog/sync.mjs';
 import { GitPublisher } from './tgblog/publish.mjs';
+import { SiteTagsService, siteTagFormFields } from './sitetags.mjs';
 
 const ADMIN_DIR = fileURLToPath(new URL('./admin/', import.meta.url));
 const PORTAL_DIR = fileURLToPath(new URL('./portal/', import.meta.url));
@@ -405,6 +406,27 @@ export function createLeadServer(options = {}) {
     gitRunner: tgBlogConfig.gitRunner,
   }) : null;
   const tgBlog = tgBlogStore ? new TgBlogSync({ config: tgBlogConfig, store: tgBlogStore, publisher: tgBlogPublisher }) : null;
+
+  /* Analytics / verification codes edited in /admin (docs/22). Same checkout, branch and push
+     switch as the blog sync (BLOG_SYNC_REPO_DIR / BLOG_SYNC_GIT_PUSH): the saved JSON is
+     committed and pushed, and the push rebuilds the static site. */
+  const siteTagOptions = options.siteTags ?? {};
+  const siteTagsRepo = siteTagOptions.repoDir ?? tgBlogConfig.repoDir;
+  const siteTagsPush = siteTagOptions.gitPush ?? tgBlogConfig.gitPush;
+  const siteTagsPublisher = siteTagOptions.publish === false ? null : new GitPublisher({
+    repoDir: siteTagsRepo,
+    remote: tgBlogConfig.gitRemote,
+    branch: tgBlogConfig.gitBranch,
+    debounceMs: siteTagOptions.debounceMs ?? 3_000,
+    pushEnabled: siteTagsPush,
+    deployHooks: siteTagOptions.deployHooks ?? tgBlogConfig.deployHooks,
+    gitRunner: siteTagOptions.gitRunner ?? tgBlogConfig.gitRunner,
+    paths: ['src/data/site-tags.json'],
+    commitMessage: (title) => `chore(site): ${title} [admin]`,
+    logTag: 'site-tags',
+  });
+  const siteTags = new SiteTagsService({ store, repoDir: siteTagsRepo, publisher: siteTagsPublisher });
+  siteTags.heal();
 
   const getClientAddress = (req) => {
     if (trustProxy && req.headers['x-forwarded-for']) return String(req.headers['x-forwarded-for']).split(',')[0].trim().slice(0, 100);
@@ -1363,6 +1385,31 @@ export function createLeadServer(options = {}) {
         }
       }
 
+      if (path === '/api/admin/site-tags') {
+        requireAdmin(session);
+        if (req.method === 'GET') {
+          return sendJson(res, 200, {
+            ok: true,
+            ...siteTags.get(),
+            fields: siteTagFormFields,
+            publish: { gitPush: Boolean(siteTagsPush), branch: tgBlogConfig.gitBranch },
+          });
+        }
+        if (req.method === 'PUT') {
+          verifyCsrf(req, session);
+          const body = await readJson(req, 64_000);
+          const result = siteTags.save(body?.tags ?? {}, session.email);
+          if (!result.ok) throw new HttpError(422, 'Ba’zi kodlar noto‘g‘ri — maydonlar ostidagi izohni ko‘ring.', result.errors);
+          if (result.changed.length) store.audit(session.email, 'site_tags.update', 'site_settings', 'site_tags', { changed: result.changed });
+          return sendJson(res, 200, {
+            ok: true,
+            ...siteTags.get(),
+            changed: result.changed,
+            publish: { gitPush: Boolean(siteTagsPush), branch: tgBlogConfig.gitBranch, scheduled: result.fileChanged },
+          });
+        }
+      }
+
       if (req.method === 'GET' && path === '/api/admin/system') {
         requireAdmin(session);
         return sendJson(res, 200, {
@@ -1486,6 +1533,7 @@ export function createLeadServer(options = {}) {
   server.uploadsDir = uploadsDir;
   server.tgBlog = tgBlog;
   server.tgBlogConfig = tgBlogConfig;
+  server.siteTags = siteTags;
   server.processOutbox = processOutbox;
   server.listenBackend = () => new Promise((resolve, reject) => {
     server.once('error', reject);
@@ -1509,6 +1557,7 @@ export function createLeadServer(options = {}) {
     clearInterval(workerTimer);
     clearInterval(retentionTimer);
     if (tgBlogPublisher) void tgBlogPublisher.stop();
+    if (siteTagsPublisher) void siteTagsPublisher.stop();
   });
   return server;
 }

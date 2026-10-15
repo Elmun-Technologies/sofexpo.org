@@ -26,7 +26,8 @@ import StandQuizModal from '@/components/StandQuizModal.astro';
    booking action already. The smart CTA/quiz stays: it is part of the page. */
 import Tracking from '@/components/conversion/Tracking.astro';
 import FormHandler from '@/components/conversion/FormHandler.astro';
-import { analytics, verificationMeta } from '@/lib/analytics';
+import SiteTags from '@/components/conversion/SiteTags.astro';
+import { verificationMeta } from '@/lib/analytics';
 
 interface Props {
   locale: Locale;
@@ -85,10 +86,6 @@ if (meta.noindex) {
   meta.xDefault = '';
 }
 const t = useUI(locale);
-/* GA4 / Yandex Metrica only on the real hosts (sof-expo.com and its show subdomains): Vercel
-   previews and local builds must not count as visits (docs/22) */
-const ROOT_HOST = new URL(SITE).hostname;
-const TAGS = { ga4: analytics.ga4, ym: analytics.ym ? Number(analytics.ym) : 0, root: ROOT_HOST };
 const BUILD_DATE = new Date().toISOString().slice(0, 10);
 const nodes: Record<string, unknown>[] = [
   {
@@ -221,48 +218,7 @@ const preload = props.preload
     <meta name="twitter:title" content={meta.og.title} />
     <meta name="twitter:description" content={meta.og.description} />
     <meta name="twitter:image" content={meta.og.image} />
-    {(TAGS.ga4 || TAGS.ym) && !props.redirect && (
-      <script is:inline define:vars={{ tags: TAGS }}>
-        (function () {
-          var w = window;
-          var d = document;
-          var host = location.hostname;
-          if (host !== tags.root && !host.endsWith('.' + tags.root)) return;
-          var load = function (src) {
-            var s = d.createElement('script');
-            s.async = true;
-            s.src = src;
-            d.head.appendChild(s);
-          };
-          if (tags.ga4) {
-            w.dataLayer = w.dataLayer || [];
-            w.gtag = function () { w.dataLayer.push(arguments); };
-            w.gtag('js', new Date());
-            w.gtag('config', tags.ga4);
-            load('https://www.googletagmanager.com/gtag/js?id=' + tags.ga4);
-          }
-          if (tags.ym) {
-            w.ym = w.ym || function () { (w.ym.a = w.ym.a || []).push(arguments); };
-            w.ym.l = Date.now();
-            load('https://mc.yandex.ru/metrika/tag.js');
-            w.ym(tags.ym, 'init', { clickmap: true, trackLinks: true, accurateTrackBounce: true, webvisor: true });
-          }
-          /* conversion events from Tracking/FormHandler/QuizForm become GA4 events and Metrica
-             goals under the same names; page views, scroll and timers are counted natively */
-          var native = /^(page_view|page_hide|page_unload|time_\d+s|scroll_\d+)$/;
-          w.sofTag = function (name, data) {
-            if (!name || native.test(name)) return;
-            var params = {};
-            for (var k in data || {}) {
-              var v = data[k];
-              if (v === null || typeof v !== 'object') params[k] = v;
-            }
-            try { if (tags.ga4) w.gtag('event', name, params); } catch (e) {}
-            try { if (tags.ym) w.ym(tags.ym, 'reachGoal', name, params); } catch (e) {}
-          };
-        })();
-      </script>
-    )}
+    {!props.redirect && <SiteTags />}
     <script type="application/ld+json" is:inline set:html={JSON.stringify(graph)} />
     {/* a show host repaints the same token ladder with its own identity (src/data/brands.ts) —
         html[data-brand] is more specific than :root, so order of stylesheets does not matter */}

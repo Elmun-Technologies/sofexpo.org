@@ -19,10 +19,13 @@
     toastTimer: null,
   };
   const labels = {
-    dashboard: 'Umumiy ko‘rinish', leads: 'Arizalar', portalAccounts: 'Kabinet akkauntlari', analytics: 'Analitika',
+    dashboard: 'Umumiy ko‘rinish', leads: 'Arizalar', portalAccounts: 'Kabinet akkauntlari', exhibitorProfiles: 'Eksponent kartalari', analytics: 'Analitika',
     integrations: 'Integratsiyalar', activity: 'Faoliyat tarixi', users: 'Jamoa va ruxsatlar',
   };
   const auditActionLabels = {
+    'system.telegram_test': 'Telegram bot sinovi',
+    'exhibitor_profile.submit': 'Eksponent kartasi tekshiruvga yuborildi', 'exhibitor_profile.approve': 'Eksponent kartasi tasdiqlandi',
+    'exhibitor_profile.request_changes': 'Eksponent kartasi tuzatishga qaytarildi',
     'lead.update': 'CRM kartasi yangilandi', 'lead.note.add': 'Ichki izoh qo‘shildi',
     'portal_account.activate': 'Kabinet faollashtirildi', 'portal_account.deactivate': 'Kabinet bloklandi',
     'portal_profile.update': 'Profil yangilandi', 'user.create': 'Jamoa hisobi yaratildi',
@@ -280,7 +283,9 @@
       ${!active ? '<div class="notice-box" role="status">Bu akkaunt bloklangan; amaldagi portal sessiyalari bekor qilingan.</div>' : ''}
       <div class="account-detail-grid"><section class="panel"><div class="panel-head"><div><h3>Profil va hisob</h3><p>Ro‘yxatdan o‘tish va oxirgi faollik</p></div></div><dl class="detail-list">
         ${detailItem('Ism', account.name)}${detailItem('Email', account.email)}${detailItem('Telefon', account.phone)}${detailItem('Kompaniya', account.company)}${detailItem('Mamlakat', account.country)}${detailItem('Faoliyat sohasi', account.industry)}${detailItem('Sayt', account.website)}${detailItem('Qiziqishlar', account.interests)}${detailItem('Yaratilgan', formatDate(account.createdAt))}${detailItem('Oxirgi kirish', account.lastLoginAt ? formatDate(account.lastLoginAt) : 'Hali kirmagan')}${detailItem('Profil yangilangan', formatDate(account.profileUpdatedAt))}
-      </dl></section><section class="panel"><div class="panel-head"><div><h3>So‘rovlar oqimi</h3><p>${number(requests.length)} ta murojaat · holat va mas’ul CRM kartasidan boshqariladi</p></div></div>${requests.length ? `<div class="table-wrap"><table class="data-table"><thead><tr><th>SO‘ROV</th><th>TADBIR</th><th>SANA</th><th>STATUS</th><th>MAS’UL</th><th>AMAL</th></tr></thead><tbody>${requestRows}</tbody></table></div>` : '<div class="empty-state"><strong>Hali so‘rov yuborilmagan</strong>Akkaunt ro‘yxatdan o‘tgan, ammo tashrif yoki ishtirok arizasi yo‘q.</div>'}</section></div>`;
+      </dl></section><section class="panel"><div class="panel-head"><div><h3>So‘rovlar oqimi</h3><p>${number(requests.length)} ta murojaat · holat va mas’ul CRM kartasidan boshqariladi</p></div></div>${requests.length ? `<div class="table-wrap"><table class="data-table"><thead><tr><th>SO‘ROV</th><th>TADBIR</th><th>SANA</th><th>STATUS</th><th>MAS’UL</th><th>AMAL</th></tr></thead><tbody>${requestRows}</tbody></table></div>` : '<div class="empty-state"><strong>Hali so‘rov yuborilmagan</strong>Akkaunt ro‘yxatdan o‘tgan, ammo tashrif yoki ishtirok arizasi yo‘q.</div>'}</section></div>
+      ${account.exhibitorCard ? companyPanel(account.exhibitorCard) : ''}`;
+    bindCompanyReview(id);
     $('#back-portal-accounts').addEventListener('click', () => {
       state.currentPortalAccountId = '';
       renderPortalAccounts().catch(showError);
@@ -295,6 +300,70 @@
       } catch (error) { showError(error); }
     });
     bindLeadButtons(content);
+  }
+
+  /* ---------- exhibitor company cards (logo, flyers, catalogue, photos) ---------- */
+  const eventNames = { 'foodera-expo': 'FOODERA EXPO 2026', 'buildpro-expo': 'BUILD PRO EXPO 2026', 'agropro-expo': 'AGROPRO EXPO 2027', 'world-edu-expo': 'WORLD EDU 2027', 'ecom-retail-expo': 'ECOM & RETAIL EXPO 2027' };
+  const companyStatusLabels = { draft: 'Qoralama', submitted: 'Tekshiruvda', approved: 'Tasdiqlangan', changes: 'Tuzatish kerak' };
+  const fileKindLabels = { logo: 'Logotip', flyer: 'Flayer', catalog: 'Katalog', photo: 'Foto' };
+  const sizeLabel = (bytes) => (bytes >= 1048576 ? `${(bytes / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(bytes / 1024))} KB`);
+  const companyBadge = (status) => `<span class="company-badge" data-status="${escapeHtml(status)}">${escapeHtml(companyStatusLabels[status] || status)}</span>`;
+
+  function companyPanel(company) {
+    const logo = company.files.find((file) => file.kind === 'logo');
+    const others = company.files.filter((file) => file.kind !== 'logo');
+    const fileRows = others.map((file) => `<li>${file.mime.startsWith('image/') ? `<img class="file-thumb" src="/api/admin/files/${escapeHtml(file.id)}" alt="" loading="lazy" />` : '<span class="file-thumb">PDF</span>'}<span class="file-name">${escapeHtml(file.fileName)}<small>${escapeHtml(fileKindLabels[file.kind] || file.kind)} · ${escapeHtml(sizeLabel(file.size))} · ${escapeHtml(formatDate(file.createdAt))}</small></span><a class="button button-secondary" href="/api/admin/files/${escapeHtml(file.id)}" target="_blank" rel="noopener">Yuklab olish</a></li>`).join('');
+    const canReview = company.updatedAt && company.status !== 'draft';
+    return `<section class="panel company-panel" style="margin-top:14px"><div class="panel-head"><div><h3>Kompaniya kartasi</h3><p>Katalog va reklama uchun eksponent yuborgan ma’lumotlar${company.submittedAt ? ` · yuborilgan ${escapeHtml(formatDate(company.submittedAt))}` : ''}</p></div>${companyBadge(company.status)}</div>
+      ${company.updatedAt ? `<div class="company-panel__grid"><div class="company-panel__logo">${logo ? `<img src="/api/admin/files/${escapeHtml(logo.id)}" alt="${escapeHtml(company.brandName)} logotipi" /><a href="/api/admin/files/${escapeHtml(logo.id)}" target="_blank" rel="noopener">Logotipni ochish</a>` : '<span>Logotip yuklanmagan</span>'}</div>
+      <dl class="detail-list">${detailItem('Brend', company.brandName)}${detailItem('Ko‘rgazma', eventNames[company.event] || company.event)}${detailItem('Stend', company.stand)}${detailItem('Kompaniya haqida', company.description)}${detailItem('Mahsulotlar', company.products)}${detailItem('Sayt', company.website)}${detailItem('Instagram', company.instagram)}${detailItem('Telegram', company.telegram)}${detailItem('Kontakt', [company.contactName, company.contactPhone, company.contactEmail].filter(Boolean).join(' · '))}</dl></div>
+      <h4 class="company-panel__files-title">Fayllar (${number(others.length)})</h4>${others.length ? `<ul class="file-list">${fileRows}</ul>` : '<div class="empty-state">Flayer, katalog yoki foto yuklanmagan.</div>'}
+      ${company.reviewNote ? `<div class="notice-box" role="status">Oxirgi izoh${company.reviewedBy ? ` (${escapeHtml(company.reviewedBy)})` : ''}: ${escapeHtml(company.reviewNote)}</div>` : ''}
+      ${canReview ? `<form class="company-review-form" id="company-review-form"><label for="company-review-note">Eksponentga izoh (tuzatish so‘ralganda majburiy)</label><textarea id="company-review-note" name="note" rows="2" maxlength="1000" placeholder="Masalan: logotipni shaffof fonda yuboring"></textarea><div class="company-review-actions"><button class="button button-secondary" type="submit" data-review="changes">Tuzatishga qaytarish</button><button class="button button-primary" type="submit" data-review="approved">Tasdiqlash</button></div></form>` : '<p class="muted">Eksponent kartani hali tekshiruvga yubormagan.</p>'}`
+      : '<div class="empty-state"><strong>Karta to‘ldirilmagan</strong>Eksponent kabinetida logotip, flayer va kompaniya ma’lumotlarini hali yuklamagan.</div>'}</section>`;
+  }
+
+  function bindCompanyReview(accountId) {
+    const form = $('#company-review-form');
+    if (!form) return;
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const status = event.submitter?.dataset.review || 'approved';
+      const note = String(new FormData(form).get('note') || '').trim();
+      try {
+        await api(`/api/admin/portal-accounts/${encodeURIComponent(accountId)}/company`, { method: 'PATCH', body: { status, note } });
+        showToast(status === 'approved' ? 'Karta tasdiqlandi.' : 'Karta eksponentga tuzatish uchun qaytarildi.');
+        refreshProfilesCount();
+        await openPortalAccount(accountId);
+      } catch (error) { showError(error); }
+    });
+  }
+
+  async function refreshProfilesCount() {
+    try {
+      const data = await api('/api/admin/exhibitor-profiles?status=submitted');
+      const badge = $('#profiles-count');
+      const count = Number(data.counts?.submitted || 0);
+      badge.textContent = String(count);
+      badge.hidden = !count;
+    } catch { /* the badge is a hint only */ }
+  }
+
+  async function renderExhibitorProfiles() {
+    const content = $('#content');
+    content.innerHTML = '<div class="skeleton"></div>';
+    const filter = state.profileFilter || '';
+    const data = await api(`/api/admin/exhibitor-profiles${filter ? `?status=${encodeURIComponent(filter)}` : ''}`);
+    const counts = data.counts || {};
+    const total = Object.values(counts).reduce((sum, n) => sum + Number(n), 0);
+    const tabs = [['', 'Hammasi', total], ['submitted', 'Tekshiruvda', counts.submitted || 0], ['changes', 'Tuzatish kerak', counts.changes || 0], ['approved', 'Tasdiqlangan', counts.approved || 0], ['draft', 'Qoralama', counts.draft || 0]]
+      .map(([value, label, count]) => `<button type="button" class="filter-chip ${filter === value ? 'active' : ''}" data-profile-filter="${value}">${label} <b>${number(count)}</b></button>`).join('');
+    const rows = (data.items || []).map((item) => `<tr><td><div class="profile-cell">${item.logoId ? `<img class="file-thumb" src="/api/admin/files/${escapeHtml(item.logoId)}" alt="" loading="lazy" />` : '<span class="file-thumb">—</span>'}<div class="person-info"><strong>${escapeHtml(item.brandName || item.company || '—')}</strong><small>${escapeHtml(item.email)}</small></div></div></td><td>${escapeHtml(eventNames[item.event] || item.event || '—')}</td><td>${escapeHtml(item.stand || '—')}</td><td>${number(item.fileCount)}</td><td>${companyBadge(item.status)}</td><td>${escapeHtml(formatDate(item.submittedAt || item.updatedAt))}</td><td><button class="button button-secondary" type="button" data-open-account="${escapeHtml(item.accountId)}">Ochish</button></td></tr>`).join('');
+    content.innerHTML = `${pageIntro('Eksponent kartalari', 'Logotip, flayer, katalog va kompaniya matni — katalog va reklama uchun. Tekshiruvda turganlar birinchi chiqadi.', `${number(counts.submitted || 0)} TA TEKSHIRUVDA`)}
+      <div class="filter-chips">${tabs}</div>
+      <section class="panel table-panel"><div class="table-wrap">${rows ? `<table class="data-table"><thead><tr><th>KOMPANIYA</th><th>KO‘RGAZMA</th><th>STEND</th><th>FAYLLAR</th><th>HOLAT</th><th>YANGILANGAN</th><th>AMAL</th></tr></thead><tbody>${rows}</tbody></table>` : '<div class="empty-state"><strong>Karta topilmadi</strong>Eksponentlar kabinetda kompaniya kartasini to‘ldirganda shu yerda paydo bo‘ladi.</div>'}</div></section>`;
+    $$('[data-profile-filter]').forEach((button) => button.addEventListener('click', () => { state.profileFilter = button.dataset.profileFilter; renderExhibitorProfiles().catch(showError); }));
+    $$('[data-open-account]').forEach((button) => button.addEventListener('click', () => { state.view = 'portalAccounts'; openPortalAccount(button.dataset.openAccount).catch(showError); }));
   }
 
   function bindLeadButtons(root = document) {
@@ -353,16 +422,28 @@
     const failed = data.outbox?.failed || 0;
     const pending = data.outbox?.pending || 0;
     const providers = [
-      { name: 'Telegram Bot', icon: '➤', on: data.providers.telegram, detail: 'Yangi arizalar menejerlar Telegram chatiga xabarnoma sifatida yuboriladi.' },
+      { name: 'Telegram Bot', icon: '➤', on: data.providers.telegram, detail: 'Yangi arizalar menejerlar Telegram chatiga xabarnoma sifatida yuboriladi.', test: true },
       { name: 'CRM webhook', icon: '↗', on: data.providers.crm, detail: 'Lidlar sozlangan CRM webhook manziliga fon rejimida jo‘natiladi.' },
       { name: 'SQLite saqlash', icon: '▣', on: data.storage === 'sqlite', detail: 'Arizalar va analitika serverdagi SQLite bazasiga ishonchli yoziladi.' },
     ];
     content.innerHTML = `${pageIntro('Integratsiyalar va tizim', 'Ulanish holati va yuborilmagan arizalarni shu yerdan kuzating.', 'SERVER SIDE')}
-      <div class="integration-grid">${providers.map((provider) => `<article class="integration-card"><div class="integration-icon">${provider.icon}</div><h3>${provider.name}</h3><p>${provider.detail}</p><div class="connection ${provider.on ? 'on' : ''}"><i></i>${provider.on ? 'Ulangan' : 'Sozlanmagan'}</div></article>`).join('')}</div>
+      <div class="integration-grid">${providers.map((provider) => `<article class="integration-card"><div class="integration-icon">${provider.icon}</div><h3>${provider.name}</h3><p>${provider.detail}</p><div class="connection ${provider.on ? 'on' : ''}"><i></i>${provider.on ? 'Ulangan' : 'Sozlanmagan'}</div>${provider.test ? '<button class="button button-secondary" id="telegram-test" type="button" style="margin-top:12px">Test xabar yuborish</button><p class="telegram-test-result" id="telegram-test-result" role="status" hidden></p>' : ''}</article>`).join('')}</div>
       <div class="system-grid"><section class="panel"><div class="panel-head"><div><h3>Yetkazib berish navbati</h3><p>Vaqtinchalik uzilishlar avtomatik qayta uriniladi.</p></div></div><div class="system-stat"><span>Kutilmoqda</span><strong>${number(pending)}</strong></div><div class="system-stat"><span>Qayta urinish tugagan</span><strong>${number(failed)}</strong></div><div class="system-stat"><span>Administratorlar</span><strong>${number(data.adminUsers)}</strong></div><div class="system-stat"><span>Backend runtime</span><strong>${escapeHtml(data.node)}</strong></div>${failed ? '<button class="button button-secondary" id="retry-outbox" type="button" style="margin-top:15px">Yakunlangan jo‘natishlarni qayta urinish</button>' : ''}</section>
       <section class="panel"><div class="panel-head"><div><h3>Yetkazilmagan murojaatlar</h3><p>Avval saqlanadi, keyin integratsiyalarga uzatiladi.</p></div></div>${data.recentDeliveries?.length ? `<div class="table-wrap"><table class="data-table"><thead><tr><th>LID</th><th>KANAL</th><th>HOLAT</th><th>URINISH</th></tr></thead><tbody>${data.recentDeliveries.map((row) => `<tr><td>${escapeHtml(row.name)}<small style="display:block;color:#98a198;margin-top:4px">${escapeHtml(row.phone)}</small></td><td>${escapeHtml(row.provider)}</td><td>${escapeHtml(row.state === 'failed' ? 'Xatolik' : 'Navbatda')}</td><td>${number(row.attempts)}${row.lastError ? `<small style="display:block;color:#a35446;margin-top:4px">${escapeHtml(row.lastError)}</small>` : ''}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty-state"><strong>Navbat toza</strong>Hozircha qayta ishlanishi kerak bo‘lgan jo‘natma yo‘q.</div>'}</section></div>
       <section class="panel" style="margin-top:14px"><div class="panel-head"><div><h3>So‘nggi boshqaruv amallari</h3><p>CRM, kabinet va jamoa sozlamalaridagi eng oxirgi o‘zgarishlar</p></div><button class="button button-secondary" id="open-activity-log" type="button">To‘liq tarix</button></div>${auditData.items?.length ? `<div class="table-wrap"><table class="data-table"><thead><tr><th>SANA</th><th>BAJARUVCHI</th><th>AMAL</th><th>OBYEKT</th><th>O‘ZGARISH</th></tr></thead><tbody>${auditData.items.map((item) => `<tr><td>${escapeHtml(formatDate(item.createdAt))}</td><td>${escapeHtml(item.actorEmail)}</td><td>${escapeHtml(auditActionLabels[item.action] || item.action)}</td><td>${escapeHtml(item.entityType)} · ${escapeHtml(String(item.entityId).slice(0, 8))}</td><td>${escapeHtml(JSON.stringify(item.details || {}))}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty-state">Hozircha qayd etilgan boshqaruv amali yo‘q.</div>'}</section>`;
     $('#open-activity-log')?.addEventListener('click', () => navigate('activity'));
+    /* one click proves the bot end to end: the token, the chat and the bot's right to post there */
+    $('#telegram-test')?.addEventListener('click', async (event) => {
+      const button = event.currentTarget;
+      const out = $('#telegram-test-result');
+      button.disabled = true;
+      try {
+        const result = await api('/api/admin/system/telegram-test', { method: 'POST', body: {} });
+        out.hidden = false;
+        out.className = `telegram-test-result ${result.ok ? 'is-ok' : 'is-error'}`;
+        out.textContent = result.ok ? 'Xabar chatga yetib bordi — bot ishlayapti.' : `Bot ishlamadi: ${result.error}`;
+      } catch (error) { showError(error); } finally { button.disabled = false; }
+    });
     $('#retry-outbox')?.addEventListener('click', async () => {
       try {
         const result = await api('/api/admin/outbox/retry', { method: 'POST', body: {} });
@@ -513,7 +594,7 @@
     $$('.nav-item').forEach((item) => item.classList.toggle('active', item.dataset.view === view));
     $('#sidebar').classList.remove('mobile-open');
     $('#mobile-scrim')?.classList.remove('active');
-    const renderers = { dashboard: renderDashboard, leads: renderLeads, portalAccounts: renderPortalAccounts, analytics: renderAnalytics, integrations: renderIntegrations, activity: renderActivity, users: renderUsers };
+    const renderers = { dashboard: renderDashboard, leads: renderLeads, portalAccounts: renderPortalAccounts, exhibitorProfiles: renderExhibitorProfiles, analytics: renderAnalytics, integrations: renderIntegrations, activity: renderActivity, users: renderUsers };
     renderers[view]().catch(showError);
   }
 
@@ -523,6 +604,7 @@
     setUser(data.user);
     setAuthVisible(false);
     navigate('dashboard');
+    refreshProfilesCount();
   }
 
   async function initialize() {
@@ -559,6 +641,7 @@
       setAuthVisible(false);
       formElement.reset();
       navigate('dashboard');
+      refreshProfilesCount();
     } catch (error) {
       errorNode.textContent = error.message;
       errorNode.hidden = false;

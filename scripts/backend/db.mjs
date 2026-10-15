@@ -226,6 +226,41 @@ export class BackendStore {
         created_at TEXT NOT NULL
       );
       CREATE INDEX IF NOT EXISTS portal_requests_account_idx ON portal_requests(account_id, created_at DESC);
+      -- 2026-10: an exhibitor's public face for the catalogue and the show's promo — company text,
+      -- contacts, the stand, and a review state the organiser moves (docs/17 §exhibitor profile)
+      CREATE TABLE IF NOT EXISTS exhibitor_companies (
+        account_id TEXT PRIMARY KEY REFERENCES portal_accounts(id) ON DELETE CASCADE,
+        brand_name TEXT NOT NULL DEFAULT '',
+        description TEXT NOT NULL DEFAULT '',
+        products TEXT NOT NULL DEFAULT '',
+        website TEXT NOT NULL DEFAULT '',
+        instagram TEXT NOT NULL DEFAULT '',
+        telegram TEXT NOT NULL DEFAULT '',
+        contact_name TEXT NOT NULL DEFAULT '',
+        contact_phone TEXT NOT NULL DEFAULT '',
+        contact_email TEXT NOT NULL DEFAULT '',
+        event TEXT NOT NULL DEFAULT '',
+        stand TEXT NOT NULL DEFAULT '',
+        status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'submitted', 'approved', 'changes')),
+        review_note TEXT NOT NULL DEFAULT '',
+        updated_at TEXT NOT NULL,
+        submitted_at TEXT,
+        reviewed_at TEXT,
+        reviewed_by TEXT NOT NULL DEFAULT ''
+      );
+      CREATE INDEX IF NOT EXISTS exhibitor_companies_status_idx ON exhibitor_companies(status, updated_at DESC);
+      CREATE TABLE IF NOT EXISTS exhibitor_files (
+        id TEXT PRIMARY KEY,
+        account_id TEXT NOT NULL REFERENCES portal_accounts(id) ON DELETE CASCADE,
+        kind TEXT NOT NULL CHECK (kind IN ('logo', 'flyer', 'catalog', 'photo')),
+        file_name TEXT NOT NULL,
+        mime TEXT NOT NULL,
+        size INTEGER NOT NULL,
+        sha256 TEXT NOT NULL,
+        storage_key TEXT NOT NULL,
+        created_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS exhibitor_files_account_idx ON exhibitor_files(account_id, kind, created_at DESC);
     `);
     // If the old JSONL process was interrupted mid-send, let the new worker safely resume it.
     this.db.prepare("UPDATE delivery_outbox SET state = 'pending', next_attempt_at = ? WHERE state = 'sending'").run(nowIso());
@@ -531,7 +566,98 @@ export class BackendStore {
       WHERE r.account_id = ?
       GROUP BY r.id ORDER BY r.created_at DESC LIMIT 100`).all(id)
       .map((row) => ({ ...row, details: parseJson(row.detailsJson), noteCount: Number(row.noteCount) }));
-    return { ...account, requests };
+    /* `company` is already the profile's company name; the exhibitor's card travels as its own key */
+    const exhibitorCard = account.accountType === 'exhibitor' ? this.getExhibitorCompany(id) : null;
+    return { ...account, requests, exhibitorCard };
+  }
+
+  /* ---------- exhibitor company profile and files ---------- */
+
+  getExhibitorCompany(accountId) {
+    const row = this.db.prepare(`SELECT brand_name AS brandName, description, products, website, instagram, telegram,
+        contact_name AS contactName, contact_phone AS contactPhone, contact_email AS contactEmail,
+        event, stand, status, review_note AS reviewNote, updated_at AS updatedAt,
+        submitted_at AS submittedAt, reviewed_at AS reviewedAt, reviewed_by AS reviewedBy
+      FROM exhibitor_companies WHERE account_id = ?`).get(accountId);
+    const company = row ? { ...row } : {
+      brandName: '', description: '', products: '', website: '', instagram: '', telegram: '',
+      contactName: '', contactPhone: '', contactEmail: '', event: '', stand: '',
+      status: 'draft', reviewNote: '', updatedAt: null, submittedAt: null, reviewedAt: null, reviewedBy: '',
+    };
+    return { ...company, files: this.listExhibitorFiles(accountId) };
+  }
+
+  saveExhibitorCompany(accountId, fields, { submit = false } = {}) {
+    const now = nowIso();
+    const current = this.db.prepare('SELECT status, submitted_at AS submittedAt FROM exhibitor_companies WHERE account_id = ?').get(accountId);
+    /* an edit after approval goes back to the organiser; "submit" sends a draft for review */
+    const status = submit ? 'submitted' : current?.status === 'approved' || current?.status === 'submitted' ? 'submitted' : (current?.status || 'draft');
+    const submittedAt = status === 'submitted' ? now : current?.submittedAt ?? null;
+    this.db.prepare(`INSERT INTO exhibitor_companies (account_id, brand_name, description, products, website, instagram, telegram,
+        contact_name, contact_phone, contact_email, event, stand, status, updated_at, submitted_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(account_id) DO UPDATE SET brand_name = excluded.brand_name, description = excluded.description,
+        products = excluded.products, website = excluded.website, instagram = excluded.instagram, telegram = excluded.telegram,
+        contact_name = excluded.contact_name, contact_phone = excluded.contact_phone, contact_email = excluded.contact_email,
+        event = excluded.event, stand = excluded.stand, status = excluded.status, updated_at = excluded.updated_at,
+        submitted_at = excluded.submitted_at`)
+      .run(accountId, fields.brandName, fields.description, fields.products, fields.website, fields.instagram, fields.telegram,
+        fields.contactName, fields.contactPhone, fields.contactEmail, fields.event, fields.stand, status, now, submittedAt);
+    return this.getExhibitorCompany(accountId);
+  }
+
+  reviewExhibitorCompany(accountId, { status, note }, actorEmail) {
+    const result = this.db.prepare(`UPDATE exhibitor_companies SET status = ?, review_note = ?, reviewed_at = ?, reviewed_by = ?
+      WHERE account_id = ?`).run(status, note, nowIso(), actorEmail, accountId);
+    if (!result.changes) return null;
+    this.audit(actorEmail, status === 'approved' ? 'exhibitor_profile.approve' : 'exhibitor_profile.request_changes', 'portal_account', accountId, { status, note });
+    return this.getExhibitorCompany(accountId);
+  }
+
+  listExhibitorCompanies({ status = '' } = {}) {
+    const where = status ? 'WHERE c.status = ?' : '';
+    const rows = this.db.prepare(`SELECT c.account_id AS accountId, a.email, p.company, c.brand_name AS brandName, c.event, c.stand,
+        c.status, c.updated_at AS updatedAt, c.submitted_at AS submittedAt,
+        (SELECT COUNT(*) FROM exhibitor_files f WHERE f.account_id = c.account_id) AS fileCount,
+        (SELECT id FROM exhibitor_files f WHERE f.account_id = c.account_id AND f.kind = 'logo' ORDER BY created_at DESC LIMIT 1) AS logoId
+      FROM exhibitor_companies c JOIN portal_accounts a ON a.id = c.account_id
+      LEFT JOIN portal_profiles p ON p.account_id = c.account_id
+      ${where} ORDER BY CASE c.status WHEN 'submitted' THEN 0 WHEN 'changes' THEN 1 WHEN 'draft' THEN 2 ELSE 3 END, c.updated_at DESC LIMIT 500`)
+      .all(...(status ? [status] : []));
+    const counts = Object.fromEntries(this.db.prepare('SELECT status, COUNT(*) AS n FROM exhibitor_companies GROUP BY status').all().map((r) => [r.status, Number(r.n)]));
+    return { items: rows.map((row) => ({ ...row, fileCount: Number(row.fileCount) })), counts };
+  }
+
+  listExhibitorFiles(accountId) {
+    return this.db.prepare(`SELECT id, kind, file_name AS fileName, mime, size, created_at AS createdAt
+      FROM exhibitor_files WHERE account_id = ? ORDER BY kind, created_at DESC`).all(accountId)
+      .map((row) => ({ ...row, size: Number(row.size) }));
+  }
+
+  exhibitorFileUsage(accountId) {
+    const rows = this.db.prepare('SELECT kind, COUNT(*) AS n, COALESCE(SUM(size), 0) AS bytes FROM exhibitor_files WHERE account_id = ? GROUP BY kind').all(accountId);
+    const byKind = Object.fromEntries(rows.map((r) => [r.kind, Number(r.n)]));
+    return { byKind, bytes: rows.reduce((sum, r) => sum + Number(r.bytes), 0) };
+  }
+
+  addExhibitorFile({ id, accountId, kind, fileName, mime, size, sha256, storageKey }) {
+    this.db.prepare(`INSERT INTO exhibitor_files (id, account_id, kind, file_name, mime, size, sha256, storage_key, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(id, accountId, kind, fileName, mime, size, sha256, storageKey, nowIso());
+    this.db.prepare(`UPDATE exhibitor_companies SET status = 'submitted', submitted_at = ?, updated_at = ?
+      WHERE account_id = ? AND status = 'approved'`).run(nowIso(), nowIso(), accountId);
+    return this.getExhibitorFile(id);
+  }
+
+  getExhibitorFile(id) {
+    const row = this.db.prepare(`SELECT id, account_id AS accountId, kind, file_name AS fileName, mime, size, sha256,
+        storage_key AS storageKey, created_at AS createdAt FROM exhibitor_files WHERE id = ?`).get(id);
+    return row ? { ...row, size: Number(row.size) } : null;
+  }
+
+  deleteExhibitorFile(id) {
+    const file = this.getExhibitorFile(id);
+    if (file) this.db.prepare('DELETE FROM exhibitor_files WHERE id = ?').run(id);
+    return file;
   }
 
   updatePortalAccount(id, { active }, actorEmail) {
@@ -901,9 +1027,10 @@ export class BackendStore {
       .run(nowIso(), id);
   }
 
-  failDelivery(id, attempts, error, maxAttempts = 8) {
+  failDelivery(id, attempts, error, maxAttempts = 8, minWaitMs = 0) {
     const terminal = attempts >= maxAttempts;
-    const wait = Math.min(60 * 60 * 1000, 30_000 * (2 ** Math.max(0, attempts - 1)));
+    /* exponential back-off, but never sooner than the provider asked for (Telegram's 429) */
+    const wait = Math.max(Number(minWaitMs) || 0, Math.min(60 * 60 * 1000, 30_000 * (2 ** Math.max(0, attempts - 1))));
     const next = terminal ? nowIso() : new Date(Date.now() + wait).toISOString();
     this.db.prepare(`UPDATE delivery_outbox SET state = ?, attempts = ?, next_attempt_at = ?, last_error = ? WHERE id = ?`)
       .run(terminal ? 'failed' : 'pending', attempts, next, String(error || 'delivery failed').slice(0, 500), id);

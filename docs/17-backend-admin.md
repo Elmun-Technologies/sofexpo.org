@@ -247,3 +247,40 @@ Backend integratsion testlar: `npm run test:backend`. To‘liq loyiha suite’i 
 `npm test` (yoki `npm run check`) orqali ishlaydi. Backend testlari admin/portal login va CSRF,
 role isolation, visitor/exhibitor ariza flow’i, admin akkaunt qidiruvi/bloklash va sessiya bekor qilish,
 portal analytics, CORS, SQLite, outbox retry, eksport va last-admin himoyasini tekshiradi.
+
+## Eksponent kartasi: logotip, flayer, katalog, foto (2026-10-15)
+
+Eksponent kabinetida **Kompaniya kartasi**: brend nomi, ko‘rgazma, stend raqami, kompaniya haqida
+(≥40 belgi), mahsulotlar, sayt/Instagram/Telegram, ko‘rgazma bo‘yicha kontakt va fayllar.
+Holat: `draft` → `submitted` (eksponent yuboradi; brend, tavsif, ko‘rgazma va logotip majburiy) →
+`approved` yoki `changes` (tashkilotchi izoh bilan qaytaradi). Tasdiqlangan kartaga o‘zgarish yoki
+yangi fayl kirsa, u yana `submitted` bo‘ladi.
+
+| Slot | Turi (birinchi baytlardan aniqlanadi) | Hajm | Soni |
+|---|---|---|---|
+| logo | PNG, JPG, WebP (SVG qabul qilinmaydi) | 3 MB | 1 (yangisi almashtiradi) |
+| flyer | PDF, PNG, JPG, WebP | 15 MB | 10 |
+| catalog | PDF | 25 MB | 3 |
+| photo | PNG, JPG, WebP | 8 MB | 12 |
+
+Akkaunt bo‘yicha jami 120 MB. Fayllar `PORTAL_UPLOAD_DIR` da (standart: baza yonidagi `uploads/`,
+ya’ni o‘sha persistent volume) `akkaunt/uuid.kengaytma` nomi bilan saqlanadi; fayl nomi tozalanadi.
+Qaytarishda `nosniff` + `sandbox` CSP; rasmlar inline, PDF yuklab olish sifatida.
+
+API: `GET/PUT /api/portal/company`, `POST /api/portal/files?kind=…` (xom body, `X-File-Name`),
+`GET/DELETE /api/portal/files/:id`; admin: `GET /api/admin/exhibitor-profiles?status=`,
+`GET /api/admin/files/:id`, `PATCH /api/admin/portal-accounts/:id/company {status, note}`.
+Admin panelda yangi bo‘lim **Eksponent kartalari** (tekshiruvdagilar soni yon menyuda) va
+akkaunt kartasida logotip, fayllar, «Tasdiqlash» / «Tuzatishga qaytarish».
+
+## Telegram bot tekshiruvi (2026-10-15)
+
+- Telegram rad etsa sababi saqlanadi (`Telegram 400: Bad Request: chat not found`) — admin panel
+  «Integratsiyalar» → yetkazilmagan murojaatlar jadvalida ko‘rinadi.
+- 429 da Telegram so‘ragan `retry_after` kutiladi (eksponensial kutishdan kam emas).
+- «Integratsiyalar» → **Test xabar yuborish**: token, chat va botning chatga yozish huquqini bitta
+  bosishda tekshiradi (`POST /api/admin/system/telegram-test`).
+- `TELEGRAM_API_BASE` (ixtiyoriy) — Bot API manzili; testlar soxta server bilan to‘liq zanjirni
+  tekshiradi (`tests/backend.test.mjs`).
+- Bot ishlashi uchun serverda `TELEGRAM_BOT_TOKEN` va `TELEGRAM_CHAT_ID` o‘rnatilgan bo‘lishi va bot
+  o‘sha chat/guruhga qo‘shilgan (kanal bo‘lsa — admin) bo‘lishi shart.

@@ -117,6 +117,61 @@
           </section>
 
           <section class="portal-main-column">
+            <section class="portal-card company-card" id="company-card" hidden aria-labelledby="company-title">
+              <div class="card-heading"><div><p class="eyebrow" data-i18n="companyKicker">KOMPANIYA KARTASI</p><h2 id="company-title" data-i18n="companyTitle">Katalog va reklama uchun ma’lumotlar</h2></div><span class="company-status" id="company-status" data-status="draft"></span></div>
+              <p class="card-lead" data-i18n="companyLead">Logotip, flayer va kompaniya haqidagi matn ko‘rgazma katalogi, sayt va ijtimoiy tarmoqlardagi e’lonlar uchun ishlatiladi. Tashkilotchi tekshirib tasdiqlaydi.</p>
+              <div class="company-review" id="company-review" role="status" hidden><strong data-i18n="reviewNoteLabel">Tashkilotchi izohi</strong><p id="company-review-note"></p></div>
+
+              <div class="company-logo">
+                <div class="company-logo__preview" id="company-logo-preview"><span data-i18n="logoEmpty">Logotip yo‘q</span></div>
+                <div class="company-logo__body">
+                  <h3 data-i18n="logoTitle">Logotip</h3>
+                  <p class="hint" data-i18n="logoHint">PNG, JPG yoki WebP · 3 MB gacha · shaffof yoki oq fon</p>
+                  <label class="button button-quiet file-button"><input type="file" accept="image/png,image/jpeg,image/webp" data-upload="logo" /><span data-i18n="uploadLogo">Logotip yuklash</span></label>
+                </div>
+              </div>
+
+              <form id="company-form" class="form-stack company-form" novalidate>
+                <div class="form-grid-2">
+                  <div><label for="company-brand" data-i18n="fieldBrand">Brend nomi (katalogda)</label><input id="company-brand" name="brandName" maxlength="120" required /></div>
+                  <div><label for="company-event" data-i18n="fieldShow">Ko‘rgazma</label><select id="company-event" name="event"><option value="" data-i18n="chooseEvent">Tadbirni tanlang</option></select></div>
+                </div>
+                <div class="form-grid-2">
+                  <div><label for="company-stand" data-i18n="fieldStand">Stend raqami</label><input id="company-stand" name="stand" maxlength="40" placeholder="B-14" /></div>
+                  <div><label for="company-website" data-i18n="profileWebsite">Sayt</label><input id="company-website" name="website" type="url" maxlength="300" placeholder="https://" /></div>
+                </div>
+                <label for="company-description" data-i18n="fieldDescription">Kompaniya haqida</label>
+                <textarea id="company-description" name="description" rows="4" maxlength="2000" aria-describedby="company-description-hint"></textarea>
+                <p class="hint" id="company-description-hint"><span data-i18n="descriptionHint">Kamida 40 belgi: nima ishlab chiqarasiz yoki sotasiz, kimlar uchun.</span> <span id="company-description-count">0/2000</span></p>
+                <label for="company-products" data-i18n="fieldProducts">Mahsulot va xizmatlar</label>
+                <textarea id="company-products" name="products" rows="2" maxlength="1000"></textarea>
+                <div class="form-grid-2">
+                  <div><label for="company-instagram">Instagram</label><input id="company-instagram" name="instagram" maxlength="120" placeholder="@brand" /></div>
+                  <div><label for="company-telegram">Telegram</label><input id="company-telegram" name="telegram" maxlength="120" placeholder="@brand" /></div>
+                </div>
+                <fieldset class="company-contact">
+                  <legend data-i18n="contactBlock">Ko‘rgazma bo‘yicha kontakt</legend>
+                  <div class="form-grid-3">
+                    <div><label for="company-contact-name" data-i18n="fieldName">Ism-familiya</label><input id="company-contact-name" name="contactName" maxlength="120" autocomplete="name" /></div>
+                    <div><label for="company-contact-phone" data-i18n="fieldPhone">Telefon</label><input id="company-contact-phone" name="contactPhone" type="tel" maxlength="60" autocomplete="tel" /></div>
+                    <div><label for="company-contact-email" data-i18n="fieldEmail">Email manzil</label><input id="company-contact-email" name="contactEmail" type="email" maxlength="200" autocomplete="email" /></div>
+                  </div>
+                </fieldset>
+
+                <div class="company-files">
+                  <section class="company-files__group" data-kind="flyer"><div class="company-files__head"><div><h3 data-i18n="flyersTitle">Flayerlar</h3><p class="hint" data-i18n="flyersHint">PDF, PNG, JPG, WebP · har biri 15 MB gacha · 10 tagacha</p></div><label class="button button-quiet file-button"><input type="file" multiple accept="application/pdf,image/png,image/jpeg,image/webp" data-upload="flyer" /><span data-i18n="addFiles">Fayl qo‘shish</span></label></div><ul class="file-list" data-files="flyer"></ul></section>
+                  <section class="company-files__group" data-kind="catalog"><div class="company-files__head"><div><h3 data-i18n="catalogTitle">Katalog / taqdimot</h3><p class="hint" data-i18n="catalogHint">PDF · 25 MB gacha · 3 tagacha</p></div><label class="button button-quiet file-button"><input type="file" multiple accept="application/pdf" data-upload="catalog" /><span data-i18n="addFiles">Fayl qo‘shish</span></label></div><ul class="file-list" data-files="catalog"></ul></section>
+                  <section class="company-files__group" data-kind="photo"><div class="company-files__head"><div><h3 data-i18n="photosTitle">Stend va mahsulot fotolari</h3><p class="hint" data-i18n="photosHint">PNG, JPG, WebP · 8 MB gacha · 12 tagacha</p></div><label class="button button-quiet file-button"><input type="file" multiple accept="image/png,image/jpeg,image/webp" data-upload="photo" /><span data-i18n="addFiles">Fayl qo‘shish</span></label></div><ul class="file-list" data-files="photo"></ul></section>
+                </div>
+
+                <div class="company-actions">
+                  <button class="button button-quiet" type="submit" data-company-action="save"><span data-i18n="saveDraft">Saqlash</span></button>
+                  <button class="button button-dark" type="button" data-company-action="submit"><span data-i18n="submitReview">Tekshiruvga yuborish</span> <span aria-hidden="true">→</span></button>
+                </div>
+                <p id="company-error" class="form-error" role="alert" hidden></p>
+              </form>
+            </section>
+
             <section class="portal-card request-card">
               <div class="card-heading"><div><p class="eyebrow" id="request-kicker">YANGI MUROJAAT</p><h2 id="request-title">Tashrif rejasini yuborish</h2></div><span class="heading-icon">↗</span></div>
               <p class="card-lead" id="request-card-lead">Tadbirni tanlang va tashkilotchilarga qiziqishingiz haqida xabar yuboring.</p>

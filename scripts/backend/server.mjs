@@ -1,7 +1,7 @@
 import http from 'node:http';
-import { timingSafeEqual } from 'node:crypto';
-import { readFileSync } from 'node:fs';
-import { extname } from 'node:path';
+import { createHash, randomUUID, timingSafeEqual } from 'node:crypto';
+import { createReadStream, existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
+import { dirname, extname, join, resolve as resolvePath } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { BackendStore, LEAD_PRIORITIES, LEAD_STATUSES, USER_ROLES } from './db.mjs';
 import { createSecret, hashToken, normalizeEmail, validEmail, validPassword, verifyPassword } from './auth.mjs';
@@ -27,6 +27,26 @@ const PORTAL_EVENTS = [
   { slug: 'world-edu-expo', name: 'WORLD EDU · SPRING 2027', dates: '9–10 aprel 2027' },
   { slug: 'ecom-retail-expo', name: 'ECOM & RETAIL EXPO', dates: '16–17 iyun 2027' },
 ];
+/* exhibitor uploads (logo, flyers, catalogue, stand photos): what each slot accepts, how many
+   files and how large. The type is read from the file's first bytes, never from its name or the
+   browser's Content-Type, and SVG is not accepted (it can carry script). */
+const IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
+const UPLOAD_KINDS = {
+  logo: { max: 1, bytes: 3 * 1024 * 1024, types: IMAGE_TYPES },
+  flyer: { max: 10, bytes: 15 * 1024 * 1024, types: ['application/pdf', ...IMAGE_TYPES] },
+  catalog: { max: 3, bytes: 25 * 1024 * 1024, types: ['application/pdf'] },
+  photo: { max: 12, bytes: 8 * 1024 * 1024, types: IMAGE_TYPES },
+};
+const UPLOAD_QUOTA_BYTES = 120 * 1024 * 1024;
+const UPLOAD_EXT = { 'image/png': '.png', 'image/jpeg': '.jpg', 'image/webp': '.webp', 'application/pdf': '.pdf' };
+function sniffUpload(buffer) {
+  if (buffer.length >= 8 && buffer[0] === 0x89 && buffer.subarray(1, 4).toString('latin1') === 'PNG') return 'image/png';
+  if (buffer.length >= 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff) return 'image/jpeg';
+  if (buffer.length >= 12 && buffer.subarray(0, 4).toString('latin1') === 'RIFF' && buffer.subarray(8, 12).toString('latin1') === 'WEBP') return 'image/webp';
+  if (buffer.length >= 5 && buffer.subarray(0, 5).toString('latin1') === '%PDF-') return 'application/pdf';
+  return '';
+}
+const COMPANY_STATUSES = new Set(['approved', 'changes']);
 const LEAD_TEXT_FIELDS = {
   formType: 'Форма', event: 'Выставка', name: 'Имя', company: 'Компания', position: 'Должность',
   phone: 'Телефон', email: 'Email', direction: 'Направление', area: 'Площадь', goal: 'Задача',
@@ -249,6 +269,40 @@ async function readJson(req, maxBytes = 32_000) {
   }
 }
 
+function uploadLimits() {
+  return Object.fromEntries(Object.entries(UPLOAD_KINDS).map(([kind, rule]) => [kind, { max: rule.max, megabytes: Math.round(rule.bytes / 1024 / 1024), types: rule.types }]));
+}
+
+async function readUpload(req, maxBytes) {
+  const declared = Number(req.headers['content-length'] || 0);
+  if (declared > maxBytes) throw new HttpError(413, `Fayl juda katta: ${Math.round(maxBytes / 1024 / 1024)} MB gacha ruxsat etiladi.`);
+  const chunks = [];
+  let size = 0;
+  for await (const chunk of req) {
+    size += chunk.length;
+    if (size > maxBytes) throw new HttpError(413, `Fayl juda katta: ${Math.round(maxBytes / 1024 / 1024)} MB gacha ruxsat etiladi.`);
+    chunks.push(chunk);
+  }
+  if (!size) throw new HttpError(400, 'Fayl bo‘sh.');
+  return Buffer.concat(chunks);
+}
+
+/* an uploaded file back to its owner or the organiser: images inline (previews), PDFs as a
+   download; nosniff and a sandboxing CSP so a file can never act as a page */
+function sendUpload(res, file, absolutePath) {
+  if (!existsSync(absolutePath)) throw new HttpError(404, 'Fayl topilmadi.');
+  const inline = file.mime.startsWith('image/');
+  res.writeHead(200, {
+    'Content-Type': file.mime,
+    'Content-Length': file.size,
+    'Content-Disposition': `${inline ? 'inline' : 'attachment'}; filename*=UTF-8''${encodeURIComponent(file.fileName)}`,
+    'X-Content-Type-Options': 'nosniff',
+    'Content-Security-Policy': "default-src 'none'; sandbox",
+    'Cache-Control': 'private, no-store',
+  });
+  createReadStream(absolutePath).pipe(res);
+}
+
 function sendJson(res, status, data) {
   const body = JSON.stringify(data);
   res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': Buffer.byteLength(body), 'Cache-Control': 'no-store' });
@@ -342,6 +396,15 @@ export function createLeadServer(options = {}) {
   const maxDeliveryAttempts = clamp(options.maxDeliveryAttempts, 1, 20, 8);
   const telegramToken = options.telegramToken ?? process.env.TELEGRAM_BOT_TOKEN ?? '';
   const telegramChat = options.telegramChat ?? process.env.TELEGRAM_CHAT_ID ?? '';
+  /* the Bot API host; overridable so a test (or a proxy in a blocked network) can stand in */
+  /* exhibitor uploads live next to the database (the same persistent volume on Fly) */
+  const uploadDir = resolvePath(options.uploadDir ?? process.env.PORTAL_UPLOAD_DIR ?? join(dirname(dbPath === ':memory:' ? '.data/x' : dbPath), 'uploads'));
+  const uploadPath = (storageKey) => {
+    const absolute = resolvePath(uploadDir, storageKey);
+    if (!absolute.startsWith(uploadDir + '/')) throw new HttpError(400, 'Fayl yo‘li noto‘g‘ri.');
+    return absolute;
+  };
+  const telegramApiBase = String(options.telegramApiBase ?? process.env.TELEGRAM_API_BASE ?? 'https://api.telegram.org').replace(/\/+$/, '');
   const crmWebhookUrl = options.crmWebhookUrl ?? process.env.CRM_WEBHOOK_URL ?? '';
   const crmWebhookToken = options.crmWebhookToken ?? process.env.CRM_WEBHOOK_TOKEN ?? '';
   const deliverProvider = options.deliverProvider;
@@ -477,16 +540,25 @@ export function createLeadServer(options = {}) {
     return secureEqual(header, ingressSecret) || secureEqual(query, ingressSecret);
   };
 
+  /* Telegram says why it refused ("chat not found", "bot was blocked by the user", "Too Many
+     Requests: retry after 17"); that sentence is what the admin needs to fix the bot, so it is
+     kept in the error, and a 429's retry_after becomes the next attempt's delay. */
   async function sendTelegram(text) {
-    const response = await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
+    const response = await fetch(`${telegramApiBase}/bot${telegramToken}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ chat_id: telegramChat, text, disable_web_page_preview: true }),
       signal: AbortSignal.timeout(8_000),
     });
-    if (!response.ok) throw new Error(`Telegram HTTP ${response.status}`);
     const result = await response.json().catch(() => null);
-    if (!result?.ok) throw new Error('Telegram rejected the message');
+    if (!response.ok || !result?.ok) {
+      const reason = cleanText(result?.description || (response.ok ? 'rejected the message' : `HTTP ${response.status}`), 300);
+      const error = new Error(`Telegram ${response.status}: ${reason}`);
+      const retryAfter = Number(result?.parameters?.retry_after);
+      if (Number.isFinite(retryAfter) && retryAfter > 0) error.retryAfterMs = retryAfter * 1000;
+      throw error;
+    }
+    return result.result;
   }
 
   async function sendCrm(lead) {
@@ -520,7 +592,7 @@ export function createLeadServer(options = {}) {
           console.info(`[lead-backend] delivery ${job.id} (${job.provider}) sent`);
         } catch (error) {
           const message = cleanText(error?.message || 'Delivery failed', 500);
-          store.failDelivery(job.id, attempts, message, maxDeliveryAttempts);
+          store.failDelivery(job.id, attempts, message, maxDeliveryAttempts, error?.retryAfterMs);
           console.error(`[lead-backend] delivery ${job.id} (${job.provider}) failed: ${message}`);
         }
       }
@@ -759,6 +831,105 @@ export function createLeadServer(options = {}) {
         return sendJson(res, 200, { ok: true, user: portalAccountResponse(account) });
       }
 
+      /* ---------- exhibitor company profile: text, logo, flyers, catalogue, photos ---------- */
+      if (path === '/api/portal/company' || path.startsWith('/api/portal/files')) {
+        const owner = store.getPortalAccountById(session.account_id);
+        if (!owner) throw new HttpError(401, 'Kabinet topilmadi.');
+        if (owner.accountType !== 'exhibitor') throw new HttpError(403, 'Kompaniya profili faqat eksponentlar uchun.');
+
+        if (req.method === 'GET' && path === '/api/portal/company') {
+          return sendJson(res, 200, { ok: true, company: store.getExhibitorCompany(owner.id), limits: uploadLimits(), events: PORTAL_EVENTS });
+        }
+
+        if (req.method === 'PUT' && path === '/api/portal/company') {
+          verifyCsrf(req, session);
+          const body = await readJson(req, 20_000);
+          const fields = {
+            brandName: cleanText(body.brandName, 120),
+            description: cleanText(body.description, 2000),
+            products: cleanText(body.products, 1000),
+            website: cleanText(body.website, 300),
+            instagram: cleanText(body.instagram, 120),
+            telegram: cleanText(body.telegram, 120),
+            contactName: cleanText(body.contactName, 120),
+            contactPhone: cleanText(body.contactPhone, 60),
+            contactEmail: normalizeEmail(cleanText(body.contactEmail, 200)),
+            event: cleanText(body.event, 60),
+            stand: cleanText(body.stand, 40),
+          };
+          if (fields.website) {
+            try {
+              const website = new URL(fields.website);
+              if (!['http:', 'https:'].includes(website.protocol) || website.username || website.password) throw new Error('invalid');
+              fields.website = website.origin + website.pathname.slice(0, 180);
+            } catch { throw new HttpError(422, 'Sayt manzili http:// yoki https:// bilan boshlansin.'); }
+          }
+          if (fields.contactEmail && !validEmail(fields.contactEmail)) throw new HttpError(422, 'Kontakt email manzili noto‘g‘ri.');
+          if (fields.event && !PORTAL_EVENTS.some((item) => item.slug === fields.event)) throw new HttpError(422, 'Ko‘rgazmani ro‘yxatdan tanlang.');
+          const submit = body.submit === true;
+          if (submit) {
+            const missing = [];
+            if (!fields.brandName) missing.push('brend nomi');
+            if (fields.description.length < 40) missing.push('kompaniya haqida kamida 40 belgi');
+            if (!fields.event) missing.push('ko‘rgazma');
+            if (!store.exhibitorFileUsage(owner.id).byKind.logo) missing.push('logotip');
+            if (missing.length) throw new HttpError(422, `Tekshiruvga yuborish uchun to‘ldiring: ${missing.join(', ')}.`);
+          }
+          const company = store.saveExhibitorCompany(owner.id, fields, { submit });
+          if (submit) store.audit(owner.email, 'exhibitor_profile.submit', 'portal_account', owner.id, { brandName: fields.brandName, event: fields.event });
+          return sendJson(res, 200, { ok: true, company });
+        }
+
+        if (req.method === 'POST' && path === '/api/portal/files') {
+          verifyCsrf(req, session);
+          if (!rateAllowed(`portal-upload:${owner.id}`, 60, 60 * 60_000)) throw new HttpError(429, 'Yuklashlar soni ko‘p. Birozdan keyin urinib ko‘ring.');
+          const kind = cleanText(url.searchParams.get('kind'), 20);
+          const rule = UPLOAD_KINDS[kind];
+          if (!rule) throw new HttpError(422, 'Fayl turi noto‘g‘ri: logo, flyer, catalog yoki photo.');
+          const usage = store.exhibitorFileUsage(owner.id);
+          if (kind !== 'logo' && (usage.byKind[kind] || 0) >= rule.max) throw new HttpError(422, `Bu bo‘limga ko‘pi bilan ${rule.max} ta fayl yuklash mumkin.`);
+          const buffer = await readUpload(req, rule.bytes);
+          const mime = sniffUpload(buffer);
+          if (!mime || !rule.types.includes(mime)) {
+            throw new HttpError(415, kind === 'catalog' ? 'Katalog PDF formatida bo‘lishi kerak.' : kind === 'flyer' ? 'Flayer PDF, PNG, JPG yoki WebP bo‘lishi kerak.' : 'Rasm PNG, JPG yoki WebP bo‘lishi kerak.');
+          }
+          const previousLogo = kind === 'logo' ? store.listExhibitorFiles(owner.id).filter((f) => f.kind === 'logo') : [];
+          const freed = previousLogo.reduce((sum, f) => sum + f.size, 0);
+          if (usage.bytes - freed + buffer.length > UPLOAD_QUOTA_BYTES) throw new HttpError(413, 'Kabinetdagi fayllar hajmi 120 MB dan oshib ketadi. Eskisini o‘chiring.');
+          let rawName = String(req.headers['x-file-name'] || '');
+          try { rawName = decodeURIComponent(rawName); } catch { /* keep as sent */ }
+          const base = cleanText(rawName.split(/[\\/]/).pop().replace(/\.[a-z0-9]{1,5}$/i, ''), 100).replace(/[^\p{L}\p{N} ._()-]+/gu, '').trim() || kind;
+          const id = randomUUID();
+          const storageKey = `${owner.id}/${id}${UPLOAD_EXT[mime]}`;
+          const absolute = uploadPath(storageKey);
+          mkdirSync(dirname(absolute), { recursive: true });
+          writeFileSync(absolute, buffer, { flag: 'wx' });
+          const file = store.addExhibitorFile({
+            id, accountId: owner.id, kind, fileName: `${base}${UPLOAD_EXT[mime]}`, mime, size: buffer.length,
+            sha256: createHash('sha256').update(buffer).digest('hex'), storageKey,
+          });
+          for (const old of previousLogo) {
+            const removed = store.deleteExhibitorFile(old.id);
+            if (removed) try { unlinkSync(uploadPath(removed.storageKey)); } catch { /* already gone */ }
+          }
+          return sendJson(res, 201, { ok: true, file: { id: file.id, kind: file.kind, fileName: file.fileName, mime: file.mime, size: file.size, createdAt: file.createdAt } });
+        }
+
+        const ownFile = path.match(/^\/api\/portal\/files\/([a-f0-9-]{36})$/i);
+        if (ownFile) {
+          const file = store.getExhibitorFile(ownFile[1]);
+          if (!file || file.accountId !== owner.id) throw new HttpError(404, 'Fayl topilmadi.');
+          if (req.method === 'GET') return sendUpload(res, file, uploadPath(file.storageKey));
+          if (req.method === 'DELETE') {
+            verifyCsrf(req, session);
+            store.deleteExhibitorFile(file.id);
+            try { unlinkSync(uploadPath(file.storageKey)); } catch { /* already gone */ }
+            return sendJson(res, 200, { ok: true });
+          }
+        }
+        throw new HttpError(405, 'Bu amal qo‘llab-quvvatlanmaydi.');
+      }
+
       if (req.method === 'GET' && path === '/api/portal/requests') {
         return sendJson(res, 200, { ok: true, items: store.listPortalRequests(session.account_id) });
       }
@@ -844,6 +1015,32 @@ export function createLeadServer(options = {}) {
         return sendJson(res, 200, { ok: true, ...store.analytics(clamp(url.searchParams.get('days'), 1, 90, 30)) });
       }
 
+      if (req.method === 'GET' && path === '/api/admin/exhibitor-profiles') {
+        const status = cleanText(url.searchParams.get('status'), 20);
+        if (status && !['draft', 'submitted', 'approved', 'changes'].includes(status)) throw new HttpError(422, 'Holat filtri noto‘g‘ri.');
+        return sendJson(res, 200, { ok: true, ...store.listExhibitorCompanies({ status }) });
+      }
+
+      const adminFile = path.match(/^\/api\/admin\/files\/([a-f0-9-]{36})$/i);
+      if (adminFile && req.method === 'GET') {
+        const file = store.getExhibitorFile(adminFile[1]);
+        if (!file) throw new HttpError(404, 'Fayl topilmadi.');
+        return sendUpload(res, file, uploadPath(file.storageKey));
+      }
+
+      const companyReview = path.match(/^\/api\/admin\/portal-accounts\/([a-f0-9-]{36})\/company$/i);
+      if (companyReview && req.method === 'PATCH') {
+        verifyCsrf(req, session);
+        const body = await readJson(req, 8_000);
+        const status = cleanText(body.status, 20);
+        if (!COMPANY_STATUSES.has(status)) throw new HttpError(422, 'Holat approved yoki changes bo‘lishi kerak.');
+        const note = cleanText(body.note, 1000);
+        if (status === 'changes' && note.length < 5) throw new HttpError(422, 'Eksponentga nimani tuzatish kerakligini yozing.');
+        const company = store.reviewExhibitorCompany(companyReview[1], { status, note }, session.email);
+        if (!company) throw new HttpError(404, 'Kompaniya profili hali to‘ldirilmagan.');
+        return sendJson(res, 200, { ok: true, company });
+      }
+
       if (req.method === 'GET' && path === '/api/admin/portal-accounts') {
         const accountType = cleanText(url.searchParams.get('type'), 20);
         const active = url.searchParams.get('active') ?? '';
@@ -925,6 +1122,21 @@ export function createLeadServer(options = {}) {
           const note = store.addLeadNote(leadId, { userId: session.user_id, authorEmail: session.email, body: text });
           if (!note) throw new HttpError(404, 'Lid topilmadi.');
           return sendJson(res, 201, { ok: true, note });
+        }
+      }
+
+      if (req.method === 'POST' && path === '/api/admin/system/telegram-test') {
+        requireAdmin(session);
+        verifyCsrf(req, session);
+        if (!telegramToken || !telegramChat) {
+          return sendJson(res, 200, { ok: false, configured: false, error: 'TELEGRAM_BOT_TOKEN yoki TELEGRAM_CHAT_ID o‘rnatilmagan.' });
+        }
+        try {
+          const message = await sendTelegram(`✅ SOF EXPO: bot ulangan. Test xabar ${new Date().toISOString()} da ${session.email} tomonidan yuborildi.`);
+          store.audit(session.email, 'system.telegram_test', 'system', 'telegram', { ok: true });
+          return sendJson(res, 200, { ok: true, configured: true, messageId: message?.message_id ?? null });
+        } catch (error) {
+          return sendJson(res, 200, { ok: false, configured: true, error: cleanText(error?.message || 'Telegram xatosi', 300) });
         }
       }
 

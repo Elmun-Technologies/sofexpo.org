@@ -545,3 +545,181 @@ test('backend bootstraps only an environment-provided admin and protects last ad
   assert.match(result.data.error, /Oxirgi faol admin/);
   assert.equal(server.backendStore.listUsers()[0].active, 1);
 });
+
+/* The real Telegram path (no deliverProvider stub): a local stand-in for the Bot API checks the
+   request the bot sends, then answers the way Telegram does when something is wrong. */
+async function startFakeTelegram(t, reply) {
+  const { createServer } = await import('node:http');
+  const calls = [];
+  const server = createServer((req, res) => {
+    let raw = '';
+    req.on('data', (chunk) => { raw += chunk; });
+    req.on('end', () => {
+      calls.push({ url: req.url, body: JSON.parse(raw || '{}') });
+      const [status, body] = reply(calls.length);
+      res.writeHead(status, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(body));
+    });
+  });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => new Promise((resolve) => server.close(resolve)));
+  return { base: `http://127.0.0.1:${server.address().port}`, calls };
+}
+
+test('telegram bot: sends the lead to the configured chat, keeps Telegram’s reason and its retry_after', async (t) => {
+  let mode = 'ok';
+  const telegram = await startFakeTelegram(t, () => {
+    if (mode === 'ok') return [200, { ok: true, result: { message_id: 42 } }];
+    if (mode === 'chat') return [400, { ok: false, error_code: 400, description: 'Bad Request: chat not found' }];
+    return [429, { ok: false, error_code: 429, description: 'Too Many Requests: retry after 90', parameters: { retry_after: 90 } }];
+  });
+  const { server, base } = await startBackend(t, {
+    telegramToken: '123:ABC', telegramChat: '-1001234567890', telegramApiBase: telegram.base, maxDeliveryAttempts: 3,
+  });
+
+  const sent = await jsonRequest(base, '/lead', {
+    method: 'POST', body: { name: 'Bot Lead', company: 'Tasty LLC', phone: '+998901112233', email: 'bot@tasty.test', industry: 'Food', area: '18', consent: true, event: 'FOODERA EXPO 2026', formType: 'exhibitor' },
+  });
+  assert.equal(sent.response.status, 202);
+  assert.ok(await waitFor(() => server.backendStore.getLead(sent.data.id)?.deliveries[0]?.state === 'sent', 3000));
+  assert.equal(telegram.calls[0].url, '/bot123:ABC/sendMessage');
+  assert.equal(telegram.calls[0].body.chat_id, '-1001234567890');
+  assert.match(telegram.calls[0].body.text, /Bot Lead/);
+  assert.match(telegram.calls[0].body.text, /FOODERA EXPO 2026/);
+  assert.ok(telegram.calls[0].body.text.length <= 4096);
+
+  mode = 'chat';
+  const lost = await jsonRequest(base, '/lead', { method: 'POST', body: { name: 'Chat Missing', phone: '+998901112244', formType: 'callback' } });
+  assert.ok(await waitFor(() => /chat not found/.test(server.backendStore.getLead(lost.data.id)?.deliveries[0]?.lastError || ''), 3000));
+
+  mode = 'flood';
+  const flood = await jsonRequest(base, '/lead', { method: 'POST', body: { name: 'Flood Lead', phone: '+998901112255', formType: 'callback' } });
+  assert.ok(await waitFor(() => /retry after 90/.test(server.backendStore.getLead(flood.data.id)?.deliveries[0]?.lastError || ''), 3000));
+  const next = Date.parse(server.backendStore.getLead(flood.data.id).deliveries[0].nextAttemptAt);
+  assert.ok(next - Date.now() > 80_000, 'the next attempt waits at least as long as Telegram asked');
+
+  const session = await login(base);
+  mode = 'ok';
+  const probe = await jsonRequest(base, '/api/admin/system/telegram-test', { method: 'POST', cookie: session.cookie, csrf: session.csrf, body: {} });
+  assert.equal(probe.data.ok, true);
+  assert.equal(probe.data.messageId, 42);
+  mode = 'chat';
+  const broken = await jsonRequest(base, '/api/admin/system/telegram-test', { method: 'POST', cookie: session.cookie, csrf: session.csrf, body: {} });
+  assert.equal(broken.data.ok, false);
+  assert.match(broken.data.error, /chat not found/);
+});
+
+test('telegram test button explains a missing bot configuration', async (t) => {
+  const { base } = await startBackend(t);
+  const session = await login(base);
+  const probe = await jsonRequest(base, '/api/admin/system/telegram-test', { method: 'POST', cookie: session.cookie, csrf: session.csrf, body: {} });
+  assert.equal(probe.data.ok, false);
+  assert.equal(probe.data.configured, false);
+});
+
+/* An exhibitor fills the company card (logo, flyers, catalogue, text) and sends it for review;
+   the organiser sees it, downloads the files and approves or asks for changes. */
+const PNG_1PX = Buffer.from('89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c4890000000d49444154789c6360000002000154a24f5d0000000049454e44ae426082', 'hex');
+const PDF_MIN = Buffer.from('%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF\n');
+
+async function upload(base, { cookie, csrf, kind, name, body }) {
+  const response = await fetch(`${base}/api/portal/files?kind=${kind}`, {
+    method: 'POST', headers: { Cookie: cookie, 'X-CSRF-Token': csrf, 'Content-Type': 'application/octet-stream', 'X-File-Name': encodeURIComponent(name) }, body,
+  });
+  return { response, data: await response.json() };
+}
+
+test('exhibitor company profile: uploads are checked by content, reviewed by the organiser, private to the owner', async (t) => {
+  const { base } = await startBackend(t);
+  const reg = await jsonRequest(base, '/api/portal/register', {
+    method: 'POST', body: {
+      accountType: 'exhibitor', name: 'Aziz Rahimov', email: 'brand@tasty.test', password: 'exhibitor-password-2026',
+      phone: '+998 91 234 56 78', company: 'Tasty Foods LLC', country: 'Uzbekistan', industry: 'Food manufacturing', consent: 'yes',
+    },
+  });
+  assert.equal(reg.response.status, 201);
+  const cookie = reg.response.headers.get('set-cookie').split(';')[0];
+  const csrf = reg.data.csrfToken;
+  const accountId = reg.data.user.id;
+
+  let company = await jsonRequest(base, '/api/portal/company', { cookie });
+  assert.equal(company.data.company.status, 'draft');
+  assert.equal(company.data.limits.logo.max, 1);
+
+  // submit without a logo is refused with the missing items named
+  const early = await jsonRequest(base, '/api/portal/company', { method: 'PUT', cookie, csrf, body: { brandName: 'Tasty', submit: true } });
+  assert.equal(early.response.status, 422);
+  assert.match(early.data.error, /logotip/);
+
+  // a renamed text file is not an image, and SVG is never accepted
+  const fake = await upload(base, { cookie, csrf, kind: 'logo', name: 'logo.png', body: Buffer.from('<svg onload=alert(1)></svg>') });
+  assert.equal(fake.response.status, 415);
+  const pdfAsLogo = await upload(base, { cookie, csrf, kind: 'logo', name: 'logo.pdf', body: PDF_MIN });
+  assert.equal(pdfAsLogo.response.status, 415);
+  const logo = await upload(base, { cookie, csrf, kind: 'logo', name: '../../etc/Tasty Logo.png', body: PNG_1PX });
+  assert.equal(logo.response.status, 201);
+  assert.equal(logo.data.file.mime, 'image/png');
+  assert.equal(logo.data.file.fileName, 'Tasty Logo.png');
+  const flyer = await upload(base, { cookie, csrf, kind: 'flyer', name: 'Flyer 2026.pdf', body: PDF_MIN });
+  assert.equal(flyer.response.status, 201);
+  const catalogImage = await upload(base, { cookie, csrf, kind: 'catalog', name: 'cat.png', body: PNG_1PX });
+  assert.equal(catalogImage.response.status, 415);
+  // a second logo replaces the first
+  const logo2 = await upload(base, { cookie, csrf, kind: 'logo', name: 'logo-v2.png', body: PNG_1PX });
+  assert.equal(logo2.response.status, 201);
+  company = await jsonRequest(base, '/api/portal/company', { cookie });
+  assert.deepEqual(company.data.company.files.map((f) => f.kind).sort(), ['flyer', 'logo']);
+
+  // the owner can read a file back with safe headers
+  const own = await fetch(`${base}/api/portal/files/${flyer.data.file.id}`, { headers: { Cookie: cookie } });
+  assert.equal(own.status, 200);
+  assert.equal(own.headers.get('content-type'), 'application/pdf');
+  assert.match(own.headers.get('content-disposition'), /^attachment/);
+  assert.equal(own.headers.get('x-content-type-options'), 'nosniff');
+  assert.ok(Buffer.from(await own.arrayBuffer()).equals(PDF_MIN));
+
+  const saved = await jsonRequest(base, '/api/portal/company', {
+    method: 'PUT', cookie, csrf, body: {
+      brandName: 'Tasty', description: 'Dried fruit and nut mixes from the Fergana valley, packed for retail chains and HoReCa.',
+      products: 'Dried apricots, raisins, nut mixes', website: 'https://tasty.test/about', event: 'foodera-expo', stand: 'B-14',
+      contactEmail: 'sales@tasty.test', submit: true,
+    },
+  });
+  assert.equal(saved.response.status, 200);
+  assert.equal(saved.data.company.status, 'submitted');
+
+  // a visitor has no company card, and cannot read the exhibitor's files
+  const visitor = await jsonRequest(base, '/api/portal/register', {
+    method: 'POST', body: { accountType: 'visitor', name: 'Guest', email: 'guest@tasty.test', password: 'visitor-password-2026', phone: '+998 90 000 00 00', country: 'Uzbekistan', industry: 'Retail', interests: 'Food', consent: 'yes' },
+  });
+  const visitorCookie = visitor.response.headers.get('set-cookie').split(';')[0];
+  assert.equal((await jsonRequest(base, '/api/portal/company', { cookie: visitorCookie })).response.status, 403);
+  assert.equal((await fetch(`${base}/api/portal/files/${flyer.data.file.id}`, { headers: { Cookie: visitorCookie } })).status, 403);
+
+  // the organiser: list, account card, file download, review
+  const session = await login(base);
+  const list = await jsonRequest(base, '/api/admin/exhibitor-profiles', { cookie: session.cookie });
+  assert.equal(list.data.counts.submitted, 1);
+  assert.equal(list.data.items[0].brandName, 'Tasty');
+  assert.ok(list.data.items[0].logoId);
+  const card = await jsonRequest(base, `/api/admin/portal-accounts/${accountId}`, { cookie: session.cookie });
+  assert.equal(card.data.account.company, 'Tasty Foods LLC');
+  assert.equal(card.data.account.exhibitorCard.stand, 'B-14');
+  assert.equal(card.data.account.exhibitorCard.files.length, 2);
+  const staffDownload = await fetch(`${base}/api/admin/files/${logo2.data.file.id}`, { headers: { Cookie: session.cookie } });
+  assert.equal(staffDownload.status, 200);
+  assert.equal(staffDownload.headers.get('content-type'), 'image/png');
+  const vague = await jsonRequest(base, `/api/admin/portal-accounts/${accountId}/company`, { method: 'PATCH', cookie: session.cookie, csrf: session.csrf, body: { status: 'changes', note: '' } });
+  assert.equal(vague.response.status, 422);
+  const changes = await jsonRequest(base, `/api/admin/portal-accounts/${accountId}/company`, { method: 'PATCH', cookie: session.cookie, csrf: session.csrf, body: { status: 'changes', note: 'Logo needs a transparent background.' } });
+  assert.equal(changes.data.company.status, 'changes');
+  company = await jsonRequest(base, '/api/portal/company', { cookie });
+  assert.equal(company.data.company.reviewNote, 'Logo needs a transparent background.');
+  const approved = await jsonRequest(base, `/api/admin/portal-accounts/${accountId}/company`, { method: 'PATCH', cookie: session.cookie, csrf: session.csrf, body: { status: 'approved', note: '' } });
+  assert.equal(approved.data.company.status, 'approved');
+
+  // deleting removes the file for good
+  const removed = await jsonRequest(base, `/api/portal/files/${flyer.data.file.id}`, { method: 'DELETE', cookie, csrf });
+  assert.equal(removed.response.status, 200);
+  assert.equal((await fetch(`${base}/api/portal/files/${flyer.data.file.id}`, { headers: { Cookie: cookie } })).status, 404);
+});

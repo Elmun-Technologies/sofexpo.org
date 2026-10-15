@@ -269,6 +269,24 @@ const featured: Record<string, { img: string; alt: string; kicker: string; date?
       if (picker?.open) { picker.open = false; picker.querySelector('summary').focus(); }
       if (accountPicker?.open) { accountPicker.open = false; accountPicker.querySelector('summary').focus(); }
     });
+    /* hide-on-scroll for the compact header (≤1280px): down = away, up = back, never while
+       the phone menu is open or near the top of the page */
+    {
+      const compact = matchMedia('(max-width: 1280px)');
+      let lastY = scrollY;
+      let ticking = false;
+      const update = () => {
+        ticking = false;
+        const y = scrollY;
+        const root = document.documentElement;
+        if (!compact.matches || document.body.classList.contains('nav-open') || y < 160) root.classList.remove('hdr-away');
+        else if (y > lastY + 6) root.classList.add('hdr-away');
+        else if (y < lastY - 6) root.classList.remove('hdr-away');
+        lastY = y;
+      };
+      addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+      document.addEventListener('focusin', (e) => { if (e.target.closest?.('.hdr')) document.documentElement.classList.remove('hdr-away'); });
+    }
     const desktop = matchMedia('(min-width: 1281px)');
     desktop.addEventListener('change', (e) => { if (e.matches) set(false); });
     window.addEventListener('resize', () => { if (document.body.classList.contains('nav-open')) set(true); });

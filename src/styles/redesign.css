@@ -1311,6 +1311,7 @@ main > :is(.block--form, .block--auto-form) :is(.form-ex, .form-vi, .form-org, .
   background: none;
   padding: 0;
   max-width: 980px;
+  margin-inline: auto; /* centred in its panel, not hugging the left with an empty right half */
 }
 main > .calf .pill span {
   margin-left: 0.3em;
@@ -1395,4 +1396,18 @@ main > .evnav {
 }
 .nav:hover .nav__item:not(:hover):not([data-keyboard-open]) .nav__link[aria-current="page"] {
   border-color: var(--ink);
+}
+
+/* phones and tablets: the header steps aside while you read down and comes back the moment
+   you scroll up, so header + bottom booking bar never hold 135px of an 844px screen at once.
+   The show's tab bar follows it to the top edge. Desktop keeps the sticky header (its mega
+   menus need it). */
+@media (max-width: 1280px) {
+  .hdr { transition: transform 0.28s ease; will-change: transform; }
+  html.hdr-away .hdr { transform: translateY(calc(-100% - 6px)); }
+  main > .evnav { transition: top 0.28s ease; }
+  html.hdr-away main > .evnav { top: 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hdr, main > .evnav { transition: none; }
 }

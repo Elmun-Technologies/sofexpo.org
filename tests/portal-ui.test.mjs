@@ -24,12 +24,13 @@ function createPortalPage(search = '', { failRequests = false } = {}) {
   const calls = [];
   let account = null;
   let requests = [];
+  let company = { brandName: '', description: '', products: '', website: '', instagram: '', telegram: '', contactName: '', contactPhone: '', contactEmail: '', event: '', stand: '', status: 'draft', reviewNote: '', files: [] };
 
   window.fetch = async (path, options = {}) => {
-    const call = { path: String(path), method: options.method || 'GET', headers: options.headers || {}, body: options.body ? JSON.parse(options.body) : null };
+    const call = { path: String(path), method: options.method || 'GET', headers: options.headers || {}, body: typeof options.body === 'string' ? JSON.parse(options.body) : options.body ?? null };
     calls.push(call);
     if (call.path === '/api/portal/options') return jsonResponse({ ok: true, events: [foodera] });
-    if (call.path === '/api/portal/me') return jsonResponse({ ok: false, error: 'Login required' }, 401);
+    if (call.path === '/api/portal/me') return account ? jsonResponse({ ok: true, user: account, csrfToken: 'csrf-test-token' }) : jsonResponse({ ok: false, error: 'Login required' }, 401);
     if (call.path === '/api/portal/register') {
       const body = call.body;
       account = {
@@ -60,6 +61,18 @@ function createPortalPage(search = '', { failRequests = false } = {}) {
     if (call.path === '/api/portal/requests' && call.method === 'GET') {
       if (failRequests) return jsonResponse({ ok: false, error: 'Temporary error' }, 503);
       return jsonResponse({ ok: true, items: requests });
+    }
+    if (call.path === '/api/portal/company' && call.method === 'GET') return jsonResponse({ ok: true, company, events: [foodera] });
+    if (call.path === '/api/portal/company' && call.method === 'PUT') {
+      if (call.body.submit && !company.files.some((file) => file.kind === 'logo')) return jsonResponse({ ok: false, error: 'Tekshiruvga yuborish uchun to‘ldiring: logotip.' }, 422);
+      company = { ...company, ...call.body, status: call.body.submit ? 'submitted' : company.status };
+      return jsonResponse({ ok: true, company });
+    }
+    if (call.path.startsWith('/api/portal/files?kind=') && call.method === 'POST') {
+      const kind = call.path.split('=')[1];
+      const file = { id: `file-${company.files.length + 1}`, kind, fileName: decodeURIComponent(call.headers['X-File-Name']), mime: kind === 'logo' ? 'image/png' : 'application/pdf', size: 2048, createdAt: '2026-10-15T10:00:00.000Z' };
+      company.files = [...company.files.filter((item) => kind !== 'logo' || item.kind !== 'logo'), file];
+      return jsonResponse({ ok: true, file }, 201);
     }
     if (call.path === '/api/portal/logout') return jsonResponse({ ok: true });
     throw new Error(`Unexpected portal API request: ${call.method} ${call.path}`);
@@ -314,6 +327,50 @@ test('request history shows a recoverable error instead of an endless loading st
     await waitFor(window, () => !document.querySelector('#portal-view').hidden && document.querySelector('#requests-list .requests-error'));
     assert.match(document.querySelector('#requests-list').textContent, /Qayta urinib ko‘ring/);
     assert.equal(document.querySelector('#portal-view').hidden, false);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('an exhibitor fills the company card: logo upload, refusal without a logo, then review', async () => {
+  const { dom, window, calls } = createPortalPage();
+  try {
+    const document = window.document;
+    await waitFor(window, () => !document.querySelector('#auth-view').hidden, 'auth view did not show');
+    document.querySelector('#register-tab').click();
+    const type = document.querySelector('#register-type');
+    type.value = 'exhibitor';
+    type.dispatchEvent(new window.Event('change', { bubbles: true }));
+    const set = (id, value) => { document.querySelector(id).value = value; };
+    set('#register-name', 'Aziz Rahimov'); set('#register-phone', '+998 91 234 56 78'); set('#register-email', 'brand@tasty.test');
+    set('#register-company', 'Tasty Foods LLC'); set('#register-industry', 'Food'); set('#register-password', 'exhibitor-password-2026');
+    document.querySelector('#register-form input[name="consent"]').checked = true;
+    document.querySelector('#register-form').dispatchEvent(new window.Event('submit', { bubbles: true, cancelable: true }));
+    await waitFor(window, () => !document.querySelector('#company-card').hidden, 'company card did not open for an exhibitor');
+    await waitFor(window, () => document.querySelector('#company-brand').value === 'Tasty Foods LLC', `brand name was not prefilled: toast=${document.querySelector('#toast').textContent} calls=${calls.map((c) => c.method + ' ' + c.path).join(',')}`);
+    assert.equal(document.querySelector('#company-status').textContent, 'Qoralama');
+
+    document.querySelector('#company-description').value = 'Dried fruit and nut mixes from the Fergana valley for retail chains.';
+    document.querySelector('#company-event').value = 'foodera-expo';
+    document.querySelector('[data-company-action="submit"]').click();
+    await waitFor(window, () => !document.querySelector('#company-error').hidden, 'missing logo was not reported');
+    assert.match(document.querySelector('#company-error').textContent, /logotip/);
+
+    const input = document.querySelector('[data-upload="logo"]');
+    Object.defineProperty(input, 'files', { value: [new window.File(['png'], 'Tasty Logo.png', { type: 'image/png' })], configurable: true });
+    input.dispatchEvent(new window.Event('change', { bubbles: true }));
+    await waitFor(window, () => document.querySelector('#company-logo-preview img'), 'logo preview did not render');
+    const upload = calls.find((call) => call.path === '/api/portal/files?kind=logo');
+    assert.equal(upload.headers['X-CSRF-Token'], 'csrf-test-token');
+    assert.equal(upload.headers['X-File-Name'], encodeURIComponent('Tasty Logo.png'));
+
+    document.querySelector('[data-company-action="submit"]').click();
+    await waitFor(window, () => document.querySelector('#company-status').textContent === 'Tekshiruvda', 'card was not sent for review');
+    const sent = calls.filter((call) => call.path === '/api/portal/company' && call.method === 'PUT').pop();
+    assert.equal(sent.body.submit, true);
+    assert.equal(sent.body.event, 'foodera-expo');
+
+    // a visitor never sees the card
   } finally {
     dom.window.close();
   }

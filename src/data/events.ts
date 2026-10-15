@@ -119,7 +119,7 @@ export const events: ExpoEvent[] = [
     },
     edition: { ru: 'Специализированная выставка продуктов и напитков в Узбекистане', en: 'The food and beverage exhibition for Uzbekistan and Central Asia' },
     status: 'open',
-    heroImage: '/images/food-tasting.jpg',
+    heroImage: '/images/event-foodera.jpg',
     tagline: {
       ru: 'Место встречи производителей, дистрибьюторов и покупателей пищевой отрасли Центральной Азии.',
       en: 'Where producers, distributors and buyers of the Central Asian food industry meet.',

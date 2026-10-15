@@ -767,3 +767,94 @@ test('a guest registers with name, phone, email and consent only — no company,
   });
   assert.equal(missingEmail.response.status, 422);
 });
+
+async function startFakeTelegram(t, reply) {
+  const { createServer } = await import('node:http');
+  const calls = [];
+  const server = createServer((req, res) => {
+    let raw = '';
+    req.on('data', (chunk) => { raw += chunk; });
+    req.on('end', () => {
+      calls.push({ url: req.url, body: JSON.parse(raw || '{}') });
+      const [status, body] = reply(calls.length);
+      res.writeHead(status, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(body));
+    });
+  });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  t.after(() => new Promise((resolve) => server.close(resolve)));
+  return { base: `http://127.0.0.1:${server.address().port}`, calls };
+}
+
+test('telegram bot: sends the lead to the configured chat, keeps Telegram’s reason and its retry_after', async (t) => {
+  let mode = 'ok';
+  const telegram = await startFakeTelegram(t, () => {
+    if (mode === 'ok') return [200, { ok: true, result: { message_id: 42 } }];
+    if (mode === 'chat') return [400, { ok: false, error_code: 400, description: 'Bad Request: chat not found' }];
+    return [429, { ok: false, error_code: 429, description: 'Too Many Requests: retry after 90', parameters: { retry_after: 90 } }];
+  });
+  const { server, base } = await startBackend(t, {
+    telegramToken: '123:ABC', telegramChat: '-1001234567890', telegramApiBase: telegram.base, maxDeliveryAttempts: 3,
+  });
+
+  const sent = await jsonRequest(base, '/lead', {
+    method: 'POST', body: { name: 'Bot Lead', company: 'Tasty LLC', phone: '+998901112233', email: 'bot@tasty.test', industry: 'Food', area: '18', consent: true, event: 'FOODERA EXPO 2026', formType: 'exhibitor' },
+  });
+  assert.equal(sent.response.status, 202);
+  assert.ok(await waitFor(() => server.backendStore.getLead(sent.data.id)?.deliveries[0]?.state === 'sent', 3000));
+  assert.equal(telegram.calls[0].url, '/bot123:ABC/sendMessage');
+  assert.equal(telegram.calls[0].body.chat_id, '-1001234567890');
+  assert.match(telegram.calls[0].body.text, /Bot Lead/);
+  assert.match(telegram.calls[0].body.text, /FOODERA EXPO 2026/);
+  assert.ok(telegram.calls[0].body.text.length <= 4096);
+
+  mode = 'chat';
+  const lost = await jsonRequest(base, '/lead', { method: 'POST', body: { name: 'Chat Missing', phone: '+998901112244', formType: 'callback' } });
+  assert.ok(await waitFor(() => /chat not found/.test(server.backendStore.getLead(lost.data.id)?.deliveries[0]?.lastError || ''), 3000));
+
+  mode = 'flood';
+  const flood = await jsonRequest(base, '/lead', { method: 'POST', body: { name: 'Flood Lead', phone: '+998901112255', formType: 'callback' } });
+  assert.ok(await waitFor(() => /retry after 90/.test(server.backendStore.getLead(flood.data.id)?.deliveries[0]?.lastError || ''), 3000));
+  const next = Date.parse(server.backendStore.getLead(flood.data.id).deliveries[0].nextAttemptAt);
+  assert.ok(next - Date.now() > 80_000, 'the next attempt waits at least as long as Telegram asked');
+
+  const session = await login(base);
+  mode = 'ok';
+  const probe = await jsonRequest(base, '/api/admin/system/telegram-test', { method: 'POST', cookie: session.cookie, csrf: session.csrf, body: {} });
+  assert.equal(probe.data.ok, true);
+  assert.equal(probe.data.messageId, 42);
+  mode = 'chat';
+  const broken = await jsonRequest(base, '/api/admin/system/telegram-test', { method: 'POST', cookie: session.cookie, csrf: session.csrf, body: {} });
+  assert.equal(broken.data.ok, false);
+  assert.match(broken.data.error, /chat not found/);
+});
+
+test('telegram test button explains a missing bot configuration', async (t) => {
+  const { base } = await startBackend(t);
+  const session = await login(base);
+  const probe = await jsonRequest(base, '/api/admin/system/telegram-test', { method: 'POST', cookie: session.cookie, csrf: session.csrf, body: {} });
+  assert.equal(probe.data.ok, false);
+  assert.equal(probe.data.configured, false);
+});
+
+test('a company page sent for moderation is announced in the managers’ Telegram chat', async (t) => {
+  const telegram = await startFakeTelegram(t, () => [200, { ok: true, result: { message_id: 7 } }]);
+  const { base } = await startBackend(t, { telegramToken: '123:ABC', telegramChat: '-100555', telegramApiBase: telegram.base });
+  const reg = await jsonRequest(base, '/api/portal/register', {
+    method: 'POST', body: { accountType: 'exhibitor', name: 'Nodira K', email: 'card@notice.test', password: 'exhibitor-password-2026', phone: '+998 90 111 22 33', company: 'Notice Foods', industry: 'Food', consent: 'yes' },
+  });
+  const cookie = reg.response.headers.get('set-cookie').split(';')[0];
+  const csrf = reg.data.csrfToken;
+  assert.equal((await upload(base, { cookie, csrf, kind: 'logo', name: 'logo.png', body: PNG })).response.status, 201);
+  const showcase = { name: 'Notice Foods', about: 'Spices and dried fruit for retail chains.', participation: [{ event: 'foodera-expo', year: 2026, stand: 'C-3' }] };
+  const draft = await jsonRequest(base, '/api/portal/showcase', { method: 'PUT', cookie, csrf, body: { showcase } });
+  assert.equal(draft.response.status, 200);
+  const sent = await jsonRequest(base, '/api/portal/showcase', { method: 'PUT', cookie, csrf, body: { showcase, submit: true } });
+  assert.equal(sent.response.status, 200);
+  assert.ok(await waitFor(() => telegram.calls.some((call) => /moderatsiyaga keldi/.test(call.body.text)), 3000));
+  const notices = telegram.calls.filter((call) => /moderatsiyaga keldi/.test(call.body.text));
+  assert.equal(notices.length, 1, 'saving a draft does not notify; sending does, once');
+  assert.match(notices[0].body.text, /Notice Foods/);
+  assert.match(notices[0].body.text, /FOODERA EXPO 2026 · stend C-3/);
+  assert.match(notices[0].body.text, /logo 1/);
+});

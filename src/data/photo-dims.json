@@ -76,16 +76,16 @@
     849
   ],
   "food-tasting-counter": [
-    768,
-    432
+    1200,
+    750
   ],
   "food-tasting": [
-    768,
-    432
+    1200,
+    750
   ],
   "greenhouse-tomatoes": [
-    768,
-    480
+    1200,
+    750
   ],
   "hall-aerial-2": [
     1200,
@@ -172,8 +172,8 @@
     750
   ],
   "outdoor-area": [
-    768,
-    432
+    1200,
+    750
   ],
   "outdoor-tractors": [
     1200,
@@ -228,8 +228,8 @@
     750
   ],
   "stand-equipment": [
-    768,
-    432
+    1200,
+    750
   ],
   "stand-exhibitor": [
     1200,
@@ -240,8 +240,8 @@
     750
   ],
   "stand-fertilizer": [
-    768,
-    480
+    1200,
+    750
   ],
   "stand-green": [
     1200,
@@ -260,16 +260,16 @@
     750
   ],
   "stand-modern": [
-    1049,
-    656
+    1200,
+    750
   ],
   "stand-nrg": [
     1024,
     576
   ],
   "stand-shell": [
-    768,
-    480
+    1200,
+    750
   ],
   "stand-two-level": [
     1200,
@@ -284,8 +284,8 @@
     750
   ],
   "venue-aerial": [
-    900,
-    563
+    1200,
+    750
   ],
   "venue-conference": [
     1200,

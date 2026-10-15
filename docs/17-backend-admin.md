@@ -310,3 +310,19 @@ Backend integratsion testlar: `npm run test:backend`. To‘liq loyiha suite’i 
 `npm test` (yoki `npm run check`) orqali ishlaydi. Backend testlari admin/portal login va CSRF,
 role isolation, visitor/exhibitor ariza flow’i, admin akkaunt qidiruvi/bloklash va sessiya bekor qilish,
 portal analytics, CORS, SQLite, outbox retry, eksport va last-admin himoyasini tekshiradi.
+
+## Telegram bot tekshiruvi (2026-10-15)
+
+- Telegram rad etsa sababi saqlanadi (`Telegram 400: Bad Request: chat not found`) — admin panel
+  «Integratsiyalar» → yetkazilmagan murojaatlar jadvalida ko‘rinadi.
+- 429 da Telegram so‘ragan `retry_after` kutiladi (eksponensial kutishdan kam emas).
+- «Integratsiyalar» → **Test xabar yuborish**: token, chat va botning chatga yozish huquqini bitta
+  bosishda tekshiradi (`POST /api/admin/system/telegram-test`).
+- `TELEGRAM_API_BASE` (ixtiyoriy) — Bot API manzili; testlar soxta server bilan to‘liq zanjirni
+  tekshiradi (`tests/backend.test.mjs`).
+- Bot ishlashi uchun serverda `TELEGRAM_BOT_TOKEN` va `TELEGRAM_CHAT_ID` o‘rnatilgan bo‘lishi va bot
+  o‘sha chat/guruhga qo‘shilgan (kanal bo‘lsa — admin) bo‘lishi shart.
+- Eksponent kompaniya sahifasini moderatsiyaga yuborganda (`PUT /api/portal/showcase` +
+  `submit: true`) o‘sha Telegram chatiga xabar boradi (kompaniya, ko‘rgazma · stend, fayllar soni,
+  email) — best-effort, sahifa CRM’da baribir saqlanadi.
+- Admin va kabinet sahifalarida favicon bor (oldin `/favicon.ico` 404 berardi).

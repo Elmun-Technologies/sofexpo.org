@@ -9,7 +9,7 @@ import {
 } from './db.mjs';
 import { PORTAL_EVENTS, SHOWS } from './shows.mjs';
 import {
-  SHOWCASE_LIMITS, SOCIAL_NETWORKS, UPLOAD_LIMITS, cleanFileName, cleanFileTitle, fileTitleFromName, normalizeShowcase,
+  SHOWCASE_LIMITS, SOCIAL_NETWORKS, UPLOAD_LIMITS, cleanFileName, cleanFileTitle, editionLabel, fileTitleFromName, normalizeShowcase,
   sniffUpload, submitErrors,
 } from './showcase.mjs';
 import { createSecret, hashToken, normalizeEmail, validEmail, validPassword, verifyPassword } from './auth.mjs';
@@ -371,6 +371,8 @@ export function createLeadServer(options = {}) {
   const crmWebhookUrl = options.crmWebhookUrl ?? process.env.CRM_WEBHOOK_URL ?? '';
   const crmWebhookToken = options.crmWebhookToken ?? process.env.CRM_WEBHOOK_TOKEN ?? '';
   const deliverProvider = options.deliverProvider;
+  /* the Bot API host; overridable so a test (or a proxy in a blocked network) can stand in */
+  const telegramApiBase = String(options.telegramApiBase ?? process.env.TELEGRAM_API_BASE ?? 'https://api.telegram.org').replace(/\/+$/, '');
   /* exhibitor uploads live next to the database, never inside the web root; they are
      streamed only through the routes below (cabinet owner, admins, or — once published —
      the public directory) */
@@ -572,16 +574,25 @@ export function createLeadServer(options = {}) {
     return secureEqual(header, ingressSecret) || secureEqual(query, ingressSecret);
   };
 
+  /* Telegram says why it refused ("chat not found", "bot was blocked by the user", "Too Many
+     Requests: retry after 17"); that sentence is what the admin needs to fix the bot, so it is
+     kept in the error, and a 429's retry_after becomes the next attempt's delay. */
   async function sendTelegram(text) {
-    const response = await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
+    const response = await fetch(`${telegramApiBase}/bot${telegramToken}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ chat_id: telegramChat, text, disable_web_page_preview: true }),
       signal: AbortSignal.timeout(8_000),
     });
-    if (!response.ok) throw new Error(`Telegram HTTP ${response.status}`);
     const result = await response.json().catch(() => null);
-    if (!result?.ok) throw new Error('Telegram rejected the message');
+    if (!response.ok || !result?.ok) {
+      const reason = cleanText(result?.description || (response.ok ? 'rejected the message' : `HTTP ${response.status}`), 300);
+      const error = new Error(`Telegram ${response.status}: ${reason}`);
+      const retryAfter = Number(result?.parameters?.retry_after);
+      if (Number.isFinite(retryAfter) && retryAfter > 0) error.retryAfterMs = retryAfter * 1000;
+      throw error;
+    }
+    return result.result;
   }
 
   async function sendCrm(lead) {
@@ -615,7 +626,7 @@ export function createLeadServer(options = {}) {
           console.info(`[lead-backend] delivery ${job.id} (${job.provider}) sent`);
         } catch (error) {
           const message = cleanText(error?.message || 'Delivery failed', 500);
-          store.failDelivery(job.id, attempts, message, maxDeliveryAttempts);
+          store.failDelivery(job.id, attempts, message, maxDeliveryAttempts, error?.retryAfterMs);
           console.error(`[lead-backend] delivery ${job.id} (${job.provider}) failed: ${message}`);
         }
       }
@@ -981,6 +992,24 @@ export function createLeadServer(options = {}) {
           Object.assign(errors, submit ? submitErrors(value) : {});
           if (Object.keys(errors).length) throw new HttpError(422, 'Ba’zi maydonlar noto‘g‘ri to‘ldirilgan.', errors);
           const showcase = store.saveShowcaseDraft(session.account_id, value, { submit });
+          /* the managers hear about a page waiting for moderation in the same Telegram chat as
+             leads; best effort — the page is saved and listed in the CRM either way */
+          if (submit && telegramToken && telegramChat) {
+            const owner = store.getPortalAccountById(session.account_id);
+            const files = store.listPortalFiles(session.account_id);
+            const kinds = [...new Set(files.map((file) => file.kind))];
+            const text = [
+              '🗂 Kompaniya sahifasi moderatsiyaga keldi',
+              '',
+              `🏢 ${value.name || owner?.company || '—'}`,
+              ...value.participation.map((item) => `🎪 ${editionLabel(item.event, item.year)}${item.stand ? ` · stend ${item.stand}` : ''}`),
+              `📎 ${files.length} ta fayl${kinds.length ? `: ${kinds.map((kind) => `${kind} ${files.filter((file) => file.kind === kind).length}`).join(', ')}` : ''}`,
+              `✉️ ${owner?.email || session.email}`,
+              '',
+              'CRM → Kompaniya sahifalari',
+            ].join('\n');
+            sendTelegram(text).catch((error) => console.error('[lead-backend] showcase notice failed:', error?.message || error));
+          }
           return sendJson(res, 200, { ok: true, showcase: showcaseResponse(showcase) });
         }
       }
@@ -1316,6 +1345,21 @@ export function createLeadServer(options = {}) {
           const note = store.addLeadNote(leadId, { userId: session.user_id, authorEmail: session.email, body: text, kind });
           if (!note) throw new HttpError(404, 'Lid topilmadi.');
           return sendJson(res, 201, { ok: true, note });
+        }
+      }
+
+      if (req.method === 'POST' && path === '/api/admin/system/telegram-test') {
+        requireAdmin(session);
+        verifyCsrf(req, session);
+        if (!telegramToken || !telegramChat) {
+          return sendJson(res, 200, { ok: false, configured: false, error: 'TELEGRAM_BOT_TOKEN yoki TELEGRAM_CHAT_ID o‘rnatilmagan.' });
+        }
+        try {
+          const message = await sendTelegram(`✅ SOF EXPO: bot ulangan. Test xabar ${new Date().toISOString()} da ${session.email} tomonidan yuborildi.`);
+          store.audit(session.email, 'system.telegram_test', 'system', 'telegram', { ok: true });
+          return sendJson(res, 200, { ok: true, configured: true, messageId: message?.message_id ?? null });
+        } catch (error) {
+          return sendJson(res, 200, { ok: false, configured: true, error: cleanText(error?.message || 'Telegram xatosi', 300) });
         }
       }
 

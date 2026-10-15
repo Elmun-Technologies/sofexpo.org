@@ -517,6 +517,10 @@ input[type='checkbox'] { width: 16px; height: 16px; accent-color: var(--blue); }
 .connection i { width: 8px; height: 8px; border-radius: 50%; background: var(--line-strong); }
 .connection.on { color: var(--success); }
 .connection.on i { background: var(--success); }
+.telegram-test { display: flex; margin-top: 12px; }
+.telegram-test-result { margin-top: 10px; padding: 9px 11px; border-radius: var(--r-sm); font-size: 12.5px; line-height: 1.45; }
+.telegram-test-result.is-ok { background: #e8f5ee; color: var(--success); }
+.telegram-test-result.is-error { background: var(--st-lost-bg); color: var(--danger); }
 .system-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 16px; margin-top: 16px; }
 .system-grid > .panel + .panel { margin-top: 0; }
 .system-stat { display: flex; justify-content: space-between; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 13px; }

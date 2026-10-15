@@ -166,12 +166,28 @@ main > .wrap .crumbs {
 .nav__link::after {
   display: none;
 }
+/* open (hover/focus) is the filled pill; the section you are in is an outlined pill with a dot,
+   so an open menu next to the current section never shows two identical black pills */
+.nav__link[aria-current="page"] {
+  border-color: var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--ink);
+}
+.nav__link[aria-current="page"]::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold); /* the brand blue on sofexpo.org, each show's own colour on its host */
+  flex: none;
+}
 .nav__link:hover,
 .nav__item:hover .nav__link,
-.nav__item:focus-within .nav__link,
-.nav__link[aria-current="page"] {
+.nav__item:has(:focus-visible) .nav__link {
   background: var(--ink);
   border-color: var(--ink);
+  box-shadow: none;
   color: #fff;
 }
 .nav__caret {
@@ -328,6 +344,8 @@ main > .wrap .crumbs {
   flex-direction: column;
   gap: 2px;
   height: 100%;
+  margin: 0; /* global.css still bleeds the old list links by -0.75rem, which glued the cards */
+  border: 1px solid transparent;
   padding: 14px 18px;
   border-radius: 20px;
   background: var(--cream-2);
@@ -336,6 +354,14 @@ main > .wrap .crumbs {
 }
 .mega__links a:hover {
   background: var(--line);
+  color: var(--ink);
+}
+.mega__links a[aria-current="page"] {
+  background: var(--paper);
+  border-color: var(--ink);
+}
+.mega__links a:hover .mega__t,
+.mega__links a[aria-current="page"] .mega__t {
   color: var(--ink);
 }
 .mega__t {
@@ -379,6 +405,14 @@ main > .wrap .crumbs {
 .mega__photo-card small {
   font-size: 0.75rem;
   color: var(--ink-60);
+}
+.mega__photo-card b {
+  line-height: 1.25;
+}
+.mega__photo-card .mega__photo-date {
+  margin-top: 2px;
+  color: var(--ink);
+  font-weight: 500;
 }
 
 /* the round "go" arrow used on every card; it turns yellow when its card is hovered */
@@ -1294,6 +1328,7 @@ main > :is(.block--form, .block--auto-form) :is(.form-ex, .form-vi, .form-org, .
   background: none;
   padding: 0;
   max-width: 980px;
+  margin-inline: auto; /* centred in its panel, not hugging the left with an empty right half */
 }
 main > .calf .pill span {
   margin-left: 0.3em;
@@ -1349,4 +1384,53 @@ main > .evnav {
 .ftr__main > * {
   position: relative;
   z-index: 1;
+}
+
+/* calendar rail: a show name never ends in "…" — the long one (ECOM & RETAIL EXPO SAMARKAND)
+   wraps to a second line instead of being cut */
+.rail b {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  line-height: 1.2;
+}
+
+/* one mega-menu at a time (2026-10-15). While the pointer is on the bar only the item under it
+   shows its panel, instantly: a menu still fading out, or one held open by focus, used to sit
+   on top of the next one ("two menus merged"). Keyboard focus opens a panel only when it is
+   :focus-visible, so a mouse click no longer leaves a menu stuck open. */
+/* …unless the keyboard opened it (ArrowDown); hovering another item clears that state */
+.nav:hover .nav__item:not(:hover):not([data-keyboard-open]) .mega {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: none;
+}
+.nav:hover .nav__item:not(:hover):not([data-keyboard-open]) .nav__link:not(:hover) {
+  background: var(--paper);
+  border-color: var(--line);
+  color: var(--ink);
+}
+.nav:hover .nav__item:not(:hover):not([data-keyboard-open]) .nav__link[aria-current="page"] {
+  border-color: var(--ink);
+}
+
+/* phones and tablets: the header steps aside while you read down and comes back the moment
+   you scroll up, so header + bottom booking bar never hold 135px of an 844px screen at once.
+   The show's tab bar follows it to the top edge. Desktop keeps the sticky header (its mega
+   menus need it). */
+@media (max-width: 1280px) {
+  .hdr { transition: transform 0.28s ease; will-change: transform; }
+  html.hdr-away .hdr { transform: translateY(calc(-100% - 6px)); }
+  main > .evnav { transition: top 0.28s ease; }
+  html.hdr-away main > .evnav { top: 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hdr, main > .evnav { transition: none; }
+}
+
+/* phones: a long Russian word in a display heading ("конфиденциальности") is wider than the
+   column; let the language's own hyphenation break it instead of pushing the page sideways */
+@media (max-width: 480px) {
+  h1, h2 { hyphens: auto; -webkit-hyphens: auto; overflow-wrap: break-word; }
 }

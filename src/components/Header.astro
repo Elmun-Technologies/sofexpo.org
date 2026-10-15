@@ -72,7 +72,13 @@ const featured: Record<string, { img: string; alt: string; kicker: string; date?
 <header class="hdr" id="top">
   <div class="wrap hdr__in">
     <a class="logo" href={P('/')} aria-label={`${CURRENT_BRAND ? CURRENT_BRAND.name[locale] + ' ' + CURRENT_BRAND.sub[locale] : site.brand[locale]} — ${t('breadcrumbs.home')}`}>
-      {logoFor(CURRENT_EVENT) ? (
+      {CURRENT_BRAND?.headerLogo ? (
+        /* the show's horizontal lockup: its round badge is illegible at header height */
+        <picture>
+          <source type="image/webp" srcset={CURRENT_BRAND.headerLogo.webp} />
+          <img class="logo__h logo__h--show" src={CURRENT_BRAND.headerLogo.src} alt={`${CURRENT_BRAND.name[locale]} ${CURRENT_BRAND.sub[locale]}`} width={CURRENT_BRAND.headerLogo.width / 2} height={CURRENT_BRAND.headerLogo.height / 2} loading="eager" decoding="async" fetchpriority="high" />
+        </picture>
+      ) : logoFor(CURRENT_EVENT) ? (
         /* the show's own logo, cut from the organiser's artwork (docs/15 §10) */
         <ShowLogo slug={CURRENT_EVENT} height={40} eager />
       ) : CURRENT_BRAND?.mark === 'star' ? (
@@ -137,7 +143,7 @@ const featured: Record<string, { img: string; alt: string; kicker: string; date?
                     <a class="mega__photo" href={P(featured[item.base].href)}>
                       <Photo src={featured[item.base].img} alt={featured[item.base].alt} ratio="4/5" sizes="300px" rounded={false} />
                       <span class="mega__photo-card">
-                        <span><small><span>{featured[item.base].kicker}</span>{featured[item.base].date && <> · <span>{featured[item.base].date}</span></>}</small><b>{featured[item.base].title}</b></span>
+                        <span><small>{featured[item.base].kicker}</small><b>{featured[item.base].title}</b>{featured[item.base].date && <small class="mega__photo-date">{featured[item.base].date}</small>}</span>
                         <span class="arr" aria-hidden="true"><Icon name="arrow-ne" size={14} /></span>
                       </span>
                     </a>
@@ -187,7 +193,7 @@ const featured: Record<string, { img: string; alt: string; kicker: string; date?
     <nav aria-label={t('nav.menu')}>
       {
         items.map((item) => (
-          <details>
+          <details name="mnav-section">
             <summary>{t(item.key as never)}</summary>
             <div class="mnav__list">
               <a href={P(item.base)}>{t('nav.sectionHome')}</a>
@@ -254,6 +260,14 @@ const featured: Record<string, { img: string; alt: string; kicker: string; date?
     });
     const picker = document.querySelector('.language-picker');
     const accountPicker = document.querySelector('.account-picker');
+    /* phone menu: one section open at a time (`name` does this natively; the listener covers
+       browsers without exclusive <details>), so two lists never run together */
+    document.querySelectorAll('.mnav details[name="mnav-section"]').forEach((d, _, all) => {
+      d.addEventListener('toggle', () => { if (d.open) all.forEach((o) => { if (o !== d) o.open = false; }); });
+    });
+    /* the two header drop-downs never stack: opening one closes the other */
+    picker?.addEventListener('toggle', () => { if (picker.open && accountPicker) accountPicker.open = false; });
+    accountPicker?.addEventListener('toggle', () => { if (accountPicker.open && picker) picker.open = false; });
     document.addEventListener('click', (e) => {
       if (picker && !picker.contains(e.target)) picker.open = false;
       if (accountPicker && !accountPicker.contains(e.target)) accountPicker.open = false;
@@ -263,6 +277,24 @@ const featured: Record<string, { img: string; alt: string; kicker: string; date?
       if (picker?.open) { picker.open = false; picker.querySelector('summary').focus(); }
       if (accountPicker?.open) { accountPicker.open = false; accountPicker.querySelector('summary').focus(); }
     });
+    /* hide-on-scroll for the compact header (≤1280px): down = away, up = back, never while
+       the phone menu is open or near the top of the page */
+    {
+      const compact = matchMedia('(max-width: 1280px)');
+      let lastY = scrollY;
+      let ticking = false;
+      const update = () => {
+        ticking = false;
+        const y = scrollY;
+        const root = document.documentElement;
+        if (!compact.matches || document.body.classList.contains('nav-open') || y < 160) root.classList.remove('hdr-away');
+        else if (y > lastY + 6) root.classList.add('hdr-away');
+        else if (y < lastY - 6) root.classList.remove('hdr-away');
+        lastY = y;
+      };
+      addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+      document.addEventListener('focusin', (e) => { if (e.target.closest?.('.hdr')) document.documentElement.classList.remove('hdr-away'); });
+    }
     const desktop = matchMedia('(min-width: 1281px)');
     desktop.addEventListener('change', (e) => { if (e.matches) set(false); });
     window.addEventListener('resize', () => { if (document.body.classList.contains('nav-open')) set(true); });
@@ -288,8 +320,23 @@ const featured: Record<string, { img: string; alt: string; kicker: string; date?
           setOpen(item, true);
         });
       }
-      item.addEventListener('pointerenter', () => item.removeAttribute('data-dismissed'));
-      item.addEventListener('focusin', () => item.removeAttribute('data-dismissed'));
+      item.addEventListener('pointerenter', () => {
+        item.removeAttribute('data-dismissed');
+        /* only one panel open: the pointer moving onto another item closes a panel that
+           keyboard focus, ArrowDown or a tap had opened, so it cannot reappear underneath */
+        if (picker) picker.open = false;
+        if (accountPicker) accountPicker.open = false;
+        document.querySelectorAll('.nav__item').forEach((other) => {
+          if (other === item) return;
+          setOpen(other, false);
+          if (other.contains(document.activeElement)) document.activeElement.blur();
+        });
+      });
+      item.addEventListener('focusin', () => {
+        item.removeAttribute('data-dismissed');
+        if (picker) picker.open = false;
+        if (accountPicker) accountPicker.open = false;
+      });
       item.addEventListener('focusout', (e) => {
         if (!item.contains(e.relatedTarget)) setOpen(item, false);
       });

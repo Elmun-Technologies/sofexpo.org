@@ -1126,16 +1126,28 @@
     const failed = data.outbox?.failed || 0;
     const pending = data.outbox?.pending || 0;
     const providers = [
-      { name: 'Telegram Bot', icon: '➤', on: data.providers.telegram, detail: 'Yangi arizalar menejerlar Telegram chatiga xabarnoma sifatida yuboriladi.' },
+      { name: 'Telegram Bot', icon: '➤', on: data.providers.telegram, test: true, detail: 'Yangi arizalar menejerlar Telegram chatiga xabarnoma sifatida yuboriladi.' },
       { name: 'CRM webhook', icon: '↗', on: data.providers.crm, detail: 'Lidlar sozlangan CRM webhook manziliga fon rejimida jo‘natiladi.' },
       { name: 'SQLite saqlash', icon: '▣', on: data.storage === 'sqlite', detail: 'Arizalar, fayllar ro‘yxati va analitika serverdagi SQLite bazasida.' },
     ];
     content.innerHTML = `${pageIntro('Integratsiyalar va tizim', 'Ulanish holati va yuborilmagan arizalarni shu yerdan kuzating.', 'SERVER')}
-      <div class="integration-grid">${providers.map((provider) => `<article class="integration-card"><div class="integration-icon">${provider.icon}</div><h3>${provider.name}</h3><p>${provider.detail}</p><div class="connection ${provider.on ? 'on' : ''}"><i></i>${provider.on ? 'Ulangan' : 'Sozlanmagan'}</div></article>`).join('')}</div>
+      <div class="integration-grid">${providers.map((provider) => `<article class="integration-card"><div class="integration-icon">${provider.icon}</div><h3>${provider.name}</h3><p>${provider.detail}</p><div class="connection ${provider.on ? 'on' : ''}"><i></i>${provider.on ? 'Ulangan' : 'Sozlanmagan'}</div>${provider.test ? '<button class="button button-secondary button-small telegram-test" id="telegram-test" type="button">Test xabar yuborish</button><p class="telegram-test-result" id="telegram-test-result" role="status" hidden></p>' : ''}</article>`).join('')}</div>
       <div class="system-grid"><section class="panel"><div class="panel-head"><div><h3>Yetkazib berish navbati</h3><p>Vaqtinchalik uzilishlar avtomatik qayta uriniladi.</p></div></div><div class="system-stat"><span>Kutilmoqda</span><strong>${number(pending)}</strong></div><div class="system-stat"><span>Qayta urinish tugagan</span><strong>${number(failed)}</strong></div><div class="system-stat"><span>Administratorlar</span><strong>${number(data.adminUsers)}</strong></div><div class="system-stat"><span>Backend runtime</span><strong>${escapeHtml(data.node)}</strong></div>${failed ? '<div class="form-actions"><button class="button button-primary" type="button" id="retry-outbox">Qayta yuborish</button></div>' : ''}</section>
       <section class="panel table-panel"><div class="panel-head"><div><h3>Yetkazilmagan murojaatlar</h3><p>Avval saqlanadi, keyin integratsiyalarga uzatiladi.</p></div></div>${data.recentDeliveries?.length ? `<div class="table-wrap"><table class="data-table"><thead><tr><th>LID</th><th>KANAL</th><th>HOLAT</th><th class="num">URINISH</th></tr></thead><tbody>${data.recentDeliveries.map((row) => `<tr><td>${escapeHtml(row.name)}<span class="sub">${escapeHtml(row.phone)}</span></td><td>${escapeHtml(row.provider)}</td><td>${escapeHtml(row.state === 'failed' ? 'Xatolik' : 'Navbatda')}${row.lastError ? `<span class="sub">${escapeHtml(row.lastError)}</span>` : ''}</td><td class="num">${number(row.attempts)}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty-state"><strong>Hammasi yetkazilgan</strong>Navbatda muammoli jo‘natma yo‘q.</div>'}</section></div>
       <section class="panel table-panel" style="margin-top:16px"><div class="panel-head"><div><h3>So‘nggi boshqaruv amallari</h3><p>CRM, kabinet va jamoa sozlamalaridagi oxirgi o‘zgarishlar</p></div><button class="button button-secondary button-small" id="open-activity-log" type="button">To‘liq tarix</button></div>${auditData.items?.length ? `<div class="table-wrap"><table class="data-table"><thead><tr><th>SANA</th><th>BAJARUVCHI</th><th>AMAL</th><th>OBYEKT</th><th>O‘ZGARISH</th></tr></thead><tbody>${auditRows(auditData.items)}</tbody></table></div>` : '<div class="empty-state">Hali amal qayd etilmagan.</div>'}</section>`;
     $('#open-activity-log')?.addEventListener('click', () => navigate('activity'));
+    /* one click proves the bot end to end: the token, the chat and the bot's right to post there */
+    $('#telegram-test')?.addEventListener('click', async (event) => {
+      const button = event.currentTarget;
+      const out = $('#telegram-test-result');
+      button.disabled = true;
+      try {
+        const result = await api('/api/admin/system/telegram-test', { method: 'POST', body: {} });
+        out.hidden = false;
+        out.className = `telegram-test-result ${result.ok ? 'is-ok' : 'is-error'}`;
+        out.textContent = result.ok ? 'Xabar chatga yetib bordi — bot ishlayapti.' : `Bot ishlamadi: ${result.error}`;
+      } catch (error) { showError(error); } finally { button.disabled = false; }
+    });
     $('#retry-outbox')?.addEventListener('click', async () => {
       try {
         const result = await api('/api/admin/outbox/retry', { method: 'POST', body: {} });

@@ -5,6 +5,7 @@ date: 2026-09-16
 category: "food"
 tags: ["FOODERA", "2026"]
 event: foodera-expo
+hero: /images/food-tasting.jpg
 ---
 ### What is open
 

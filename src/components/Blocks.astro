@@ -66,6 +66,16 @@ const H = (p?: string) => {
   if (/^\/(files|images|og)\//.test(p) || /\.[a-z0-9]+$/i.test(p)) return p;
   return L(p);
 };
+/** Columns for a gallery of n photos and how many of the first photos span two columns, so the
+ *  last row is always full: 6 → 3 columns, 7 → 4 with the first photo wide, 5 → 3 with one wide.
+ *  A ragged last row (4 + 2) read as a missing photo. `wideT` is the same for the 2-column tablet grid. */
+const galLayout = (n: number) => {
+  if (n <= 3) return { cols: n, wideD: 0, wideT: n === 3 ? 1 : 0 };
+  const extra = (c: number) => (c - (n % c)) % c;
+  const cols = extra(4) <= extra(3) ? 4 : 3;
+  return { cols, wideD: extra(cols), wideT: n % 2 };
+};
+
 /** A gallery is drawn as one grid per album; a block without albums stays a flat grid. */
 const galleryGroups = (b: Block): BlockAlbum[] =>
   b.albums?.length ? b.albums : [{ title: '', items: (b.items ?? []) as BlockShot[] }];
@@ -82,7 +92,9 @@ const galleryGroups = (b: Block): BlockAlbum[] =>
     const boundary = (x?: Block) => !x || x.type === 'hero' || x.type === 'faq';
     const sameGround = !boundary(prev) && b.type !== 'faq' && ground(prev) === ground(b);
     const leadsIn = b.type === 'h2';
-    const showMidCta = auto && !hasForm && blocks.length > 3 && (idx === 1 || idx === 3);
+    /* one reminder in the middle of a long page; the closing CTA + form come after the last
+       block. Two mid strips plus the closing one put the same banner on a page three times. */
+    const showMidCta = auto && !hasForm && blocks.length > 6 && idx === Math.floor(blocks.length / 2) && b.type !== 'cta';
     return (
       <>
       <section hidden={b.type === 'directory' ? true : undefined} class:list={['sec', 'block', 'reveal', `block--${b.type}`, b.type === 'directory' && 'xdir-host', b.tone === 'paper' && 'sec--paper', b.tone === 'forest' && 'sec--forest', b.tone === 'sand' && 'sec--sand', b.anchor && 'has-anchor', leadsIn && 'block--head', afterHead && 'block--after-head', sameGround && !afterHead && 'block--cont']} id={b.id}>
@@ -113,7 +125,7 @@ const galleryGroups = (b: Block): BlockAlbum[] =>
                 ) : null}
               </div>
               {b.image && (
-                <Photo class="block__media" src={b.image} alt={b.imageAlt ?? ''} ratio={b.mediaRatio ?? '4/3'} priority sizes="(max-width: 1080px) 100vw, 45vw" />
+                <Photo class="block__media" src={b.image} alt={b.imageAlt ?? ''} ratio={b.mediaRatio ?? '4/3'} priority sizes="(max-width: 1080px) 130vw, 72vw" />
               )}
             </div>
           )}
@@ -321,10 +333,10 @@ const galleryGroups = (b: Block): BlockAlbum[] =>
                 return (
                   <section class="gal-album">
                     {album.title && <AlbumTitle class="gal-album__title">{album.title}</AlbumTitle>}
-                    <div class="gal">
+                    <div class="gal" data-cols={galLayout((album.items ?? []).length).cols}>
                       {((album.items ?? []) as BlockShot[]).map((g, i) => (
-                        <div class="gal__item">
-                          <Photo src={g.src} alt={g.alt ?? g.caption ?? ''} ratio="4/3" zoom priority={gi === 0 && i === 0} sizes="(max-width: 680px) 100vw, (max-width: 1080px) 50vw, 33vw" />
+                        <div class:list={['gal__item', { 'gal__item--wd': i < galLayout((album.items ?? []).length).wideD, 'gal__item--wt': i < galLayout((album.items ?? []).length).wideT }]}>
+                          <Photo src={g.src} alt={g.alt ?? g.caption ?? ''} ratio="4/3" zoom priority={gi === 0 && i === 0} sizes={i < Math.max(galLayout((album.items ?? []).length).wideD, galLayout((album.items ?? []).length).wideT) ? '(max-width: 680px) 100vw, 66vw' : '(max-width: 680px) 100vw, (max-width: 1080px) 50vw, 33vw'} />
                           {g.caption && <p class="gal__cap">{g.caption}</p>}
                         </div>
                       ))}
@@ -335,7 +347,7 @@ const galleryGroups = (b: Block): BlockAlbum[] =>
             </>
           )}
 
-          {b.type === 'rail' && <CalendarRail locale={locale} tone="light" count={b.railCount ?? 4} />}
+          {b.type === 'rail' && <CalendarRail locale={locale} tone="light" count={b.railCount ?? 6} />}
 
           {b.type === 'partners' && (
             <PartnerLogoWall
@@ -468,7 +480,7 @@ const galleryGroups = (b: Block): BlockAlbum[] =>
       {showMidCta && (
         <section class="sec block block--mid-cta reveal">
           <div class="wrap">
-            <SmartCta locale={locale} variant={idx===1 ? 'inline' : 'card'} intent={auto!.cta} />
+            <SmartCta locale={locale} variant="card" intent={auto!.cta} />
           </div>
         </section>
       )}
@@ -503,7 +515,7 @@ const galleryGroups = (b: Block): BlockAlbum[] =>
 <style>
   .sec--sand { background: var(--cream-2); }
   /* the quiz reads best as a focused column, never stretched over a wide grid */
-  .quiz-block { max-width: 760px; }
+  .quiz-block { max-width: 760px; margin-inline: auto; }
   /* 2026-10 design (docs/18 §9): the page hero is two panels side by side — a white text panel
      and the photograph as its own full-height panel — instead of one panel with a thumbnail */
   .block--hero { background: none; padding-block: 0; border-radius: 0; overflow: visible; }
@@ -555,7 +567,22 @@ const galleryGroups = (b: Block): BlockAlbum[] =>
   .checks { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: .6rem 1.4rem; }
   .checks li { display: flex; gap: .7rem; align-items: flex-start; padding: .9rem 0; border-bottom: 1px solid var(--cream); }
   .checks :global(svg) { width: 22px; height: 22px; padding: 4px; border-radius: 50%; background: var(--accent); color: var(--ink); margin-top: .05rem; flex: none; }
-  .gal { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: clamp(.7rem, .4rem + .8vw, 1.1rem); }
+  .gal { display: grid; grid-template-columns: 1fr; gap: clamp(.7rem, .4rem + .8vw, 1.1rem); }
+  @media (min-width: 681px) {
+    .gal { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .gal__item--wt { grid-column: span 2; }
+    .gal__item--wt :global(.ph) { aspect-ratio: 8 / 3; }
+  }
+  @media (min-width: 1081px) {
+    .gal[data-cols='3'] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .gal[data-cols='4'] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .gal[data-cols='2'] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .gal[data-cols='1'] { grid-template-columns: minmax(0, 1fr); }
+    .gal__item--wt { grid-column: auto; }
+    .gal__item--wt :global(.ph) { aspect-ratio: 4 / 3; }
+    .gal__item--wd { grid-column: span 2; }
+    .gal__item--wd :global(.ph) { aspect-ratio: 8 / 3; }
+  }
   .gal__item :global(.ph) { box-shadow: var(--shadow-soft); }
   .gal__cap { margin: .65rem 0 0; font-size: .86rem; line-height: 1.45; color: var(--ink-60); }
   /* albums: one heading per space, so the grid answers a question instead of showing 16 files */

@@ -1624,9 +1624,10 @@ export class BackendStore {
       .run(nowIso(), id);
   }
 
-  failDelivery(id, attempts, error, maxAttempts = 8) {
+  failDelivery(id, attempts, error, maxAttempts = 8, minWaitMs = 0) {
     const terminal = attempts >= maxAttempts;
-    const wait = Math.min(60 * 60 * 1000, 30_000 * (2 ** Math.max(0, attempts - 1)));
+    /* exponential back-off, but never sooner than the provider asked for (Telegram's 429) */
+    const wait = Math.max(Number(minWaitMs) || 0, Math.min(60 * 60 * 1000, 30_000 * (2 ** Math.max(0, attempts - 1))));
     const next = terminal ? nowIso() : new Date(Date.now() + wait).toISOString();
     this.db.prepare(`UPDATE delivery_outbox SET state = ?, attempts = ?, next_attempt_at = ?, last_error = ? WHERE id = ?`)
       .run(terminal ? 'failed' : 'pending', attempts, next, String(error || 'delivery failed').slice(0, 500), id);

@@ -6,6 +6,7 @@ category: "food"
 readingMinutes: 8
 tags: ["retail", "FOODERA", "negotiations"]
 event: foodera-expo
+hero: /images/food-tasting-counter.jpg
 ---
 
 ### A chain buys predictability, not a product

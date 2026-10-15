@@ -56,6 +56,17 @@ export type HostBrand = {
      white panel tinted with the mark colour, so the full-colour logo sits on its own ground;
      'dark' when the logo is drawn on black (BUILD PRO, ECOM, PROMOTORS) */
   hero?: "light" | "dark";
+  /** a horizontal lockup for the 40px header, when the round badge would be illegible there */
+  headerLogo?: { src: string; webp: string; width: number; height: number };
+  /** the logo's shape and type voice (all optional; the centre's defaults apply otherwise) */
+  style?: {
+    rPanel?: number;
+    rCard?: number;
+    rPill?: number;
+    displayWeight?: number;
+    displayStyle?: "italic" | "normal";
+    displayTracking?: string;
+  };
   palette: BrandPalette;
 };
 
@@ -93,6 +104,17 @@ export function brandCss(brand: HostBrand | null): string {
     `--focus-ring:0 0 0 4px color-mix(in srgb,${p.mark} 32%,transparent);`,
     `--brand-tint:color-mix(in srgb,${p.mark} 9%,#fff);`,
     `--brand-stripe:${brand.stripe};`,
+    /* shape and type voice from the logo: radius of panels/cards/pills, display weight/style */
+    brand.style
+      ? [
+          brand.style.rPanel != null ? `--r-panel:${brand.style.rPanel}px;` : "",
+          brand.style.rCard != null ? `--r-lg:${brand.style.rCard}px;` : "",
+          brand.style.rPill != null ? `--r-pill:${brand.style.rPill}px;` : "",
+          brand.style.displayWeight != null ? `--display-weight:${brand.style.displayWeight};` : "",
+          brand.style.displayStyle ? `--display-style:${brand.style.displayStyle};` : "",
+          brand.style.displayTracking ? `--display-tracking:${brand.style.displayTracking};` : "",
+        ].join("")
+      : "",
     `--brand-pattern:url("data:image/svg+xml,${encodeURIComponent(brand.pattern)}");--brand-pattern-size:${brand.patternSize}px;`,
     "}",
   ].join("");

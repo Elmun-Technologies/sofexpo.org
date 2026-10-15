@@ -6,6 +6,7 @@ category: "food"
 readingMinutes: 8
 tags: ["ритейл", "FOODERA", "переговоры"]
 event: foodera-expo
+hero: /images/food-tasting-counter.jpg
 ---
 
 ### Сеть покупает не продукт, а предсказуемость

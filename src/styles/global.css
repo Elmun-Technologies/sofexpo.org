@@ -17,7 +17,12 @@
 :root {
   /* the centre's own logo colours (green, blue, red) as one band; a show page swaps it for its
      logo's colours via brandCss() */
-  --brand-stripe: linear-gradient(90deg, #60a854 0 33.4%, #489cb4 33.4% 66.7%, #c03030 66.7% 100%);
+  /* the SOF EXPO mark's three arcs, measured off images/brand-masters/sof-expo-logo.png */
+  --brand-stripe: linear-gradient(90deg, #48b454 0 33.4%, #249cb4 33.4% 66.7%, #cc243c 66.7% 100%);
+  --sx-green: #48b454;
+  --sx-blue: #249cb4;
+  --sx-red: #cc243c;
+  --sx-grey: #909090;
   /* the only easing curve in the product: a state change, not a performance. Displacement
      (translate/scale) and reveal-on-hover are gone — see docs/07 §8 */
   --tr: 180ms cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -181,15 +186,18 @@ h3,
 h4,
 h5 {
   font-family: var(--f-display);
-  font-weight: 500;
+  /* a show's own voice (brand-map.json → style): BUILD and AGROPRO bold like their logos,
+     PROMOTORS heavy italic, ECOM light; the centre stays at 500 */
+  font-weight: var(--display-weight, 500);
+  font-style: var(--display-style, normal);
   line-height: 1;
-  letter-spacing: -0.04em;
+  letter-spacing: var(--display-tracking, -0.04em);
   margin: 0 0 0.5em;
   text-wrap: balance;
 }
 
 h1 {
-  letter-spacing: -0.04em;
+  letter-spacing: var(--display-tracking, -0.04em);
   line-height: 0.98;
 }
 
@@ -1134,13 +1142,13 @@ a.chip:hover {
 /* 2026-10-04 (docs/15 §11): the section a visitor is in, and the one under the pointer, are
    marked by a 2px rule on the header's bottom edge — not by a filled pill */
 .nav__link:hover,
-.nav__item:focus-within .nav__link,
+.nav__item:has(:focus-visible) .nav__link,
 .nav__link[aria-current="page"] {
   color: var(--evergreen);
 }
 
 .nav__item:hover .mega,
-.nav__item:focus-within .mega,
+.nav__item:has(:focus-visible) .mega,
 .nav__item[data-keyboard-open] .mega {
   opacity: 1;
   visibility: visible;
@@ -2374,7 +2382,7 @@ h2.h3 { font-size: var(--t-h3); line-height: 1.18; letter-spacing: -0.014em; }
   transition: transform var(--tr);
 }
 .nav__item:hover .nav__link::after,
-.nav__item:focus-within .nav__link::after,
+.nav__item:has(:focus-visible) .nav__link::after,
 .nav__link[aria-current="page"]::after {
   transform: scaleX(1);
 }
@@ -2383,7 +2391,7 @@ h2.h3 { font-size: var(--t-h3); line-height: 1.18; letter-spacing: -0.014em; }
   transition: transform var(--tr), opacity var(--tr);
 }
 .nav__item:hover .nav__caret,
-.nav__item:focus-within .nav__caret {
+.nav__item:has(:focus-visible) .nav__caret {
   transform: rotate(180deg);
   opacity: 0.85;
 }

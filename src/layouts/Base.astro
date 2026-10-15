@@ -1,4 +1,6 @@
 ---
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 import '@/styles/fonts.css';
 import '@/styles/global.css';
 import '@/styles/premium.css';
@@ -60,8 +62,12 @@ const props = Astro.props;
 const PAGE_BRAND = CURRENT_BRAND ?? props.brand ?? null;
 const { locale, path, jsonLd = [], breadcrumbs = [] } = props;
 
-/** icon folder: a branded host keeps its own icons beside the centre's */
-const ICON = CURRENT_BRAND ? `/brand/${CURRENT_BRAND.id}` : '';
+/** icon folder: a show's host, and a show's own page on the centre's host, wear that show's
+   icon in the browser tab (public/brand/<id>/, scripts/build-assets.mjs); a show without its
+   icon set yet (PROMOTORS) keeps the centre's */
+const ICON = PAGE_BRAND && existsSync(join(process.cwd(), 'public', 'brand', PAGE_BRAND.id, 'favicon.png'))
+  ? `/brand/${PAGE_BRAND.id}`
+  : '';
 const meta = buildMeta({
   locale,
   path,

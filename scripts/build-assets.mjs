@@ -102,7 +102,7 @@ writeFileSync(
 
 console.log("public/og/default.jpg + favicons written");
 
-// --- per-host brand icons: public/brand/<id>/favicon.svg -> favicon.png + apple-touch-icon.png ----
+// --- per-host social cards (icons: scripts/build-brand-icons.mjs) ----
 /* A branded host shares the layout of the centre but not its face: the same social card is retyped
    from brand-map.json, so a show link unfurls in the show's own colours. City and venue only — no
    dates, because dates change every edition and a duplicated fact would drift. */
@@ -117,20 +117,8 @@ const ORN = `<g fill="none" stroke="{c}" stroke-width="1.5" stroke-linecap="roun
 if (existsSync(brandRoot)) {
   for (const [slug, b] of Object.entries(brands.hosts ?? {})) {
     const dir = `${brandRoot}/${b.id}`;
-    const fav = `${dir}/favicon.svg`;
-    if (!existsSync(fav)) continue;
-    const svg = readFileSync(fav);
-    await sharp(svg, { density: 400 })
-      .resize(512, 512)
-      .png()
-      .toFile(`${dir}/favicon.png`);
-    await sharp(svg, { density: 400 })
-      .resize(180, 180)
-      .png()
-      .toFile(`${dir}/apple-touch-icon.png`);
-    console.log(
-      `brand icons: ${b.id} (favicon.png 512, apple-touch-icon.png 180)`,
-    );
+    /* the show's tab icons come from its real logo: scripts/build-brand-icons.mjs */
+    if (!existsSync(`${dir}/favicon.png`)) continue;
     const c = b.palette;
     /* mark: 'star' hosts unfurl the organiser's eight-pointed badge (big, centre-left).
        Until a badge file exists the card wears the centre's hall mark (small, top-left),

@@ -56,6 +56,9 @@ const { locale, kicker, title, text, primary, secondary, dark = true } = Astro.p
     position: absolute;
     inset: 0;
     background:
+      /* the brand band across the top — the centre's tricolour, the show's own band under
+         data-brand (docs/21 §5) */
+      var(--brand-stripe) top / 100% 6px no-repeat,
       radial-gradient(70% 140% at 88% 10%, color-mix(in srgb, var(--moss) 50%, transparent), transparent 60%),
       /* the second glow is the show's own accent (FOODERA gold, AGROPRO yellow …) — a fixed brass
          tint read as a stain on the blue and black shows */

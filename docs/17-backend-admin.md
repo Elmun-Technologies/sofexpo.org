@@ -21,7 +21,7 @@ SQLite’da saqlaydi, Telegram/CRM’ga navbat bilan uzatadi va birinchi tomon a
 ## 1. Tuzilma
 
 ```text
-Static public site (Cloudflare Pages / CDN)
+Static public site (Vercel / CDN)
   ├─ POST PUBLIC_LEAD_ENDPOINT ───────────────┐
   ├─ POST PUBLIC_ANALYTICS_ENDPOINT ──────────┤ CORS: exact site-origin allow-list
   └─ PUBLIC_PORTAL_URL → /cabinet             │
@@ -73,17 +73,20 @@ yozish kerak.
 | `portal_sessions` | Portal token/CSRF xeshi, expiry va account foreign key |
 | `portal_profiles` | Ism, telefon, kompaniya, mamlakat, soha, sayt va qiziqishlar |
 | `portal_requests` | Account’ga tegishli tashrif/ishtirok so‘rovi; CRM lead ID va holat bilan bog‘langan |
-| `leads` | Aloqa, forma/tadbir, locale, manba, landing/referrer, UTM, status, priority, mas’ul va forma payload’i |
+| `leads` | Aloqa, forma/tadbir, locale, manba, landing/referrer, UTM, `session_id`, status, priority, mas’ul, bitim summasi/valyuta, stend m², keyingi qadam va sanasi, yo‘qotish sababi, forma payload’i |
+| `lead_stage_history` | Har bir bosqich o‘zgarishi: qaysi bosqichdan qaysiga, kim, qachon — voronka va “bosqichda o‘rtacha kun” shu jadvaldan |
 | `lead_notes` | Ariza ustidagi ichki izohlar, muallif va sana |
 | `delivery_outbox` | Provider, urinish soni, keyingi urinish, holat va oxirgi xato |
 | `analytics_events` | Privacy-minimal hodisalar; IP va raw URL yo‘q |
-| `audit_log` | Status/ustuvorlik/mas’ul/foydalanuvchi o‘zgarishlari |
+| `audit_log` | Status/ustuvorlik/mas’ul/foydalanuvchi o‘zgarishlari, kompaniya sahifasini nashr/rad/yashirish |
+| `exhibitor_showcases` | Eksponentning kompaniya sahifasi: qoralama (`draft_json`), nashr qilingan nusxa (`published_json`), holat, slug, moderator izohi |
+| `portal_files` | Eksponent yuklagan logo va materiallar (katalog, buklet, listovka, taqdimot, prays-list, foto): tur, sarlavha, MIME, hajm, sha256, `published` belgisi; fayl o‘zi `UPLOADS_DIR` papkasida (standart: SQLite fayli yonidagi `uploads/`, ya’ni Fly volume’da) |
 | `schema_migrations` | Eski `.cache/leads.jsonl` va `events.jsonl` ni bir marta import qilish belgisi |
 
-Lead statuslari: `new → contacted → qualified → won / lost`; qo‘shimcha `spam`. Admin panelda
-qidiruv, status/forma filtri, sahifalash, CSV eksport (10 000 tagacha), priority, mas’ul, ichki
-izoh va ariza tarixi mavjud. “Status transition” qattiq bloklanmaydi — menejer xato statusni ham
-orqaga qaytara oladi; har o‘zgarish audit logga yoziladi.
+Lead hayot sikli (bosqichlar): `new → contacted → qualified → proposal → negotiation → won`, yopilish
+`lost` (sababi majburiy) yoki `spam`. Har o‘tish `lead_stage_history` va audit logga yoziladi; menejer
+xato bosqichni orqaga qaytara oladi. Saytdagi forma `sessionId` yuboradi, shuning uchun lead kartasida
+o‘sha tashrifning yo‘li (ko‘rilgan sahifalar, bosilgan CTA’lar) ko‘rinadi.
 
 ## 3. Admin paneli
 
@@ -92,9 +95,19 @@ orqaga qaytara oladi; har o‘zgarish audit logga yoziladi.
 - **Umumiy ko‘rinish:** davr tanlash (7/30/90 kun), jami/yangi leadlar, sessiya va konversiya,
   arizalar trendi/status/form/source kesimi hamda shu davrdagi yangi mehmon/eksponent akkauntlari,
   kabinet so‘rovlari va yangi so‘rovlar.
+- **Bugun (vazifalar):** muddati o‘tgan va bugungi keyingi qadamlar, egasiz yangi leadlar, 7 kundan
+  beri qimirlamagan bitimlar, 1 soatdan ortiq javobsiz yangi arizalar soni.
+- **Voronka (pipeline):** bosqichlar bo‘yicha kanban, har ustunda soni va bitim summasi; kartani ochib
+  bosqich, summa, m², keyingi qadam/sana, mas’ul va yo‘qotish sababini o‘zgartirish; qo‘ng‘iroq/uchrashuv/
+  email/xabar qaydlari; bosqichlar tarixi va saytdagi tashrif yo‘li.
 - **Arizalar:** ism/telefon/kompaniya bo‘yicha qidiruv, status va forma filtri, tafsilot paneli,
-  status/priority/mas’ulni yangilash, jamoa izohlari, CSV eksport. Portal so‘rovlari ham shu CRM
-  kartalariga ulangan; menejer o‘zgartirgan status account egasining kabinetida ko‘rinadi.
+  CSV eksport. Portal so‘rovlari ham shu CRM kartalariga ulangan; menejer o‘zgartirgan status account
+  egasining kabinetida ko‘rinadi.
+- **Savdo analitikasi:** davr bo‘yicha bosqichma-bosqich konversiya, won/lost, yutilgan summa,
+  o‘rtacha bitim, birinchi javobgacha vaqt, bosqichda o‘rtacha kun, yo‘qotish sabablari, manba/UTM,
+  forma va tadbir kesimida natija, menejerlar reytingi.
+- **Kompaniya sahifalari (moderatsiya):** eksponent yuborgan sahifa va fayllarni ko‘rish, nashr
+  qilish, rad etish (sabab eksponent kabinetida ko‘rinadi) yoki saytdan yashirish.
 - **Kabinet akkauntlari:** mehmon/eksponent profilini qidirish va filtrlash, ro‘yxatdan o‘tish/oxirgi
   kirish tarixi, har bir akkauntning barcha portal so‘rovlari va CRM kartalariga tez o‘tish. Admin
   akkauntni bloklaydi yoki qayta faollashtiradi; bloklash barcha sessiyalarni bekor qiladi va auditga
@@ -119,8 +132,17 @@ Backenddagi `/cabinet` sahifasida alohida ro‘yxatdan o‘tish va kirish oqimi 
 
 - **Mehmon (`visitor`)**: ism/telefon/profil va qiziqishlarini saqlaydi; tadbirni tanlab tashrif,
   buyer dasturi, guruh yoki konferensiya bo‘yicha so‘rov yuboradi.
+- **Mehmon** ro‘yxatdan o‘tishda kompaniya majburiy emas (talaba, xususiy xaridor). Saytdagi bepul chipta
+  formasi ham faqat ism, telefon, email va (ixtiyoriy) ko‘rgazmani so‘raydi; “O‘zim” tanlansa kompaniya
+  maydoni yashiriladi. Backend `visitor` formasi uchun faqat `email` va `consent` ni talab qiladi.
 - **Eksponent (`exhibitor`)**: kompaniya, soha, mamlakat va sayt profilini boshqaradi; tadbir,
   taxminiy m² va ishtirok formatini ko‘rsatib, stend so‘rovi yuboradi.
+- **Kompaniya sahifasi (eksponent):** logo, bir qatorli tavsif (≤120), “kompaniya haqida” (≤1000),
+  soha, shahar/mamlakat, sayt, ijtimoiy tarmoqlar (Instagram, Telegram, Facebook, LinkedIn, YouTube,
+  TikTok), qaysi ko‘rgazmalarda (joriy va o‘tgan yillar) va qaysi stendda qatnashgani hamda materiallar:
+  PDF ≤20 MB, rasm (PNG/JPG/WebP) ≤5 MB, jami ≤30 fayl, SVG qabul qilinmaydi; fayl turi baytlar bo‘yicha
+  tekshiriladi. “Ko‘rib chiqishga yuborish” → admin nashr qiladi → saytda chiqadi. Nashrdan keyingi
+  tahrirlar yana ko‘rib chiqiladi, saytda esa oxirgi tasdiqlangan nusxa turadi.
 - Har bir so‘rov `portal_requests` va mavjud `leads` jadvaliga bitta SQLite tranzaksiyasida yoziladi.
   Admin uni odatdagi CRM lead sifatida ko‘radi; menejer statusni yangilasa, shu holat account
   egasining kabinetida ham ko‘rinadi. Bir account boshqa account so‘rovlarini o‘qiy olmaydi.
@@ -139,14 +161,22 @@ Backenddagi `/cabinet` sahifasida alohida ro‘yxatdan o‘tish va kirish oqimi 
   email provayderi tanlangandan keyin alohida qo‘shiladi.
 
 Sayt headeridagi kabinet havolalari `PUBLIC_PORTAL_URL` build-time env o‘zgaruvchisi berilganda
-ko‘rinadi (masalan, `https://api.sofexpo.org`). Havola joriy sahifa tilini `lang` parametrida uzatadi;
+ko‘rinadi (masalan, `https://api.sof-expo.com`). Havola joriy sahifa tilini `lang` parametrida uzatadi;
 qo‘llab-quvvatlanadigan qiymatlar `uz`, `ru`, `en`, `tr`, `zh`, to‘g‘ridan-to‘g‘ri ochilganda esa o‘zbek
 tili tanlanadi. Foydalanuvchi kabinet ichida tilni o‘zgartirishi mumkin. Bo‘sh bo‘lsa noto‘g‘ri/localhost
 havola chiqarilmaydi; portalni API hostidagi `/cabinet` orqali ochish mumkin.
 
+**Saytdagi eksponentlar katalogi.** Nashr qilingan sahifalar `GET /api/public/exhibitors` orqali
+ochiq (CORS `*`, 2 daqiqa kesh), fayllar `GET /media/exhibitors/:id` orqali (faqat nashr qilingan, faol
+akkauntniki). Statik sayt ularni brauzerda o‘qiydi (`src/components/ExhibitorDirectory.astro`):
+`/exhibitors/catalogue/` sahifasida barcha ko‘rgazmalar bo‘yicha, har bir ko‘rgazma sahifasida
+(umumiy va “Ishtirokchilarga”) faqat o‘sha ko‘rgazma bo‘yicha — qidiruv, ko‘rgazma va “yaqin/o‘tgan”
+filtri bilan. Backend manzili: `PUBLIC_EXHIBITORS_API`, bo‘lmasa `PUBLIC_PORTAL_URL`, bo‘lmasa
+`PUBLIC_LEAD_ENDPOINT` origin’i. Backend javob bermasa yoki ro‘yxat bo‘sh bo‘lsa blok umuman
+ko‘rinmaydi va sahifadagi statik PDF kataloglar qoladi — saytni qayta build qilish shart emas.
+
 **Chegaralar:** so‘rov yuborish chiptani/QR’ni chiqarish, qatnashishni tasdiqlash, stendni bron qilish,
-to‘lov, shartnoma/faktura yoki fayl yuklash degani emas. Bu oqimlar ushbu MVP’da mavjud emas; portal
-faqat murojaat va uning CRM holatini kuzatadi.
+to‘lov yoki shartnoma/faktura degani emas. Bu oqimlar ushbu MVP’da mavjud emas.
 
 ## 5. Lokal ishga tushirish
 
@@ -179,28 +209,48 @@ Bu foydalanuvchining barcha oldingi sessiyalarini bekor qiladi. Parolni qayta ti
 reset env qatorlarini o‘chiring. Yangi foydalanuvchini admin panelning “Jamoa va ruxsatlar”
 bo‘limidan yarating.
 
+### Demo ma’lumotlar bilan
+
+CRM, kabinet va saytdagi eksponentlar katalogini haqiqiy bazasiz ko‘rsatish uchun:
+
+```bash
+npm run backend:demo              # :8790, har startda vaqtinchalik yangi SQLite (chiqishda o‘chadi)
+PUBLIC_EXHIBITORS_API=http://127.0.0.1:8790 PUBLIC_PORTAL_URL=http://127.0.0.1:8790 \
+PUBLIC_LEAD_ENDPOINT=http://127.0.0.1:8790/lead PUBLIC_ANALYTICS_ENDPOINT=http://127.0.0.1:8790/event \
+npm run build && npm run preview
+```
+
+`scripts/backend/demo.mjs` quyidagilarni yaratadi:
+- 9 ta eksponent kompaniya, logotip va PDF materiallari bilan. 8 tasi chop etilgan, 1 tasi moderatsiyani kutadi.
+- 12 ta ariza: barcha bosqichlarda, muddati o‘tgan, yo‘qotilgan va sotilganlari bilan.
+- 2 ta menejer.
+
+Kirish ma’lumotlari start logida chiqadi: admin `admin@sof-expo.com` / `admin-password-2026`, eksponent
+`aziz@beton.uz` / `exhibitor-password-2026`. Boshqa host’dan ochilsa (masalan, preview domeni),
+`DEMO_HOST=0.0.0.0` va sayt origin’ini `DEMO_ORIGINS` ga vergul bilan bering. Skript hech qachon
+`DB_PATH` dagi haqiqiy bazaga tegmaydi.
+
 ## 6. Production sozlash
 
-1. Node 22.18+ server/VPS yoki persistent volume’li runtime’da backendni ishga tushiring.
-2. DNS/TLS: masalan `api.sofexpo.org` → Node backend; reverse proxy HTTP’ni backendga uzatsin va
-   `X-Forwarded-Proto`, `X-Forwarded-Host`, `X-Forwarded-For` ni o‘zi yozsin. Faqat ishonchli
-   proxy bo‘lsa `LEAD_WEBHOOK_TRUST_PROXY=1` qiling; to‘g‘ridan-to‘g‘ri internetga ochiq serverda
-   bu qiymat `0` qolsin.
-3. `LEAD_WEBHOOK_DB` ni persistent diskka qo‘ying, fayl ruxsatini faqat backend useriga bering,
-   diskni shifrlang va muntazam backup qiling. `.data/` Git’ga kirmaydi.
-4. `.env` da haqiqiy `ADMIN_EMAIL`, uzun random `ADMIN_PASSWORD`, `LEAD_WEBHOOK_ORIGINS` (aniq
-   `https://sofexpo.org`, `https://foodera.sofexpo.org` … va `https://api.sofexpo.org`), Telegram
-   token/chat yoki `CRM_WEBHOOK_URL`/token sozlang. Bot/CRM sirlari faqat backend env’da bo‘ladi.
-5. `.github/workflows/deploy.yml` Cloudflare Pages uchun statik saytni quradi. Standart ochiq manzillar
-   `PUBLIC_LEAD_ENDPOINT=https://api.sofexpo.org/lead`,
-   `PUBLIC_ANALYTICS_ENDPOINT=https://api.sofexpo.org/event` va `PUBLIC_PORTAL_URL=https://api.sofexpo.org`;
-   boshqa backend domeni ishlatilsa, GitHub repository variables’da mos qiymatlarni belgilang.
-   `PUBLIC_*` qiymatlari build vaqtida HTML/JS’ga kiradi — ularga secret token qo‘ymang. Deploy workflow
-   Cloudflare `CLOUDFLARE_API_TOKEN` va `CLOUDFLARE_ACCOUNT_ID` secrets’larini talab qiladi,
-   nashrdan oldin `/health`, `/api/portal/options` va `/cabinet` ni tekshiradi, ammo **Node backendni
-   o‘zi deploy qilmaydi**. Shu sabab Pages’ni nashr etishdan oldin API server, persistent DB, TLS, CORS,
-   admin bootstrap hamda Telegram/CRM yetkazish sozlamalari production’da ishga tushganini tekshiring.
-6. Admin panel: `https://api.sofexpo.org/admin`; portal login/registratsiya: `https://api.sofexpo.org/cabinet`.
+1. Production backend Fly.io’da ishlaydi: app `sofexpo-api`, region `ist`, bitta 512 MB machine va
+   `/data` persistent volume. App/volume yaratish hamda deploy tartibi `docs/20-fly-deploy.md` da.
+2. `api.sof-expo.com` DNS/TLS’ni Fly app’iga ulang (Namecheap va sertifikat qadamlari docs/20’da).
+   Fly Proxy orqali keladigan so‘rovlar uchun `LEAD_WEBHOOK_TRUST_PROXY=1`; bevosita internetga
+   ochiladigan boshqa runtime’da faqat ishonchli reverse proxy forwarded header’larni yozsa yoqing.
+3. `LEAD_WEBHOOK_DB` persistent volume’dagi `/data/sofexpo.sqlite` bo‘lsin; `.data/` Git’ga kirmaydi.
+   SQLite bitta machine/single-writer uchun: volume’ni bir nechta backend process’iga ulamang va
+   muntazam snapshot hamda alohida backup/restore tartibini saqlang (`docs/20-fly-deploy.md` §7).
+4. Fly secrets’da haqiqiy `ADMIN_EMAIL`, uzun random `ADMIN_PASSWORD`, Telegram bot/webhook secrets
+   hamda kerak bo‘lsa CRM URL/token’ni sozlang. `LEAD_WEBHOOK_ORIGINS` secret emas: production
+   saytining aniq origin’lari Fly config’da beriladi. Bot/CRM credentials’larini public/static env’ga
+   qo‘ymang.
+5. Statik saytning asosiy deploy’i **Vercel**’da (`vercel.json`, `PUBLIC_HOSTS_MODE=alias`). Vercel
+   Production env’da `PUBLIC_LEAD_ENDPOINT=https://api.sof-expo.com/lead`,
+   `PUBLIC_ANALYTICS_ENDPOINT=https://api.sof-expo.com/event` va `PUBLIC_PORTAL_URL=https://api.sof-expo.com`
+   qiymatlarini belgilang; `PUBLIC_*` build-time qiymatlar, ularga secret token qo‘ymang. Fly backend
+   Vercel tomonidan deploy qilinmaydi. Cloudflare Pages workflow keyingi multi-host topology uchun
+   saqlanadi, current root-domain deployment o‘rnini bosmaydi.
+6. Admin panel: `https://api.sof-expo.com/admin`; portal login/registratsiya: `https://api.sof-expo.com/cabinet`.
    Ular public statik hostda emas, API server domenida. `LEAD_WEBHOOK_ORIGIN` eski bitta-origin
    sozlamasi qabul qilinadi, lekin yangi deploy’da bir nechta domen uchun `LEAD_WEBHOOK_ORIGINS` ishlating.
 
@@ -224,7 +274,12 @@ kalit yubormang.
 | `GET` | `/api/portal/me` | Login | Portal profili + CSRF tokenini yangilash |
 | `PATCH` | `/api/portal/profile` | Login + CSRF | Faqat o‘z profilini tahrirlash |
 | `GET/POST` | `/api/portal/requests` | Login (POST + CSRF) | Faqat o‘z tashrif/ishtirok so‘rovlarini ko‘rish/yuborish |
+| `GET/PUT` | `/api/portal/showcase` | Eksponent (PUT + CSRF) | Kompaniya sahifasi qoralamasi; `submit: true` = ko‘rib chiqishga yuborish |
+| `GET/POST` | `/api/portal/files` | Eksponent (POST + CSRF) | Logo/material yuklash (raw body; `?kind=&name=&title=`) |
+| `GET/PATCH/DELETE` | `/api/portal/files/:id` | Eksponent (PATCH/DELETE + CSRF) | O‘z faylini ko‘rish, nomini/turini o‘zgartirish, o‘chirish |
 | `POST` | `/api/portal/logout` | Login + CSRF | Portal sessiyasini bekor qilish |
+| `GET` | `/api/public/exhibitors?event=&when=&q=` | Ochiq | Nashr qilingan kompaniya sahifalari (sayt katalogi) |
+| `GET` | `/media/exhibitors/:id` | Ochiq | Nashr qilingan logo/material fayli |
 | `GET` | `/api/admin/status` | Ochiq | Birinchi admin sozlanganmi |
 | `POST` | `/api/admin/login` | Ochiq + rate limit | Sessiya yaratish |
 | `GET` | `/api/admin/me` | Login | Profil + yangilanadigan CSRF token |
@@ -233,10 +288,18 @@ kalit yubormang.
 | `GET` | `/api/admin/portal-accounts?...` | Login | Mehmon/eksponent akkauntlarini qidirish, filtrlash va sahifalash |
 | `GET` | `/api/admin/portal-accounts/:id` | Login | Profil va unga bog‘langan so‘rov/CRM kartalari |
 | `PATCH` | `/api/admin/portal-accounts/:id` | Admin + CSRF | Akkauntni bloklash/faollashtirish; bloklanganda sessiyalar bekor qilinadi |
+| `GET` | `/api/admin/pipeline` | Login | Bosqichlar bo‘yicha kanban (soni, summasi, kartalar) |
+| `GET` | `/api/admin/tasks` | Login | Muddati o‘tgan/bugungi/yaqin qadamlar, egasiz va “uxlab qolgan” leadlar |
+| `GET` | `/api/admin/team` | Login | Menejerlar bo‘yicha ochiq/yutilgan bitimlar |
+| `GET` | `/api/admin/sales-analytics?days=90` | Login | Konversiya, won/lost, summa, javob vaqti, yo‘qotish sabablari, manba/forma/tadbir kesimi |
+| `GET` | `/api/admin/showcases?status=` | Login | Kompaniya sahifalari ro‘yxati |
+| `GET` | `/api/admin/showcases/:accountId` | Login | Qoralama, nashr nusxasi va fayllar |
+| `POST` | `/api/admin/showcases/:accountId/review` | Login + CSRF | `publish` / `reject` (izoh majburiy) / `hide` |
+| `GET` | `/api/admin/files/:id` | Login | Moderatsiya uchun faylni ochish |
 | `GET` | `/api/admin/leads?...` | Login | Qidiruv/filtr/sahifalash |
 | `GET` | `/api/admin/leads/:id` | Login | Tafsilot + izoh + yetkazish holati |
-| `PATCH` | `/api/admin/leads/:id` | Login + CSRF | Status/priority/assignee |
-| `POST` | `/api/admin/leads/:id/notes` | Login + CSRF | Ichki izoh |
+| `PATCH` | `/api/admin/leads/:id` | Login + CSRF | Bosqich, priority, mas’ul, summa/valyuta, m², keyingi qadam/sana, yo‘qotish sababi |
+| `POST` | `/api/admin/leads/:id/notes` | Login + CSRF | Ichki izoh yoki aloqa qaydi (`kind`: call/meeting/email/message) |
 | `GET` | `/api/admin/leads/export.csv` | Login | Filtrlangan CSV, 10k limit |
 | `GET/POST/PATCH` | `/api/admin/users` | Admin + CSRF (o‘qishdan tashqari) | Hisob va ruxsatlar |
 | `GET` | `/api/admin/system` | Admin | Integratsiya/navbat holati |
@@ -247,31 +310,6 @@ Backend integratsion testlar: `npm run test:backend`. To‘liq loyiha suite’i 
 `npm test` (yoki `npm run check`) orqali ishlaydi. Backend testlari admin/portal login va CSRF,
 role isolation, visitor/exhibitor ariza flow’i, admin akkaunt qidiruvi/bloklash va sessiya bekor qilish,
 portal analytics, CORS, SQLite, outbox retry, eksport va last-admin himoyasini tekshiradi.
-
-## Eksponent kartasi: logotip, flayer, katalog, foto (2026-10-15)
-
-Eksponent kabinetida **Kompaniya kartasi**: brend nomi, ko‘rgazma, stend raqami, kompaniya haqida
-(≥40 belgi), mahsulotlar, sayt/Instagram/Telegram, ko‘rgazma bo‘yicha kontakt va fayllar.
-Holat: `draft` → `submitted` (eksponent yuboradi; brend, tavsif, ko‘rgazma va logotip majburiy) →
-`approved` yoki `changes` (tashkilotchi izoh bilan qaytaradi). Tasdiqlangan kartaga o‘zgarish yoki
-yangi fayl kirsa, u yana `submitted` bo‘ladi.
-
-| Slot | Turi (birinchi baytlardan aniqlanadi) | Hajm | Soni |
-|---|---|---|---|
-| logo | PNG, JPG, WebP (SVG qabul qilinmaydi) | 3 MB | 1 (yangisi almashtiradi) |
-| flyer | PDF, PNG, JPG, WebP | 15 MB | 10 |
-| catalog | PDF | 25 MB | 3 |
-| photo | PNG, JPG, WebP | 8 MB | 12 |
-
-Akkaunt bo‘yicha jami 120 MB. Fayllar `PORTAL_UPLOAD_DIR` da (standart: baza yonidagi `uploads/`,
-ya’ni o‘sha persistent volume) `akkaunt/uuid.kengaytma` nomi bilan saqlanadi; fayl nomi tozalanadi.
-Qaytarishda `nosniff` + `sandbox` CSP; rasmlar inline, PDF yuklab olish sifatida.
-
-API: `GET/PUT /api/portal/company`, `POST /api/portal/files?kind=…` (xom body, `X-File-Name`),
-`GET/DELETE /api/portal/files/:id`; admin: `GET /api/admin/exhibitor-profiles?status=`,
-`GET /api/admin/files/:id`, `PATCH /api/admin/portal-accounts/:id/company {status, note}`.
-Admin panelda yangi bo‘lim **Eksponent kartalari** (tekshiruvdagilar soni yon menyuda) va
-akkaunt kartasida logotip, fayllar, «Tasdiqlash» / «Tuzatishga qaytarish».
 
 ## Telegram bot tekshiruvi (2026-10-15)
 
@@ -284,7 +322,7 @@ akkaunt kartasida logotip, fayllar, «Tasdiqlash» / «Tuzatishga qaytarish».
   tekshiradi (`tests/backend.test.mjs`).
 - Bot ishlashi uchun serverda `TELEGRAM_BOT_TOKEN` va `TELEGRAM_CHAT_ID` o‘rnatilgan bo‘lishi va bot
   o‘sha chat/guruhga qo‘shilgan (kanal bo‘lsa — admin) bo‘lishi shart.
-- Eksponent kartani tekshiruvga yuborganda o‘sha Telegram chatiga xabar boradi (brend, ko‘rgazma,
-  stend, fayllar soni) — best-effort, karta CRM’da baribir saqlanadi.
-- Admin va kabinet sahifalarida favicon bor (oldin `/favicon.ico` 404 berardi). Telefonda
-  «Eksponent kartalari» jadvali kartochkalarga aylanadi.
+- Eksponent kompaniya sahifasini moderatsiyaga yuborganda (`PUT /api/portal/showcase` +
+  `submit: true`) o‘sha Telegram chatiga xabar boradi (kompaniya, ko‘rgazma · stend, fayllar soni,
+  email) — best-effort, sahifa CRM’da baribir saqlanadi.
+- Admin va kabinet sahifalarida favicon bor (oldin `/favicon.ico` 404 berardi).

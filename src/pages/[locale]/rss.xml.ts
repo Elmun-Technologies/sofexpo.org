@@ -59,7 +59,7 @@ export async function GET(context: APIContext) {
     description: ru
       ? "Анонсы выставок, деловые программы и материалы для прессы от выставочно-конгрессного центра в Самарканде."
       : "Exhibition announcements, business programmes and press material from the exhibition and congress centre in Samarkand.",
-    site: context.site ?? new URL("https://sofexpo.org"),
+    site: context.site ?? new URL("https://sof-expo.com"),
     items,
     customData: `<language>${ru ? "ru" : "en"}</language><image><url>${abs("/og/default.jpg")}</url><title>SOF EXPO Samarkand</title></image>`,
     xmlns: { atom: "http://www.w3.org/2005/Atom" },

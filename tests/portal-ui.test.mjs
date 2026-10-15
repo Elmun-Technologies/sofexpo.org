@@ -8,6 +8,16 @@ const headerSource = readFileSync(new URL('../src/components/Header.astro', impo
 const translations = readFileSync(new URL('../scripts/backend/portal/i18n.js', import.meta.url), 'utf8');
 const app = readFileSync(new URL('../scripts/backend/portal/app.js', import.meta.url), 'utf8');
 const foodera = { slug: 'foodera-expo', name: 'FOODERA EXPO 2026', dates: '27–29 oktabr 2026' };
+const shows = [
+  { slug: 'foodera-expo', name: 'FOODERA EXPO', editions: [{ year: 2026, upcoming: true }] },
+  { slug: 'buildpro-expo', name: 'BUILD PRO EXPO', editions: [{ year: 2026, upcoming: true }, { year: 2025 }] },
+];
+
+function chooseType(window, type) {
+  const radio = window.document.querySelector(`#register-type-${type}`);
+  radio.checked = true;
+  radio.dispatchEvent(new window.Event('change', { bubbles: true }));
+}
 
 function jsonResponse(data, status = 200) {
   return {
@@ -24,13 +34,14 @@ function createPortalPage(search = '', { failRequests = false } = {}) {
   const calls = [];
   let account = null;
   let requests = [];
-  let company = { brandName: '', description: '', products: '', website: '', instagram: '', telegram: '', contactName: '', contactPhone: '', contactEmail: '', event: '', stand: '', status: 'draft', reviewNote: '', files: [] };
+  let showcase = { status: 'draft', draft: null, live: false, hasChanges: false, reviewNote: '', files: [] };
 
   window.fetch = async (path, options = {}) => {
-    const call = { path: String(path), method: options.method || 'GET', headers: options.headers || {}, body: typeof options.body === 'string' ? JSON.parse(options.body) : options.body ?? null };
+    const raw = options.body && typeof options.body !== 'string';
+    const call = { path: String(path), method: options.method || 'GET', headers: options.headers || {}, body: options.body && !raw ? JSON.parse(options.body) : null, raw };
     calls.push(call);
-    if (call.path === '/api/portal/options') return jsonResponse({ ok: true, events: [foodera] });
-    if (call.path === '/api/portal/me') return account ? jsonResponse({ ok: true, user: account, csrfToken: 'csrf-test-token' }) : jsonResponse({ ok: false, error: 'Login required' }, 401);
+    if (call.path === '/api/portal/options') return jsonResponse({ ok: true, events: [foodera], shows, socials: ['instagram', 'telegram'], fileKinds: ['catalog', 'brochure', 'flyer', 'image', 'other'] });
+    if (call.path === '/api/portal/me') return jsonResponse({ ok: false, error: 'Login required' }, 401);
     if (call.path === '/api/portal/register') {
       const body = call.body;
       account = {
@@ -62,16 +73,20 @@ function createPortalPage(search = '', { failRequests = false } = {}) {
       if (failRequests) return jsonResponse({ ok: false, error: 'Temporary error' }, 503);
       return jsonResponse({ ok: true, items: requests });
     }
-    if (call.path === '/api/portal/company' && call.method === 'GET') return jsonResponse({ ok: true, company, events: [foodera] });
-    if (call.path === '/api/portal/company' && call.method === 'PUT') {
-      if (call.body.submit && !company.files.some((file) => file.kind === 'logo')) return jsonResponse({ ok: false, error: 'Tekshiruvga yuborish uchun to‘ldiring: logotip.' }, 422);
-      company = { ...company, ...call.body, status: call.body.submit ? 'submitted' : company.status };
-      return jsonResponse({ ok: true, company });
+    if (call.path === '/api/portal/showcase' && call.method === 'GET') return jsonResponse({ ok: true, showcase });
+    if (call.path === '/api/portal/showcase' && call.method === 'PUT') {
+      const errors = {};
+      if (call.body.submit && !call.body.showcase.participation.length) errors.participation = 'required';
+      if (call.body.showcase.website === 'not a url') errors.website = 'url';
+      if (Object.keys(errors).length) return jsonResponse({ ok: false, error: 'Ba’zi maydonlar noto‘g‘ri to‘ldirilgan.', details: errors }, 422);
+      showcase = { ...showcase, draft: { ...call.body.showcase, logoFileId: showcase.draft?.logoFileId || '' }, status: call.body.submit ? 'pending' : showcase.status };
+      return jsonResponse({ ok: true, showcase });
     }
-    if (call.path.startsWith('/api/portal/files?kind=') && call.method === 'POST') {
-      const kind = call.path.split('=')[1];
-      const file = { id: `file-${company.files.length + 1}`, kind, fileName: decodeURIComponent(call.headers['X-File-Name']), mime: kind === 'logo' ? 'image/png' : 'application/pdf', size: 2048, createdAt: '2026-10-15T10:00:00.000Z' };
-      company.files = [...company.files.filter((item) => kind !== 'logo' || item.kind !== 'logo'), file];
+    if (call.path.startsWith('/api/portal/files?') && call.method === 'POST') {
+      const params = new URL(call.path, 'https://x.test').searchParams;
+      const file = { id: `00000000-0000-4000-8000-00000000000${showcase.files.length + 1}`, kind: params.get('kind'), title: params.get('name').replace(/\.pdf$/, ''), mime: 'application/pdf', size: 2048, published: false };
+      file.url = `/api/portal/files/${file.id}`;
+      showcase = { ...showcase, files: [...showcase.files, file] };
       return jsonResponse({ ok: true, file }, 201);
     }
     if (call.path === '/api/portal/logout') return jsonResponse({ ok: true });
@@ -134,13 +149,14 @@ test('portal login/register tabs are accessible and switching roles keeps accoun
     assert.equal(registerTab.getAttribute('aria-selected'), 'true');
     assert.equal(registerForm.hidden, false);
 
-    const type = document.querySelector('#register-type');
-    type.value = 'exhibitor';
-    type.dispatchEvent(new window.Event('change', { bubbles: true }));
+    assert.equal(document.querySelector('#register-company').required, false, 'guests may come without a company');
+    assert.equal(document.querySelector('#register-industry').disabled, true);
+    chooseType(window, 'exhibitor');
     assert.equal(document.querySelector('#register-company').disabled, false);
     assert.equal(document.querySelector('#register-company').required, true);
-    assert.equal(document.querySelector('[data-role-fields="visitor"]').hidden, true);
-    assert.equal(document.querySelector('#register-interests').disabled, true);
+    assert.equal(document.querySelector('#register-industry').required, true);
+    assert.equal(document.querySelector('[data-role-fields="exhibitor"]').hidden, false);
+    assert.equal(document.querySelector('[data-visitor-only]').hidden, true);
     assert.equal(document.querySelector('.exhibitor-request-fields').hidden, false);
     assert.equal(document.querySelector('#request-area').required, true);
     assert.equal(document.querySelector('#request-interest').disabled, true);
@@ -190,16 +206,18 @@ test('visitor deep links open registration, show only visitor fields, and privac
     await waitFor(window, () => calls.some((call) => call.path === '/api/portal/me'));
     const document = window.document;
     assert.equal(document.querySelector('#register-form').hidden, false);
-    assert.equal(document.querySelector('#register-type').value, 'visitor');
-    assert.equal(document.querySelector('.visitor-profile-fields').hidden, false);
+    assert.equal(document.querySelector('#register-type-visitor').checked, true);
     assert.equal(document.querySelector('.exhibitor-profile-fields').hidden, true);
-    assert.equal(document.querySelector('#register-company').disabled, true);
-    assert.equal(document.querySelector('#register-interests').disabled, false);
-    assert.equal(document.querySelector('#request-interest').required, true);
+    assert.equal(document.querySelector('[data-role-fields="exhibitor"]').hidden, true);
+    assert.equal(document.querySelector('#register-company').disabled, false);
+    assert.equal(document.querySelector('#register-company').required, false);
+    assert.equal(document.querySelector('#request-interest').required, false, 'a guest only has to pick the show');
+    const visibleRequired = [...document.querySelectorAll('#register-form [required]')].filter((field) => !field.disabled).map((field) => field.name);
+    assert.deepEqual(visibleRequired.sort(), ['consent', 'email', 'name', 'password', 'phone']);
     assert.equal(document.querySelector('#request-area').disabled, true);
-    assert.match(document.querySelector('.register-consent a').href, /^https:\/\/sofexpo\.org\/uz\/legal\/privacy\//);
-    assert.equal(document.querySelector('.auth-story .brand').href, 'https://sofexpo.org/uz/');
-    assert.equal(document.querySelector('.back-link').href, 'https://sofexpo.org/uz/');
+    assert.match(document.querySelector('.register-consent a').href, /^https:\/\/sof-expo\.com\/uz\/legal\/privacy\//);
+    assert.equal(document.querySelector('.auth-story .brand').href, 'https://sof-expo.com/uz/');
+    assert.equal(document.querySelector('.back-link').href, 'https://sof-expo.com/uz/');
   } finally {
     dom.window.close();
   }
@@ -241,8 +259,8 @@ test('portal can switch across all five site languages and keeps its public link
       assert.equal(document.querySelector('#login-tab').textContent, login);
       assert.equal(document.querySelector('#request-title').textContent, visitTitle);
       assert.equal(document.querySelector('#request-event option[value="foodera-expo"]').textContent, eventOption);
-      assert.equal(document.querySelector('.register-consent a').href, `https://sofexpo.org/${locale}/legal/privacy/`);
-      assert.equal(document.querySelector('.back-link').href, `https://sofexpo.org/${locale}/`);
+      assert.equal(document.querySelector('.register-consent a').href, `https://sof-expo.com/${locale}/legal/privacy/`);
+      assert.equal(document.querySelector('.back-link').href, `https://sof-expo.com/${locale}/`);
       assert.equal(document.querySelector('#auth-locale').value, locale);
     } finally {
       dom.window.close();
@@ -257,7 +275,7 @@ test('portal can switch across all five site languages and keeps its public link
     select.dispatchEvent(new window.Event('change', { bubbles: true }));
     assert.equal(window.document.documentElement.lang, 'en');
     assert.equal(window.document.querySelector('#request-title').textContent, 'Plan your visit');
-    assert.equal(window.document.querySelector('.register-consent a').href, 'https://sofexpo.org/en/legal/privacy/');
+    assert.equal(window.document.querySelector('.register-consent a').href, 'https://sof-expo.com/en/legal/privacy/');
     assert.equal(new URL(window.location.href).searchParams.get('type'), 'visitor');
     assert.equal(new URL(window.location.href).searchParams.get('lang'), 'en');
     assert.equal(window.document.querySelector('#portal-locale').value, 'en');
@@ -273,9 +291,7 @@ test('authenticated exhibitor content and CRM request locale update when the lan
     await waitFor(window, () => calls.some((call) => call.path === '/api/portal/me'));
     const document = window.document;
     document.querySelector('#register-tab').click();
-    const type = document.querySelector('#register-type');
-    type.value = 'exhibitor';
-    type.dispatchEvent(new window.Event('change', { bubbles: true }));
+    chooseType(window, 'exhibitor');
     document.querySelector('#register-name').value = 'Demo Company Contact';
     document.querySelector('#register-phone').value = '+998 90 123 45 67';
     document.querySelector('#register-email').value = 'company@example.test';
@@ -286,7 +302,7 @@ test('authenticated exhibitor content and CRM request locale update when the lan
     document.querySelector('#register-form').dispatchEvent(new window.Event('submit', { bubbles: true, cancelable: true }));
     await waitFor(window, () => !document.querySelector('#portal-view').hidden);
     assert.equal(document.querySelector('#account-role').textContent, 'Экспонент');
-    assert.equal(document.querySelector('#profile-form label[for="profile-company"]').textContent, 'Название компании');
+    assert.equal(document.querySelector('#profile-form label[for="profile-company"] [data-i18n="fieldCompany"]').textContent, 'Название компании');
 
     const language = document.querySelector('#portal-locale');
     language.value = 'en';
@@ -294,7 +310,7 @@ test('authenticated exhibitor content and CRM request locale update when the lan
     assert.equal(document.querySelector('#account-role').textContent, 'Exhibitor');
     assert.equal(document.querySelector('#welcome-title').textContent, 'Welcome, Demo Foods');
     assert.equal(document.querySelector('#request-title').textContent, 'Exhibit at a show');
-    assert.equal(document.querySelector('#profile-form label[for="profile-company"]').textContent, 'Company name');
+    assert.equal(document.querySelector('#profile-form label[for="profile-company"] [data-i18n="fieldCompany"]').textContent, 'Company name');
 
     document.querySelector('#request-event').value = foodera.slug;
     document.querySelector('#request-area').value = '18';
@@ -332,45 +348,67 @@ test('request history shows a recoverable error instead of an endless loading st
   }
 });
 
-test('an exhibitor fills the company card: logo upload, refusal without a logo, then review', async () => {
+test('exhibitor company page: prefilled from the account, edition chips, upload, field errors, draft and submit', async () => {
   const { dom, window, calls } = createPortalPage();
   try {
+    await waitFor(window, () => calls.some((call) => call.path === '/api/portal/me'));
     const document = window.document;
-    await waitFor(window, () => !document.querySelector('#auth-view').hidden, 'auth view did not show');
     document.querySelector('#register-tab').click();
-    const type = document.querySelector('#register-type');
-    type.value = 'exhibitor';
-    type.dispatchEvent(new window.Event('change', { bubbles: true }));
-    const set = (id, value) => { document.querySelector(id).value = value; };
-    set('#register-name', 'Aziz Rahimov'); set('#register-phone', '+998 91 234 56 78'); set('#register-email', 'brand@tasty.test');
-    set('#register-company', 'Tasty Foods LLC'); set('#register-industry', 'Food'); set('#register-password', 'exhibitor-password-2026');
-    document.querySelector('#register-form input[name="consent"]').checked = true;
+    chooseType(window, 'exhibitor');
+    document.querySelector('#register-name').value = 'Aziz Karimov';
+    document.querySelector('#register-phone').value = '+998 90 123 45 67';
+    document.querySelector('#register-email').value = 'aziz@beton.test';
+    document.querySelector('#register-password').value = 'long-demo-password-2026';
+    document.querySelector('#register-company').value = 'Beton Group';
+    document.querySelector('#register-industry').value = 'Construction';
+    document.querySelector('input[name="consent"]').checked = true;
     document.querySelector('#register-form').dispatchEvent(new window.Event('submit', { bubbles: true, cancelable: true }));
-    await waitFor(window, () => !document.querySelector('#company-card').hidden, 'company card did not open for an exhibitor');
-    await waitFor(window, () => document.querySelector('#company-brand').value === 'Tasty Foods LLC', `brand name was not prefilled: toast=${document.querySelector('#toast').textContent} calls=${calls.map((c) => c.method + ' ' + c.path).join(',')}`);
-    assert.equal(document.querySelector('#company-status').textContent, 'Qoralama');
+    await waitFor(window, () => !document.querySelector('#portal-view').hidden && document.querySelector('.edition-chip'));
 
-    document.querySelector('#company-description').value = 'Dried fruit and nut mixes from the Fergana valley for retail chains.';
-    document.querySelector('#company-event').value = 'foodera-expo';
-    document.querySelector('[data-company-action="submit"]').click();
-    await waitFor(window, () => !document.querySelector('#company-error').hidden, 'missing logo was not reported');
-    assert.match(document.querySelector('#company-error').textContent, /logotip/);
+    assert.equal(document.querySelector('#tab-showcase').hidden, false);
+    assert.equal(document.querySelector('#panel-showcase').hidden, false, 'exhibitors land on their company page');
+    assert.equal(document.querySelector('#panel-requests').hidden, true);
+    assert.equal(document.querySelector('#sc-name').value, 'Beton Group');
+    assert.equal(document.querySelector('#sc-category').value, 'Construction');
+    assert.equal(document.querySelectorAll('[data-social]').length, 2);
+    assert.equal(document.querySelector('#showcase-status').textContent, 'Qoralama');
 
-    const input = document.querySelector('[data-upload="logo"]');
-    Object.defineProperty(input, 'files', { value: [new window.File(['png'], 'Tasty Logo.png', { type: 'image/png' })], configurable: true });
+    /* sending without any show selected → the server's field error is shown next to the section */
+    document.querySelector('#showcase-form').dispatchEvent(new window.Event('submit', { bubbles: true, cancelable: true }));
+    await waitFor(window, () => !document.querySelector('[data-field="participation"] .field-error').hidden);
+    assert.match(document.querySelector('[data-field="participation"] .field-error').textContent, /moderatsiya/i);
+
+    const chip = document.querySelector('.edition-chip[data-edition="buildpro-expo:2025"]');
+    chip.click();
+    const stand = document.querySelector('[data-stand="buildpro-expo:2025"]');
+    assert.ok(stand, 'a selected edition offers an optional stand number');
+    stand.value = 'A-12';
+    document.querySelector('#sc-tagline').value = 'Ready-mix <b>concrete</b>';
+    document.querySelector('[data-social="instagram"]').value = '@betongroup';
+
+    /* upload goes as raw bytes with the CSRF token */
+    const input = document.querySelector('#materials-input');
+    const file = new window.File(['%PDF-1.4 demo'], 'Katalog 2026.pdf', { type: 'application/pdf' });
+    Object.defineProperty(input, 'files', { value: [file], configurable: true });
     input.dispatchEvent(new window.Event('change', { bubbles: true }));
-    await waitFor(window, () => document.querySelector('#company-logo-preview img'), 'logo preview did not render');
-    const upload = calls.find((call) => call.path === '/api/portal/files?kind=logo');
+    await waitFor(window, () => document.querySelector('#materials-list .material[data-file]'));
+    const upload = calls.find((call) => call.path.startsWith('/api/portal/files?'));
+    assert.equal(upload.raw, true);
     assert.equal(upload.headers['X-CSRF-Token'], 'csrf-test-token');
-    assert.equal(upload.headers['X-File-Name'], encodeURIComponent('Tasty Logo.png'));
+    assert.match(upload.path, /kind=catalog/);
+    assert.equal(document.querySelector('.material-title').value, 'Katalog 2026');
 
-    document.querySelector('[data-company-action="submit"]').click();
-    await waitFor(window, () => document.querySelector('#company-status').textContent === 'Tekshiruvda', 'card was not sent for review');
-    const sent = calls.filter((call) => call.path === '/api/portal/company' && call.method === 'PUT').pop();
-    assert.equal(sent.body.submit, true);
-    assert.equal(sent.body.event, 'foodera-expo');
+    document.querySelector('#showcase-save').click();
+    await waitFor(window, () => calls.some((call) => call.path === '/api/portal/showcase' && call.method === 'PUT' && call.body.submit === false));
+    const draft = calls.find((call) => call.path === '/api/portal/showcase' && call.method === 'PUT' && call.body.submit === false).body.showcase;
+    assert.deepEqual(draft.participation, [{ event: 'buildpro-expo', year: 2025, stand: 'A-12' }]);
+    assert.equal(draft.socials.instagram, '@betongroup');
+    assert.equal(draft.tagline, 'Ready-mix <b>concrete</b>');
 
-    // a visitor never sees the card
+    document.querySelector('#showcase-form').dispatchEvent(new window.Event('submit', { bubbles: true, cancelable: true }));
+    await waitFor(window, () => document.querySelector('#showcase-status').textContent === 'Moderatsiyada');
+    assert.equal(document.querySelector('#showcase-status').classList.contains('sc-pending'), true);
+    assert.ok(Number.parseInt(document.querySelector('#completeness-value').textContent, 10) >= 50);
   } finally {
     dom.window.close();
   }

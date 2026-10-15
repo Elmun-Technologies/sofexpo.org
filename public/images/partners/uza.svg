@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 64" role="img" aria-label="UzA">
+  <!-- UzA wordmark redrawn in vector after the agency's own light-background version
+       (navy letters, red point inside the A, no plate). The tagline "O'zbekiston Milliy
+       axborot agentligi" is left out: it is unreadable at wall size. Swap for the agency's
+       official vector when it arrives. -->
+  <g fill="#14254a">
+    <path d="M4.5 2v31.5a24.5 24.5 0 0 0 49 0V2" fill="none" stroke="#14254a" stroke-width="9"/>
+    <path d="M67 2h60v9H67zM67 53h60v9H67zM114 11h13L80 53H67z"/>
+    <path d="M136 62L166 0l30 62h-10.5L166 21.5 146.5 62z"/>
+  </g>
+  <circle cx="166" cy="55" r="6" fill="#d3131b"/>
+</svg>

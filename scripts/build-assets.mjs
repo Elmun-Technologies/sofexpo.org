@@ -25,7 +25,7 @@ const overlay = `<svg width="${W}" height="${H}">
   <text x="72" y="410" font-family="Menlo, Consolas, monospace" font-size="21" fill="#ffffff" opacity="0.72" letter-spacing="2.6">EXHIBITION CENTRE · TRADE SHOWS</text>
   <text x="72" y="462" font-family="Helvetica, Arial, sans-serif" font-size="27" fill="#ffffff">4 400 m² hall · 5 000 m² open-air</text>
   <text x="72" y="498" font-family="Helvetica, Arial, sans-serif" font-size="27" fill="#ffffff">20+ events a year · 70 000+ visitors</text>
-  <text x="72" y="556" font-family="Menlo, Consolas, monospace" font-size="22" fill="#ffffff" opacity="0.8" letter-spacing="1.6">sofexpo.org</text>
+  <text x="72" y="556" font-family="Menlo, Consolas, monospace" font-size="22" fill="#ffffff" opacity="0.8" letter-spacing="1.6">sof-expo.com</text>
   <rect x="70" y="576" width="640" height="1" fill="#ffffff" opacity="0.3"/>
 </svg>`;
 

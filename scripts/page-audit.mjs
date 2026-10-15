@@ -31,7 +31,7 @@ for (const f of files) {
     if (seen[k].has(key)) problems.push(`${url} duplicate ${k} with ${seen[k].get(key)}`);
     else seen[k].set(key, url);
   }
-  if (!/rel="canonical" href="https:\/\/sofexpo\.org\//.test(h)) problems.push(`${url} canonical missing`);
+  if (!/rel="canonical" href="https:\/\/sof-expo\.com\//.test(h)) problems.push(`${url} canonical missing`);
   for (const img of h.match(/<img\b[^>]*>/g) ?? []) if (!/\balt="/.test(img)) problems.push(`${url} <img> without alt`);
   // a duplicate id breaks label/for pairs, aria references and #anchors
   const ids = new Set();

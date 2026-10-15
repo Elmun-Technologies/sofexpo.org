@@ -4,10 +4,11 @@ import { localize } from '@/i18n/config';
 import { localePaths } from '@/lib/pages';
 import { site } from '@/data/site';
 import { upcoming, events } from '@/data/events';
+import { brandForEvent } from '@/data/brands';
 import { CURRENT_EVENT } from '@/data/hosts';
 import { eventPages } from '@/data/pages/event-pages';
 import { neighbours } from '@/data/markets';
-import { homeLogos, partnerSrc } from '@/lib/partners';
+import { homeLogos, partnerSrc, logoBox } from '@/lib/partners';
 import EventPage from '@/components/EventPage.astro';
 import { getCollection } from 'astro:content';
 import { rootJsonLd, breadcrumbJsonLd, itemListJsonLd, faqJsonLd } from '@/lib/seo';
@@ -33,6 +34,9 @@ const { locale } = Astro.params as { locale: 'ru' | 'en' };
 const P = (p: string) => localize(locale, p);
 const ru = locale === 'ru';
 const next = upcoming[0];
+/* the next-show card wears that show's own logo band, so the card reads FOODERA (blue/gold)
+   long before the visitor opens its page (docs/21 §5) */
+const nextStripe = brandForEvent(next.slug)?.stripe;
 const days = daysUntil(next.dates.start);
 /* the big date block of the next-show card: "27–29" + "OCT 2026" (the EventHero helper) */
 const nd = bigDate(next.dates.start, next.dates.end, locale);
@@ -225,6 +229,7 @@ const jsonLd = [
     <div class="h-hero__text">
       <ul class="h-chips">{copy.chips.map((c) => <li>{c}</li>)}</ul>
       <h1>{copy.h1}</h1>
+      <span class="brandrule" aria-hidden="true"></span>
       <div class="h-hero__foot">
         <p>{copy.lead}</p>
         <div class="btn-row">
@@ -242,7 +247,7 @@ const jsonLd = [
 
   <!-- 2 · the next show, and the venue in four numbers -->
   <section class="h-next">
-    <a class="h-show" href={P(`/events/${next.slug}/`)}>
+    <a class="h-show" href={P(`/events/${next.slug}/`)} style={nextStripe ? `--brand-stripe:${nextStripe}` : undefined}>
       <span class="h-show__top">
         <span class="h-show__k">
           <span>{copy.nextLabel}</span>
@@ -354,7 +359,11 @@ const jsonLd = [
       <a class="pill" href={P('/about/partners/')}>{copy.logosCta}</a>
     </div>
     <ul class="h-logos__grid">
-      {homeLogos.map((l) => <li><img src={partnerSrc(l.id)} alt={ru ? `Логотип ${l.name}` : `${l.name} logo`} loading="lazy" decoding="async" height="56" /></li>)}
+      {homeLogos.map((l) => {
+        /* optical sizing: equal visible area for wide and square logos (lib/partners.ts) */
+        const box = logoBox(l.id, { area: 8400, maxW: 168, maxH: 76 });
+        return <li><img src={partnerSrc(l.id)} alt={ru ? `Логотип ${l.name}` : `${l.name} logo`} loading="lazy" decoding="async" width={box.width} height={box.height} /></li>;
+      })}
     </ul>
   </section>
 
@@ -511,7 +520,7 @@ const jsonLd = [
     margin: 0;
     font-size: clamp(2.125rem, 10vw, 2.875rem);
     letter-spacing: -0.045em;
-    color: #1a1a1a;
+    color: var(--ink);
   }
   .h-hero__foot {
     display: flex;
@@ -542,15 +551,15 @@ const jsonLd = [
     height: 84px;
     border-radius: 50%;
     background: var(--accent);
-    color: var(--ink);
+    color: var(--accent-ink);
     display: flex;
     align-items: center;
     justify-content: center;
     transition: background-color var(--tr);
   }
   .h-go:hover {
-    background: var(--accent-hover, #3d9f48);
-    color: var(--ink);
+    background: color-mix(in srgb, var(--accent) 85%, #000);
+    color: var(--accent-ink);
   }
 
   /* 2 · next show + numbers */
@@ -564,9 +573,19 @@ const jsonLd = [
     gap: 28px;
     padding: clamp(24px, 3vw, 36px);
     border-radius: var(--r-panel);
+    /* the show's own logo band across its top edge (inline --brand-stripe on the card) */
+    position: relative;
+    overflow: clip;
     background: var(--ink);
     color: #fff;
     text-decoration: none;
+  }
+  .h-show::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 6px;
+    background: var(--brand-stripe);
   }
   .h-show:hover {
     color: #fff;
@@ -579,7 +598,7 @@ const jsonLd = [
   }
   .h-show__k {
     font-size: 0.875rem;
-    color: #9a9a9a;
+    color: #a6a6a6;
   }
   .arr--lg {
     width: 56px;
@@ -610,7 +629,7 @@ const jsonLd = [
   .h-show__date small {
     font-size: 0.36em;
     letter-spacing: -0.02em;
-    color: #9a9a9a;
+    color: #a6a6a6;
   }
   .h-chips--dark > * {
     background: transparent;
@@ -619,7 +638,7 @@ const jsonLd = [
   .h-chips--dark > .is-hot {
     background: var(--accent);
     border-color: var(--accent);
-    color: var(--ink);
+    color: var(--accent-ink);
     font-weight: 600;
   }
   .h-stats {
@@ -903,7 +922,7 @@ const jsonLd = [
     gap: 12px;
     padding: 14px 22px;
     border-radius: var(--r-pill);
-    background: #f5f5f5;
+    background: var(--cream-2);
   }
   .h-specs dt {
     color: var(--ink-60);
@@ -978,8 +997,9 @@ const jsonLd = [
     gap: 12px;
     padding: 18px 26px;
     border-radius: var(--r-pill);
-    /* a darker blue, not a white tint: the 13px label stays ≥ 4.5:1 (white on #0052BD ≈ 6.9:1) */
-    background: #0052bd;
+    /* the deeper brand blue, not a white tint: white label on --gold-ink ≈ 6.7:1 — and it
+       recolours with every show's palette instead of pinning the centre's blue everywhere */
+    background: var(--gold-ink);
   }
   .h-why__nums span {
     font-size: 0.8125rem;
@@ -1027,10 +1047,9 @@ const jsonLd = [
     border-bottom: 1px solid var(--cream);
   }
   .h-logos__grid img {
-    width: auto;
-    max-width: 80%;
-    max-height: 56px;
-    object-fit: contain;
+    /* the size comes from logoBox() via width/height; narrow cells scale it down evenly */
+    max-width: 100%;
+    height: auto;
   }
 
   /* 8 · news */
@@ -1091,7 +1110,7 @@ const jsonLd = [
   .h-form__list li {
     padding: 12px 20px;
     border-radius: var(--r-pill);
-    background: #f5f5f5;
+    background: var(--cream-2);
   }
   .h-form__card {
     flex: 2 1 560px;

@@ -123,6 +123,56 @@ test('large displays keep the 2026-10 design column: 1420px of panels, centred, 
   }
 });
 
+/* docs/18 §4: `main` is a column of panels separated by the 10px canvas gutter, and a block
+   that belongs to the heading above it (`.block--after-head` / `.block--cont`) sits
+   border-to-border with it — that joined pair is why the negative margin exists.
+
+   2026-10-15: a global `main { display: block }` in Base.astro (a pre-redesign leftover) beat
+   the frame's `display: flex; gap: var(--gap)` and dropped every gutter. The panels fused into
+   each other across the home, the audience row and the building row (the customer's screenshot),
+   and on the section pages the joined blocks sat 10px *on top of* their neighbour. This test
+   walks the frame that the fix restored: at rest the seam is either the gutter or zero (joined),
+   never a negative overlap and never a gap wider than the design allows. */
+test('the panel frame keeps its 10px canvas gutter on every page shape',async({page})=>{
+  /* the scroll reveal translates a not-yet-revealed section by 8px, which would blur the
+     geometry: with reduced motion the reveal never moves anything (docs/08 §5c) */
+  await page.emulateMedia({reducedMotion:'reduce'});
+  const measure=()=>page.evaluate(()=>{
+    const main=document.querySelector('main')!;
+    const kids=[...main.children].filter(el=>el.tagName!=='SCRIPT'&&getComputedStyle(el).display!=='none');
+    const seams:{cls:string;seam:number}[]=[];
+    for(let i=1;i<kids.length;i++){
+      const a=kids[i-1].getBoundingClientRect(),b=kids[i].getBoundingClientRect();
+      seams.push({cls:kids[i].className.toString(),seam:b.top-a.bottom});
+    }
+    return {display:getComputedStyle(main).display,gap:parseFloat(getComputedStyle(main).rowGap)||0,seams};
+  });
+  for(const path of ['','exhibitors/','venue/','organizers/','visitors/','events/','events/foodera-expo/','news/']){
+    await page.goto(`/ru/${path}`);
+    await page.evaluate(()=>document.fonts.ready);
+    const frame=await measure();
+    expect(frame.display,`/ru/${path}: main is the panel column`).toBe('flex');
+    expect(frame.gap,`/ru/${path}: canvas gutter`).toBe(10);
+    for(const {cls,seam} of frame.seams){
+      expect(seam,`/ru/${path}: ${cls} overlaps the panel above it (fused seam)`).toBeGreaterThanOrEqual(-0.5);
+      expect(seam,`/ru/${path}: ${cls} lost the canvas gutter`).toBeLessThanOrEqual(frame.gap+0.5);
+      if(/block--after-head|block--cont/.test(cls)){
+        expect(Math.abs(seam),`/ru/${path}: ${cls} must sit flush on its heading`).toBeLessThanOrEqual(0.5);
+      }
+    }
+  }
+  /* the gutter is the frame's, not a desktop extra: a phone keeps it too */
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/ru/');
+  await page.evaluate(()=>document.fonts.ready);
+  const phone=await measure();
+  expect(phone.gap,'phone: canvas gutter').toBe(10);
+  for(const {cls,seam} of phone.seams){
+    expect(seam,`phone /: ${cls} seam`).toBeGreaterThanOrEqual(-0.5);
+    expect(seam,`phone /: ${cls} seam`).toBeLessThanOrEqual(phone.gap+0.5);
+  }
+});
+
 test('other editions share the device matrix at the extreme widths',async({page})=>{
   const failures:string[]=[];
   for(const locale of ['en','zh','tr']){

@@ -1,63 +1,48 @@
 import http from 'node:http';
 import { createHash, randomUUID, timingSafeEqual } from 'node:crypto';
-import { createReadStream, existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
-import { dirname, extname, join, resolve as resolvePath } from 'node:path';
+import { createReadStream, mkdirSync, readFileSync, statSync, unlinkSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { dirname, extname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { BackendStore, LEAD_PRIORITIES, LEAD_STATUSES, USER_ROLES } from './db.mjs';
+import {
+  BackendStore, CURRENCIES, FILE_KINDS, LEAD_PRIORITIES, LEAD_STATUSES, NOTE_KINDS, SHOWCASE_STATUSES, USER_ROLES,
+} from './db.mjs';
+import { PORTAL_EVENTS, SHOWS } from './shows.mjs';
+import {
+  SHOWCASE_LIMITS, SOCIAL_NETWORKS, UPLOAD_LIMITS, cleanFileName, cleanFileTitle, editionLabel, fileTitleFromName, normalizeShowcase,
+  sniffUpload, submitErrors,
+} from './showcase.mjs';
 import { createSecret, hashToken, normalizeEmail, validEmail, validPassword, verifyPassword } from './auth.mjs';
+import { loadTgBlogConfig } from './tgblog/config.mjs';
+import { TgBlogStore } from './tgblog/store.mjs';
+import { TgBlogSync } from './tgblog/sync.mjs';
+import { GitPublisher } from './tgblog/publish.mjs';
 
 const ADMIN_DIR = fileURLToPath(new URL('./admin/', import.meta.url));
 const PORTAL_DIR = fileURLToPath(new URL('./portal/', import.meta.url));
 /* the 2026-10 design layer shared by /admin and /cabinet, and the site's own fonts and mark,
    served from an allow-list (never a path taken from the request) */
 const SHARED_FILES = {
-  '/admin/theme.css': fileURLToPath(new URL('./shared/theme.css', import.meta.url)),
-  '/cabinet/theme.css': fileURLToPath(new URL('./shared/theme.css', import.meta.url)),
-  '/brand-assets/sofexpo-logo.png': fileURLToPath(new URL('../../public/brand/sofexpo-logo.png', import.meta.url)),
+  '/brand-assets/sofexpo-logo.png': fileURLToPath(new URL('../../public/brand/sofexpo-horizontal.png', import.meta.url)),
+  '/brand-assets/sofexpo-logo-white.png': fileURLToPath(new URL('../../public/brand/sofexpo-horizontal-white.png', import.meta.url)),
   ...Object.fromEntries(['manrope', 'onest'].flatMap((face) => ['latin', 'latin-ext', 'cyrillic'].map((subset) => [
     `/brand-fonts/${face}-${subset}.woff2`,
     fileURLToPath(new URL(`../../public/fonts/${face}-${subset}.woff2`, import.meta.url)),
   ]))),
 };
 const CONTENT_TYPES = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.png': 'image/png' };
-const PORTAL_EVENTS = [
-  { slug: 'foodera-expo', name: 'FOODERA EXPO 2026', dates: '27–29 oktabr 2026' },
-  { slug: 'buildpro-expo', name: 'BUILD PRO EXPO 2026', dates: '9–11 noyabr 2026' },
-  { slug: 'agropro-expo', name: 'AGROPRO EXPO 2027', dates: '2–4 mart 2027' },
-  { slug: 'world-edu-expo', name: 'WORLD EDU · SPRING 2027', dates: '9–10 aprel 2027' },
-  { slug: 'ecom-retail-expo', name: 'ECOM & RETAIL EXPO', dates: '16–17 iyun 2027' },
-];
-/* exhibitor uploads (logo, flyers, catalogue, stand photos): what each slot accepts, how many
-   files and how large. The type is read from the file's first bytes, never from its name or the
-   browser's Content-Type, and SVG is not accepted (it can carry script). */
-const IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
-const UPLOAD_KINDS = {
-  logo: { max: 1, bytes: 3 * 1024 * 1024, types: IMAGE_TYPES },
-  flyer: { max: 10, bytes: 15 * 1024 * 1024, types: ['application/pdf', ...IMAGE_TYPES] },
-  catalog: { max: 3, bytes: 25 * 1024 * 1024, types: ['application/pdf'] },
-  photo: { max: 12, bytes: 8 * 1024 * 1024, types: IMAGE_TYPES },
-};
-const UPLOAD_QUOTA_BYTES = 120 * 1024 * 1024;
-const UPLOAD_EXT = { 'image/png': '.png', 'image/jpeg': '.jpg', 'image/webp': '.webp', 'application/pdf': '.pdf' };
-function sniffUpload(buffer) {
-  if (buffer.length >= 8 && buffer[0] === 0x89 && buffer.subarray(1, 4).toString('latin1') === 'PNG') return 'image/png';
-  if (buffer.length >= 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff) return 'image/jpeg';
-  if (buffer.length >= 12 && buffer.subarray(0, 4).toString('latin1') === 'RIFF' && buffer.subarray(8, 12).toString('latin1') === 'WEBP') return 'image/webp';
-  if (buffer.length >= 5 && buffer.subarray(0, 5).toString('latin1') === '%PDF-') return 'application/pdf';
-  return '';
-}
-const COMPANY_STATUSES = new Set(['approved', 'changes']);
 const LEAD_TEXT_FIELDS = {
   formType: 'Форма', event: 'Выставка', name: 'Имя', company: 'Компания', position: 'Должность',
   phone: 'Телефон', email: 'Email', direction: 'Направление', area: 'Площадь', goal: 'Задача',
   purpose: 'Цель', industry: 'Отрасль', package: 'Пакет', eventType: 'Формат', attendees: 'Гостей',
-  count: 'Человек', date: 'Дата', time: 'Время', channel: 'Канал', messenger: 'Мессенджер', comment: 'Комментарий',
+  count: 'Человек', visitorType: 'Кто', date: 'Дата', time: 'Время', channel: 'Канал', messenger: 'Мессенджер', comment: 'Комментарий',
 };
-const LEAD_SKIP_FIELDS = new Set(['ts', 'locale', 'url', 'referrer', 'source', 'src', '_error', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'page', 'landing']);
+const LEAD_SKIP_FIELDS = new Set(['ts', 'locale', 'url', 'referrer', 'source', 'src', '_error', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'page', 'landing', 'sessionId']);
 const REQUIRED_BY_FORM = {
   generic: ['company', 'consent'], press: ['company', 'consent'],
   exhibitor: ['company', 'industry', 'area', 'consent'],
-  visitor: ['email', 'industry', 'consent'],
+  /* a guest gives a name, a phone, an email and the show — no company, title or industry */
+  visitor: ['email', 'consent'],
   organizer: ['company', 'email', 'eventType', 'consent'], sponsor: ['company'],
   callback: [], catalog: [], group: ['count'], quiz: ['company', 'event', 'goal', 'area', 'consent'],
 };
@@ -164,6 +149,8 @@ export function normalizeLead(input) {
     landing: safePath(input.landing),
     referrer: safePath(input.referrer, { includeOrigin: true }),
     utm: cleanUtm(input),
+    /* the site's anonymous analytics session: links the request to the pages that led to it */
+    sessionId: cleanText(input.sessionId, 100).replace(/[^a-zA-Z0-9_-]/g, ''),
     payload,
   };
 }
@@ -269,38 +256,18 @@ async function readJson(req, maxBytes = 32_000) {
   }
 }
 
-function uploadLimits() {
-  return Object.fromEntries(Object.entries(UPLOAD_KINDS).map(([kind, rule]) => [kind, { max: rule.max, megabytes: Math.round(rule.bytes / 1024 / 1024), types: rule.types }]));
-}
-
-async function readUpload(req, maxBytes) {
+async function readRaw(req, maxBytes) {
   const declared = Number(req.headers['content-length'] || 0);
-  if (declared > maxBytes) throw new HttpError(413, `Fayl juda katta: ${Math.round(maxBytes / 1024 / 1024)} MB gacha ruxsat etiladi.`);
+  if (declared > maxBytes) throw new HttpError(413, 'Fayl hajmi ruxsat etilgan chegaradan oshdi.');
   const chunks = [];
   let size = 0;
   for await (const chunk of req) {
     size += chunk.length;
-    if (size > maxBytes) throw new HttpError(413, `Fayl juda katta: ${Math.round(maxBytes / 1024 / 1024)} MB gacha ruxsat etiladi.`);
+    if (size > maxBytes) throw new HttpError(413, 'Fayl hajmi ruxsat etilgan chegaradan oshdi.');
     chunks.push(chunk);
   }
   if (!size) throw new HttpError(400, 'Fayl bo‘sh.');
   return Buffer.concat(chunks);
-}
-
-/* an uploaded file back to its owner or the organiser: images inline (previews), PDFs as a
-   download; nosniff and a sandboxing CSP so a file can never act as a page */
-function sendUpload(res, file, absolutePath) {
-  if (!existsSync(absolutePath)) throw new HttpError(404, 'Fayl topilmadi.');
-  const inline = file.mime.startsWith('image/');
-  res.writeHead(200, {
-    'Content-Type': file.mime,
-    'Content-Length': file.size,
-    'Content-Disposition': `${inline ? 'inline' : 'attachment'}; filename*=UTF-8''${encodeURIComponent(file.fileName)}`,
-    'X-Content-Type-Options': 'nosniff',
-    'Content-Security-Policy': "default-src 'none'; sandbox",
-    'Cache-Control': 'private, no-store',
-  });
-  createReadStream(absolutePath).pipe(res);
 }
 
 function sendJson(res, status, data) {
@@ -375,8 +342,13 @@ function parseLeadQuery(url) {
   const search = cleanText(url.searchParams.get('q'), 120);
   const from = normalizeDateParam(url.searchParams.get('from'));
   const to = normalizeDateParam(url.searchParams.get('to'));
-  if (status && !LEAD_STATUSES.includes(status)) throw new HttpError(400, 'Status filtri noto emas.');
-  return { page, limit, status, formType, search, from, to };
+  const assignee = cleanText(url.searchParams.get('assignee'), 254);
+  const event = cleanText(url.searchParams.get('event'), 180);
+  const overdue = url.searchParams.get('overdue') === '1';
+  const sort = cleanText(url.searchParams.get('sort'), 20) || 'created';
+  if (status && status !== 'open' && !LEAD_STATUSES.includes(status)) throw new HttpError(400, 'Status filtri noto‘g‘ri.');
+  if (!['created', 'updated', 'next', 'amount'].includes(sort)) throw new HttpError(400, 'Saralash turi noto‘g‘ri.');
+  return { page, limit, status, formType, search, from, to, assignee, event, overdue, sort };
 }
 
 export function createLeadServer(options = {}) {
@@ -385,7 +357,7 @@ export function createLeadServer(options = {}) {
   const adminEmail = options.adminEmail ?? process.env.ADMIN_EMAIL ?? '';
   const adminPassword = options.adminPassword ?? process.env.ADMIN_PASSWORD ?? '';
   const dbPath = options.dbPath ?? process.env.LEAD_WEBHOOK_DB ?? '.data/sofexpo.sqlite';
-  const origins = parseOriginList(options.origins ?? process.env.LEAD_WEBHOOK_ORIGINS ?? process.env.LEAD_WEBHOOK_ORIGIN ?? 'https://sofexpo.org');
+  const origins = parseOriginList(options.origins ?? process.env.LEAD_WEBHOOK_ORIGINS ?? process.env.LEAD_WEBHOOK_ORIGIN ?? 'https://sof-expo.com');
   const allowedOrigins = new Set(origins.map(originOf).filter(Boolean));
   const wildcardOrigin = origins.includes('*');
   const trustProxy = options.trustProxy ?? process.env.LEAD_WEBHOOK_TRUST_PROXY === '1';
@@ -396,18 +368,16 @@ export function createLeadServer(options = {}) {
   const maxDeliveryAttempts = clamp(options.maxDeliveryAttempts, 1, 20, 8);
   const telegramToken = options.telegramToken ?? process.env.TELEGRAM_BOT_TOKEN ?? '';
   const telegramChat = options.telegramChat ?? process.env.TELEGRAM_CHAT_ID ?? '';
-  /* the Bot API host; overridable so a test (or a proxy in a blocked network) can stand in */
-  /* exhibitor uploads live next to the database (the same persistent volume on Fly) */
-  const uploadDir = resolvePath(options.uploadDir ?? process.env.PORTAL_UPLOAD_DIR ?? join(dirname(dbPath === ':memory:' ? '.data/x' : dbPath), 'uploads'));
-  const uploadPath = (storageKey) => {
-    const absolute = resolvePath(uploadDir, storageKey);
-    if (!absolute.startsWith(uploadDir + '/')) throw new HttpError(400, 'Fayl yo‘li noto‘g‘ri.');
-    return absolute;
-  };
-  const telegramApiBase = String(options.telegramApiBase ?? process.env.TELEGRAM_API_BASE ?? 'https://api.telegram.org').replace(/\/+$/, '');
   const crmWebhookUrl = options.crmWebhookUrl ?? process.env.CRM_WEBHOOK_URL ?? '';
   const crmWebhookToken = options.crmWebhookToken ?? process.env.CRM_WEBHOOK_TOKEN ?? '';
   const deliverProvider = options.deliverProvider;
+  /* the Bot API host; overridable so a test (or a proxy in a blocked network) can stand in */
+  const telegramApiBase = String(options.telegramApiBase ?? process.env.TELEGRAM_API_BASE ?? 'https://api.telegram.org').replace(/\/+$/, '');
+  /* exhibitor uploads live next to the database, never inside the web root; they are
+     streamed only through the routes below (cabinet owner, admins, or — once published —
+     the public directory) */
+  const uploadsDir = options.uploadsDir ?? process.env.UPLOADS_DIR
+    ?? (dbPath === ':memory:' ? join(tmpdir(), `sofexpo-uploads-${process.pid}`) : join(dirname(dbPath), 'uploads'));
   const store = options.store ?? new BackendStore({
     dbPath,
     legacyLeadsPath: options.legacyLeadsPath ?? process.env.LEAD_WEBHOOK_STORE ?? '.cache/leads.jsonl',
@@ -418,6 +388,23 @@ export function createLeadServer(options = {}) {
   const rateBuckets = new Map();
   const loginFailures = new Map();
   let workerActive = false;
+
+  /* Telegram → blog sync (docs/telegram-blog-sync.md): the canonical state lives in the
+     same SQLite file; markdown+media are materialized into the repo and a debounced git
+     push triggers the Cloudflare Pages rebuild — the static-site equivalent of
+     revalidation. Disabled unless token + webhook secret + channel id are all set. */
+  const tgBlogConfig = loadTgBlogConfig(options.tgBlog ?? {});
+  const tgBlogStore = tgBlogConfig.ready ? new TgBlogStore(store.db) : null;
+  const tgBlogPublisher = tgBlogConfig.ready ? new GitPublisher({
+    repoDir: tgBlogConfig.repoDir,
+    remote: tgBlogConfig.gitRemote,
+    branch: tgBlogConfig.gitBranch,
+    debounceMs: tgBlogConfig.pushDebounceMs,
+    pushEnabled: tgBlogConfig.gitPush,
+    deployHooks: tgBlogConfig.deployHooks,
+    gitRunner: tgBlogConfig.gitRunner,
+  }) : null;
+  const tgBlog = tgBlogStore ? new TgBlogSync({ config: tgBlogConfig, store: tgBlogStore, publisher: tgBlogPublisher }) : null;
 
   const getClientAddress = (req) => {
     if (trustProxy && req.headers['x-forwarded-for']) return String(req.headers['x-forwarded-for']).split(',')[0].trim().slice(0, 100);
@@ -533,6 +520,53 @@ export function createLeadServer(options = {}) {
     const token = String(req.headers['x-csrf-token'] || '');
     if (!token || !secureEqual(hashToken(token), session.csrf_hash)) throw new HttpError(403, 'Xavfsizlik tokeni yaroqsiz. Sahifani yangilang.');
   };
+  const storedPath = (storageName) => {
+    if (!/^[a-f0-9-]{36}\.(pdf|png|jpg|webp)$/.test(storageName)) throw new HttpError(404, 'Fayl topilmadi.');
+    return join(uploadsDir, storageName);
+  };
+  const removeStored = (names = []) => {
+    for (const name of names) {
+      try { unlinkSync(storedPath(name)); } catch { /* already gone */ }
+    }
+  };
+  const sendStoredFile = (req, res, file, { publicCache = false } = {}) => {
+    let path;
+    let size;
+    try {
+      path = storedPath(file.storageName);
+      size = statSync(path).size;
+    } catch {
+      throw new HttpError(404, 'Fayl topilmadi.');
+    }
+    const etag = `"${String(file.sha256 || '').slice(0, 32)}"`;
+    if (file.sha256 && req.headers['if-none-match'] === etag) {
+      res.writeHead(304, { ETag: etag });
+      return res.end();
+    }
+    const ext = { 'application/pdf': 'pdf', 'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp' }[file.mime] || 'bin';
+    const base = String(file.title || file.originalName || 'file').replace(/["\\\r\n]/g, '').slice(0, 100) || 'file';
+    const ascii = base.normalize('NFKD').replace(/[^\x20-\x7e]/g, '').trim() || 'file';
+    res.writeHead(200, {
+      'Content-Type': file.mime,
+      'Content-Length': size,
+      'Content-Disposition': `inline; filename="${ascii}.${ext}"; filename*=UTF-8''${encodeURIComponent(`${base}.${ext}`)}`,
+      'Cache-Control': publicCache ? 'public, max-age=3600' : 'private, no-store',
+      ...(file.sha256 ? { ETag: etag } : {}),
+      'X-Content-Type-Options': 'nosniff',
+      'Cross-Origin-Resource-Policy': 'cross-origin',
+      /* PDFs need the browser's own viewer (a CSP sandbox blocks it in Chromium); the bytes
+         were sniffed on upload, so only a real PDF or raster image is ever served here */
+      ...(file.mime === 'application/pdf' ? {} : { 'Content-Security-Policy': "default-src 'none'; img-src 'self'; style-src 'unsafe-inline'; sandbox" }),
+    });
+    if (req.method === 'HEAD') return res.end();
+    createReadStream(path).pipe(res);
+  };
+  const portalFileResponse = (file) => ({ ...file, url: `/api/portal/files/${file.id}` });
+  const showcaseResponse = (showcase) => ({ ...showcase, files: showcase.files.map(portalFileResponse) });
+  const requireExhibitor = (session) => {
+    if (session.account_type !== 'exhibitor') throw new HttpError(403, 'Bu bo‘lim faqat eksponentlar uchun.');
+  };
+
   const checkIngressSecret = (req, url) => {
     if (!ingressSecret) return true;
     const header = String(req.headers.authorization || '').replace(/^Bearer\s+/i, '');
@@ -603,11 +637,50 @@ export function createLeadServer(options = {}) {
     }
   }
 
+  /* read-only public data for the static site (any sof-expo subdomain): no cookies, no
+     credentials, so a wildcard origin is safe */
+  async function handlePublic(req, res, path, url) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    if (req.method === 'OPTIONS') {
+      res.writeHead(204, { 'Access-Control-Allow-Methods': 'GET, HEAD, OPTIONS', 'Access-Control-Max-Age': '600' });
+      return res.end();
+    }
+    if (!['GET', 'HEAD'].includes(req.method)) throw new HttpError(405, 'Faqat o‘qish mumkin.');
+    if (!rateAllowed(`public:${getClientAddress(req)}`, 240)) throw new HttpError(429, 'Juda ko‘p so‘rov.');
+    const media = path.match(/^\/media\/exhibitors\/([a-f0-9-]{36})$/i);
+    if (media) {
+      const file = store.publicFile(media[1].toLowerCase());
+      if (!file) throw new HttpError(404, 'Fayl topilmadi.');
+      return sendStoredFile(req, res, file, { publicCache: true });
+    }
+    if (path === '/api/public/exhibitors') {
+      const event = cleanText(url.searchParams.get('event'), 60);
+      const when = cleanText(url.searchParams.get('when'), 10);
+      const items = store.publicExhibitors({
+        event: SHOWS.some((show) => show.slug === event) ? event : '',
+        when: ['current', 'past'].includes(when) ? when : '',
+        q: cleanText(url.searchParams.get('q'), 80),
+      });
+      const body = JSON.stringify({ ok: true, items, shows: SHOWS.map(({ slug, name }) => ({ slug, name })) });
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': Buffer.byteLength(body), 'Cache-Control': 'public, max-age=120' });
+      return res.end(req.method === 'HEAD' ? undefined : body);
+    }
+    throw new HttpError(404, 'Sahifa topilmadi.');
+  }
+
   async function handleRequest(req, res) {
+    const rawPath = String(req.url || '/').split('?', 1)[0].replace(/\/{2,}/g, '/');
+    if (rawPath.startsWith('/api/public/') || rawPath.startsWith('/media/')) {
+      let publicUrl;
+      try { publicUrl = new URL(req.url || '/', 'http://localhost'); } catch { throw new HttpError(400, 'URL noto‘g‘ri.'); }
+      return handlePublic(req, res, rawPath, publicUrl);
+    }
     if (!corsAndSecurity(req, res)) return sendJson(res, 403, { ok: false, error: 'Origin not allowed' });
     if (req.method === 'OPTIONS') {
       res.writeHead(204, {
-        'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-CSRF-Token, Idempotency-Key',
         'Access-Control-Max-Age': '600',
       });
@@ -696,6 +769,17 @@ export function createLeadServer(options = {}) {
       return sendJson(res, 202, { ok: true, stored });
     }
 
+    /* Telegram posts webhook. ACK fast (200) and process asynchronously: on any
+       processing failure we still return 200 so Telegram does not retry forever.
+       Only signature/secret and payload validation may answer non-200 (spec). */
+    if (tgBlog && req.method === 'POST' && path === tgBlogConfig.webhookPath) {
+      const secret = String(req.headers['x-telegram-bot-api-secret-token'] || '');
+      if (!secureEqual(secret, tgBlogConfig.secret)) throw new HttpError(401, 'Webhook kaliti noto‘g‘ri.');
+      const update = await readJson(req, 1_000_000);
+      void tgBlog.ingestUpdate(update);
+      return sendJson(res, 200, { ok: true });
+    }
+
     if (req.method === 'GET' && path === '/stats') {
       const session = getSession(req);
       const bearer = String(req.headers.authorization || '').replace(/^Bearer\s+/i, '');
@@ -730,7 +814,14 @@ export function createLeadServer(options = {}) {
     }
 
     if (req.method === 'GET' && path === '/api/portal/options') {
-      return sendJson(res, 200, { ok: true, events: PORTAL_EVENTS });
+      return sendJson(res, 200, {
+        ok: true,
+        events: PORTAL_EVENTS,
+        shows: SHOWS,
+        fileKinds: FILE_KINDS.filter((kind) => kind !== 'logo'),
+        socials: SOCIAL_NETWORKS,
+        limits: { ...SHOWCASE_LIMITS, ...UPLOAD_LIMITS },
+      });
     }
 
     if (req.method === 'POST' && path === '/api/portal/register') {
@@ -831,124 +922,6 @@ export function createLeadServer(options = {}) {
         return sendJson(res, 200, { ok: true, user: portalAccountResponse(account) });
       }
 
-      /* ---------- exhibitor company profile: text, logo, flyers, catalogue, photos ---------- */
-      if (path === '/api/portal/company' || path.startsWith('/api/portal/files')) {
-        const owner = store.getPortalAccountById(session.account_id);
-        if (!owner) throw new HttpError(401, 'Kabinet topilmadi.');
-        if (owner.accountType !== 'exhibitor') throw new HttpError(403, 'Kompaniya profili faqat eksponentlar uchun.');
-
-        if (req.method === 'GET' && path === '/api/portal/company') {
-          return sendJson(res, 200, { ok: true, company: store.getExhibitorCompany(owner.id), limits: uploadLimits(), events: PORTAL_EVENTS });
-        }
-
-        if (req.method === 'PUT' && path === '/api/portal/company') {
-          verifyCsrf(req, session);
-          const body = await readJson(req, 20_000);
-          const fields = {
-            brandName: cleanText(body.brandName, 120),
-            description: cleanText(body.description, 2000),
-            products: cleanText(body.products, 1000),
-            website: cleanText(body.website, 300),
-            instagram: cleanText(body.instagram, 120),
-            telegram: cleanText(body.telegram, 120),
-            contactName: cleanText(body.contactName, 120),
-            contactPhone: cleanText(body.contactPhone, 60),
-            contactEmail: normalizeEmail(cleanText(body.contactEmail, 200)),
-            event: cleanText(body.event, 60),
-            stand: cleanText(body.stand, 40),
-          };
-          if (fields.website) {
-            try {
-              const website = new URL(fields.website);
-              if (!['http:', 'https:'].includes(website.protocol) || website.username || website.password) throw new Error('invalid');
-              fields.website = website.origin + website.pathname.slice(0, 180);
-            } catch { throw new HttpError(422, 'Sayt manzili http:// yoki https:// bilan boshlansin.'); }
-          }
-          if (fields.contactEmail && !validEmail(fields.contactEmail)) throw new HttpError(422, 'Kontakt email manzili noto‘g‘ri.');
-          if (fields.event && !PORTAL_EVENTS.some((item) => item.slug === fields.event)) throw new HttpError(422, 'Ko‘rgazmani ro‘yxatdan tanlang.');
-          const submit = body.submit === true;
-          if (submit) {
-            const missing = [];
-            if (!fields.brandName) missing.push('brend nomi');
-            if (fields.description.length < 40) missing.push('kompaniya haqida kamida 40 belgi');
-            if (!fields.event) missing.push('ko‘rgazma');
-            if (!store.exhibitorFileUsage(owner.id).byKind.logo) missing.push('logotip');
-            if (missing.length) throw new HttpError(422, `Tekshiruvga yuborish uchun to‘ldiring: ${missing.join(', ')}.`);
-          }
-          const company = store.saveExhibitorCompany(owner.id, fields, { submit });
-          if (submit) {
-            store.audit(owner.email, 'exhibitor_profile.submit', 'portal_account', owner.id, { brandName: fields.brandName, event: fields.event });
-            /* the managers hear about a card waiting for review in the same Telegram chat as leads;
-               best effort — the card is already saved and listed in the CRM either way */
-            if (telegramToken && telegramChat) {
-              const show = PORTAL_EVENTS.find((item) => item.slug === fields.event)?.name || fields.event;
-              const files = store.listExhibitorFiles(owner.id);
-              const text = [
-                '🗂 Eksponent kartasi tekshiruvga keldi',
-                '',
-                `🏢 ${fields.brandName}${owner.company && owner.company !== fields.brandName ? ` (${owner.company})` : ''}`,
-                `🎪 ${show}${fields.stand ? ` · stend ${fields.stand}` : ''}`,
-                `📎 ${files.length} ta fayl: ${['logo', 'flyer', 'catalog', 'photo'].map((k) => `${k} ${files.filter((f) => f.kind === k).length}`).join(', ')}`,
-                `✉️ ${owner.email}`,
-                '',
-                'CRM → Eksponent kartalari',
-              ].join('\n');
-              sendTelegram(text).catch((error) => console.error('[lead-backend] exhibitor card notice failed:', error?.message || error));
-            }
-          }
-          return sendJson(res, 200, { ok: true, company });
-        }
-
-        if (req.method === 'POST' && path === '/api/portal/files') {
-          verifyCsrf(req, session);
-          if (!rateAllowed(`portal-upload:${owner.id}`, 60, 60 * 60_000)) throw new HttpError(429, 'Yuklashlar soni ko‘p. Birozdan keyin urinib ko‘ring.');
-          const kind = cleanText(url.searchParams.get('kind'), 20);
-          const rule = UPLOAD_KINDS[kind];
-          if (!rule) throw new HttpError(422, 'Fayl turi noto‘g‘ri: logo, flyer, catalog yoki photo.');
-          const usage = store.exhibitorFileUsage(owner.id);
-          if (kind !== 'logo' && (usage.byKind[kind] || 0) >= rule.max) throw new HttpError(422, `Bu bo‘limga ko‘pi bilan ${rule.max} ta fayl yuklash mumkin.`);
-          const buffer = await readUpload(req, rule.bytes);
-          const mime = sniffUpload(buffer);
-          if (!mime || !rule.types.includes(mime)) {
-            throw new HttpError(415, kind === 'catalog' ? 'Katalog PDF formatida bo‘lishi kerak.' : kind === 'flyer' ? 'Flayer PDF, PNG, JPG yoki WebP bo‘lishi kerak.' : 'Rasm PNG, JPG yoki WebP bo‘lishi kerak.');
-          }
-          const previousLogo = kind === 'logo' ? store.listExhibitorFiles(owner.id).filter((f) => f.kind === 'logo') : [];
-          const freed = previousLogo.reduce((sum, f) => sum + f.size, 0);
-          if (usage.bytes - freed + buffer.length > UPLOAD_QUOTA_BYTES) throw new HttpError(413, 'Kabinetdagi fayllar hajmi 120 MB dan oshib ketadi. Eskisini o‘chiring.');
-          let rawName = String(req.headers['x-file-name'] || '');
-          try { rawName = decodeURIComponent(rawName); } catch { /* keep as sent */ }
-          const base = cleanText(rawName.split(/[\\/]/).pop().replace(/\.[a-z0-9]{1,5}$/i, ''), 100).replace(/[^\p{L}\p{N} ._()-]+/gu, '').trim() || kind;
-          const id = randomUUID();
-          const storageKey = `${owner.id}/${id}${UPLOAD_EXT[mime]}`;
-          const absolute = uploadPath(storageKey);
-          mkdirSync(dirname(absolute), { recursive: true });
-          writeFileSync(absolute, buffer, { flag: 'wx' });
-          const file = store.addExhibitorFile({
-            id, accountId: owner.id, kind, fileName: `${base}${UPLOAD_EXT[mime]}`, mime, size: buffer.length,
-            sha256: createHash('sha256').update(buffer).digest('hex'), storageKey,
-          });
-          for (const old of previousLogo) {
-            const removed = store.deleteExhibitorFile(old.id);
-            if (removed) try { unlinkSync(uploadPath(removed.storageKey)); } catch { /* already gone */ }
-          }
-          return sendJson(res, 201, { ok: true, file: { id: file.id, kind: file.kind, fileName: file.fileName, mime: file.mime, size: file.size, createdAt: file.createdAt } });
-        }
-
-        const ownFile = path.match(/^\/api\/portal\/files\/([a-f0-9-]{36})$/i);
-        if (ownFile) {
-          const file = store.getExhibitorFile(ownFile[1]);
-          if (!file || file.accountId !== owner.id) throw new HttpError(404, 'Fayl topilmadi.');
-          if (req.method === 'GET') return sendUpload(res, file, uploadPath(file.storageKey));
-          if (req.method === 'DELETE') {
-            verifyCsrf(req, session);
-            store.deleteExhibitorFile(file.id);
-            try { unlinkSync(uploadPath(file.storageKey)); } catch { /* already gone */ }
-            return sendJson(res, 200, { ok: true });
-          }
-        }
-        throw new HttpError(405, 'Bu amal qo‘llab-quvvatlanmaydi.');
-      }
-
       if (req.method === 'GET' && path === '/api/portal/requests') {
         return sendJson(res, 200, { ok: true, items: store.listPortalRequests(session.account_id) });
       }
@@ -973,8 +946,8 @@ export function createLeadServer(options = {}) {
           details = { industry: account.industry, area: `${areaNumber} m²`, package: packageName, message };
           payload = { portalAccountType: account.accountType, industry: account.industry, country: account.country, area: details.area, package: packageName, comment: message };
         } else {
-          const interest = cleanText(body.interest, 160);
-          if (!interest) throw new HttpError(422, 'Qiziqish yo‘nalishini kiriting.');
+          /* a guest only picks the show; the visit goal is optional (many come without a company) */
+          const interest = cleanText(body.interest, 160) || 'visit';
           details = { interest, message };
           payload = { portalAccountType: account.accountType, country: account.country, industry: account.industry, interest, comment: message };
         }
@@ -1007,6 +980,113 @@ export function createLeadServer(options = {}) {
         return sendJson(res, 201, { ok: true, request });
       }
 
+      if (path === '/api/portal/showcase') {
+        requireExhibitor(session);
+        if (req.method === 'GET') return sendJson(res, 200, { ok: true, showcase: showcaseResponse(store.getShowcase(session.account_id)) });
+        if (req.method === 'PUT') {
+          verifyCsrf(req, session);
+          if (!rateAllowed(`portal-showcase:${session.account_id}`, 60, 60 * 60_000)) throw new HttpError(429, 'Juda ko‘p saqlash. Birozdan keyin urinib ko‘ring.');
+          const body = await readJson(req, 32_000);
+          const { value, errors } = normalizeShowcase(body.showcase || {});
+          const submit = body.submit === true;
+          Object.assign(errors, submit ? submitErrors(value) : {});
+          if (Object.keys(errors).length) throw new HttpError(422, 'Ba’zi maydonlar noto‘g‘ri to‘ldirilgan.', errors);
+          const showcase = store.saveShowcaseDraft(session.account_id, value, { submit });
+          /* the managers hear about a page waiting for moderation in the same Telegram chat as
+             leads; best effort — the page is saved and listed in the CRM either way */
+          if (submit && telegramToken && telegramChat) {
+            const owner = store.getPortalAccountById(session.account_id);
+            const files = store.listPortalFiles(session.account_id);
+            const kinds = [...new Set(files.map((file) => file.kind))];
+            const text = [
+              '🗂 Kompaniya sahifasi moderatsiyaga keldi',
+              '',
+              `🏢 ${value.name || owner?.company || '—'}`,
+              ...value.participation.map((item) => `🎪 ${editionLabel(item.event, item.year)}${item.stand ? ` · stend ${item.stand}` : ''}`),
+              `📎 ${files.length} ta fayl${kinds.length ? `: ${kinds.map((kind) => `${kind} ${files.filter((file) => file.kind === kind).length}`).join(', ')}` : ''}`,
+              `✉️ ${owner?.email || session.email}`,
+              '',
+              'CRM → Kompaniya sahifalari',
+            ].join('\n');
+            sendTelegram(text).catch((error) => console.error('[lead-backend] showcase notice failed:', error?.message || error));
+          }
+          return sendJson(res, 200, { ok: true, showcase: showcaseResponse(showcase) });
+        }
+      }
+
+      if (req.method === 'GET' && path === '/api/portal/files') {
+        requireExhibitor(session);
+        return sendJson(res, 200, { ok: true, items: store.listPortalFiles(session.account_id).map(portalFileResponse) });
+      }
+
+      if (req.method === 'POST' && path === '/api/portal/files') {
+        requireExhibitor(session);
+        verifyCsrf(req, session);
+        if (!rateAllowed(`portal-upload:${session.account_id}`, 40, 60 * 60_000)) throw new HttpError(429, 'Fayllar soni ko‘p. Birozdan keyin urinib ko‘ring.');
+        const kind = cleanText(url.searchParams.get('kind'), 20) || 'other';
+        if (!FILE_KINDS.includes(kind)) throw new HttpError(422, 'Fayl turi noto‘g‘ri.');
+        if (store.countPortalFiles(session.account_id) >= UPLOAD_LIMITS.filesPerAccount) {
+          throw new HttpError(422, `Ko‘pi bilan ${UPLOAD_LIMITS.filesPerAccount} ta fayl yuklash mumkin. Keraksizini o‘chiring.`);
+        }
+        const buffer = await readRaw(req, UPLOAD_LIMITS.pdfBytes);
+        const type = sniffUpload(buffer);
+        if (!type) throw new HttpError(415, 'Faqat PDF, PNG, JPG yoki WEBP fayl yuklash mumkin.');
+        if (kind === 'logo' && !type.image) throw new HttpError(415, 'Logotip PNG, JPG yoki WEBP rasm bo‘lishi kerak.');
+        if (type.image && buffer.length > UPLOAD_LIMITS.imageBytes) throw new HttpError(413, 'Rasm hajmi 5 MB dan oshmasin.');
+        const originalName = cleanFileName(url.searchParams.get('name'));
+        const title = cleanFileTitle(url.searchParams.get('title')) || (kind === 'logo' ? 'Logo' : fileTitleFromName(originalName));
+        const storageName = `${randomUUID()}.${type.ext}`;
+        mkdirSync(uploadsDir, { recursive: true });
+        writeFileSync(storedPath(storageName), buffer, { mode: 0o640 });
+        let result;
+        try {
+          result = store.addPortalFile({
+            accountId: session.account_id,
+            kind,
+            title,
+            originalName,
+            mime: type.mime,
+            size: buffer.length,
+            sha256: createHash('sha256').update(buffer).digest('hex'),
+            storageName,
+          });
+        } catch (error) {
+          removeStored([storageName]);
+          throw error;
+        }
+        removeStored(result.removed);
+        return sendJson(res, 201, { ok: true, file: portalFileResponse(result.file) });
+      }
+
+      const portalFileMatch = path.match(/^\/api\/portal\/files\/([a-f0-9-]{36})$/i);
+      if (portalFileMatch) {
+        requireExhibitor(session);
+        const fileId = portalFileMatch[1].toLowerCase();
+        if (req.method === 'GET' || req.method === 'HEAD') {
+          const file = store.getPortalFile(fileId);
+          if (!file || file.accountId !== session.account_id) throw new HttpError(404, 'Fayl topilmadi.');
+          return sendStoredFile(req, res, file);
+        }
+        if (req.method === 'PATCH') {
+          verifyCsrf(req, session);
+          const body = await readJson(req, 4_000);
+          const kind = body.kind === undefined ? undefined : cleanText(body.kind, 20);
+          if (kind !== undefined && (!FILE_KINDS.includes(kind) || kind === 'logo')) throw new HttpError(422, 'Fayl turi noto‘g‘ri.');
+          const title = body.title === undefined ? undefined : cleanFileTitle(body.title);
+          if (title !== undefined && !title) throw new HttpError(422, 'Fayl nomi bo‘sh bo‘lmasin.');
+          const file = store.updatePortalFile(session.account_id, fileId, { title, kind });
+          if (!file) throw new HttpError(404, 'Fayl topilmadi.');
+          return sendJson(res, 200, { ok: true, file: portalFileResponse(file) });
+        }
+        if (req.method === 'DELETE') {
+          verifyCsrf(req, session);
+          const file = store.deletePortalFile(session.account_id, fileId);
+          if (!file) throw new HttpError(404, 'Fayl topilmadi.');
+          removeStored([file.storageName]);
+          return sendJson(res, 200, { ok: true });
+        }
+      }
+
       throw new HttpError(404, 'Portal API manzili topilmadi.');
     }
 
@@ -1034,30 +1114,80 @@ export function createLeadServer(options = {}) {
         return sendJson(res, 200, { ok: true, ...store.analytics(clamp(url.searchParams.get('days'), 1, 90, 30)) });
       }
 
-      if (req.method === 'GET' && path === '/api/admin/exhibitor-profiles') {
+      if (req.method === 'GET' && path === '/api/admin/sales-analytics') {
+        return sendJson(res, 200, { ok: true, ...store.salesAnalytics(clamp(url.searchParams.get('days'), 1, 365, 30)) });
+      }
+
+      if (req.method === 'GET' && path === '/api/admin/pipeline') {
+        return sendJson(res, 200, {
+          ok: true,
+          ...store.pipeline({
+            assignee: cleanText(url.searchParams.get('assignee'), 254),
+            event: cleanText(url.searchParams.get('event'), 180),
+            search: cleanText(url.searchParams.get('q'), 120),
+            closedDays: clamp(url.searchParams.get('closedDays'), 1, 365, 30),
+          }),
+        });
+      }
+
+      if (req.method === 'GET' && path === '/api/admin/tasks') {
+        return sendJson(res, 200, { ok: true, ...store.tasks() });
+      }
+
+      if (req.method === 'GET' && path === '/api/admin/team') {
+        return sendJson(res, 200, {
+          ok: true,
+          team: store.listTeam(),
+          events: [...new Set([...PORTAL_EVENTS.map((item) => item.name), ...SHOWS.map((show) => show.name)])],
+          shows: SHOWS,
+          currencies: CURRENCIES,
+          noteKinds: NOTE_KINDS,
+          statuses: LEAD_STATUSES,
+        });
+      }
+
+      if (req.method === 'GET' && path === '/api/admin/showcases') {
         const status = cleanText(url.searchParams.get('status'), 20);
-        if (status && !['draft', 'submitted', 'approved', 'changes'].includes(status)) throw new HttpError(422, 'Holat filtri noto‘g‘ri.');
-        return sendJson(res, 200, { ok: true, ...store.listExhibitorCompanies({ status }) });
+        if (status && !SHOWCASE_STATUSES.includes(status)) throw new HttpError(422, 'Holat filtri noto‘g‘ri.');
+        return sendJson(res, 200, {
+          ok: true,
+          ...store.listShowcases({
+            status,
+            search: cleanText(url.searchParams.get('q'), 120),
+            page: clamp(url.searchParams.get('page'), 1, 1_000_000, 1),
+            limit: clamp(url.searchParams.get('limit'), 1, 50, 25),
+          }),
+        });
       }
 
-      const adminFile = path.match(/^\/api\/admin\/files\/([a-f0-9-]{36})$/i);
-      if (adminFile && req.method === 'GET') {
-        const file = store.getExhibitorFile(adminFile[1]);
+      const showcaseMatch = path.match(/^\/api\/admin\/showcases\/([a-f0-9-]{36})(?:\/(review))?$/i);
+      if (showcaseMatch) {
+        const accountId = showcaseMatch[1].toLowerCase();
+        if (req.method === 'GET' && !showcaseMatch[2]) {
+          const showcase = store.getShowcaseForAdmin(accountId);
+          if (!showcase) throw new HttpError(404, 'Kompaniya sahifasi topilmadi.');
+          return sendJson(res, 200, { ok: true, showcase });
+        }
+        if (req.method === 'POST' && showcaseMatch[2]) {
+          verifyCsrf(req, session);
+          const body = await readJson(req, 4_000);
+          const action = cleanText(body.action, 20);
+          if (!['publish', 'reject', 'hide'].includes(action)) throw new HttpError(422, 'Amal noto‘g‘ri.');
+          const note = cleanText(body.note, 1000);
+          if (action === 'reject' && !note) throw new HttpError(422, 'Rad etish sababini yozing — eksponent uni kabinetda ko‘radi.');
+          const result = store.reviewShowcase(accountId, { action, note }, session.email);
+          if (result.error === 'not_found') throw new HttpError(404, 'Kompaniya sahifasi topilmadi.');
+          if (result.error === 'name_required') throw new HttpError(422, 'Kompaniya nomi bo‘sh — nashr qilib bo‘lmaydi.');
+          removeStored(result.removed);
+          return sendJson(res, 200, { ok: true, showcase: result.showcase });
+        }
+      }
+
+      const adminFileMatch = path.match(/^\/api\/admin\/files\/([a-f0-9-]{36})$/i);
+      if (adminFileMatch && (req.method === 'GET' || req.method === 'HEAD')) {
+        const file = store.getPortalFile(adminFileMatch[1].toLowerCase());
         if (!file) throw new HttpError(404, 'Fayl topilmadi.');
-        return sendUpload(res, file, uploadPath(file.storageKey));
-      }
-
-      const companyReview = path.match(/^\/api\/admin\/portal-accounts\/([a-f0-9-]{36})\/company$/i);
-      if (companyReview && req.method === 'PATCH') {
-        verifyCsrf(req, session);
-        const body = await readJson(req, 8_000);
-        const status = cleanText(body.status, 20);
-        if (!COMPANY_STATUSES.has(status)) throw new HttpError(422, 'Holat approved yoki changes bo‘lishi kerak.');
-        const note = cleanText(body.note, 1000);
-        if (status === 'changes' && note.length < 5) throw new HttpError(422, 'Eksponentga nimani tuzatish kerakligini yozing.');
-        const company = store.reviewExhibitorCompany(companyReview[1], { status, note }, session.email);
-        if (!company) throw new HttpError(404, 'Kompaniya profili hali to‘ldirilmagan.');
-        return sendJson(res, 200, { ok: true, company });
+        return sendStoredFile(req, res, file);
       }
 
       if (req.method === 'GET' && path === '/api/admin/portal-accounts') {
@@ -1107,6 +1237,50 @@ export function createLeadServer(options = {}) {
         return;
       }
 
+      /* Telegram-synced blog posts: list + publish/unpublish/delete (Bot API never
+         reports deletions, so editorial control lives here — docs/telegram-blog-sync.md). */
+      if (req.method === 'GET' && path === '/api/admin/blog-posts') {
+        if (!tgBlog) throw new HttpError(503, 'Telegram blog sinxronizatsiyasi sozlanmagan.');
+        const status = cleanText(url.searchParams.get('status'), 20);
+        return sendJson(res, 200, {
+          ok: true,
+          ...tgBlog.listPosts({
+            page: clamp(url.searchParams.get('page'), 1, 1_000_000, 1),
+            limit: clamp(url.searchParams.get('limit'), 1, 100, 25),
+            status,
+          }),
+          sync: {
+            channel: tgBlogConfig.channelUsername ? `@${tgBlogConfig.channelUsername}` : tgBlogConfig.channelId,
+            mode: tgBlogConfig.mode,
+            collection: tgBlogConfig.collection,
+            locale: tgBlogConfig.locale,
+            gitPush: tgBlogConfig.gitPush,
+          },
+        });
+      }
+
+      const blogMatch = path.match(/^\/api\/admin\/blog-posts\/(\d{1,10})(?:\/(publish|unpublish))?$/);
+      if (blogMatch) {
+        if (!tgBlog) throw new HttpError(503, 'Telegram blog sinxronizatsiyasi sozlanmagan.');
+        const postId = Number(blogMatch[1]);
+        if (req.method === 'POST' && blogMatch[2]) {
+          verifyCsrf(req, session);
+          const status = blogMatch[2] === 'publish' ? 'published' : 'unpublished';
+          const post = await tgBlog.setPostStatus(postId, status, session.email);
+          if (!post) throw new HttpError(404, 'Maqola topilmadi.');
+          store.audit(session.email, `blog.${blogMatch[2]}`, 'tg_blog_post', String(postId), { slug: post.slug });
+          return sendJson(res, 200, { ok: true, post: { id: post.id, slug: post.slug, status: post.status } });
+        }
+        if (req.method === 'DELETE' && !blogMatch[2]) {
+          requireAdmin(session);
+          verifyCsrf(req, session);
+          const post = await tgBlog.deletePost(postId, session.email);
+          if (!post) throw new HttpError(404, 'Maqola topilmadi.');
+          store.audit(session.email, 'blog.delete', 'tg_blog_post', String(postId), { slug: post.slug });
+          return sendJson(res, 200, { ok: true, removed: post.removed });
+        }
+      }
+
       const leadMatch = path.match(/^\/api\/admin\/leads\/([a-f0-9-]{36})(?:\/(notes))?$/i);
       if (leadMatch) {
         const leadId = leadMatch[1];
@@ -1128,6 +1302,34 @@ export function createLeadServer(options = {}) {
             patch.priority = body.priority;
           }
           if (body.assignee !== undefined) patch.assignee = cleanText(body.assignee, 120);
+          if (body.dealAmount !== undefined) {
+            const amount = body.dealAmount === '' || body.dealAmount === null ? 0 : Number(body.dealAmount);
+            if (!Number.isFinite(amount) || amount < 0 || amount > 1e12) throw new HttpError(422, 'Bitim summasi noto‘g‘ri.');
+            patch.dealAmount = Math.round(amount * 100) / 100;
+          }
+          if (body.currency !== undefined) {
+            if (!CURRENCIES.includes(body.currency)) throw new HttpError(422, 'Valyuta noto‘g‘ri.');
+            patch.currency = body.currency;
+          }
+          if (body.standArea !== undefined) {
+            const area = body.standArea === '' || body.standArea === null ? null : Number(body.standArea);
+            if (area !== null && (!Number.isFinite(area) || area < 0 || area > 100_000)) throw new HttpError(422, 'Stend maydoni noto‘g‘ri.');
+            patch.standArea = area;
+          }
+          if (body.lostReason !== undefined) patch.lostReason = cleanText(body.lostReason, 300);
+          if (body.nextAction !== undefined) patch.nextAction = cleanText(body.nextAction, 300);
+          if (body.nextActionAt !== undefined) {
+            if (body.nextActionAt === '' || body.nextActionAt === null) patch.nextActionAt = null;
+            else {
+              const at = Date.parse(String(body.nextActionAt));
+              if (!Number.isFinite(at)) throw new HttpError(422, 'Keyingi qadam sanasi noto‘g‘ri.');
+              patch.nextActionAt = new Date(at).toISOString();
+            }
+          }
+          if (body.event !== undefined) patch.event = cleanText(body.event, 180);
+          if (patch.status === 'lost' && body.lostReason !== undefined && !patch.lostReason) {
+            throw new HttpError(422, 'Yo‘qotish sababini ko‘rsating.');
+          }
           if (!Object.keys(patch).length) throw new HttpError(422, 'Yangilash uchun maydon topilmadi.');
           const lead = store.updateLead(leadId, patch, session.email);
           if (!lead) throw new HttpError(404, 'Lid topilmadi.');
@@ -1138,7 +1340,9 @@ export function createLeadServer(options = {}) {
           const body = await readJson(req, 8_000);
           const text = cleanText(body.body, 4000);
           if (!text) throw new HttpError(422, 'Izoh matni bo‘sh bo‘lmasligi kerak.');
-          const note = store.addLeadNote(leadId, { userId: session.user_id, authorEmail: session.email, body: text });
+          const kind = body.kind === undefined ? 'note' : cleanText(body.kind, 20);
+          if (!NOTE_KINDS.includes(kind)) throw new HttpError(422, 'Faoliyat turi noto‘g‘ri.');
+          const note = store.addLeadNote(leadId, { userId: session.user_id, authorEmail: session.email, body: text, kind });
           if (!note) throw new HttpError(404, 'Lid topilmadi.');
           return sendJson(res, 201, { ok: true, note });
         }
@@ -1275,9 +1479,13 @@ export function createLeadServer(options = {}) {
     });
   });
   server.headersTimeout = 10_000;
-  server.requestTimeout = 20_000;
+  /* uploads of up to 20 MB over a slow mobile link need more than the JSON default */
+  server.requestTimeout = 120_000;
   server.keepAliveTimeout = 5_000;
   server.backendStore = store;
+  server.uploadsDir = uploadsDir;
+  server.tgBlog = tgBlog;
+  server.tgBlogConfig = tgBlogConfig;
   server.processOutbox = processOutbox;
   server.listenBackend = () => new Promise((resolve, reject) => {
     server.once('error', reject);
@@ -1300,6 +1508,7 @@ export function createLeadServer(options = {}) {
   server.on('close', () => {
     clearInterval(workerTimer);
     clearInterval(retentionTimer);
+    if (tgBlogPublisher) void tgBlogPublisher.stop();
   });
   return server;
 }

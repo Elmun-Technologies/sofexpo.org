@@ -105,4 +105,23 @@ const html = scrollableTables(await Astro.slots.render('default'), {label:t('tab
     padding: 0.1em 0.35em;
     border-radius: var(--r);
   }
+  /* Telegram-synced posts: videos and spoiler entities (docs/telegram-blog-sync.md) */
+  .post-body :global(video) {
+    display: block;
+    max-width: 100%;
+    border-radius: var(--r);
+    margin: 1.6rem 0;
+  }
+  .post-body :global(.tg-spoiler) {
+    background: var(--cream-2);
+    border-radius: var(--r);
+    padding: 0.05em 0.3em;
+    filter: blur(5px);
+    cursor: pointer;
+    transition: filter 0.2s ease;
+  }
+  .post-body :global(.tg-spoiler:hover),
+  .post-body :global(.tg-spoiler:focus) {
+    filter: none;
+  }
 </style>

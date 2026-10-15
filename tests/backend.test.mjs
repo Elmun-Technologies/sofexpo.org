@@ -70,8 +70,8 @@ async function waitFor(predicate, timeoutMs = 1000) {
 test('lead normalization validates required contacts and strips tracking queries from URLs', () => {
   const lead = normalizeLead({
     name: '   Test Exhibitor ', company: 'ACME', phone: '+998 90 123 45 67', email: 'team@example.com',
-    formType: 'exhibitor', industry: 'Food', area: '18 м²', locale: 'uz', page: 'https://sofexpo.org/uz/request-stand/?utm_source=secret',
-    landing: 'https://sofexpo.org/uz/?utm_campaign=launch', referrer: 'https://search.example/result?q=private',
+    formType: 'exhibitor', industry: 'Food', area: '18 м²', locale: 'uz', page: 'https://sof-expo.com/uz/request-stand/?utm_source=secret',
+    landing: 'https://sof-expo.com/uz/?utm_campaign=launch', referrer: 'https://search.example/result?q=private',
     utm_source: 'newsletter', utm_campaign: 'october', comment: 'Interested in a 18 m² stand', consent: 'yes',
   });
   assert.equal(lead.name, 'Test Exhibitor');
@@ -106,8 +106,8 @@ test('legacy lead formatter and summary stay backward-compatible', () => {
 
 test('CORS preflight admits every production host for lead and analytics endpoints', async (t) => {
   const origins = [
-    'https://sofexpo.org', 'https://foodera.sofexpo.org', 'https://buildpro.sofexpo.org',
-    'https://agropro.sofexpo.org', 'https://worldedu.sofexpo.org', 'https://ecomretail.sofexpo.org',
+    'https://sof-expo.com', 'https://www.sof-expo.com', 'https://foodera.sof-expo.com', 'https://buildpro.sof-expo.com',
+    'https://agropro.sof-expo.com', 'https://worldedu.sof-expo.com', 'https://ecomretail.sof-expo.com',
   ];
   const { base } = await startBackend(t, { origins });
   for (const endpoint of ['/lead', '/event']) {
@@ -129,10 +129,10 @@ test('CORS preflight admits every production host for lead and analytics endpoin
 });
 
 test('public lead API persists valid requests and rejects invalid/cross-origin submissions', async (t) => {
-  const { server, base } = await startBackend(t, { origins: ['https://sofexpo.org'] });
+  const { server, base } = await startBackend(t, { origins: ['https://sof-expo.com'] });
   let result = await jsonRequest(base, '/lead', {
     method: 'POST',
-    origin: 'https://sofexpo.org',
+    origin: 'https://sof-expo.com',
     body: {
       name: 'QA Lead', company: 'Samarkand Foods', phone: '+998 90 555 55 55', email: 'qa@example.com',
       formType: 'exhibitor', event: 'FOODERA EXPO 2026', industry: 'Food', area: '18 м²', consent: 'on', locale: 'uz', page: '/uz/request-stand/',
@@ -154,7 +154,7 @@ test('public lead API persists valid requests and rejects invalid/cross-origin s
   assert.equal(result.response.status, 403);
 
   result = await jsonRequest(base, '/lead', {
-    method: 'POST', origin: 'https://sofexpo.org', body: { name: 'Missing phone' },
+    method: 'POST', origin: 'https://sof-expo.com', body: { name: 'Missing phone' },
   });
   assert.equal(result.response.status, 422);
   assert.equal(server.backendStore.listLeads().total, 1);
@@ -228,7 +228,7 @@ test('first-party analytics omits IP, full URL, and referrer query; dashboard ag
     method: 'POST',
     body: {
       events: [
-        { event: 'page_view', sessionId: 'anon-session-1', locale: 'uz', path: '/uz/request-stand/?email=private', url: 'https://sofexpo.org/?private=1', referrer: 'https://search.example/?user=secret', utm: { source: 'newsletter', campaign: 'october' } },
+        { event: 'page_view', sessionId: 'anon-session-1', locale: 'uz', path: '/uz/request-stand/?email=private', url: 'https://sof-expo.com/?private=1', referrer: 'https://search.example/?user=secret', utm: { source: 'newsletter', campaign: 'october' } },
         { event: 'cta_click', sessionId: 'anon-session-1', locale: 'uz', path: '/uz/request-stand/', cta: 'book-stand', source: 'hero' },
         { event: 'form_start', sessionId: 'anon-session-1', locale: 'uz', path: '/uz/request-stand/', form: 'exhibitor', channel: 'website' },
         { event: 'form_submit', sessionId: 'anon-session-1', locale: 'uz', path: '/uz/request-stand/', form: 'exhibitor', success: true, fallback: false },
@@ -546,8 +546,228 @@ test('backend bootstraps only an environment-provided admin and protects last ad
   assert.equal(server.backendStore.listUsers()[0].active, 1);
 });
 
-/* The real Telegram path (no deliverProvider stub): a local stand-in for the Bot API checks the
-   request the bot sends, then answers the way Telegram does when something is wrong. */
+test('lead lifecycle: deal fields, typed activity, stage history, journey, pipeline, tasks and sales analytics', async (t) => {
+  const { base } = await startBackend(t);
+  const sessionId = 'sess_lifecycle_1';
+  await jsonRequest(base, '/event', {
+    method: 'POST', body: { events: [
+      { event: 'page_view', sessionId, path: '/uz/buildpro-expo/', utm_source: 'instagram' },
+      { event: 'cta_click', sessionId, path: '/uz/buildpro-expo/', cta: 'Stend band qilish' },
+    ] },
+  });
+  let result = await jsonRequest(base, '/lead', {
+    method: 'POST', body: {
+      name: 'Lifecycle Lead', phone: '+998 90 555 44 33', company: 'Beton LLC', formType: 'exhibitor', industry: 'Build',
+      area: '24', consent: 'yes', event: 'BUILD PRO EXPO 2026', utm_source: 'instagram', utm_campaign: 'autumn', sessionId,
+    },
+  });
+  assert.equal(result.response.status, 202);
+  const leadId = result.data.id;
+  const admin = await login(base);
+
+  result = await jsonRequest(base, `/api/admin/leads/${leadId}`, { cookie: admin.cookie });
+  assert.equal(result.data.lead.sessionId, sessionId);
+  assert.deepEqual(result.data.lead.journey.map((step) => step.event), ['page_view', 'cta_click']);
+  assert.deepEqual(result.data.lead.stageHistory.map((step) => step.toStatus), ['new']);
+  assert.equal(result.data.lead.payload.sessionId, undefined, 'session id is metadata, not form payload');
+
+  result = await jsonRequest(base, `/api/admin/leads/${leadId}/notes`, {
+    method: 'POST', cookie: admin.cookie, csrf: admin.csrf, body: { body: 'Called, wants 24 m²', kind: 'call' },
+  });
+  assert.equal(result.response.status, 201);
+  result = await jsonRequest(base, `/api/admin/leads/${leadId}`, { cookie: admin.cookie });
+  assert.equal(result.data.lead.status, 'contacted', 'a logged call moves a new lead on');
+  assert.ok(result.data.lead.firstContactAt);
+  assert.equal(result.data.lead.notes[0].kind, 'call');
+
+  result = await jsonRequest(base, `/api/admin/leads/${leadId}/notes`, {
+    method: 'POST', cookie: admin.cookie, csrf: admin.csrf, body: { body: 'x', kind: 'fax' },
+  });
+  assert.equal(result.response.status, 422);
+  result = await jsonRequest(base, `/api/admin/leads/${leadId}`, {
+    method: 'PATCH', cookie: admin.cookie, csrf: admin.csrf, body: { currency: 'BTC' },
+  });
+  assert.equal(result.response.status, 422);
+
+  const tomorrow = new Date(Date.now() + 26 * 3_600_000).toISOString();
+  result = await jsonRequest(base, `/api/admin/leads/${leadId}`, {
+    method: 'PATCH', cookie: admin.cookie, csrf: admin.csrf,
+    body: { status: 'proposal', dealAmount: 4800, currency: 'USD', standArea: 24, assignee: ADMIN_EMAIL, nextAction: 'Send contract', nextActionAt: tomorrow },
+  });
+  assert.equal(result.response.status, 200);
+  assert.equal(result.data.lead.dealAmount, 4800);
+  assert.equal(result.data.lead.nextAction, 'Send contract');
+  assert.ok(result.data.lead.history.some((item) => item.details?.status?.to === 'proposal'));
+
+  result = await jsonRequest(base, '/api/admin/pipeline', { cookie: admin.cookie });
+  const proposal = result.data.columns.find((column) => column.status === 'proposal');
+  assert.equal(proposal.count, 1);
+  assert.equal(proposal.amount.USD, 4800);
+
+  result = await jsonRequest(base, '/api/admin/tasks', { cookie: admin.cookie });
+  assert.equal(result.data.upcoming.length + result.data.today.length, 1);
+
+  result = await jsonRequest(base, '/api/admin/leads?status=open&assignee=' + encodeURIComponent(ADMIN_EMAIL), { cookie: admin.cookie });
+  assert.equal(result.data.total, 1);
+
+  result = await jsonRequest(base, `/api/admin/leads/${leadId}`, {
+    method: 'PATCH', cookie: admin.cookie, csrf: admin.csrf, body: { status: 'lost', lostReason: '' },
+  });
+  assert.equal(result.response.status, 422, 'a lost deal needs a reason');
+  result = await jsonRequest(base, `/api/admin/leads/${leadId}`, {
+    method: 'PATCH', cookie: admin.cookie, csrf: admin.csrf, body: { status: 'won' },
+  });
+  assert.ok(result.data.lead.closedAt);
+  assert.deepEqual(result.data.lead.stageHistory.map((step) => step.toStatus), ['new', 'contacted', 'proposal', 'won']);
+
+  result = await jsonRequest(base, '/api/admin/sales-analytics?days=30', { cookie: admin.cookie });
+  assert.equal(result.response.status, 200);
+  assert.equal(result.data.totals.won, 1);
+  assert.equal(result.data.totals.revenue.USD, 4800);
+  assert.equal(result.data.totals.trackedJourneys, 1);
+  assert.equal(result.data.funnel.find((step) => step.stage === 'qualified').count, 1, 'skipped stages still count as passed');
+  assert.equal(result.data.channels[0].key, 'instagram');
+  assert.equal(result.data.campaigns[0].key, 'autumn');
+
+  result = await jsonRequest(base, '/api/admin/team', { cookie: admin.cookie });
+  assert.ok(result.data.team.some((member) => member.email === ADMIN_EMAIL));
+  result = await jsonRequest(base, '/api/admin/dashboard', { cookie: admin.cookie });
+  assert.equal(result.data.sales.won, 1);
+});
+
+const PNG = Buffer.concat([Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]), Buffer.alloc(64, 1)]);
+const PDF = Buffer.from('%PDF-1.4\n1 0 obj << /Type /Catalog >> endobj\ntrailer << >>\n%%EOF\n');
+
+async function upload(base, { cookie, csrf, kind, name, body }) {
+  const response = await fetch(`${base}/api/portal/files?kind=${kind}&name=${encodeURIComponent(name)}`, {
+    method: 'POST', headers: { Cookie: cookie, 'X-CSRF-Token': csrf, 'Content-Type': 'application/octet-stream' }, body,
+  });
+  return { response, data: await response.json() };
+}
+
+test('exhibitor company page: uploads, moderation and the public directory', async (t) => {
+  const { base } = await startBackend(t);
+  let result = await jsonRequest(base, '/api/portal/register', {
+    method: 'POST', body: {
+      accountType: 'exhibitor', name: 'Aziz Eksponent', email: 'aziz@beton.test', password: 'exhibitor-password-2026',
+      phone: '+998 90 111 22 33', company: 'Beton Group', industry: 'Construction', consent: 'yes',
+    },
+  });
+  const cookie = result.response.headers.get('set-cookie').split(';')[0];
+  const csrf = result.data.csrfToken;
+  const accountId = result.data.user.id;
+
+  result = await upload(base, { cookie, csrf, kind: 'catalog', name: 'notes.txt', body: Buffer.from('just some text here') });
+  assert.equal(result.response.status, 415, 'bytes decide the type, not the name');
+  result = await upload(base, { cookie, csrf, kind: 'logo', name: 'logo.pdf', body: PDF });
+  assert.equal(result.response.status, 415, 'a logo must be an image');
+  result = await upload(base, { cookie, csrf: 'bad', kind: 'logo', name: 'logo.png', body: PNG });
+  assert.equal(result.response.status, 403);
+
+  result = await upload(base, { cookie, csrf, kind: 'logo', name: 'logo.png', body: PNG });
+  assert.equal(result.response.status, 201);
+  const logoId = result.data.file.id;
+  result = await upload(base, { cookie, csrf, kind: 'catalog', name: 'Beton_katalog_2026.pdf', body: PDF });
+  assert.equal(result.response.status, 201);
+  assert.equal(result.data.file.title, 'Beton katalog 2026');
+  const catalogId = result.data.file.id;
+
+  const own = await fetch(`${base}/api/portal/files/${catalogId}`, { headers: { Cookie: cookie } });
+  assert.equal(own.status, 200);
+  assert.equal(own.headers.get('content-type'), 'application/pdf');
+
+  const showcase = {
+    name: 'Beton Group', tagline: 'Ready-mix concrete', about: 'Concrete for 15 years.', website: 'beton.test',
+    socials: { instagram: '@betongroup', telegram: 't.me/betongroup' },
+    participation: [{ event: 'buildpro-expo', year: 2026, stand: 'A-12' }, { event: 'buildpro-expo', year: 2024 }],
+  };
+  result = await jsonRequest(base, '/api/portal/showcase', { method: 'PUT', cookie, csrf, body: { showcase: { ...showcase, participation: [] }, submit: true } });
+  assert.equal(result.response.status, 422);
+  assert.equal(result.data.details.participation, 'required');
+  result = await jsonRequest(base, '/api/portal/showcase', { method: 'PUT', cookie, csrf, body: { showcase: { ...showcase, website: 'not a url' } } });
+  assert.equal(result.response.status, 422);
+  result = await jsonRequest(base, '/api/portal/showcase', { method: 'PUT', cookie, csrf, body: { showcase, submit: true } });
+  assert.equal(result.response.status, 200);
+  assert.equal(result.data.showcase.status, 'pending');
+  assert.equal(result.data.showcase.draft.logoFileId, logoId);
+  assert.equal(result.data.showcase.draft.socials.instagram, 'https://instagram.com/betongroup');
+
+  result = await jsonRequest(base, '/api/public/exhibitors');
+  assert.equal(result.data.items.length, 0, 'nothing is public before moderation');
+  assert.equal((await fetch(`${base}/media/exhibitors/${catalogId}`)).status, 404);
+
+  const admin = await login(base);
+  result = await jsonRequest(base, '/api/admin/showcases?status=pending', { cookie: admin.cookie });
+  assert.equal(result.data.items.length, 1);
+  assert.equal(result.data.counts.pending, 1);
+  result = await jsonRequest(base, `/api/admin/showcases/${accountId}/review`, { method: 'POST', cookie: admin.cookie, csrf: admin.csrf, body: { action: 'reject' } });
+  assert.equal(result.response.status, 422, 'a rejection needs a note');
+  result = await jsonRequest(base, `/api/admin/showcases/${accountId}/review`, { method: 'POST', cookie: admin.cookie, csrf: admin.csrf, body: { action: 'publish' } });
+  assert.equal(result.response.status, 200);
+  assert.equal(result.data.showcase.slug, 'beton-group');
+
+  result = await jsonRequest(base, '/api/public/exhibitors?when=current', { origin: 'https://buildpro.sof-expo.com' });
+  assert.equal(result.response.headers.get('access-control-allow-origin'), '*');
+  assert.equal(result.data.items.length, 1);
+  const company = result.data.items[0];
+  assert.equal(company.current, true);
+  assert.equal(company.materials[0].title, 'Beton katalog 2026');
+  assert.equal(company.participation[0].label, 'BUILD PRO EXPO 2026');
+  assert.equal((await jsonRequest(base, '/api/public/exhibitors?event=agropro-expo')).data.items.length, 0);
+  assert.equal((await jsonRequest(base, '/api/public/exhibitors?q=concrete')).data.items.length, 1);
+
+  const media = await fetch(`${base}${company.materials[0].url}`, { headers: { Origin: 'https://sof-expo.com' } });
+  assert.equal(media.status, 200);
+  assert.equal(media.headers.get('x-content-type-options'), 'nosniff');
+  assert.equal(media.headers.get('cross-origin-resource-policy'), 'cross-origin');
+  assert.equal(Buffer.from(await media.arrayBuffer()).toString('latin1', 0, 5), '%PDF-');
+  const logo = await fetch(`${base}${company.logo}`);
+  assert.match(logo.headers.get('content-security-policy'), /sandbox/);
+
+  /* a material added after publishing waits for the next review; deleting one is immediate */
+  result = await upload(base, { cookie, csrf, kind: 'flyer', name: 'flyer.pdf', body: PDF });
+  assert.equal((await fetch(`${base}/media/exhibitors/${result.data.file.id}`)).status, 404);
+  result = await jsonRequest(base, `/api/portal/files/${catalogId}`, { method: 'DELETE', cookie, csrf });
+  assert.equal(result.response.status, 200);
+  assert.equal((await fetch(`${base}/media/exhibitors/${catalogId}`)).status, 404);
+  assert.equal((await jsonRequest(base, '/api/public/exhibitors')).data.items[0].materials.length, 0);
+
+  result = await jsonRequest(base, `/api/admin/showcases/${accountId}/review`, { method: 'POST', cookie: admin.cookie, csrf: admin.csrf, body: { action: 'hide', note: 'Duplicate' } });
+  assert.equal(result.response.status, 200);
+  assert.equal((await jsonRequest(base, '/api/public/exhibitors')).data.items.length, 0);
+
+  /* visitors have no company page */
+  result = await jsonRequest(base, '/api/portal/register', {
+    method: 'POST', body: { accountType: 'visitor', name: 'Mehmon', email: 'guest@example.test', password: 'visitor-password-2026', phone: '+998 90 000 11 22', consent: 'yes' },
+  });
+  assert.equal(result.response.status, 201, 'a visitor needs no company');
+  const visitorCookie = result.response.headers.get('set-cookie').split(';')[0];
+  assert.equal((await jsonRequest(base, '/api/portal/showcase', { cookie: visitorCookie })).response.status, 403);
+});
+
+test('a guest registers with name, phone, email and consent only — no company, title or industry', async (t) => {
+  const { server, base } = await startBackend(t, { origins: ['https://sof-expo.com'] });
+  const result = await jsonRequest(base, '/lead', {
+    method: 'POST',
+    origin: 'https://sof-expo.com',
+    body: {
+      name: 'Private Guest', phone: '+998 90 777 66 55', email: 'guest@example.com', visitorType: 'private',
+      formType: 'visitor', consent: 'on', locale: 'uz', page: '/uz/visitors/tickets/', sessionId: '1760450000000-abc1234',
+    },
+  });
+  assert.equal(result.response.status, 202);
+  const saved = server.backendStore.getLead(result.data.id);
+  assert.equal(saved.formType, 'visitor');
+  assert.equal(saved.company, '');
+  assert.equal(saved.sessionId, '1760450000000-abc1234');
+
+  const missingEmail = await jsonRequest(base, '/lead', {
+    method: 'POST', origin: 'https://sof-expo.com',
+    body: { name: 'No Mail', phone: '+998 90 777 66 54', formType: 'visitor', consent: 'on' },
+  });
+  assert.equal(missingEmail.response.status, 422);
+});
+
 async function startFakeTelegram(t, reply) {
   const { createServer } = await import('node:http');
   const calls = [];
@@ -617,128 +837,24 @@ test('telegram test button explains a missing bot configuration', async (t) => {
   assert.equal(probe.data.configured, false);
 });
 
-/* An exhibitor fills the company card (logo, flyers, catalogue, text) and sends it for review;
-   the organiser sees it, downloads the files and approves or asks for changes. */
-const PNG_1PX = Buffer.from('89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c4890000000d49444154789c6360000002000154a24f5d0000000049454e44ae426082', 'hex');
-const PDF_MIN = Buffer.from('%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF\n');
-
-async function upload(base, { cookie, csrf, kind, name, body }) {
-  const response = await fetch(`${base}/api/portal/files?kind=${kind}`, {
-    method: 'POST', headers: { Cookie: cookie, 'X-CSRF-Token': csrf, 'Content-Type': 'application/octet-stream', 'X-File-Name': encodeURIComponent(name) }, body,
-  });
-  return { response, data: await response.json() };
-}
-
-test('exhibitor company profile: uploads are checked by content, reviewed by the organiser, private to the owner', async (t) => {
-  const { base } = await startBackend(t);
-  const reg = await jsonRequest(base, '/api/portal/register', {
-    method: 'POST', body: {
-      accountType: 'exhibitor', name: 'Aziz Rahimov', email: 'brand@tasty.test', password: 'exhibitor-password-2026',
-      phone: '+998 91 234 56 78', company: 'Tasty Foods LLC', country: 'Uzbekistan', industry: 'Food manufacturing', consent: 'yes',
-    },
-  });
-  assert.equal(reg.response.status, 201);
-  const cookie = reg.response.headers.get('set-cookie').split(';')[0];
-  const csrf = reg.data.csrfToken;
-  const accountId = reg.data.user.id;
-
-  let company = await jsonRequest(base, '/api/portal/company', { cookie });
-  assert.equal(company.data.company.status, 'draft');
-  assert.equal(company.data.limits.logo.max, 1);
-
-  // submit without a logo is refused with the missing items named
-  const early = await jsonRequest(base, '/api/portal/company', { method: 'PUT', cookie, csrf, body: { brandName: 'Tasty', submit: true } });
-  assert.equal(early.response.status, 422);
-  assert.match(early.data.error, /logotip/);
-
-  // a renamed text file is not an image, and SVG is never accepted
-  const fake = await upload(base, { cookie, csrf, kind: 'logo', name: 'logo.png', body: Buffer.from('<svg onload=alert(1)></svg>') });
-  assert.equal(fake.response.status, 415);
-  const pdfAsLogo = await upload(base, { cookie, csrf, kind: 'logo', name: 'logo.pdf', body: PDF_MIN });
-  assert.equal(pdfAsLogo.response.status, 415);
-  const logo = await upload(base, { cookie, csrf, kind: 'logo', name: '../../etc/Tasty Logo.png', body: PNG_1PX });
-  assert.equal(logo.response.status, 201);
-  assert.equal(logo.data.file.mime, 'image/png');
-  assert.equal(logo.data.file.fileName, 'Tasty Logo.png');
-  const flyer = await upload(base, { cookie, csrf, kind: 'flyer', name: 'Flyer 2026.pdf', body: PDF_MIN });
-  assert.equal(flyer.response.status, 201);
-  const catalogImage = await upload(base, { cookie, csrf, kind: 'catalog', name: 'cat.png', body: PNG_1PX });
-  assert.equal(catalogImage.response.status, 415);
-  // a second logo replaces the first
-  const logo2 = await upload(base, { cookie, csrf, kind: 'logo', name: 'logo-v2.png', body: PNG_1PX });
-  assert.equal(logo2.response.status, 201);
-  company = await jsonRequest(base, '/api/portal/company', { cookie });
-  assert.deepEqual(company.data.company.files.map((f) => f.kind).sort(), ['flyer', 'logo']);
-
-  // the owner can read a file back with safe headers
-  const own = await fetch(`${base}/api/portal/files/${flyer.data.file.id}`, { headers: { Cookie: cookie } });
-  assert.equal(own.status, 200);
-  assert.equal(own.headers.get('content-type'), 'application/pdf');
-  assert.match(own.headers.get('content-disposition'), /^attachment/);
-  assert.equal(own.headers.get('x-content-type-options'), 'nosniff');
-  assert.ok(Buffer.from(await own.arrayBuffer()).equals(PDF_MIN));
-
-  const saved = await jsonRequest(base, '/api/portal/company', {
-    method: 'PUT', cookie, csrf, body: {
-      brandName: 'Tasty', description: 'Dried fruit and nut mixes from the Fergana valley, packed for retail chains and HoReCa.',
-      products: 'Dried apricots, raisins, nut mixes', website: 'https://tasty.test/about', event: 'foodera-expo', stand: 'B-14',
-      contactEmail: 'sales@tasty.test', submit: true,
-    },
-  });
-  assert.equal(saved.response.status, 200);
-  assert.equal(saved.data.company.status, 'submitted');
-
-  // a visitor has no company card, and cannot read the exhibitor's files
-  const visitor = await jsonRequest(base, '/api/portal/register', {
-    method: 'POST', body: { accountType: 'visitor', name: 'Guest', email: 'guest@tasty.test', password: 'visitor-password-2026', phone: '+998 90 000 00 00', country: 'Uzbekistan', industry: 'Retail', interests: 'Food', consent: 'yes' },
-  });
-  const visitorCookie = visitor.response.headers.get('set-cookie').split(';')[0];
-  assert.equal((await jsonRequest(base, '/api/portal/company', { cookie: visitorCookie })).response.status, 403);
-  assert.equal((await fetch(`${base}/api/portal/files/${flyer.data.file.id}`, { headers: { Cookie: visitorCookie } })).status, 403);
-
-  // the organiser: list, account card, file download, review
-  const session = await login(base);
-  const list = await jsonRequest(base, '/api/admin/exhibitor-profiles', { cookie: session.cookie });
-  assert.equal(list.data.counts.submitted, 1);
-  assert.equal(list.data.items[0].brandName, 'Tasty');
-  assert.ok(list.data.items[0].logoId);
-  const card = await jsonRequest(base, `/api/admin/portal-accounts/${accountId}`, { cookie: session.cookie });
-  assert.equal(card.data.account.company, 'Tasty Foods LLC');
-  assert.equal(card.data.account.exhibitorCard.stand, 'B-14');
-  assert.equal(card.data.account.exhibitorCard.files.length, 2);
-  const staffDownload = await fetch(`${base}/api/admin/files/${logo2.data.file.id}`, { headers: { Cookie: session.cookie } });
-  assert.equal(staffDownload.status, 200);
-  assert.equal(staffDownload.headers.get('content-type'), 'image/png');
-  const vague = await jsonRequest(base, `/api/admin/portal-accounts/${accountId}/company`, { method: 'PATCH', cookie: session.cookie, csrf: session.csrf, body: { status: 'changes', note: '' } });
-  assert.equal(vague.response.status, 422);
-  const changes = await jsonRequest(base, `/api/admin/portal-accounts/${accountId}/company`, { method: 'PATCH', cookie: session.cookie, csrf: session.csrf, body: { status: 'changes', note: 'Logo needs a transparent background.' } });
-  assert.equal(changes.data.company.status, 'changes');
-  company = await jsonRequest(base, '/api/portal/company', { cookie });
-  assert.equal(company.data.company.reviewNote, 'Logo needs a transparent background.');
-  const approved = await jsonRequest(base, `/api/admin/portal-accounts/${accountId}/company`, { method: 'PATCH', cookie: session.cookie, csrf: session.csrf, body: { status: 'approved', note: '' } });
-  assert.equal(approved.data.company.status, 'approved');
-
-  // deleting removes the file for good
-  const removed = await jsonRequest(base, `/api/portal/files/${flyer.data.file.id}`, { method: 'DELETE', cookie, csrf });
-  assert.equal(removed.response.status, 200);
-  assert.equal((await fetch(`${base}/api/portal/files/${flyer.data.file.id}`, { headers: { Cookie: cookie } })).status, 404);
-});
-
-test('a card sent for review is announced in the managers’ Telegram chat', async (t) => {
+test('a company page sent for moderation is announced in the managers’ Telegram chat', async (t) => {
   const telegram = await startFakeTelegram(t, () => [200, { ok: true, result: { message_id: 7 } }]);
   const { base } = await startBackend(t, { telegramToken: '123:ABC', telegramChat: '-100555', telegramApiBase: telegram.base });
   const reg = await jsonRequest(base, '/api/portal/register', {
-    method: 'POST', body: { accountType: 'exhibitor', name: 'Nodira K', email: 'card@notice.test', password: 'exhibitor-password-2026', phone: '+998 90 111 22 33', company: 'Notice Foods', country: 'Uzbekistan', industry: 'Food', consent: 'yes' },
+    method: 'POST', body: { accountType: 'exhibitor', name: 'Nodira K', email: 'card@notice.test', password: 'exhibitor-password-2026', phone: '+998 90 111 22 33', company: 'Notice Foods', industry: 'Food', consent: 'yes' },
   });
   const cookie = reg.response.headers.get('set-cookie').split(';')[0];
   const csrf = reg.data.csrfToken;
-  assert.equal((await upload(base, { cookie, csrf, kind: 'logo', name: 'logo.png', body: PNG_1PX })).response.status, 201);
-  const sent = await jsonRequest(base, '/api/portal/company', {
-    method: 'PUT', cookie, csrf, body: { brandName: 'Notice', description: 'Spices and dried fruit for retail chains in Central Asia and the Gulf.', event: 'foodera-expo', stand: 'C-3', submit: true },
-  });
+  assert.equal((await upload(base, { cookie, csrf, kind: 'logo', name: 'logo.png', body: PNG })).response.status, 201);
+  const showcase = { name: 'Notice Foods', about: 'Spices and dried fruit for retail chains.', participation: [{ event: 'foodera-expo', year: 2026, stand: 'C-3' }] };
+  const draft = await jsonRequest(base, '/api/portal/showcase', { method: 'PUT', cookie, csrf, body: { showcase } });
+  assert.equal(draft.response.status, 200);
+  const sent = await jsonRequest(base, '/api/portal/showcase', { method: 'PUT', cookie, csrf, body: { showcase, submit: true } });
   assert.equal(sent.response.status, 200);
-  assert.ok(await waitFor(() => telegram.calls.some((call) => /Eksponent kartasi tekshiruvga keldi/.test(call.body.text)), 3000));
-  const notice = telegram.calls.find((call) => /Eksponent kartasi/.test(call.body.text)).body.text;
-  assert.match(notice, /FOODERA EXPO 2026 · stend C-3/);
-  assert.match(notice, /logo 1/);
+  assert.ok(await waitFor(() => telegram.calls.some((call) => /moderatsiyaga keldi/.test(call.body.text)), 3000));
+  const notices = telegram.calls.filter((call) => /moderatsiyaga keldi/.test(call.body.text));
+  assert.equal(notices.length, 1, 'saving a draft does not notify; sending does, once');
+  assert.match(notices[0].body.text, /Notice Foods/);
+  assert.match(notices[0].body.text, /FOODERA EXPO 2026 · stend C-3/);
+  assert.match(notices[0].body.text, /logo 1/);
 });

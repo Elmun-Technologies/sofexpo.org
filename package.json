@@ -1,5 +1,5 @@
 {
-  "name": "sofexpo.org",
+  "name": "sof-expo.com",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -24,10 +24,15 @@
     "audit:downloads": "node scripts/audit-downloads.mjs",
     "check:release": "npm run check && npm run audit:downloads -- --require-final",
     "lead-webhook": "node --env-file-if-exists=.env scripts/lead-webhook.mjs",
+    "telegram:set-webhook": "node --env-file-if-exists=.env scripts/telegram-set-webhook.mjs set",
+    "telegram:webhook-info": "node --env-file-if-exists=.env scripts/telegram-set-webhook.mjs check",
+    "telegram:backfill": "node --env-file-if-exists=.env scripts/telegram-backfill.mjs",
     "admin:reset-password": "node --env-file-if-exists=.env scripts/backend/admin-cli.mjs reset-password",
     "test:backend": "node --test tests/backend.test.mjs",
+    "backend:demo": "node scripts/backend/demo.mjs",
     "typecheck": "astro sync && tsc --noEmit -p .",
-    "logos": "node scripts/build-logos.mjs"
+    "logos": "node scripts/build-logos.mjs",
+    "logos:partners": "node scripts/build-partner-logos.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",
@@ -43,5 +48,8 @@
     "@playwright/test": "^1.63.0",
     "jsdom": "^30.1.1",
     "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=22.18.0"
   }
 }

@@ -19,6 +19,7 @@ import Photo from '@/components/Photo.astro';
 import { bigDate, industryLabel } from '@/lib/labels';
 import { eventIcsPath } from '@/lib/ics';
 import { archive } from '@/data/archive';
+import { brandForEvent } from '@/data/brands';
 
 const { locale, event, kicker, title, lead, variant = 'open', soloKicker = false } = Astro.props as {
   locale: Locale;
@@ -34,6 +35,8 @@ const t = useUI(locale);
 const ru = locale === 'ru';
 const L = (p: string) => localize(locale, p);
 const upcoming = variant === 'open';
+/* a show whose logo is drawn on white gets a light hero in its own tint (brand-map.json `hero`) */
+const light = brandForEvent(event.slug)?.hero === 'light';
 /* the hero highlight is one sentence per show — printed on the overview only */
 const showHighlight = Astro.props.showHighlight ?? true;
 const d = bigDate(event.dates.start, event.dates.end, locale);
@@ -82,7 +85,7 @@ const heroKicker =
 <!-- 2026-10 design (docs/18 §8): two panels — the show's own ground with the logo, the H1, the
      date as the loudest figure and the booking action; beside it the hall photo carrying the
      countdown. A visitor's first screen owes them facts (dates, venue, days left). -->
-<section class:list={['ehero', { 'ehero--past': !upcoming }]}>
+<section class:list={['ehero', { 'ehero--past': !upcoming, 'ehero--light': light }]}>
   <div class="ehero__main">
     <ShowLogo slug={event.slug} height={logoFor(event.slug)?.round ? 88 : 56} class="ehero__logo" eager />
     {/* the kicker names the industry ("Food and beverage exhibition"), the query a show page
@@ -374,5 +377,80 @@ const heroKicker =
     .ehero__main {
       min-height: 640px;
     }
+  }
+
+  /* ---------- light hero: logos drawn on white (FOODERA, AGROPRO, WORLD EDU) ----------
+     the panel is white tinted with the show's mark colour, text in the show's own dark ink,
+     the motif drawn in the mark colour, the booking action in the show's deep colour */
+  .ehero--light .ehero__main {
+    background: var(--brand-tint, #fff);
+    color: var(--ink);
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .ehero--light .ehero__main::after {
+    background: var(--brand-mark);
+    opacity: 0.32;
+    -webkit-mask-image: var(--brand-pattern), linear-gradient(105deg, transparent 42%, #000 92%);
+    mask-image: var(--brand-pattern), linear-gradient(105deg, transparent 42%, #000 92%);
+    -webkit-mask-size: var(--brand-pattern-size, 120px), 100% 100%;
+    mask-size: var(--brand-pattern-size, 120px), 100% 100%;
+    -webkit-mask-repeat: repeat, no-repeat;
+    mask-repeat: repeat, no-repeat;
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
+  }
+  @media (max-width: 900px) {
+    .ehero--light .ehero__main::after {
+      -webkit-mask-image: var(--brand-pattern), radial-gradient(90% 260px at 100% 0, #000, transparent);
+      mask-image: var(--brand-pattern), radial-gradient(90% 260px at 100% 0, #000, transparent);
+    }
+  }
+  .ehero--light .ehero__main :global(.ehero__logo) {
+    padding: 0;
+    background: transparent;
+  }
+  .ehero--light h1,
+  .ehero--light .ehero__date b {
+    color: var(--evergreen);
+  }
+  .ehero--light :global(h1 > .kicker),
+  .ehero--light .ehero__date span {
+    color: var(--ink-60);
+  }
+  .ehero--light .hero__lead,
+  .ehero--light .ehero__facts li {
+    color: var(--ink);
+  }
+  .ehero--light .ehero__facts :global(svg) {
+    color: var(--gold);
+  }
+  .ehero--light :global(.btn--show) {
+    --btn-bg: var(--evergreen);
+    --btn-fg: #fff;
+    background: var(--evergreen);
+    border-color: var(--evergreen);
+    color: #fff;
+  }
+  .ehero--light :global(.btn--show:hover) {
+    background: var(--evergreen-2);
+    border-color: var(--evergreen-2);
+    color: #fff;
+  }
+  .ehero--light :global(.btn--ghost) {
+    --btn-fg: var(--ink);
+    background: #fff;
+    border-color: var(--line-strong);
+    color: var(--ink);
+  }
+  .ehero--light :global(.btn--ghost:hover) {
+    --btn-fg: var(--evergreen);
+    background: #fff;
+    border-color: var(--evergreen);
+    color: var(--evergreen);
+  }
+  .ehero--light .ehero__note {
+    background: #fff;
+    border-color: var(--line);
+    color: var(--ink);
   }
 </style>

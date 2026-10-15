@@ -52,6 +52,10 @@ export type HostBrand = {
      not only in colour */
   pattern: string;
   patternSize: number;
+  /** 'light' when the logo is drawn on white (FOODERA, AGROPRO, WORLD EDU): the event hero is a
+     white panel tinted with the mark colour, so the full-colour logo sits on its own ground;
+     'dark' when the logo is drawn on black (BUILD PRO, ECOM, PROMOTORS) */
+  hero?: "light" | "dark";
   /** a horizontal lockup for the 40px header, when the round badge would be illegible there */
   headerLogo?: { src: string; webp: string; width: number; height: number };
   /** the logo's shape and type voice (all optional; the centre's defaults apply otherwise) */
@@ -90,9 +94,15 @@ export function brandCss(brand: HostBrand | null): string {
     `--ink:${p.ink};--ink-60:${p.ink60};--ink-40:${p.ink40};`,
     `--line:${p.line};--line-strong:${p.lineStrong};`,
     `--cream:${p.cream};--cream-2:${p.cream2};`,
-    `--gold:${p.gold};--gold-ink:${p.gold};--gold-soft:${p.goldSoft};--ornament:${p.ornament};--brand-mark:${p.mark};`,
-    /* the 2026-10 design's yellow accent (booking CTA, call-outs) becomes the show's own accent */
-    `--accent:${p.goldSoft};--accent-hover:color-mix(in srgb,${p.goldSoft} 82%,#000);--accent-soft:color-mix(in srgb,${p.goldSoft} 16%,#fff);`,
+    `--gold:${p.gold};--gold-soft:${p.goldSoft};--ornament:${p.ornament};--brand-mark:${p.mark};`,
+    /* the 2026-10 design's booking accent (CTA, call-outs) becomes the show's own accent,
+       and what sits on it is that show's ink (the pair is AA-verified by check-brand-contrast) */
+    `--accent:${p.goldSoft};--accent-ink:${p.ink};`,
+    /* the rest of the centre's black/blue/yellow ladder, so none of it leaks onto a show page:
+       small accent text, the pale accent ground, neutral chips and the keyboard focus ring */
+    `--gold-ink:${p.gold};--accent-soft:color-mix(in srgb,${p.goldSoft} 22%,#fff);--sage:${p.cream2};`,
+    `--focus-ring:0 0 0 4px color-mix(in srgb,${p.mark} 32%,transparent);`,
+    `--brand-tint:color-mix(in srgb,${p.mark} 9%,#fff);`,
     `--brand-stripe:${brand.stripe};`,
     /* shape and type voice from the logo: radius of panels/cards/pills, display weight/style */
     brand.style

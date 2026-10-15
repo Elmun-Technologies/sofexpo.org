@@ -1,4 +1,4 @@
-# SOF EXPO Samarkand — sofexpo.org
+# SOF EXPO Samarkand — sof-expo.com
 
 Website of the SOF EXPO Samarkand exhibition & congress centre and its own trade shows:
 one **Astro 7** project, **647 static pages** (129 per locale), five locales
@@ -65,11 +65,11 @@ So the public website remains:
 
 | Show                          | Dates          | Status                  | Host (`subdomain` mode)  |
 | ----------------------------- | -------------- | ----------------------- | ------------------------ |
-| FOODERA EXPO 2026             | 20–22 Oct 2026 | open                    | `foodera.sofexpo.org`    |
-| BUILDPRO EXPO 2026            | 9–11 Nov 2026  | open                    | `buildpro.sofexpo.org`   |
-| AGROPRO EXPO 2027             | 2–4 Mar 2027   | registration            | `agropro.sofexpo.org`    |
-| WORLD EDU EXPO 2027           | 9–10 Apr 2027  | registration            | `worldedu.sofexpo.org`   |
-| ECOM & RETAIL EXPO 2027       | 16–17 Jun 2027 | registration            | `ecomretail.sofexpo.org` |
+| FOODERA EXPO 2026             | 20–22 Oct 2026 | open                    | `foodera.sof-expo.com`    |
+| BUILDPRO EXPO 2026            | 9–11 Nov 2026  | open                    | `buildpro.sof-expo.com`   |
+| AGROPRO EXPO 2027             | 2–4 Mar 2027   | registration            | `agropro.sof-expo.com`    |
+| WORLD EDU EXPO 2027           | 9–10 Apr 2027  | registration            | `worldedu.sof-expo.com`   |
+| ECOM & RETAIL EXPO 2027       | 16–17 Jun 2027 | registration            | `ecomretail.sof-expo.com` |
 | PROMOTORS SHOW SAMARKAND 2026 | 12–13 Sep 2026 | past (archive, noindex) | —                        |
 
 Source of truth: `src/data/events.ts`; past results in `src/data/archive.ts`.
@@ -81,8 +81,8 @@ service. To exercise the complete lead/admin stack, the backend uses Node’s bu
 (no additional npm runtime package) and a local `.data/` directory.
 
 ```bash
-git clone https://github.com/Elmun-Technologies/sofexpo.org.git
-cd sofexpo.org
+git clone https://github.com/Elmun-Technologies/sof-expo.com.git
+cd sof-expo.com
 npm ci
 npm run dev            # http://localhost:4321/  → 301 to /en/  (/ru/ also live)
 ```
@@ -102,7 +102,7 @@ npm run build          # → dist/  (647 pages) + sitemap pruned of noindex URLs
 npm run preview        # serve dist/ locally on :4321
 npm run check          # build + SEO/accessibility audit — the CI gate
 npm run check:hosts    # build all 6 hostnames into dist-hosts/ and verify cross-host links
-node scripts/build-one-host.mjs foodera.sofexpo.org   # exactly what a deploy target runs
+node scripts/build-one-host.mjs foodera.sof-expo.com   # exactly what a deploy target runs
 ```
 
 ## 3. Commands
@@ -131,7 +131,7 @@ node scripts/build-one-host.mjs foodera.sofexpo.org   # exactly what a deploy ta
 ## 4. Repository layout
 
 ```
-sofexpo.org/
+sof-expo.com/
 ├── astro.config.mjs        # static output, site URL from SITE, i18n, sitemap, @ alias, ICS integration
 ├── tsconfig.json           # strict + paths: @/* → src/*
 ├── scripts/                # build & verification tooling + lead-webhook backend entry point
@@ -203,7 +203,7 @@ Two modes, one variable — `PUBLIC_HOSTS_MODE`:
 
 | Mode                | What is published                                                                                                           |
 | ------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `alias` (default)   | Everything on `sofexpo.org`; a show's cluster lives at `/events/{slug}/…`                                                     |
+| `alias` (default)   | Everything on `sof-expo.com`; a show's cluster lives at `/events/{slug}/…`                                                     |
 | `subdomain`         | Each recurring show owns a hostname (`/`, `/exhibitors/`, `/visitors/`, `/program/`); the centre keeps the venue, the audience hubs, the calendar, **all editorial** and legal pages. Old centre URLs become `noindex,follow` stubs + 301s |
 
 Ownership is decided once, in `scripts/host-rules.mjs` (+ `src/data/host-map.json`), imported by
@@ -251,8 +251,8 @@ Two supported shapes, both static:
 `/` keeps an HTML meta-refresh fallback for hosts that ignore `_redirects`.
 
 ```
-node scripts/build-one-host.mjs sofexpo.org
-node scripts/build-one-host.mjs foodera.sofexpo.org      # …and the other four shows
+node scripts/build-one-host.mjs sof-expo.com
+node scripts/build-one-host.mjs foodera.sof-expo.com      # …and the other four shows
 ```
 
 **B. Own VPS (nginx/Caddy).** `npm run check:hosts` writes all six builds to
@@ -264,16 +264,16 @@ DNS: CNAME per subdomain, A/ALIAS for the apex. Day-X checklist, redirect rules 
 
 | Variable            | Default                  | Used by                                                    |
 | ------------------- | ------------------------ | ---------------------------------------------------------- |
-| `SITE`              | `https://sofexpo.org/`   | `astro.config.mjs` → canonical, OG, JSON-LD, sitemap, RSS   |
+| `SITE`              | `https://sof-expo.com/`   | `astro.config.mjs` → canonical, OG, JSON-LD, sitemap, RSS   |
 | `PUBLIC_HOSTS_MODE` | `alias`                  | app + build scripts; `alias` \| `subdomain`                 |
-| `SITE_URL`          | `https://sofexpo.org`    | `scripts/seo-audit.mjs`                                     |
-| `PUBLIC_LEAD_ENDPOINT` | *(empty)*             | Every form; production example `https://api.sofexpo.org/lead`. Without it, forms preserve the honest WhatsApp/email fallback. |
-| `PUBLIC_ANALYTICS_ENDPOINT` | *(empty)*        | First-party tracking; production example `https://api.sofexpo.org/event`. No IP or full URL is stored. |
-| `PUBLIC_PORTAL_URL` | *(empty)*             | Static-site account-menu target; e.g. `https://api.sofexpo.org`. Set at build time; blank hides cabinet links. The Cloudflare deploy workflow defaults to `https://api.sofexpo.org` (override with a repository variable). |
+| `SITE_URL`          | `https://sof-expo.com`    | `scripts/seo-audit.mjs`                                     |
+| `PUBLIC_LEAD_ENDPOINT` | *(empty)*             | Every form; production example `https://api.sof-expo.com/lead`. Without it, forms preserve the honest WhatsApp/email fallback. |
+| `PUBLIC_ANALYTICS_ENDPOINT` | *(empty)*        | First-party tracking; production example `https://api.sof-expo.com/event`. No IP or full URL is stored. |
+| `PUBLIC_PORTAL_URL` | *(empty)*             | Static-site account-menu target; e.g. `https://api.sof-expo.com`. Set at build time; blank hides cabinet links. The Cloudflare deploy workflow defaults to `https://api.sof-expo.com` (override with a repository variable). |
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | *(unset)*     | First-start admin bootstrap; use a unique 12+ character password. Never put credentials in `PUBLIC_*`. |
 | `PORTAL_SESSION_DAYS` | `14`              | Visitor/exhibitor session duration (1–30 days). |
 | `LEAD_WEBHOOK_DB` | `./.data/sofexpo.sqlite` | Persistent SQLite database for leads, portal profiles/requests, admin sessions, analytics, notes and delivery queue. |
-| `LEAD_WEBHOOK_ORIGINS` | `https://sofexpo.org` | Comma-separated exact site/API origins allowed by CORS. Include the five show hosts when used. |
+| `LEAD_WEBHOOK_ORIGINS` | `https://sof-expo.com` | Comma-separated exact site/API origins allowed by CORS. Include the five show hosts when used. |
 | `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` | *(unset)* | Optional backend-only lead notifications; errors retry from the durable outbox. |
 | `CRM_WEBHOOK_URL` / `CRM_WEBHOOK_TOKEN` | *(unset)* | Optional server-to-server CRM delivery. |
 | `LEAD_WEBHOOK_TRUST_PROXY` | `0` | Set `1` only behind a trusted proxy that overwrites forwarded headers. |

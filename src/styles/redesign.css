@@ -2,9 +2,10 @@
    SOF EXPO SAMARKAND — 2026-10 redesign layer (docs/18)
 
    The approved design (design/ in the site package): a grey canvas, white
-   36px panels separated by 10px, black ink, the centre's logo blue (#157389, the
-   arc #249CB4 deepened) and its green arc (#48B454) reserved for the booking action. Type: Manrope 500
-   for display, Onest for body.
+   36px panels separated by 10px. As of 2026-10-14 (docs/21) the colour lives
+   in the SOF EXPO brand family: green-black ink, deep green panels, the logo
+   blue for links and the logo red reserved for the booking action. Type:
+   Manrope 500 for display, Onest for body.
 
    The tokens themselves live in global.css (:root) — this file re-draws the
    shared components on top of them: the page frame and its panels, the header
@@ -347,12 +348,12 @@ main > .wrap .crumbs {
   border: 1px solid transparent;
   padding: 14px 18px;
   border-radius: 20px;
-  background: #f5f5f5;
+  background: var(--cream-2);
   text-decoration: none;
   transition: background-color var(--tr);
 }
 .mega__links a:hover {
-  background: #ececec;
+  background: var(--line);
   color: var(--ink);
 }
 .mega__links a[aria-current="page"] {
@@ -441,7 +442,7 @@ a:hover > .arr,
 a:hover .arr,
 a:focus-visible .arr {
   background: var(--accent);
-  color: var(--ink);
+  color: var(--accent-ink);
 }
 
 /* mobile menu: a white card under the bar, one grey accordion row per section */
@@ -512,10 +513,13 @@ a:focus-visible .arr {
 }
 .btn--accent,
 .btn--accent:hover {
-  color: var(--ink);
+  color: var(--accent-ink);
 }
 .btn--accent:hover {
-  background: var(--accent-hover, #3d9f48);
+  /* a darker shade of whatever the current accent is — the centre's red deepens, a show's
+     accent deepens too; the old hardcoded acid-yellow flashed the centre's colour onto
+     every branded show page */
+  background: color-mix(in srgb, var(--accent) 85%, #000);
 }
 .btn--ghost {
   border-color: var(--ink);
@@ -527,7 +531,7 @@ a:focus-visible .arr {
 }
 .btn--light:hover {
   background: var(--accent);
-  color: var(--ink);
+  color: var(--accent-ink);
 }
 .sec--forest .btn--ghost:hover,
 .hero .btn--ghost:hover,
@@ -567,7 +571,7 @@ a:focus-visible .arr {
 .chip--gold {
   background: var(--accent);
   border-color: var(--accent);
-  color: var(--ink);
+  color: var(--accent-ink);
   font-weight: 600;
 }
 .card {
@@ -661,7 +665,7 @@ input[type="radio"] {
 }
 .ftr__cta .arr {
   background: var(--accent);
-  color: var(--ink);
+  color: var(--accent-ink);
 }
 .ftr__sales {
   flex: 1 1 360px;
@@ -715,7 +719,7 @@ input[type="radio"] {
 .ftr__about {
   max-width: 34ch;
   margin: 1rem 0 0;
-  color: #9a9a9a;
+  color: #a6a6a6;
 }
 .ftr h3 {
   font-family: var(--f-body);
@@ -723,13 +727,15 @@ input[type="radio"] {
   font-weight: 500;
   letter-spacing: 0;
   text-transform: none;
-  color: #9a9a9a;
+  color: #a6a6a6;
 }
 .ftr ul {
   gap: 10px;
 }
 .ftr a:hover {
-  color: var(--accent);
+  /* the light brand accent on the dark footer — the booking accent (red on the centre)
+     would fail contrast here */
+  color: var(--gold-soft);
   text-decoration: none;
 }
 .ftr .logo__h {
@@ -746,7 +752,7 @@ input[type="radio"] {
   color: var(--ink);
 }
 .ftr__bottom {
-  color: #9a9a9a;
+  color: #a6a6a6;
   border-top-color: rgba(255, 255, 255, 0.14);
 }
 
@@ -931,7 +937,7 @@ main > .evnav .evnav__in {
 }
 .ev .ev__foot .ev__more:hover {
   background: var(--accent);
-  color: var(--ink);
+  color: var(--accent-ink);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1005,6 +1011,7 @@ main > .calh {
 .pill.pill--w:hover {
   background: var(--accent);
   border-color: var(--accent);
+  color: var(--accent-ink);
 }
 
 main > .calf {
@@ -1109,6 +1116,7 @@ main > .calc {
 }
 .calc__pill--open {
   background: var(--accent);
+  color: var(--accent-ink);
   font-weight: 600;
 }
 .calc h2 {
@@ -1160,6 +1168,10 @@ main > .calc {
 }
 .calc__date:hover {
   background: var(--accent);
+  color: var(--accent-ink);
+}
+.calc__date:hover :is(.calc__y, .calc__m, b) {
+  color: var(--accent-ink);
 }
 .calc__y {
   font-size: 0.875rem;
@@ -1253,10 +1265,15 @@ main > .calq {
 }
 .callout--gold {
   background: var(--accent);
+  color: var(--accent-ink);
 }
 .callout--gold .muted,
-.callout--gold .kicker {
-  color: var(--ink);
+.callout--gold .kicker,
+.callout--gold :is(h2, h3) {
+  color: var(--accent-ink);
+}
+.callout--gold :is(a, .lead) {
+  color: inherit;
 }
 .rows {
   border-top: 0;

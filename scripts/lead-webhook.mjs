@@ -19,6 +19,13 @@ if (isMain) {
     console.log(`[lead-backend] listening on ${typeof address === 'object' ? address.port : port} (${host})`);
     console.log(`[lead-backend] admin: /admin | visitor/exhibitor portal: /cabinet | database: ${process.env.LEAD_WEBHOOK_DB || '.data/sofexpo.sqlite'}`);
     console.log(`[lead-backend] integrations: Telegram ${process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID ? 'on' : 'off'}, CRM ${process.env.CRM_WEBHOOK_URL ? 'on' : 'off'} | active admin: ${store.hasActiveAdmin() ? 'yes' : 'no'}`);
+    const tg = server.tgBlog;
+    if (tg) {
+      const cfg = server.tgBlogConfig;
+      console.log(`[lead-backend] telegram→blog sync: ON ${cfg.webhookPath} (channel ${cfg.channelUsername ? `@${cfg.channelUsername}` : cfg.channelId}, mode ${cfg.mode}, ${cfg.collection}/${cfg.locale}, git push ${cfg.gitPush ? 'on' : 'off'})`);
+    } else {
+      console.log('[lead-backend] telegram→blog sync: OFF (set TELEGRAM_BOT_TOKEN + TELEGRAM_WEBHOOK_SECRET + TELEGRAM_CHANNEL_ID to enable)');
+    }
     if (!store.hasActiveAdmin()) console.warn('[lead-backend] set ADMIN_EMAIL and ADMIN_PASSWORD (12+ chars) in .env, then restart to create the first admin account.');
   });
   const shutdown = () => {

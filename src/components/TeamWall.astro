@@ -53,7 +53,7 @@ const personLd = {
       "@type": "Person",
       name: m.name[locale],
       jobTitle: m.role[locale],
-      image: `https://sofexpo.org/images/team/${m.card}.jpg`,
+      image: `https://sof-expo.com/images/team/${m.card}.jpg`,
       worksFor: { "@type": "Organization", name: "SOF EXPO Samarkand" },
       ...(m.phone ? { telephone: m.phone } : {}),
     },
@@ -230,7 +230,8 @@ const groups = ORDER.map((k) => ({
     width: 100%;
     aspect-ratio: 1 / 1;
     object-fit: contain;
-    background: #0a1f3d;
+    /* portraits sit on the deep brand green, not an off-palette navy */
+    background: var(--evergreen);
     transition: transform 600ms cubic-bezier(0.22, 0.61, 0.36, 1);
   }
   .tw__item:hover .tw__card img {

@@ -3,184 +3,205 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/png" href="/brand-assets/sofexpo-logo.png" />
     <meta name="robots" content="noindex,nofollow" />
     <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#0a0a0a" />
     <title id="document-title" data-i18n="documentTitle">SOF EXPO · Shaxsiy kabinet</title>
-    <link rel="stylesheet" href="/cabinet/app.css" />
     <link rel="preload" href="/brand-fonts/onest-latin.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="stylesheet" href="/cabinet/theme.css" />
+    <link rel="icon" type="image/png" href="/brand-assets/sofexpo-logo.png" />
+    <link rel="stylesheet" href="/cabinet/app.css" />
     <script src="/cabinet/i18n.js" defer></script>
     <script src="/cabinet/app.js" defer></script>
   </head>
   <body>
-    <div class="page-grain" aria-hidden="true"></div>
+    <!-- ======================= SIGN IN / SIGN UP ======================= -->
     <main id="auth-view" class="auth-layout">
       <section class="auth-story">
-        <a class="brand" href="https://sofexpo.org/uz/" aria-label="SOF EXPO bosh sahifa" data-i18n-aria-label="siteHome" data-public-link="home"><span class="brand-mark">S</span><span>SOF EXPO<small>SAMARKAND · BUSINESS EVENTS</small></span></a>
+        <a class="brand" href="https://sof-expo.com/uz/" aria-label="SOF EXPO bosh sahifa" data-i18n-aria-label="siteHome" data-public-link="home"><img src="/brand-assets/sofexpo-logo-white.png" alt="SOF EXPO" width="168" height="48" /></a>
         <div class="story-copy">
           <p class="eyebrow" data-i18n="storyKicker">BIZNES UCHRASHUVLARI UCHUN</p>
-          <h1><span data-i18n="storyTitle">Ko‘rgazmadagi</span><br /><em data-i18n="storyTitleAccent">keyingi qadamingiz.</em></h1>
+          <h1><span data-i18n="storyTitle">Ko‘rgazmadagi</span> <em data-i18n="storyTitleAccent">keyingi qadamingiz.</em></h1>
           <p data-i18n="storyDescription">Eksponent sifatida ishtirok so‘rovini yuboring yoki mehmon sifatida tashrif rejangizni saqlang. Murojaatlar holatini shu yerdan kuzating.</p>
+          <ul class="story-points">
+            <li data-i18n="storyPointVisitor">Mehmonlar — 1 daqiqada ro‘yxatdan o‘tish, kompaniya shart emas</li>
+            <li data-i18n="storyPointExhibitor">Eksponentlar — logotip, tavsif va kataloglar sof-expo.com saytida</li>
+            <li data-i18n="storyPointStatus">Har bir so‘rov holati shu yerda ko‘rinadi</li>
+          </ul>
         </div>
-        <div class="story-foot"><span class="status-pulse"></span> <span data-i18n="secureBadge">Himoyalangan shaxsiy kabinet</span></div>
-        <div class="story-number">SOF EXPO <span>· 01</span></div>
+        <div class="story-foot"><span class="status-pulse" aria-hidden="true"></span> <span data-i18n="secureBadge">Himoyalangan shaxsiy kabinet</span></div>
       </section>
 
       <section class="auth-panel">
-        <div class="auth-locale-control"><label class="sr-only" for="auth-locale" data-i18n="languageLabel">Til</label><select class="locale-select" id="auth-locale" aria-label="Til" data-i18n-aria-label="languageLabel"><option value="uz">O‘zbekcha</option><option value="ru">Русский</option><option value="en">English</option><option value="tr">Türkçe</option><option value="zh">中文</option></select></div>
-        <div class="auth-brand-mobile"><span class="brand-mark">S</span><span>SOF EXPO <small data-i18n="mobileCabinet">SHAXSIY KABINET</small></span></div>
+        <div class="auth-top">
+          <a class="auth-brand-mobile" href="https://sof-expo.com/uz/" data-public-link="home" aria-label="SOF EXPO bosh sahifa" data-i18n-aria-label="siteHome"><img src="/brand-assets/sofexpo-logo.png" alt="SOF EXPO" width="140" height="40" /></a>
+          <div class="auth-locale-control"><label class="sr-only" for="auth-locale" data-i18n="languageLabel">Til</label><select class="locale-select" id="auth-locale" aria-label="Til" data-i18n-aria-label="languageLabel"><option value="uz">O‘zbekcha</option><option value="ru">Русский</option><option value="en">English</option><option value="tr">Türkçe</option><option value="zh">中文</option></select></div>
+        </div>
         <div class="auth-card">
           <p class="eyebrow" data-i18n="audienceLabel">MEHMONLAR VA EKSPONENTLAR UCHUN</p>
           <h2 id="auth-title">Kabinetga kirish</h2>
           <p class="muted" id="auth-description">Murojaatlaringizni davom ettirish uchun emailingiz bilan kiring.</p>
-          <div class="auth-tabs" id="auth-tabs" role="tablist" aria-label="Kirish yoki hisob yaratish" data-i18n-aria-label="authTabsLabel">
+          <div class="segmented auth-tabs" id="auth-tabs" role="tablist" aria-label="Kirish yoki hisob yaratish" data-i18n-aria-label="authTabsLabel">
             <button class="auth-tab active" type="button" id="login-tab" data-auth-tab="login" role="tab" aria-controls="login-form" aria-selected="true" tabindex="0" data-i18n="loginTab">Kirish</button>
             <button class="auth-tab" type="button" id="register-tab" data-auth-tab="register" role="tab" aria-controls="register-form" aria-selected="false" tabindex="-1" data-i18n="registerTab">Hisob yaratish</button>
           </div>
 
           <form id="login-form" class="form-stack" role="tabpanel" aria-labelledby="login-tab" tabindex="-1" autocomplete="on">
-            <label for="login-email" data-i18n="fieldEmail">Email manzil</label>
-            <input id="login-email" name="email" type="email" autocomplete="username" required placeholder="name@company.com" />
-            <label for="login-password" data-i18n="fieldPassword">Parol</label>
-            <input id="login-password" name="password" type="password" autocomplete="current-password" required placeholder="Parolingiz" data-i18n-placeholder="loginPasswordPlaceholder" />
-            <button class="button button-dark" type="submit"><span data-i18n="loginSubmit">Kabinetga kirish</span> <span aria-hidden="true">→</span></button>
+            <div class="field"><label for="login-email" data-i18n="fieldEmail">Email manzil</label><input id="login-email" name="email" type="email" autocomplete="username" required placeholder="name@company.com" /></div>
+            <div class="field"><label for="login-password" data-i18n="fieldPassword">Parol</label><input id="login-password" name="password" type="password" autocomplete="current-password" required placeholder="Parolingiz" data-i18n-placeholder="loginPasswordPlaceholder" /></div>
+            <button class="button button-dark button-block" type="submit"><span data-i18n="loginSubmit">Kabinetga kirish</span> <span aria-hidden="true">→</span></button>
             <p id="login-error" class="form-error" role="alert" hidden></p>
           </form>
 
           <form id="register-form" class="form-stack" role="tabpanel" aria-labelledby="register-tab" tabindex="-1" autocomplete="on" hidden>
-            <label for="register-type" data-i18n="fieldAccountType">Kabinet turi</label>
-            <select id="register-type" name="accountType" required>
-              <option value="visitor" data-i18n="visitor">Mehmon / tashrifchi</option>
-              <option value="exhibitor" data-i18n="exhibitor">Eksponent kompaniya</option>
-            </select>
+            <fieldset class="type-switch" id="register-type">
+              <legend data-i18n="fieldAccountType">Kim sifatida ro‘yxatdan o‘tasiz?</legend>
+              <label class="type-option"><input type="radio" name="accountType" value="visitor" id="register-type-visitor" checked /><span class="type-card"><strong data-i18n="visitor">Mehmon</strong><small data-i18n="visitorHint">Ko‘rgazmaga tashrif buyuraman</small></span></label>
+              <label class="type-option"><input type="radio" name="accountType" value="exhibitor" id="register-type-exhibitor" /><span class="type-card"><strong data-i18n="exhibitor">Eksponent</strong><small data-i18n="exhibitorHint">Stend oldim yoki olmoqchiman</small></span></label>
+            </fieldset>
             <div class="form-two">
-              <div><label for="register-name" data-i18n="fieldName">Ism-familiya</label><input id="register-name" name="name" autocomplete="name" minlength="2" maxlength="120" required placeholder="Ism Familiya" data-i18n-placeholder="namePlaceholder" /></div>
-              <div><label for="register-phone" data-i18n="fieldPhone">Telefon</label><input id="register-phone" name="phone" type="tel" autocomplete="tel" required placeholder="+998 90 123 45 67" /></div>
+              <div class="field"><label for="register-name" data-i18n="fieldName">Ism-familiya</label><input id="register-name" name="name" autocomplete="name" minlength="2" maxlength="120" required placeholder="Ism Familiya" data-i18n-placeholder="namePlaceholder" /></div>
+              <div class="field"><label for="register-phone" data-i18n="fieldPhone">Telefon</label><input id="register-phone" name="phone" type="tel" autocomplete="tel" required placeholder="+998 90 123 45 67" /></div>
             </div>
-            <label for="register-email" data-i18n="fieldEmail">Email manzil</label>
-            <input id="register-email" name="email" type="email" autocomplete="email" required placeholder="name@company.com" />
-            <div class="form-two">
-              <div><label for="register-country" data-i18n="fieldCountry">Mamlakat</label><input id="register-country" name="country" autocomplete="country-name" maxlength="100" placeholder="O‘zbekiston" data-i18n-placeholder="countryPlaceholder" /></div>
-              <div><label for="register-industry" data-i18n="fieldIndustry">Faoliyat sohasi</label><input id="register-industry" name="industry" maxlength="160" placeholder="Oziq-ovqat, qurilish…" data-i18n-placeholder="industryPlaceholder" /></div>
-            </div>
-            <div class="role-fields" data-role-fields="exhibitor" hidden>
-              <label for="register-company" data-i18n="fieldCompany">Kompaniya nomi</label>
+            <div class="field"><label for="register-email" data-i18n="fieldEmail">Email manzil</label><input id="register-email" name="email" type="email" autocomplete="email" required placeholder="name@company.com" /></div>
+            <div class="field">
+              <label for="register-company"><span data-i18n="fieldCompany">Kompaniya nomi</span> <span class="optional" data-visitor-only data-i18n="optionalNoCompany">ixtiyoriy — kompaniyasiz ham bo‘ladi</span></label>
               <input id="register-company" name="company" autocomplete="organization" maxlength="200" placeholder="Kompaniya nomi" data-i18n-placeholder="companyPlaceholder" />
-              <label for="register-website"><span data-i18n="fieldWebsite">Kompaniya sayti</span> <span class="optional" data-i18n="optional">ixtiyoriy</span></label>
-              <input id="register-website" name="website" type="url" maxlength="300" placeholder="https://example.com" />
             </div>
-            <div class="role-fields" data-role-fields="visitor">
-              <label for="register-interests"><span data-i18n="fieldInterests">Qiziqish yo‘nalishlari</span> <span class="optional" data-i18n="optional">ixtiyoriy</span></label>
-              <input id="register-interests" name="interests" maxlength="500" placeholder="Masalan: oziq-ovqat, import, uskunalar" data-i18n-placeholder="interestsPlaceholder" />
+            <div class="role-fields field" data-role-fields="exhibitor" hidden>
+              <label for="register-industry" data-i18n="fieldIndustry">Faoliyat sohasi</label>
+              <input id="register-industry" name="industry" maxlength="160" placeholder="Oziq-ovqat, qurilish…" data-i18n-placeholder="industryPlaceholder" />
             </div>
-            <label for="register-password"><span data-i18n="fieldPassword">Parol</span> <span class="optional" data-i18n="passwordMin">kamida 12 belgi</span></label>
-            <input id="register-password" name="password" type="password" minlength="12" maxlength="128" autocomplete="new-password" required placeholder="Uzun va noyob parol" data-i18n-placeholder="newPasswordPlaceholder" />
-            <label class="check-row register-consent"><input name="consent" type="checkbox" value="yes" required /><span><span data-i18n="registrationConsent">Shaxsiy ma’lumotlarim murojaatni ko‘rib chiqish uchun qayta ishlanishiga roziman.</span> <a href="https://sofexpo.org/uz/legal/privacy/" data-public-link="privacy" target="_blank" rel="noopener noreferrer" data-i18n="privacyPolicy">Maxfiylik siyosati</a><span data-i18n="registrationConsentEnd">.</span></span></label>
-            <button class="button button-dark" type="submit"><span data-i18n="registerSubmit">Xavfsiz hisob yaratish</span> <span aria-hidden="true">→</span></button>
+            <div class="field">
+              <label for="register-password"><span data-i18n="fieldPassword">Parol</span> <span class="optional" data-i18n="passwordMin">kamida 12 belgi</span></label>
+              <input id="register-password" name="password" type="password" minlength="12" maxlength="128" autocomplete="new-password" required placeholder="Uzun va noyob parol" data-i18n-placeholder="newPasswordPlaceholder" />
+            </div>
+            <label class="check-row register-consent"><input name="consent" type="checkbox" value="yes" required /><span><span data-i18n="registrationConsent">Shaxsiy ma’lumotlarim murojaatni ko‘rib chiqish uchun qayta ishlanishiga roziman.</span> <a href="https://sof-expo.com/uz/legal/privacy/" data-public-link="privacy" target="_blank" rel="noopener noreferrer" data-i18n="privacyPolicy">Maxfiylik siyosati</a><span data-i18n="registrationConsentEnd">.</span></span></label>
+            <button class="button button-dark button-block" type="submit"><span data-i18n="registerSubmit">Xavfsiz hisob yaratish</span> <span aria-hidden="true">→</span></button>
             <p id="register-error" class="form-error" role="alert" hidden></p>
           </form>
           <p class="auth-note" data-i18n="authNote">Emailni tasdiqlash va parolni o‘zi tiklash hozircha mavjud emas — parolingizni xavfsiz saqlang. Hech qachon bir martalik kod yoki karta ma’lumotlarini so‘ramaymiz.</p>
         </div>
-        <a class="back-link" href="https://sofexpo.org/uz/" data-public-link="home" data-i18n="backToSite">← SOF EXPO saytiga qaytish</a>
+        <a class="back-link" href="https://sof-expo.com/uz/" data-public-link="home" data-i18n="backToSite">← SOF EXPO saytiga qaytish</a>
       </section>
     </main>
 
+    <!-- ======================= CABINET ======================= -->
     <main id="portal-view" class="portal-layout" hidden>
       <header class="portal-topbar">
-        <a class="brand brand-dark" href="https://sofexpo.org/uz/" aria-label="SOF EXPO saytiga qaytish" data-i18n-aria-label="siteHome" data-public-link="home"><span class="brand-mark">S</span><span>SOF EXPO<small data-i18n="mobileCabinet">SHAXSIY KABINET</small></span></a>
-        <div class="account-controls"><label class="sr-only" for="portal-locale" data-i18n="languageLabel">Til</label><select class="locale-select locale-select-portal" id="portal-locale" aria-label="Til" data-i18n-aria-label="languageLabel"><option value="uz">O‘zbekcha</option><option value="ru">Русский</option><option value="en">English</option><option value="tr">Türkçe</option><option value="zh">中文</option></select><span class="account-email" id="account-email">—</span><span class="role-pill" id="account-role">—</span><button class="button button-quiet" id="logout-button" type="button" data-i18n="logout">Chiqish</button></div>
+        <a class="brand" href="https://sof-expo.com/uz/" aria-label="SOF EXPO saytiga qaytish" data-i18n-aria-label="siteHome" data-public-link="home"><img src="/brand-assets/sofexpo-logo.png" alt="SOF EXPO" width="140" height="40" /></a>
+        <div class="account-controls">
+          <label class="sr-only" for="portal-locale" data-i18n="languageLabel">Til</label><select class="locale-select" id="portal-locale" aria-label="Til" data-i18n-aria-label="languageLabel"><option value="uz">O‘zbekcha</option><option value="ru">Русский</option><option value="en">English</option><option value="tr">Türkçe</option><option value="zh">中文</option></select>
+          <span class="account-id"><span class="account-email" id="account-email">—</span><span class="role-pill" id="account-role">—</span></span>
+          <button class="button button-quiet button-small" id="logout-button" type="button" data-i18n="logout">Chiqish</button>
+        </div>
       </header>
+
       <div class="portal-content">
         <section class="portal-welcome">
-          <div><p class="eyebrow" id="welcome-kicker">SHAXSIY KABINET</p><h1 id="welcome-title">Xush kelibsiz</h1><p id="welcome-copy">Profilingizni yangilang va murojaatlaringizni kuzating.</p></div>
-          <span class="portal-stamp">SOF<br />EXPO</span>
+          <p class="eyebrow" id="welcome-kicker">SHAXSIY KABINET</p>
+          <h1 id="welcome-title">Xush kelibsiz</h1>
+          <p id="welcome-copy">Profilingizni yangilang va murojaatlaringizni kuzating.</p>
         </section>
-        <div class="portal-grid">
-          <section class="portal-card profile-card">
-            <div class="card-heading"><div><p class="eyebrow" data-i18n="profileKicker">KABINET</p><h2 data-i18n="profileTitle">Profil ma’lumotlari</h2></div><span class="heading-icon">✳</span></div>
-            <form id="profile-form" class="form-stack compact-form">
-              <label for="profile-name" data-i18n="fieldName">Ism-familiya</label><input id="profile-name" name="name" required maxlength="120" />
-              <label for="profile-phone" data-i18n="fieldPhone">Telefon</label><input id="profile-phone" name="phone" type="tel" required maxlength="60" />
-              <label for="profile-country" data-i18n="fieldCountry">Mamlakat</label><input id="profile-country" name="country" maxlength="100" />
-              <div class="exhibitor-profile-fields" hidden>
-                <label for="profile-company" data-i18n="fieldCompany">Kompaniya nomi</label><input id="profile-company" name="company" maxlength="200" />
-                <label for="profile-industry" data-i18n="fieldIndustry">Faoliyat sohasi</label><input id="profile-industry" name="industry" maxlength="160" />
-                <label for="profile-website" data-i18n="profileWebsite">Sayt</label><input id="profile-website" name="website" type="url" maxlength="300" placeholder="https://" />
-              </div>
-              <div class="visitor-profile-fields">
-                <label for="profile-interests" data-i18n="profileInterests">Qiziqishlaringiz</label><textarea id="profile-interests" name="interests" maxlength="500" rows="3" placeholder="Siz uchun qiziq bo‘lgan yo‘nalishlar" data-i18n-placeholder="profileInterestsPlaceholder"></textarea>
-              </div>
-              <button class="button button-outline" type="submit" data-i18n="saveProfile">Profilni saqlash</button>
-              <p id="profile-feedback" class="inline-feedback" role="status" aria-live="polite"></p>
-            </form>
-            <p class="privacy-note" data-i18n="profilePrivacy">Profil ma’lumotlari faqat SOF EXPO murojaatlaringizni ko‘rib chiqish uchun ishlatiladi.</p>
-          </section>
 
-          <section class="portal-main-column">
-            <section class="portal-card company-card" id="company-card" hidden aria-labelledby="company-title">
-              <div class="card-heading"><div><p class="eyebrow" data-i18n="companyKicker">KOMPANIYA KARTASI</p><h2 id="company-title" data-i18n="companyTitle">Katalog va reklama uchun ma’lumotlar</h2></div><span class="company-status" id="company-status" data-status="draft"></span></div>
-              <p class="card-lead" data-i18n="companyLead">Logotip, flayer va kompaniya haqidagi matn ko‘rgazma katalogi, sayt va ijtimoiy tarmoqlardagi e’lonlar uchun ishlatiladi. Tashkilotchi tekshirib tasdiqlaydi.</p>
-              <div class="company-review" id="company-review" role="status" hidden><strong data-i18n="reviewNoteLabel">Tashkilotchi izohi</strong><p id="company-review-note"></p></div>
+        <nav class="segmented portal-tabs" id="portal-tabs" role="tablist" aria-label="Kabinet bo‘limlari" data-i18n-aria-label="portalTabsLabel">
+          <button class="portal-tab" type="button" role="tab" id="tab-showcase" data-portal-tab="showcase" aria-controls="panel-showcase" aria-selected="false" tabindex="-1" hidden><span data-i18n="tabShowcase">Kompaniya sahifasi</span></button>
+          <button class="portal-tab" type="button" role="tab" id="tab-requests" data-portal-tab="requests" aria-controls="panel-requests" aria-selected="true" tabindex="0"><span id="tab-requests-label">Murojaatlar</span></button>
+          <button class="portal-tab" type="button" role="tab" id="tab-profile" data-portal-tab="profile" aria-controls="panel-profile" aria-selected="false" tabindex="-1"><span data-i18n="tabProfile">Profil</span></button>
+        </nav>
 
-              <div class="company-logo">
-                <div class="company-logo__preview" id="company-logo-preview"><span data-i18n="logoEmpty">Logotip yo‘q</span></div>
-                <div class="company-logo__body">
-                  <h3 data-i18n="logoTitle">Logotip</h3>
-                  <p class="hint" data-i18n="logoHint">PNG, JPG yoki WebP · 3 MB gacha · shaffof yoki oq fon</p>
-                  <label class="button button-quiet file-button"><input type="file" accept="image/png,image/jpeg,image/webp" data-upload="logo" /><span data-i18n="uploadLogo">Logotip yuklash</span></label>
-                </div>
-              </div>
-
-              <form id="company-form" class="form-stack company-form" novalidate>
-                <div class="form-grid-2">
-                  <div><label for="company-brand" data-i18n="fieldBrand">Brend nomi (katalogda)</label><input id="company-brand" name="brandName" maxlength="120" required /></div>
-                  <div><label for="company-event" data-i18n="fieldShow">Ko‘rgazma</label><select id="company-event" name="event"><option value="" data-i18n="chooseEvent">Tadbirni tanlang</option></select></div>
-                </div>
-                <div class="form-grid-2">
-                  <div><label for="company-stand" data-i18n="fieldStand">Stend raqami</label><input id="company-stand" name="stand" maxlength="40" placeholder="B-14" /></div>
-                  <div><label for="company-website" data-i18n="profileWebsite">Sayt</label><input id="company-website" name="website" type="url" maxlength="300" placeholder="https://" /></div>
-                </div>
-                <label for="company-description" data-i18n="fieldDescription">Kompaniya haqida</label>
-                <textarea id="company-description" name="description" rows="4" maxlength="2000" aria-describedby="company-description-hint"></textarea>
-                <p class="hint" id="company-description-hint"><span data-i18n="descriptionHint">Kamida 40 belgi: nima ishlab chiqarasiz yoki sotasiz, kimlar uchun.</span> <span id="company-description-count">0/2000</span></p>
-                <label for="company-products" data-i18n="fieldProducts">Mahsulot va xizmatlar</label>
-                <textarea id="company-products" name="products" rows="2" maxlength="1000"></textarea>
-                <div class="form-grid-2">
-                  <div><label for="company-instagram">Instagram</label><input id="company-instagram" name="instagram" maxlength="120" placeholder="@brand" /></div>
-                  <div><label for="company-telegram">Telegram</label><input id="company-telegram" name="telegram" maxlength="120" placeholder="@brand" /></div>
-                </div>
-                <fieldset class="company-contact">
-                  <legend data-i18n="contactBlock">Ko‘rgazma bo‘yicha kontakt</legend>
-                  <div class="form-grid-3">
-                    <div><label for="company-contact-name" data-i18n="fieldName">Ism-familiya</label><input id="company-contact-name" name="contactName" maxlength="120" autocomplete="name" /></div>
-                    <div><label for="company-contact-phone" data-i18n="fieldPhone">Telefon</label><input id="company-contact-phone" name="contactPhone" type="tel" maxlength="60" autocomplete="tel" /></div>
-                    <div><label for="company-contact-email" data-i18n="fieldEmail">Email manzil</label><input id="company-contact-email" name="contactEmail" type="email" maxlength="200" autocomplete="email" /></div>
+        <!-- ---------- exhibitor company page ---------- -->
+        <section id="panel-showcase" class="portal-panel" role="tabpanel" aria-labelledby="tab-showcase" hidden>
+          <div class="showcase-layout">
+            <form id="showcase-form" class="showcase-form" novalidate>
+              <section class="portal-card">
+                <div class="card-heading"><div><h2 data-i18n="scCompanyTitle">Kompaniya</h2><p class="card-lead" data-i18n="scCompanyLead">Saytdagi eksponentlar ro‘yxatida aynan shunday ko‘rinadi.</p></div></div>
+                <div class="identity-row">
+                  <div class="logo-box">
+                    <div class="logo-frame" id="logo-frame"><img id="logo-preview" alt="" hidden /><span id="logo-placeholder" aria-hidden="true">LOGO</span></div>
+                    <input type="file" id="logo-input" accept="image/png,image/jpeg,image/webp" class="sr-only" />
+                    <div class="logo-actions">
+                      <label for="logo-input" class="button button-outline button-small" id="logo-upload-label"><span data-i18n="logoUpload">Logotip yuklash</span></label>
+                      <button type="button" class="link-button" id="logo-remove" hidden data-i18n="logoRemove">O‘chirish</button>
+                    </div>
+                    <small class="hint" data-i18n="logoHint">PNG, JPG yoki WEBP · 5 MB gacha · kvadrat yaxshi</small>
                   </div>
-                </fieldset>
-
-                <div class="company-files">
-                  <section class="company-files__group" data-kind="flyer"><div class="company-files__head"><div><h3 data-i18n="flyersTitle">Flayerlar</h3><p class="hint" data-i18n="flyersHint">PDF, PNG, JPG, WebP · har biri 15 MB gacha · 10 tagacha</p></div><label class="button button-quiet file-button"><input type="file" multiple accept="application/pdf,image/png,image/jpeg,image/webp" data-upload="flyer" /><span data-i18n="addFiles">Fayl qo‘shish</span></label></div><ul class="file-list" data-files="flyer"></ul></section>
-                  <section class="company-files__group" data-kind="catalog"><div class="company-files__head"><div><h3 data-i18n="catalogTitle">Katalog / taqdimot</h3><p class="hint" data-i18n="catalogHint">PDF · 25 MB gacha · 3 tagacha</p></div><label class="button button-quiet file-button"><input type="file" multiple accept="application/pdf" data-upload="catalog" /><span data-i18n="addFiles">Fayl qo‘shish</span></label></div><ul class="file-list" data-files="catalog"></ul></section>
-                  <section class="company-files__group" data-kind="photo"><div class="company-files__head"><div><h3 data-i18n="photosTitle">Stend va mahsulot fotolari</h3><p class="hint" data-i18n="photosHint">PNG, JPG, WebP · 8 MB gacha · 12 tagacha</p></div><label class="button button-quiet file-button"><input type="file" multiple accept="image/png,image/jpeg,image/webp" data-upload="photo" /><span data-i18n="addFiles">Fayl qo‘shish</span></label></div><ul class="file-list" data-files="photo"></ul></section>
+                  <div class="identity-fields">
+                    <div class="field" data-field="name"><label for="sc-name"><span data-i18n="scName">Kompaniya nomi</span> <span class="req" aria-hidden="true">*</span></label><input id="sc-name" name="name" maxlength="120" autocomplete="organization" required /><p class="field-error" hidden></p></div>
+                    <div class="field" data-field="tagline"><label for="sc-tagline"><span data-i18n="scTagline">Bir jumlada: nima qilasiz?</span> <span class="counter" data-counter-for="sc-tagline">0/120</span></label><input id="sc-tagline" name="tagline" maxlength="120" placeholder="Masalan: Tayyor beton va temir-beton buyumlari" data-i18n-placeholder="scTaglinePlaceholder" /><p class="field-error" hidden></p></div>
+                  </div>
                 </div>
-
-                <div class="company-actions">
-                  <button class="button button-quiet" type="submit" data-company-action="save"><span data-i18n="saveDraft">Saqlash</span></button>
-                  <button class="button button-dark" type="button" data-company-action="submit"><span data-i18n="submitReview">Tekshiruvga yuborish</span> <span aria-hidden="true">→</span></button>
+                <div class="field" data-field="about"><label for="sc-about"><span data-i18n="scAbout">Kompaniya haqida</span> <span class="counter" data-counter-for="sc-about">0/1000</span></label><textarea id="sc-about" name="about" rows="5" maxlength="1000" placeholder="Mahsulotlar, tajriba, kimlar uchun ishlaysiz — 3–5 jumla yetarli." data-i18n-placeholder="scAboutPlaceholder"></textarea><p class="field-error" hidden></p></div>
+                <div class="form-three">
+                  <div class="field" data-field="category"><label for="sc-category" data-i18n="scCategory">Soha</label><input id="sc-category" name="category" maxlength="80" placeholder="Qurilish materiallari" data-i18n-placeholder="scCategoryPlaceholder" /></div>
+                  <div class="field" data-field="country"><label for="sc-country" data-i18n="fieldCountry">Mamlakat</label><input id="sc-country" name="country" maxlength="80" autocomplete="country-name" placeholder="O‘zbekiston" data-i18n-placeholder="countryPlaceholder" /></div>
+                  <div class="field" data-field="city"><label for="sc-city" data-i18n="scCity">Shahar</label><input id="sc-city" name="city" maxlength="80" autocomplete="address-level2" /></div>
                 </div>
-                <p id="company-error" class="form-error" role="alert" hidden></p>
-              </form>
-            </section>
+              </section>
 
+              <section class="portal-card">
+                <div class="card-heading"><div><h2 data-i18n="scContactsTitle">Aloqa va ijtimoiy tarmoqlar</h2><p class="card-lead" data-i18n="scContactsLead">Mehmonlar siz bilan bog‘lanishi uchun. Hammasi ixtiyoriy.</p></div></div>
+                <div class="form-three">
+                  <div class="field" data-field="website"><label for="sc-website" data-i18n="fieldWebsite">Kompaniya sayti</label><input id="sc-website" name="website" maxlength="200" inputmode="url" placeholder="example.uz" /><p class="field-error" hidden></p></div>
+                  <div class="field" data-field="phone"><label for="sc-phone" data-i18n="scPublicPhone">Ochiq telefon</label><input id="sc-phone" name="phone" type="tel" maxlength="40" placeholder="+998 …" /><p class="field-error" hidden></p></div>
+                  <div class="field" data-field="email"><label for="sc-email" data-i18n="scPublicEmail">Ochiq email</label><input id="sc-email" name="email" type="email" maxlength="160" placeholder="info@company.uz" /><p class="field-error" hidden></p></div>
+                </div>
+                <div class="socials-grid" id="socials-grid"></div>
+              </section>
+
+              <section class="portal-card" data-field="participation">
+                <div class="card-heading"><div><h2><span data-i18n="scParticipationTitle">Qaysi ko‘rgazmalarda qatnashgansiz?</span> <span class="req" aria-hidden="true">*</span></h2><p class="card-lead" data-i18n="scParticipationLead">Yilni bosing. Sahifangiz shu ko‘rgazmalar ro‘yxatida chiqadi.</p></div></div>
+                <div id="participation-picker" class="participation-picker"></div>
+                <p class="field-error" hidden></p>
+              </section>
+
+              <section class="portal-card">
+                <div class="card-heading"><div><h2 data-i18n="scMaterialsTitle">Materiallar</h2><p class="card-lead" data-i18n="scMaterialsLead">Katalog, buklet, flayer, prays-list — ko‘rgazmada tarqatgan hamma narsa.</p></div><span class="chip" id="materials-count">0/30</span></div>
+                <label class="dropzone" id="materials-drop" for="materials-input">
+                  <input type="file" id="materials-input" multiple accept="application/pdf,image/png,image/jpeg,image/webp" class="sr-only" />
+                  <span class="dropzone-icon" aria-hidden="true">↑</span>
+                  <strong data-i18n="dropTitle">Fayllarni shu yerga tashlang yoki tanlang</strong>
+                  <small data-i18n="dropHint">PDF 20 MB gacha · JPG, PNG, WEBP 5 MB gacha</small>
+                </label>
+                <ul id="materials-list" class="materials-list"></ul>
+              </section>
+
+              <div class="showcase-actions">
+                <p id="showcase-feedback" class="inline-feedback" role="status" aria-live="polite"></p>
+                <div class="action-buttons">
+                  <button class="button button-outline" type="button" id="showcase-save" data-i18n="scSaveDraft">Qoralama sifatida saqlash</button>
+                  <button class="button button-dark" type="submit" id="showcase-submit"><span data-i18n="scSubmit">Saqlash va moderatsiyaga yuborish</span></button>
+                </div>
+              </div>
+            </form>
+
+            <aside class="showcase-side">
+              <section class="portal-card status-card">
+                <p class="eyebrow" data-i18n="scStatusTitle">SAHIFA HOLATI</p>
+                <div class="status-row"><span id="showcase-status" class="status-chip">—</span></div>
+                <p id="showcase-status-copy" class="muted"></p>
+                <p id="showcase-note" class="review-note" hidden></p>
+                <a id="showcase-live-link" class="button button-outline button-small" href="https://sof-expo.com/uz/exhibitors/catalogue/" target="_blank" rel="noopener" hidden><span data-i18n="scViewLive">Saytda ko‘rish</span> ↗</a>
+                <div class="completeness">
+                  <div class="completeness-head"><strong data-i18n="scCompleteness">To‘liqlik</strong><span id="completeness-value">0%</span></div>
+                  <div class="progress" aria-hidden="true"><span id="completeness-bar"></span></div>
+                  <ul id="completeness-list" class="check-list"></ul>
+                </div>
+              </section>
+              <p class="side-note" data-i18n="scModerationNote">Har bir o‘zgarish saytga moderatordan so‘ng chiqadi — odatda 1 ish kuni ichida.</p>
+            </aside>
+          </div>
+        </section>
+
+        <!-- ---------- requests ---------- -->
+        <section id="panel-requests" class="portal-panel" role="tabpanel" aria-labelledby="tab-requests">
+          <div class="requests-layout">
             <section class="portal-card request-card">
-              <div class="card-heading"><div><p class="eyebrow" id="request-kicker">YANGI MUROJAAT</p><h2 id="request-title">Tashrif rejasini yuborish</h2></div><span class="heading-icon">↗</span></div>
-              <p class="card-lead" id="request-card-lead">Tadbirni tanlang va tashkilotchilarga qiziqishingiz haqida xabar yuboring.</p>
+              <div class="card-heading"><div><p class="eyebrow" id="request-kicker">YANGI MUROJAAT</p><h2 id="request-title">Tashrif rejasini yuborish</h2><p class="card-lead" id="request-card-lead">Tadbirni tanlang va tashkilotchilarga qiziqishingiz haqida xabar yuboring.</p></div></div>
               <form id="request-form" class="form-stack">
-                <label for="request-event" data-i18n="fieldEvent">Tadbir</label><select id="request-event" name="event" required><option value="" data-i18n="chooseEvent">Tadbirni tanlang</option></select>
-                <div class="visitor-request-fields">
-                  <label for="request-interest" data-i18n="fieldVisitorInterest">Tashrif maqsadi / qiziqish</label>
-                  <select id="request-interest" name="interest" required>
+                <div class="field"><label for="request-event" data-i18n="fieldEvent">Tadbir</label><select id="request-event" name="event" required><option value="" data-i18n="chooseEvent">Tadbirni tanlang</option></select></div>
+                <div class="visitor-request-fields field">
+                  <label for="request-interest"><span data-i18n="fieldVisitorInterest">Tashrif maqsadi / qiziqish</span> <span class="optional" data-i18n="optional">ixtiyoriy</span></label>
+                  <select id="request-interest" name="interest">
                     <option value="" data-i18n="chooseInterest">Yo‘nalishni tanlang</option>
                     <option value="business-visit" data-i18n="businessVisit">Biznes tashrif</option>
                     <option value="buyer-program" data-i18n="buyerProgram">Xaridorlar dasturi</option>
@@ -189,28 +210,45 @@
                     <option value="other" data-i18n="other">Boshqa</option>
                   </select>
                 </div>
-                <div class="exhibitor-request-fields" hidden>
-                  <div class="form-two">
-                    <div><label for="request-area" data-i18n="fieldArea">Taxminiy maydon (m²)</label><input id="request-area" name="area" type="number" min="1" max="10000" step="1" placeholder="18" /></div>
-                    <div><label for="request-package" data-i18n="fieldPackage">Ishtirok formati</label><select id="request-package" name="package"><option value="" data-i18n="choosePackage">Tanlang</option><option data-i18n="packageStand">Stend / pavilyon</option><option data-i18n="packageOpenArea">Ochiq maydon</option><option data-i18n="packageSponsor">Homiylik</option><option data-i18n="packageUndecided">Hali aniqlanmagan</option></select></div>
-                  </div>
+                <div class="exhibitor-request-fields form-two" hidden>
+                  <div class="field"><label for="request-area" data-i18n="fieldArea">Taxminiy maydon (m²)</label><input id="request-area" name="area" type="number" min="1" max="10000" step="1" placeholder="18" inputmode="numeric" /></div>
+                  <div class="field"><label for="request-package" data-i18n="fieldPackage">Ishtirok formati</label><select id="request-package" name="package"><option value="" data-i18n="choosePackage">Tanlang</option><option data-i18n="packageStand">Stend / pavilyon</option><option data-i18n="packageOpenArea">Ochiq maydon</option><option data-i18n="packageSponsor">Homiylik</option><option data-i18n="packageUndecided">Hali aniqlanmagan</option></select></div>
                 </div>
-                <label for="request-message"><span data-i18n="fieldMessage">Qo‘shimcha ma’lumot</span> <span class="optional" data-i18n="optional">ixtiyoriy</span></label>
-                <textarea id="request-message" name="message" rows="4" maxlength="2000" placeholder="Qisqacha yozing…" data-i18n-placeholder="messagePlaceholder"></textarea>
+                <div class="field"><label for="request-message"><span data-i18n="fieldMessage">Qo‘shimcha ma’lumot</span> <span class="optional" data-i18n="optional">ixtiyoriy</span></label><textarea id="request-message" name="message" rows="3" maxlength="2000" placeholder="Qisqacha yozing…" data-i18n-placeholder="messagePlaceholder"></textarea></div>
                 <label class="check-row"><input name="consent" type="checkbox" value="yes" required /><span data-i18n="requestConsent">Ushbu murojaatni tashkilotchilarga yuborishga roziman.</span></label>
-                <button class="button button-dark" id="request-submit" type="submit"><span data-i18n="sendRequest">Murojaat yuborish</span> <span aria-hidden="true">→</span></button>
+                <button class="button button-dark button-block" id="request-submit" type="submit"><span data-i18n="sendRequest">Murojaat yuborish</span> <span aria-hidden="true">→</span></button>
                 <p id="request-error" class="form-error" role="alert" hidden></p>
               </form>
               <p class="notice-note" id="request-notice" data-i18n="requestNotice">Bu dastlabki murojaat: u chipta, joy bandi yoki shartnoma hisoblanmaydi. Tashkilotchi holatni yangilaydi va keyingi qadam bo‘yicha siz bilan bog‘lanadi.</p>
             </section>
 
             <section class="portal-card requests-card">
-              <div class="card-heading"><div><p class="eyebrow" data-i18n="historyKicker">TARIX</p><h2 id="requests-title">Mening murojaatlarim</h2></div><button class="button button-quiet" id="refresh-requests" type="button" aria-label="Murojaatlarni yangilash" data-i18n-aria-label="refreshAria"><span data-i18n="refresh">Yangilash</span></button></div>
+              <div class="card-heading"><div><p class="eyebrow" data-i18n="historyKicker">TARIX</p><h2 id="requests-title">Mening murojaatlarim</h2></div><button class="button button-quiet button-small" id="refresh-requests" type="button" aria-label="Murojaatlarni yangilash" data-i18n-aria-label="refreshAria"><span data-i18n="refresh">Yangilash</span></button></div>
               <div id="requests-list" class="request-list"><div class="loading-state" data-i18n="loading">Yuklanmoqda…</div></div>
             </section>
+          </div>
+        </section>
+
+        <!-- ---------- profile ---------- -->
+        <section id="panel-profile" class="portal-panel" role="tabpanel" aria-labelledby="tab-profile" hidden>
+          <section class="portal-card profile-card">
+            <div class="card-heading"><div><p class="eyebrow" data-i18n="profileKicker">KABINET</p><h2 data-i18n="profileTitle">Profil ma’lumotlari</h2><p class="card-lead" data-i18n="profileLead">Bu ma’lumotlar faqat tashkilotchilarga ko‘rinadi.</p></div></div>
+            <form id="profile-form" class="form-stack">
+              <div class="form-two">
+                <div class="field"><label for="profile-name" data-i18n="fieldName">Ism-familiya</label><input id="profile-name" name="name" required maxlength="120" autocomplete="name" /></div>
+                <div class="field"><label for="profile-phone" data-i18n="fieldPhone">Telefon</label><input id="profile-phone" name="phone" type="tel" required maxlength="60" autocomplete="tel" /></div>
+              </div>
+              <div class="form-two">
+                <div class="field"><label for="profile-company"><span data-i18n="fieldCompany">Kompaniya nomi</span> <span class="optional" data-visitor-only data-i18n="optional">ixtiyoriy</span></label><input id="profile-company" name="company" maxlength="200" autocomplete="organization" /></div>
+                <div class="exhibitor-profile-fields field" hidden><label for="profile-industry" data-i18n="fieldIndustry">Faoliyat sohasi</label><input id="profile-industry" name="industry" maxlength="160" /></div>
+              </div>
+              <div class="profile-actions"><button class="button button-dark" type="submit" data-i18n="saveProfile">Profilni saqlash</button><p id="profile-feedback" class="inline-feedback" role="status" aria-live="polite"></p></div>
+            </form>
+            <p class="privacy-note" data-i18n="profilePrivacy">Profil ma’lumotlari faqat SOF EXPO murojaatlaringizni ko‘rib chiqish uchun ishlatiladi.</p>
           </section>
-        </div>
-        <footer class="portal-footer"><a href="https://sofexpo.org/uz/" data-public-link="home">sofexpo.org</a><span>·</span><a href="https://sofexpo.org/uz/legal/privacy/" data-public-link="privacy" data-i18n="privacyPolicy">Maxfiylik siyosati</a><span>·</span><span>SOF EXPO Samarkand</span></footer>
+        </section>
+
+        <footer class="portal-footer"><a href="https://sof-expo.com/uz/" data-public-link="home">sof-expo.com</a><span aria-hidden="true">·</span><a href="https://sof-expo.com/uz/legal/privacy/" data-public-link="privacy" data-i18n="privacyPolicy">Maxfiylik siyosati</a><span aria-hidden="true">·</span><span>SOF EXPO Samarkand</span></footer>
       </div>
     </main>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>

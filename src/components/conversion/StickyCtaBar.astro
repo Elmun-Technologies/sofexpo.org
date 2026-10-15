@@ -297,6 +297,10 @@ const L = {
         bar.classList.toggle('is-hidden', visibleForms.size > 0);
       }, { threshold: 0, rootMargin: '0px 0px -40px 0px' });
       forms.forEach(f => io.observe(f));
+      /* keep the observer reachable — Chromium may GC an unreferenced observer,
+         after which the bar never hides near forms again */
+      (window as any).__sofIO = (window as any).__sofIO || [];
+      (window as any).__sofIO.push(io);
     }
 
     closeBtn?.addEventListener('click', () => hide(true));

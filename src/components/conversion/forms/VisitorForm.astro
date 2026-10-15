@@ -1,10 +1,15 @@
 ---
 /**
- * VisitorForm — ticket / visitor registration, distinct from exhibitor
- * Light, fast, QR-focused
+ * VisitorForm — free ticket / visitor registration.
+ * Kept to what a ticket needs: who you are, how to reach you, which show. A guest may
+ * come on their own (a student, a private buyer, a family business owner without a
+ * registered company), so the company is optional and only asked of those who come
+ * from one. Position, industry and visit purpose are no longer asked: the show answers
+ * the industry, and the sales team qualifies a visitor later, not at the door.
  */
 import type { SourceLocale as Locale } from '@/i18n/config';
 import Icon from '@/components/Icon.astro';
+import { upcoming } from '@/data/events';
 
 interface Props {
   locale: Locale;
@@ -15,21 +20,21 @@ interface Props {
 const { locale, eventName = '', id = 'visitor-form' } = Astro.props as Props;
 const ru = locale === 'ru';
 const endpoint = (import.meta.env.PUBLIC_LEAD_ENDPOINT ?? '').trim();
+const shows = upcoming.filter((e, i, all) => all.findIndex((x) => x.slug === e.slug) === i);
 
 const L = {
   title: ru ? 'Получить бесплатный билет' : 'Get free ticket',
-  sub: ru ? 'Для профильных специалистов. Билет придёт на почту после подтверждения регистрации.' : 'For trade visitors. Your ticket is emailed once the registration is confirmed.',
+  sub: ru ? 'Билет придёт на почту после подтверждения регистрации.' : 'Your ticket is emailed once the registration is confirmed.',
   name: ru ? 'Имя и фамилия' : 'Full name',
   company: ru ? 'Компания' : 'Company',
-  position: ru ? 'Должность' : 'Position',
-  positions: ru ? ['Руководитель', 'Закупщик', 'Технолог', 'Маркетолог', 'Дистрибьютор', 'Другое'] : ['Owner/CEO', 'Buyer', 'Technologist', 'Marketing', 'Distributor', 'Other'],
+  optional: ru ? 'необязательно' : 'optional',
   phone: ru ? 'Телефон' : 'Phone',
   email: 'Email',
-  industry: ru ? 'Отрасль' : 'Industry',
-  industries: ru ? ['Продукты', 'Стройка', 'Агро', 'Авто', 'E-commerce', 'Образование', 'Другое'] : ['Food', 'Build', 'Agro', 'Auto', 'E-commerce', 'Education', 'Other'],
-  purpose: ru ? 'Цель визита' : 'Visit purpose',
-  purposes: ru ? ['Закупки', 'Поиск поставщиков', 'Партнёрства', 'Изучение рынка', 'Деловая программа'] : ['Purchasing', 'Find suppliers', 'Partnerships', 'Market research', 'Business program'],
+  as: ru ? 'Я приду' : 'I am visiting',
+  asCompany: ru ? 'От компании' : 'From a company',
+  asPrivate: ru ? 'Сам по себе' : 'On my own',
   event: ru ? 'Выставка' : 'Exhibition',
+  anyShow: ru ? 'Ещё не решил' : 'Not decided yet',
   submit: ru ? 'Получить билет' : 'Get ticket',
   consent: ru ? 'Согласен на обработку данных. Билет придёт на email.' : 'I agree to data processing. Ticket to email.',
   ok: ru ? 'Регистрация принята! Билет придёт на почту после подтверждения. До встречи в SOF EXPO!' : 'Registration received! Your ticket is emailed once it is confirmed. See you at SOF EXPO!',
@@ -47,49 +52,38 @@ const L = {
   </div>
 
   <div class="form-vi__grid">
-    <div class="field">
+    <div class="field form-vi__full">
       <label for={`${id}-name`}>{L.name} *</label>
       <input id={`${id}-name`} name="name" required autocomplete="name" placeholder={ru ? 'Алишер Алиев' : 'John Smith'} />
     </div>
     <div class="field">
-      <label for={`${id}-company`}>{L.company}</label>
-      <input id={`${id}-company`} name="company" autocomplete="organization" placeholder={ru ? 'ООО Компания' : 'Company LLC'} />
-    </div>
-    <div class="field">
-      <label for={`${id}-position`}>{L.position}</label>
-      <select id={`${id}-position`} name="position">
-        <option value="">—</option>
-        {L.positions.map(p => <option>{p}</option>)}
-      </select>
-    </div>
-    <div class="field">
       <label for={`${id}-phone`}>{L.phone} *</label>
-      <input id={`${id}-phone`} name="phone" type="tel" required autocomplete="tel" placeholder="+998" />
+      <input id={`${id}-phone`} name="phone" type="tel" required autocomplete="tel" inputmode="tel" placeholder="+998" />
     </div>
-    <div class="field form-vi__full">
+    <div class="field">
       <label for={`${id}-email`}>{L.email} *</label>
-      <input id={`${id}-email`} name="email" type="email" required autocomplete="email" placeholder="you@company.com" />
+      <input id={`${id}-email`} name="email" type="email" required autocomplete="email" inputmode="email" placeholder="you@mail.com" />
     </div>
-    <div class="field">
-      <label for={`${id}-industry`}>{L.industry} *</label>
-      <select id={`${id}-industry`} name="industry" required>
-        <option value="">—</option>
-        {L.industries.map(i => <option>{i}</option>)}
-      </select>
-    </div>
-    <div class="field">
-      <label for={`${id}-purpose`}>{L.purpose}</label>
-      <select id={`${id}-purpose`} name="purpose">
-        <option value="">—</option>
-        {L.purposes.map(p => <option>{p}</option>)}
-      </select>
-    </div>
-    {eventName && (
+    {eventName ? (
+      <input type="hidden" name="event" value={eventName} />
+    ) : (
       <div class="field form-vi__full">
         <label for={`${id}-event`}>{L.event}</label>
-        <input id={`${id}-event`} name="event" value={eventName} readonly />
+        <select id={`${id}-event`} name="event">
+          <option value="">{L.anyShow}</option>
+          {shows.map((e) => <option value={e.brand.en} translate="no">{e.brand.en}</option>)}
+        </select>
       </div>
     )}
+    <fieldset class="form-vi__as form-vi__full">
+      <legend>{L.as}</legend>
+      <label><input type="radio" name="visitorType" value="company" checked data-vi-as /><span>{L.asCompany}</span></label>
+      <label><input type="radio" name="visitorType" value="private" data-vi-as /><span>{L.asPrivate}</span></label>
+    </fieldset>
+    <div class="field form-vi__full" data-vi-company>
+      <label for={`${id}-company`}>{L.company} <small class="form-vi__opt">{L.optional}</small></label>
+      <input id={`${id}-company`} name="company" autocomplete="organization" placeholder={ru ? 'ООО Компания' : 'Company LLC'} />
+    </div>
   </div>
 
   <label class="form-vi__consent">
@@ -102,9 +96,27 @@ const L = {
   <p class="form__msg" role="status" aria-live="polite" hidden></p>
 </form>
 
+<script>
+  /* "On my own" hides (and clears) the company field — nobody is asked for a company they do not have */
+  document.querySelectorAll<HTMLFormElement>('.form-vi').forEach((form) => {
+    const box = form.querySelector<HTMLElement>('[data-vi-company]');
+    const input = box?.querySelector('input');
+    const sync = () => {
+      const priv = form.querySelector<HTMLInputElement>('[data-vi-as]:checked')?.value === 'private';
+      if (!box || !input) return;
+      box.hidden = priv;
+      input.disabled = priv;
+      if (priv) input.value = '';
+    };
+    form.querySelectorAll('[data-vi-as]').forEach((radio) => radio.addEventListener('change', sync));
+    form.addEventListener('reset', () => setTimeout(sync));
+    sync();
+  });
+</script>
+
 <style>
   .form-vi {
-    background: linear-gradient(180deg, #ffffff 0%, #f8faf8 100%);
+    background: linear-gradient(180deg, #ffffff 0%, var(--cream-2) 100%);
     border: 1px solid var(--line);
     border-radius: 16px;
     padding: 20px;
@@ -124,9 +136,9 @@ const L = {
     height: 44px;
     border-radius: 12px;
     background: var(--cream-2);
+    color: var(--evergreen);
     display: grid;
     place-items: center;
-    color: var(--ink);
     flex: none;
   }
   .form-vi__head h3 {
@@ -150,11 +162,71 @@ const L = {
   .form-vi__full {
     grid-column: 1 / -1;
   }
+  .form-vi__opt {
+    margin-left: 4px;
+    font-weight: 400;
+    color: var(--ink-60);
+  }
+  .form-vi__opt::before {
+    content: '· ';
+  }
+  .form-vi__as {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+  .form-vi__as legend {
+    width: 100%;
+    margin-bottom: 6px;
+    padding: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .form-vi__as label {
+    position: relative;
+    flex: 1 1 140px;
+    cursor: pointer;
+  }
+  .form-vi__as input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+  .form-vi__as span {
+    height: 100%;
+    display: grid;
+    place-items: center;
+    padding: 10px 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    background: #fff;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--ink-60);
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .form-vi__as input:checked + span {
+    border-color: var(--evergreen);
+    background: var(--accent-soft);
+    color: var(--evergreen);
+    box-shadow: inset 0 0 0 1px var(--evergreen);
+  }
+  .form-vi__as input:focus-visible + span {
+    box-shadow: var(--focus-ring);
+  }
   .form-vi__consent {
     display: flex;
     gap: 8px;
-    font-size: 11px;
-    color: var(--ink-40);
+    font-size: 12px;
+    color: var(--ink-60);
     line-height: 1.4;
   }
   .form-vi__consent input {

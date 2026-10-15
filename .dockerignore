@@ -1,0 +1,22 @@
+# Keep all tracked files, including .git: the Telegram publisher needs a complete checkout.
+node_modules
+.astro
+dist
+dist-hosts
+.cache
+.data
+coverage
+test-results
+playwright-report
+
+# Never send local credentials to the Docker builder. Keep the tracked example file.
+.env
+.env.*
+!.env.example
+
+# Local-only data and editor/OS output (none of these are required by the publisher).
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.log
+.DS_Store

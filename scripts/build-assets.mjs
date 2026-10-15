@@ -50,14 +50,55 @@ await sharp({
   .jpeg({ quality: 82, progressive: true })
   .toFile("public/og/default.jpg");
 
-await sharp("public/favicon.svg")
-  .resize(512, 512)
-  .png()
-  .toFile("public/favicon.png");
-await sharp("public/favicon.svg")
-  .resize(180, 180)
-  .png()
-  .toFile("public/apple-touch-icon.png");
+/* The site icon is the SOF EXPO mark itself — the three arcs around the grey "SOF EXPO" disc,
+   cut from the logo master without the SAMARKAND line — on white, centred with a margin so
+   Google's round crop and a 16px tab both keep the whole mark. (Until 2026-10-15 it was an
+   abstract "hall" glyph on dark green that had nothing to do with the brand.) Google wants a
+   square icon in a multiple of 48px and a crawlable /favicon.ico, so both are written. */
+const MARK_SRC = "images/brand-masters/sof-expo-logo.png";
+const markMeta = await sharp(MARK_SRC).metadata();
+const mark = await sharp(MARK_SRC)
+  .extract({ left: 0, top: 0, width: markMeta.width, height: Math.round(markMeta.height * 0.82) })
+  .trim()
+  .toBuffer();
+const squareIcon = async (size, pad = 0.1) => {
+  const inner = Math.round(size * (1 - pad * 2));
+  const art = await sharp(mark).resize(inner, inner, { fit: "contain", background: "#ffffff00" }).toBuffer();
+  return sharp({ create: { width: size, height: size, channels: 4, background: "#ffffff" } })
+    .composite([{ input: art, gravity: "centre" }])
+    .png({ compressionLevel: 9 })
+    .toBuffer();
+};
+writeFileSync("public/favicon.png", await squareIcon(512));
+writeFileSync("public/icon-192.png", await squareIcon(192));
+writeFileSync("public/favicon-48.png", await squareIcon(48, 0.06));
+writeFileSync("public/apple-touch-icon.png", await squareIcon(180, 0.12));
+/* an .ico is a tiny directory of PNGs: 16, 32 and 48 for tabs, bookmarks and Google */
+{
+  const sizes = [16, 32, 48];
+  const pngs = await Promise.all(sizes.map((s) => squareIcon(s, s <= 16 ? 0.02 : 0.05)));
+  const head = Buffer.alloc(6 + 16 * sizes.length);
+  head.writeUInt16LE(0, 0);
+  head.writeUInt16LE(1, 2);
+  head.writeUInt16LE(sizes.length, 4);
+  let offset = head.length;
+  sizes.forEach((s, i) => {
+    const e = 6 + i * 16;
+    head.writeUInt8(s, e);
+    head.writeUInt8(s, e + 1);
+    head.writeUInt16LE(1, e + 4);
+    head.writeUInt16LE(32, e + 6);
+    head.writeUInt32LE(pngs[i].length, e + 8);
+    head.writeUInt32LE(offset, e + 12);
+    offset += pngs[i].length;
+  });
+  writeFileSync("public/favicon.ico", Buffer.concat([head, ...pngs]));
+}
+/* the SVG icon carries the same 512px raster, so browsers that prefer SVG show the logo too */
+writeFileSync(
+  "public/favicon.svg",
+  `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 64 64" role="img" aria-label="SOF EXPO Samarkand"><image width="64" height="64" href="data:image/png;base64,${(await squareIcon(128)).toString("base64")}"/></svg>\n`,
+);
 
 console.log("public/og/default.jpg + favicons written");
 

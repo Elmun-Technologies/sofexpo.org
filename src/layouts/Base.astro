@@ -178,8 +178,12 @@ const preload = props.preload
     {[`/fonts/manrope-${locale === 'ru' ? 'cyrillic' : 'latin'}.woff2`, `/fonts/onest-${locale === 'ru' ? 'cyrillic' : 'latin'}.woff2`].map((href) => (
       <link rel="preload" as="font" type="font/woff2" href={href} crossorigin="anonymous" />
     ))}
-    <link rel="icon" href={`${ICON}/favicon.svg`} type="image/svg+xml" />
+    {/* Google shows this icon next to every search result: a square of a multiple of 48px plus
+        a crawlable /favicon.ico; the centre's icon is the SOF EXPO mark (scripts/build-assets.mjs) */}
+    {!ICON && <link rel="icon" href="/favicon.ico" sizes="48x48" />}
     <link rel="icon" href={`${ICON}/favicon.png`} type="image/png" sizes="512x512" />
+    {!ICON && <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192" />}
+    <link rel="icon" href={`${ICON}/favicon.svg`} type="image/svg+xml" />
     <link rel="apple-touch-icon" href={`${ICON}/apple-touch-icon.png`} />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />

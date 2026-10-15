@@ -172,3 +172,24 @@ o'qiyotganda ekranda hech narsa qotmaydi (ko'rgazma sahifasida faqat tablar). Sh
 tagidagi panellar ham oq edi — skroll paytida bir oq blokka qo'shilib ketardi: ularga ingichka
 chegara va yumshoq soya qo'shildi. Bosh sahifadagi Samarqand bloki to'q samoviy (`--evergreen`) —
 yonidagi ikkita och samoviy blok bilan qo'shilib ketmaydi.
+
+## 8. Ikonka va SEO tuzatishlari (2026-10-15)
+
+- **Favicon.** Saytning ikonkasi (Google natijasida domen yonida ko'rinadi) to'q yashil kvadratda
+  abstrakt "zal" belgisi edi — SOF EXPO'ga aloqasi yo'q. Endi u logotipning o'zi: uchta rangli yoy va
+  kulrang "SOF EXPO" doirasi (`images/brand-masters/sof-expo-logo.png` dan, SAMARKAND qatorisiz),
+  oq fonda, Google'ning doira kesimiga sig'adigan chekka bilan. `scripts/build-assets.mjs` yozadi:
+  `favicon.ico` (16/32/48), `favicon-48.png`, `icon-192.png`, `favicon.png` (512), `apple-touch-icon.png`
+  (180), `favicon.svg`. `/favicon.ico` endi bor (Google uni so'raydi). Manifest'dagi noto'g'ri o'lchamlar
+  (512 px faylni 180 deb yozgan, OG rasmni ikonka qilgan) tuzatildi.
+- **Logotip schema'da.** `Organization.logo` `favicon.svg` edi — Google logotip uchun SVG o'qimaydi.
+  Endi `ImageObject` `/brand/sofexpo-logo-600.png` (600×646). `ExhibitionCenter`ga `logo` va `image`
+  (bino, zal, foye) qo'shildi; `alternateName` "SOF EXPO", "SOF EXPO Samarkand".
+- **Event schema.** O'tgan nashr uchun `EventCompleted` yozilardi — schema.org'da bunday qiymat yo'q
+  (validator xatosi). Endi doim `EventScheduled` (sanalar o'tganini ko'rsatadi); `url` qo'shildi.
+- **Sitemap `lastmod`** config'da `2026-09-23` qilib qotirilgan edi — endi build sanasi.
+- **Vercel.** `_redirects` Cloudflare formati, Vercel uni o'qimaydi: `/` → `/en/` 301 jonli saytda
+  ishlamasdi (faqat meta-refresh). `vercel.json`ga `redirects` (301) va `trailingSlash: true`
+  (`/ru/venue` → `/ru/venue/`, bitta URL) qo'shildi.
+- Tekshiruv: 635 indekslanadigan sahifada canonical o'ziga, OG rasm fayli bor, hreflang ru/en/x-default
+  (+uz/tr/zh), `<html lang>` to'g'ri, `<main>` dagi har `<img>` alt va width bilan.

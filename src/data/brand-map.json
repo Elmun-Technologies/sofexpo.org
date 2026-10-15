@@ -27,27 +27,34 @@
       "ornament": "islimi",
       "contrast": "checked by scripts/check-brand-contrast.mjs — every text/ground pair ≥ 4.5:1",
       "color": "#2490cc",
-      "stripe": "linear-gradient(90deg,#2490cc 0 68%,#cca878 68% 100%)",
-      "pattern": "<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><g fill='none' stroke-width='2.4'><rect x='40' y='40' width='40' height='40' stroke='#ffffff' stroke-opacity='.16'/><rect x='40' y='40' width='40' height='40' transform='rotate(45 60 60)' stroke='#cca878' stroke-opacity='.34'/></g></svg>",
-      "patternSize": 120,
+      "stripe": "linear-gradient(90deg,#0f3352 0 46%,#2490cc 46% 74%,#cca878 74% 100%)",
+      "pattern": "<svg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'><g fill='none' stroke='#d4b483' stroke-opacity='.30' stroke-width='1'><rect x='25.0' y='25.0' width='22' height='22'/><rect x='25.0' y='25.0' width='22' height='22' transform='rotate(45 36 36)'/><rect x='-11.0' y='-11.0' width='22' height='22'/><rect x='-11.0' y='-11.0' width='22' height='22' transform='rotate(45 0 0)'/><rect x='61.0' y='-11.0' width='22' height='22'/><rect x='61.0' y='-11.0' width='22' height='22' transform='rotate(45 72 0)'/><rect x='-11.0' y='61.0' width='22' height='22'/><rect x='-11.0' y='61.0' width='22' height='22' transform='rotate(45 0 72)'/><rect x='61.0' y='61.0' width='22' height='22'/><rect x='61.0' y='61.0' width='22' height='22' transform='rotate(45 72 72)'/><path d='M36 0v14M36 58v14M0 36h14M58 36h14'/></g><circle cx='36' cy='36' r='3' fill='#d4b483' fill-opacity='.35'/></svg>",
+      "patternSize": 72,
       "palette": {
-        "evergreen": "#16405e",
-        "evergreen2": "#1e5c88",
-        "moss": "#1e5c88",
-        "ink": "#12222e",
-        "ink60": "#46586a",
-        "ink40": "#4a5d6e",
-        "line": "#d6e2ec",
-        "lineStrong": "#a9c2d6",
-        "cream": "#d5dce1",
-        "cream2": "#e8ecef",
-        "gold": "#6b5021",
-        "goldSoft": "#c9a874",
-        "ornament": "#bbd8ee",
-        "mark": "#2c7fbb",
-        "_markNote": "graphic only: 4.12 on paper, 2.52 on the host ground -> on dark the square is drawn white and the diamond gold-soft (BrandMark tone rules)"
+        "evergreen": "#0f3352",
+        "evergreen2": "#174a73",
+        "moss": "#17639a",
+        "ink": "#1b2129",
+        "ink60": "#5a5348",
+        "ink40": "#5f584c",
+        "line": "#e2d9c6",
+        "lineStrong": "#cdbf9f",
+        "cream": "#e9e3d4",
+        "cream2": "#f5f1e7",
+        "gold": "#7a5a28",
+        "goldSoft": "#d4b483",
+        "ornament": "#e6dbc3",
+        "mark": "#2490cc",
+        "_markNote": "graphic only: 4.12 on paper, 2.52 on the host ground -> on dark the square is drawn white and the diamond gold-soft (BrandMark tone rules)",
+        "_note2026_10_15": "Samarkand tilework, read off the FOODERA badge (images/brand-masters/foodera-expo-2026-badge.png): ivory ground #F0EEE4, azure star and wordmark #2490CC, gold #CCA878. Lapis #0F3352 is the azure taken to night; white on it 13:1, gold-soft on it 6.6:1; gold text #7A5A28 4.9:1 on the ivory canvas."
       },
-      "mark": "star"
+      "mark": "star",
+      "style": {
+        "rPanel": 32,
+        "rCard": 22,
+        "displayWeight": 500,
+        "displayTracking": "-0.03em"
+      }
     },
     "buildpro-expo": {
       "id": "buildpro",
@@ -83,6 +90,13 @@
         "ornament": "#c7dbe4",
         "mark": "#048c88",
         "_markNote": "taken from the organiser's BUILD PRO EXPO logo (images/brand-masters/buildpro-expo-logo.png): graphite-navy ground #18212a, house gradient teal #048c88 → blue #1f4285; teal darkened to #036461 for text on light (docs/15 §10)"
+      },
+      "style": {
+        "rPanel": 14,
+        "rCard": 10,
+        "rPill": 10,
+        "displayWeight": 700,
+        "displayTracking": "-0.03em"
       }
     },
     "agropro-expo": {
@@ -119,6 +133,12 @@
         "ornament": "#dcecc4",
         "mark": "#90c048",
         "_markNote": "from the organiser's AGROPRO EXPO logo (images/brand-masters/agropro-expo-logo.png): leaf green #90c048, sun yellow #fcd83c, red #cc3024 on black type. Ground is the leaf green taken to night (#24391a); yellow is the accent on the dark ground, the red (darkened to #b2291d) the accent text on light"
+      },
+      "style": {
+        "rPanel": 40,
+        "rCard": 30,
+        "displayWeight": 700,
+        "displayTracking": "-0.035em"
       }
     },
     "world-edu-expo": {
@@ -155,6 +175,12 @@
         "ornament": "#cdeefa",
         "mark": "#00b4e4",
         "_markNote": "from the organiser's WORLD EDU logo (images/brand-masters/world-edu-logo.png): petrol blue #246078 type and owl, cyan #00b4e4 globe. The earlier burgundy palette was a placeholder from before the logo arrived"
+      },
+      "style": {
+        "rPanel": 28,
+        "rCard": 22,
+        "displayWeight": 700,
+        "displayTracking": "-0.03em"
       }
     },
     "ecom-retail-expo": {
@@ -182,15 +208,21 @@
         "ink": "#121212",
         "ink60": "#4a4a4a",
         "ink40": "#565656",
-        "line": "#dedede",
+        "line": "#d9dddd",
         "lineStrong": "#bcbcbc",
-        "cream": "#d2dddd",
-        "cream2": "#e6eded",
+        "cream": "#e3e6e6",
+        "cream2": "#f0f2f2",
         "gold": "#00666d",
         "goldSoft": "#5abcbc",
         "ornament": "#cdeaea",
         "mark": "#008a92",
         "_markNote": "taken from the organiser's e-com & retail posters (images/1-1-*.png): near-black ground #171717, wordmark teal #5abcbc, band teal #008a92; darkened to #00666d for text on light (docs/15 §10)"
+      },
+      "style": {
+        "rPanel": 24,
+        "rCard": 18,
+        "displayWeight": 400,
+        "displayTracking": "-0.035em"
       }
     },
     "promotors-show-samarkand": {
@@ -218,15 +250,23 @@
         "ink": "#111111",
         "ink60": "#4a4a4a",
         "ink40": "#565656",
-        "line": "#e0dede",
+        "line": "#dedad9",
         "lineStrong": "#bdb8b8",
-        "cream": "#e3d4d5",
-        "cream2": "#f1e7e8",
+        "cream": "#e4e1e0",
+        "cream2": "#f1efee",
         "gold": "#b3121f",
         "goldSoft": "#ff5a3c",
         "ornament": "#f1d3d5",
         "mark": "#d7192b",
         "_markNote": "from the organiser's PROMOTORS SHOW Samarkand logo: white italic on black, red script (images/brand-masters/promotors-show-logo.png). No hostname: the archived show lives on the centre (docs/15 §10)"
+      },
+      "style": {
+        "rPanel": 8,
+        "rCard": 6,
+        "rPill": 6,
+        "displayWeight": 800,
+        "displayStyle": "italic",
+        "displayTracking": "-0.02em"
       }
     }
   }

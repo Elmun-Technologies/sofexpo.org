@@ -133,7 +133,7 @@
       return `<line class="chart-grid" x1="${inset.left}" y1="${y.toFixed(1)}" x2="${width - inset.right}" y2="${y.toFixed(1)}"/>`;
     }).join('');
     const dots = points.length <= 20 ? points.map(([x, y]) => `<circle class="chart-dot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3"/>`).join('') : '';
-    return `<svg class="trend-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="Kunlik arizalar grafigi"><defs><linearGradient id="chart-fill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#0063e4" stop-opacity=".16"/><stop offset="100%" stop-color="#0063e4" stop-opacity="0"/></linearGradient></defs>${grid}<polygon class="chart-area" points="${area}"/><polyline class="chart-line" points="${line}"/>${dots}</svg>`;
+    return `<svg class="trend-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="Kunlik arizalar grafigi"><defs><linearGradient id="chart-fill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#157389" stop-opacity=".16"/><stop offset="100%" stop-color="#157389" stop-opacity="0"/></linearGradient></defs>${grid}<polygon class="chart-area" points="${area}"/><polyline class="chart-line" points="${line}"/>${dots}</svg>`;
   }
 
   function statusBadge(status) {

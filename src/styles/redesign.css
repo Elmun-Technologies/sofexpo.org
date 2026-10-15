@@ -2,8 +2,8 @@
    SOF EXPO SAMARKAND — 2026-10 redesign layer (docs/18)
 
    The approved design (design/ in the site package): a grey canvas, white
-   36px panels separated by 10px, black ink, one brand blue (#0063E4) and one
-   acid yellow (#F4FD10) reserved for the booking action. Type: Manrope 500
+   36px panels separated by 10px, black ink, the centre's logo blue (#157389, the
+   arc #249CB4 deepened) and its green arc (#48B454) reserved for the booking action. Type: Manrope 500
    for display, Onest for body.
 
    The tokens themselves live in global.css (:root) — this file re-draws the
@@ -183,7 +183,7 @@ main > .wrap .crumbs {
 }
 .nav__link:hover,
 .nav__item:hover .nav__link,
-.nav__item:focus-within .nav__link {
+.nav__item:has(:focus-visible) .nav__link {
   background: var(--ink);
   border-color: var(--ink);
   box-shadow: none;
@@ -515,7 +515,7 @@ a:focus-visible .arr {
   color: var(--ink);
 }
 .btn--accent:hover {
-  background: #e2eb00;
+  background: var(--accent-hover, #3d9f48);
 }
 .btn--ghost {
   border-color: var(--ink);
@@ -1375,4 +1375,24 @@ main > .evnav {
   overflow: visible;
   text-overflow: clip;
   line-height: 1.2;
+}
+
+/* one mega-menu at a time (2026-10-15). While the pointer is on the bar only the item under it
+   shows its panel, instantly: a menu still fading out, or one held open by focus, used to sit
+   on top of the next one ("two menus merged"). Keyboard focus opens a panel only when it is
+   :focus-visible, so a mouse click no longer leaves a menu stuck open. */
+/* …unless the keyboard opened it (ArrowDown); hovering another item clears that state */
+.nav:hover .nav__item:not(:hover):not([data-keyboard-open]) .mega {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: none;
+}
+.nav:hover .nav__item:not(:hover):not([data-keyboard-open]) .nav__link:not(:hover) {
+  background: var(--paper);
+  border-color: var(--line);
+  color: var(--ink);
+}
+.nav:hover .nav__item:not(:hover):not([data-keyboard-open]) .nav__link[aria-current="page"] {
+  border-color: var(--ink);
 }

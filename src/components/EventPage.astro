@@ -218,6 +218,16 @@ const after = ((page.after ?? []) as SectionKey[]).filter((s) => s !== 'faq' || 
       {past ? (ru ? 'Следующая редакция' : 'Next edition') : t('cta.stand')}
     </a>
   </div>
+  <script>
+    /* the bar appears once the hero (and its own "Book a stand") has scrolled away, so the
+       same button is never on screen twice */
+    const bar = document.querySelector('.m-cta');
+    const hero = document.querySelector('.ehero');
+    if (bar && hero && 'IntersectionObserver' in window) {
+      bar.classList.add('m-cta--hidden');
+      new IntersectionObserver(([e]) => bar.classList.toggle('m-cta--hidden', e.isIntersecting), { threshold: 0.15 }).observe(hero);
+    }
+  </script>
 </Base>
 
 <style>
@@ -236,6 +246,12 @@ const after = ((page.after ?? []) as SectionKey[]).filter((s) => s !== 'faq' || 
     background: var(--evergreen);
     border-top: 1px solid rgba(255, 255, 255, 0.16);
     padding: 0.55rem var(--gutter);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+  .m-cta--hidden {
+    transform: translateY(100%);
+    opacity: 0;
+    pointer-events: none;
   }
   .m-cta__txt {
     display: flex;

@@ -17,7 +17,12 @@
 :root {
   /* the centre's own logo colours (green, blue, red) as one band; a show page swaps it for its
      logo's colours via brandCss() */
-  --brand-stripe: linear-gradient(90deg, #60a854 0 33.4%, #489cb4 33.4% 66.7%, #c03030 66.7% 100%);
+  /* the SOF EXPO mark's three arcs, measured off images/brand-masters/sof-expo-logo.png */
+  --brand-stripe: linear-gradient(90deg, #48b454 0 33.4%, #249cb4 33.4% 66.7%, #cc243c 66.7% 100%);
+  --sx-green: #48b454;
+  --sx-blue: #249cb4;
+  --sx-red: #cc243c;
+  --sx-grey: #909090;
   /* the only easing curve in the product: a state change, not a performance. Displacement
      (translate/scale) and reveal-on-hover are gone — see docs/07 §8 */
   --tr: 180ms cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -41,19 +46,22 @@
   /* "evergreen" is now the ink panel / primary button, "moss" the brand blue (links, focus) */
   --evergreen: #0a0a0a;
   --evergreen-2: #2a2a2a;
-  --moss: #0063e4; /* 5.4:1 on white */
+  /* 2026-10-15: the centre's colours come from its own logo (docs/18 §15). The arc blue #249CB4
+     carries white text at 3.2:1 only, so panels and links use the same hue one step deeper. */
+  --moss: #157389; /* white on it 5.5:1 */
   --sage: #f2f2f2;
   /* yellow is for the primary booking CTA and "registration open" only — never under long text */
-  --accent: #f4fd10; /* ink on it: 17.8:1 */
-  --accent-soft: #fbffc2;
+  --accent: #48b454; /* the logo's green arc; ink on it 7.5:1 */
+  --accent-soft: #e3f3e5;
+  --accent-hover: #3d9f48;
   --ornament: #f2f2f2;
   --brand-mark: var(--evergreen);
   /* the old brass accent rules become brand blue */
-  --gold: #0063e4;
-  --gold-ink: #0057c8; /* small blue text on light grounds, ≥5.1:1 on the canvas */
+  --gold: #157389;
+  --gold-ink: #12697e; /* small blue text on light grounds, 4.9:1 on the canvas */
   /* the light accent ON dark grounds: the yellow, 17:1 on ink */
-  --gold-soft: #f4fd10;
-  --danger: #c4320a;
+  --gold-soft: #48b454; /* 7.5:1 on ink */
+  --danger: #b81f36; /* the logo's red arc, deepened: 5.0:1 on the canvas */
   --success: #1f8a4c;
 
   /* type (docs/18 §2): Manrope 500 for display — headings, big figures, dates — tight
@@ -178,15 +186,18 @@ h3,
 h4,
 h5 {
   font-family: var(--f-display);
-  font-weight: 500;
+  /* a show's own voice (brand-map.json → style): BUILD and AGROPRO bold like their logos,
+     PROMOTORS heavy italic, ECOM light; the centre stays at 500 */
+  font-weight: var(--display-weight, 500);
+  font-style: var(--display-style, normal);
   line-height: 1;
-  letter-spacing: -0.04em;
+  letter-spacing: var(--display-tracking, -0.04em);
   margin: 0 0 0.5em;
   text-wrap: balance;
 }
 
 h1 {
-  letter-spacing: -0.04em;
+  letter-spacing: var(--display-tracking, -0.04em);
   line-height: 0.98;
 }
 
@@ -1134,13 +1145,13 @@ a.chip:hover {
 /* 2026-10-04 (docs/15 §11): the section a visitor is in, and the one under the pointer, are
    marked by a 2px rule on the header's bottom edge — not by a filled pill */
 .nav__link:hover,
-.nav__item:focus-within .nav__link,
+.nav__item:has(:focus-visible) .nav__link,
 .nav__link[aria-current="page"] {
   color: var(--evergreen);
 }
 
 .nav__item:hover .mega,
-.nav__item:focus-within .mega {
+.nav__item:has(:focus-visible) .mega {
   opacity: 1;
   visibility: visible;
   transform: none;
@@ -2341,7 +2352,7 @@ h2.h3 { font-size: var(--t-h3); line-height: 1.18; letter-spacing: -0.014em; }
   transition: transform var(--tr);
 }
 .nav__item:hover .nav__link::after,
-.nav__item:focus-within .nav__link::after,
+.nav__item:has(:focus-visible) .nav__link::after,
 .nav__link[aria-current="page"]::after {
   transform: scaleX(1);
 }
@@ -2350,7 +2361,7 @@ h2.h3 { font-size: var(--t-h3); line-height: 1.18; letter-spacing: -0.014em; }
   transition: transform var(--tr), opacity var(--tr);
 }
 .nav__item:hover .nav__caret,
-.nav__item:focus-within .nav__caret {
+.nav__item:has(:focus-visible) .nav__caret {
   transform: rotate(180deg);
   opacity: 0.85;
 }

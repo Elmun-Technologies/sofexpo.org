@@ -18,18 +18,21 @@ const ru = locale === 'ru';
 const ctas = {
   exhibitor: {
     label: ru ? 'Забронировать стенд' : 'Book a stand',
-    sub: ru ? 'Ответ в течение рабочего дня · план зала бесплатно' : 'Reply within one business day · free floor plan',
+    title: ru ? 'План зала и расчёт за один день' : 'Floor plan and quote in one day',
+    sub: ru ? 'Свободные места · без предоплаты' : 'Free spots · no prepayment',
     href: `/${locale}/request-stand/`,
     action: 'open-exhibitor-form',
   },
   visitor: {
     label: ru ? 'Получить билет' : 'Get ticket',
-    sub: ru ? 'Бесплатно для специалистов' : 'Free for trade visitors',
+    title: ru ? 'Вход для специалистов бесплатный' : 'Free entry for trade visitors',
+    sub: ru ? 'Электронный билет на почту' : 'E-ticket by email',
     href: `/${locale}/visitors/tickets/`,
     action: 'open-visitor-form',
   },
   organizer: {
     label: ru ? 'Забронировать зал' : 'Book a hall',
+    title: ru ? 'Зал для вашего события' : 'A hall for your event',
     sub: ru ? '4400 м² + 5000 м² улица' : '4400 m² + 5000 m² outdoor',
     href: `/${locale}/organizers/`,
     action: 'open-organizer-form',
@@ -42,7 +45,7 @@ if (pageType === 'organizers') activeCta = ctas.organizer;
 if (pageType === 'event' && eventName) {
   activeCta = {
     ...ctas.exhibitor,
-    label: ru ? `Стенд на ${eventName}` : `Stand at ${eventName}`,
+    title: eventName,
   };
 }
 
@@ -56,7 +59,7 @@ const L = {
 <div id="sticky-cta" class="s-cta" data-page-type={pageType} hidden>
   <div class="s-cta__in wrap">
     <div class="s-cta__txt">
-      <b class="s-cta__title">{activeCta.label}</b>
+      <b class="s-cta__title">{activeCta.title}</b>
       <span class="s-cta__sub">{activeCta.sub}</span>
     </div>
     <div class="s-cta__actions">

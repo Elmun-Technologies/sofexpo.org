@@ -52,6 +52,15 @@ export type HostBrand = {
      not only in colour */
   pattern: string;
   patternSize: number;
+  /** the logo's shape and type voice (all optional; the centre's defaults apply otherwise) */
+  style?: {
+    rPanel?: number;
+    rCard?: number;
+    rPill?: number;
+    displayWeight?: number;
+    displayStyle?: "italic" | "normal";
+    displayTracking?: string;
+  };
   palette: BrandPalette;
 };
 
@@ -79,10 +88,21 @@ export function brandCss(brand: HostBrand | null): string {
     `--ink:${p.ink};--ink-60:${p.ink60};--ink-40:${p.ink40};`,
     `--line:${p.line};--line-strong:${p.lineStrong};`,
     `--cream:${p.cream};--cream-2:${p.cream2};`,
-    `--gold:${p.gold};--gold-soft:${p.goldSoft};--ornament:${p.ornament};--brand-mark:${p.mark};`,
+    `--gold:${p.gold};--gold-ink:${p.gold};--gold-soft:${p.goldSoft};--ornament:${p.ornament};--brand-mark:${p.mark};`,
     /* the 2026-10 design's yellow accent (booking CTA, call-outs) becomes the show's own accent */
-    `--accent:${p.goldSoft};`,
+    `--accent:${p.goldSoft};--accent-hover:color-mix(in srgb,${p.goldSoft} 82%,#000);--accent-soft:color-mix(in srgb,${p.goldSoft} 16%,#fff);`,
     `--brand-stripe:${brand.stripe};`,
+    /* shape and type voice from the logo: radius of panels/cards/pills, display weight/style */
+    brand.style
+      ? [
+          brand.style.rPanel != null ? `--r-panel:${brand.style.rPanel}px;` : "",
+          brand.style.rCard != null ? `--r-lg:${brand.style.rCard}px;` : "",
+          brand.style.rPill != null ? `--r-pill:${brand.style.rPill}px;` : "",
+          brand.style.displayWeight != null ? `--display-weight:${brand.style.displayWeight};` : "",
+          brand.style.displayStyle ? `--display-style:${brand.style.displayStyle};` : "",
+          brand.style.displayTracking ? `--display-tracking:${brand.style.displayTracking};` : "",
+        ].join("")
+      : "",
     `--brand-pattern:url("data:image/svg+xml,${encodeURIComponent(brand.pattern)}");--brand-pattern-size:${brand.patternSize}px;`,
     "}",
   ].join("");

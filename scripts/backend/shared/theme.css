@@ -3,7 +3,8 @@
  *
  * Loaded after each app's own app.css, so it only has to restate tokens and the handful of
  * components the site redesign changed (docs/18): Manrope for headings and figures, Onest for
- * text, the grey #E4E4E4 canvas with white 28px panels, black + blue #0063E4 + yellow #F4FD10,
+ * text, the grey #E4E4E4 canvas with white 28px panels, black + the SOF EXPO logo's blue (#157389,
+ * the arc #249CB4 deepened for white text) and green arc #48B454,
  * pill buttons, 16px-radius inputs with a blue focus ring. Status colours stay semantic.
  * The fonts and the mark are the site's own files, served by the backend (server.mjs).
  */
@@ -66,8 +67,8 @@
   --sx-ink-2: #2a2a2a;
   --sx-muted: #5e5e5e;
   --sx-line: #e4e4e4;
-  --sx-blue: #0063e4;
-  --sx-yellow: #f4fd10;
+  --sx-blue: #157389;
+  --sx-yellow: #48b454; /* the logo's green arc; the name stays so app.css keeps working */
   --sx-r: 16px;
   --sx-r-lg: 28px;
   --sx-r-panel: 36px;

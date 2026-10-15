@@ -549,7 +549,7 @@ const jsonLd = [
     transition: background-color var(--tr);
   }
   .h-go:hover {
-    background: #e2eb00;
+    background: var(--accent-hover, #3d9f48);
     color: var(--ink);
   }
 
@@ -847,7 +847,7 @@ const jsonLd = [
     color: inherit;
     border: 1px solid var(--line-c);
   }
-  /* white on #0063E4 is 5.4:1 — no translucency on the blue card, it would drop under AA */
+  /* white on the centre blue (#157389) is 5.5:1 — no translucency on the blue card, it would drop under AA */
   .h-aud__d {
     opacity: 0.8;
   }

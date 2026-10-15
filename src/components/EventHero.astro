@@ -405,6 +405,26 @@ const heroKicker =
       mask-image: var(--brand-pattern), radial-gradient(90% 260px at 100% 0, #000, transparent);
     }
   }
+  /* FOODERA: the show's own naqsh — the islimi scroll ring drawn on its badge
+     (images/brand-masters/foodera-naqsh-ring.png, cut from foodera-expo-2026-badge.png) — in
+     the badge's gold, as one large medallion half off the right edge, instead of a tiled motif */
+  :global(html[data-brand='foodera']) .ehero--light .ehero__main::after {
+    inset: -230px -150px auto auto;
+    width: min(600px, 56%);
+    aspect-ratio: 1;
+    height: auto;
+    background: #cca878;
+    opacity: 0.5;
+    -webkit-mask: url('/brand/foodera/naqsh.webp') center / contain no-repeat;
+    mask: url('/brand/foodera/naqsh.webp') center / contain no-repeat;
+  }
+  @media (max-width: 900px) {
+    :global(html[data-brand='foodera']) .ehero--light .ehero__main::after {
+      inset: -110px -150px auto auto;
+      width: 290px;
+      opacity: 0.45;
+    }
+  }
   .ehero--light .ehero__main :global(.ehero__logo) {
     padding: 0;
     background: transparent;

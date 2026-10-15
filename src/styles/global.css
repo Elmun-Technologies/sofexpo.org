@@ -17,11 +17,13 @@
 :root {
   /* the centre's own logo colours (green, blue, red) as one band; a show page swaps it for its
      logo's colours via brandCss() */
-  /* the SOF EXPO mark's three arcs, measured off images/brand-masters/sof-expo-logo.png */
-  --brand-stripe: linear-gradient(90deg, #48b454 0 33.4%, #249cb4 33.4% 66.7%, #cc243c 66.7% 100%);
-  --sx-green: #48b454;
-  --sx-blue: #249cb4;
-  --sx-red: #cc243c;
+  /* 2026-10-15: the SOF EXPO colours are the colours of the flag of Uzbekistan (azure, green,
+     red); the logo's arcs were a printed approximation of them, so the site now uses the flag's
+     own values (docs/19 §7) */
+  --brand-stripe: linear-gradient(90deg, #1eb53a 0 33.4%, #0099b5 33.4% 66.7%, #ce1126 66.7% 100%);
+  --sx-green: #1eb53a;
+  --sx-blue: #0099b5;
+  --sx-red: #ce1126;
   --sx-grey: #909090;
   /* the only easing curve in the product: a state change, not a performance. Displacement
      (translate/scale) and reveal-on-hover are gone — see docs/07 §8 */
@@ -48,17 +50,17 @@
   /* "evergreen" is the centre's deep brand green: ink panels, footer, primary buttons */
   --evergreen: #123b25; /* white on it: 12.5:1 */
   --evergreen-2: #1b4d2e; /* white on it: 9.8:1 */
-  --moss: #21687e; /* the logo blue deepened to AA on BOTH white and the grey canvas: 4.9:1 / 6.3:1 (raw logo blue is used only graphically) */
+  --moss: #00738c; /* the flag's azure #0099B5 at full saturation, one step deeper for AA text: 5.5:1 on white, 4.9:1 on the canvas (the raw azure is used only graphically). It was #21687E, a greyed petrol that read as nobody's blue. */
   --sage: #f2f2f2;
   /* the logo red is for the primary booking CTA and "registration open" — never under long text */
-  --accent: #c03030; /* white on it: 5.7:1 */
+  --accent: #ce1126; /* the flag's red; white on it: 5.6:1 */
   --accent-ink: #ffffff; /* what sits ON --accent; shows override it with their own ink */
   --accent-soft: #eef4ee; /* a whisper of the brand green on light grounds (logo tiles) */
   --ornament: #f2f2f2;
   --brand-mark: var(--evergreen);
   /* the old brass accent rules become the brand blue */
-  --gold: #21687e;
-  --gold-ink: #1e6478; /* small blue text on light grounds, 6.7:1; also a fill with white text */
+  --gold: #00738c;
+  --gold-ink: #006e86; /* small azure text on light grounds, 5.9:1 on white / 5.3:1 on the canvas; also a fill with white text */
   /* the light accent ON dark grounds: light green of the logo family, 12:1 on evergreen */
   --gold-soft: #b7e3b0;
   --danger: #c4320a;

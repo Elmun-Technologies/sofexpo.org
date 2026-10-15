@@ -29,16 +29,16 @@
   --ink-2: #262626;
   --muted: #62625e;
   --faint: #8c8c86;
-  --blue: #0063e4;
-  --blue-soft: #e8f0fd;
-  --blue-ink: #0b4fb3;
-  --yellow: #f4fd10;
+  --blue: #00738c; /* the flag's azure #0099B5, deepened for AA text (5.5:1); docs/19 §7 */
+  --blue-soft: #e2f3f6;
+  --blue-ink: #005f73;
+  --yellow: #5ccfe3; /* the light accent on the black sidebar: the flag azure lightened (was acid yellow) */
   --sidebar: #0c0c0c;
   --sidebar-2: #1a1a1a;
   --sidebar-text: #bdbdb7;
 
   /* lead stages — one colour each, everywhere */
-  --st-new: #0063e4;      --st-new-bg: #e8f0fd;
+  --st-new: #00738c;      --st-new-bg: #e2f3f6;
   --st-contacted: #6a4ad6; --st-contacted-bg: #efebfc;
   --st-qualified: #0a8a8a; --st-qualified-bg: #e4f4f4;
   --st-proposal: #b7791f;  --st-proposal-bg: #fbf1e1;
@@ -123,7 +123,7 @@ input[type='checkbox'] { width: 16px; height: 16px; accent-color: var(--blue); }
 .auth-art-copy h1 { color: #fff; font-size: clamp(32px, 4vw, 52px); line-height: 1.05; letter-spacing: -.03em; }
 .auth-art-copy p { margin-top: 18px; color: var(--sidebar-text); font-size: 16px; }
 .auth-art-meta { display: inline-flex; align-items: center; gap: 10px; margin-top: 26px; color: #fff; font-size: 13px; }
-.pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--yellow); box-shadow: 0 0 0 4px rgba(244, 253, 16, .18); }
+.pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--yellow); box-shadow: 0 0 0 4px rgba(92, 207, 227, .22); }
 .auth-main { display: grid; place-items: center; padding: 32px 20px; }
 .auth-card { width: min(420px, 100%); }
 .auth-card h2 { font-size: 30px; }

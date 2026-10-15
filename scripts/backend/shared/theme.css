@@ -736,3 +736,18 @@ input[type='radio'] {
 /* cabinet chrome */
 .locale-select, .locale-select-portal, .account-controls .button { font-size: 0.8125rem; }
 .portal-topbar .brand small, .brand small, .auth-brand-mobile small, .portal-stamp { font-size: 0.6875rem; }
+
+/* phones: the exhibitor-card table becomes one card per company (no sideways scrolling to
+   reach the status and the Open button) */
+@media (max-width: 760px) {
+  .profiles-table thead { display: none; }
+  .profiles-table, .profiles-table tbody, .profiles-table tr, .profiles-table td { display: block; width: 100%; min-width: 0 !important; box-sizing: border-box; }
+  .profiles-table tr { padding: 14px 16px; border-bottom: 1px solid var(--sx-line); }
+  .profiles-table td { display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; border: 0; }
+  .profiles-table td[data-label]::before { content: attr(data-label); color: var(--sx-muted); font-size: 0.75rem; }
+  .profiles-table td[data-label="Kompaniya"]::before { content: none; }
+  .profiles-table td[data-label="Kompaniya"] { padding-bottom: 8px; }
+  .profiles-table .cell-action { padding-top: 10px; }
+  .profiles-table .cell-action .button { width: 100%; }
+  .range-control select { min-width: 92px; }
+}

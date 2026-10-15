@@ -52,6 +52,8 @@ export type HostBrand = {
      not only in colour */
   pattern: string;
   patternSize: number;
+  /** a horizontal lockup for the 40px header, when the round badge would be illegible there */
+  headerLogo?: { src: string; webp: string; width: number; height: number };
   /** the logo's shape and type voice (all optional; the centre's defaults apply otherwise) */
   style?: {
     rPanel?: number;

@@ -72,7 +72,13 @@ const featured: Record<string, { img: string; alt: string; kicker: string; date?
 <header class="hdr" id="top">
   <div class="wrap hdr__in">
     <a class="logo" href={P('/')} aria-label={`${CURRENT_BRAND ? CURRENT_BRAND.name[locale] + ' ' + CURRENT_BRAND.sub[locale] : site.brand[locale]} — ${t('breadcrumbs.home')}`}>
-      {logoFor(CURRENT_EVENT) ? (
+      {CURRENT_BRAND?.headerLogo ? (
+        /* the show's horizontal lockup: its round badge is illegible at header height */
+        <picture>
+          <source type="image/webp" srcset={CURRENT_BRAND.headerLogo.webp} />
+          <img class="logo__h logo__h--show" src={CURRENT_BRAND.headerLogo.src} alt={`${CURRENT_BRAND.name[locale]} ${CURRENT_BRAND.sub[locale]}`} width={CURRENT_BRAND.headerLogo.width / 2} height={CURRENT_BRAND.headerLogo.height / 2} loading="eager" decoding="async" fetchpriority="high" />
+        </picture>
+      ) : logoFor(CURRENT_EVENT) ? (
         /* the show's own logo, cut from the organiser's artwork (docs/15 §10) */
         <ShowLogo slug={CURRENT_EVENT} height={40} eager />
       ) : CURRENT_BRAND?.mark === 'star' ? (

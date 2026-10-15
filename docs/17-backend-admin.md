@@ -284,3 +284,7 @@ akkaunt kartasida logotip, fayllar, «Tasdiqlash» / «Tuzatishga qaytarish».
   tekshiradi (`tests/backend.test.mjs`).
 - Bot ishlashi uchun serverda `TELEGRAM_BOT_TOKEN` va `TELEGRAM_CHAT_ID` o‘rnatilgan bo‘lishi va bot
   o‘sha chat/guruhga qo‘shilgan (kanal bo‘lsa — admin) bo‘lishi shart.
+- Eksponent kartani tekshiruvga yuborganda o‘sha Telegram chatiga xabar boradi (brend, ko‘rgazma,
+  stend, fayllar soni) — best-effort, karta CRM’da baribir saqlanadi.
+- Admin va kabinet sahifalarida favicon bor (oldin `/favicon.ico` 404 berardi). Telefonda
+  «Eksponent kartalari» jadvali kartochkalarga aylanadi.

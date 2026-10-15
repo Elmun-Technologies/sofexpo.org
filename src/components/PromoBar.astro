@@ -8,6 +8,7 @@
  */
 import { localize, type SourceLocale as Locale } from '@/i18n/config';
 import { nextEvent } from '@/data/events';
+import { CURRENT_EVENT } from '@/data/hosts';
 import { daysUntil } from '@/lib/labels';
 import Icon from '@/components/Icon.astro';
 
@@ -17,7 +18,9 @@ const L = (p: string) => localize(locale, p);
 
 const event = nextEvent();
 /** home and the line-up only; not on the event's own page (its hero already says all this) */
+/* never on a show's own domain (agropro.sofexpo.org advertising FOODERA): its hero is the news */
 const show =
+  !CURRENT_EVENT &&
   !!event &&
   event.status !== 'past' &&
   !!event.highlight &&

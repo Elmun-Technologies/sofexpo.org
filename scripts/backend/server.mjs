@@ -876,7 +876,26 @@ export function createLeadServer(options = {}) {
             if (missing.length) throw new HttpError(422, `Tekshiruvga yuborish uchun to‘ldiring: ${missing.join(', ')}.`);
           }
           const company = store.saveExhibitorCompany(owner.id, fields, { submit });
-          if (submit) store.audit(owner.email, 'exhibitor_profile.submit', 'portal_account', owner.id, { brandName: fields.brandName, event: fields.event });
+          if (submit) {
+            store.audit(owner.email, 'exhibitor_profile.submit', 'portal_account', owner.id, { brandName: fields.brandName, event: fields.event });
+            /* the managers hear about a card waiting for review in the same Telegram chat as leads;
+               best effort — the card is already saved and listed in the CRM either way */
+            if (telegramToken && telegramChat) {
+              const show = PORTAL_EVENTS.find((item) => item.slug === fields.event)?.name || fields.event;
+              const files = store.listExhibitorFiles(owner.id);
+              const text = [
+                '🗂 Eksponent kartasi tekshiruvga keldi',
+                '',
+                `🏢 ${fields.brandName}${owner.company && owner.company !== fields.brandName ? ` (${owner.company})` : ''}`,
+                `🎪 ${show}${fields.stand ? ` · stend ${fields.stand}` : ''}`,
+                `📎 ${files.length} ta fayl: ${['logo', 'flyer', 'catalog', 'photo'].map((k) => `${k} ${files.filter((f) => f.kind === k).length}`).join(', ')}`,
+                `✉️ ${owner.email}`,
+                '',
+                'CRM → Eksponent kartalari',
+              ].join('\n');
+              sendTelegram(text).catch((error) => console.error('[lead-backend] exhibitor card notice failed:', error?.message || error));
+            }
+          }
           return sendJson(res, 200, { ok: true, company });
         }
 

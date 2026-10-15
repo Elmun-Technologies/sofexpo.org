@@ -1411,3 +1411,9 @@ main > .evnav {
 @media (prefers-reduced-motion: reduce) {
   .hdr, main > .evnav { transition: none; }
 }
+
+/* phones: a long Russian word in a display heading ("конфиденциальности") is wider than the
+   column; let the language's own hyphenation break it instead of pushing the page sideways */
+@media (max-width: 480px) {
+  h1, h2 { hyphens: auto; -webkit-hyphens: auto; overflow-wrap: break-word; }
+}

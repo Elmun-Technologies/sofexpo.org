@@ -723,3 +723,22 @@ test('exhibitor company profile: uploads are checked by content, reviewed by the
   assert.equal(removed.response.status, 200);
   assert.equal((await fetch(`${base}/api/portal/files/${flyer.data.file.id}`, { headers: { Cookie: cookie } })).status, 404);
 });
+
+test('a card sent for review is announced in the managers’ Telegram chat', async (t) => {
+  const telegram = await startFakeTelegram(t, () => [200, { ok: true, result: { message_id: 7 } }]);
+  const { base } = await startBackend(t, { telegramToken: '123:ABC', telegramChat: '-100555', telegramApiBase: telegram.base });
+  const reg = await jsonRequest(base, '/api/portal/register', {
+    method: 'POST', body: { accountType: 'exhibitor', name: 'Nodira K', email: 'card@notice.test', password: 'exhibitor-password-2026', phone: '+998 90 111 22 33', company: 'Notice Foods', country: 'Uzbekistan', industry: 'Food', consent: 'yes' },
+  });
+  const cookie = reg.response.headers.get('set-cookie').split(';')[0];
+  const csrf = reg.data.csrfToken;
+  assert.equal((await upload(base, { cookie, csrf, kind: 'logo', name: 'logo.png', body: PNG_1PX })).response.status, 201);
+  const sent = await jsonRequest(base, '/api/portal/company', {
+    method: 'PUT', cookie, csrf, body: { brandName: 'Notice', description: 'Spices and dried fruit for retail chains in Central Asia and the Gulf.', event: 'foodera-expo', stand: 'C-3', submit: true },
+  });
+  assert.equal(sent.response.status, 200);
+  assert.ok(await waitFor(() => telegram.calls.some((call) => /Eksponent kartasi tekshiruvga keldi/.test(call.body.text)), 3000));
+  const notice = telegram.calls.find((call) => /Eksponent kartasi/.test(call.body.text)).body.text;
+  assert.match(notice, /FOODERA EXPO 2026 · stend C-3/);
+  assert.match(notice, /logo 1/);
+});

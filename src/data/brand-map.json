@@ -54,6 +54,13 @@
         "rCard": 22,
         "displayWeight": 500,
         "displayTracking": "-0.03em"
+      },
+      "headerLogo": {
+        "src": "/brand/foodera/logo-horizontal.png",
+        "webp": "/brand/foodera/logo-horizontal.webp",
+        "width": 328,
+        "height": 96,
+        "_note": "the organiser's horizontal FOODERA lockup (images/brand-masters/foodera-expo-horizontal.png): the round badge is illegible at the header's 40px"
       }
     },
     "buildpro-expo": {

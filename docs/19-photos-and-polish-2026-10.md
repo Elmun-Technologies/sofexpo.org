@@ -141,3 +141,19 @@ muhit tarmog'ida bloklangan — ruxsat berilgach qo'shiladi.
 **Shapka.** Hide-on-scroll endi kompyuterda ham: pastga o'qiganda shapka yashirinadi, tepaga
 aylantirganda qaytadi; mega-menyu yoki til ro'yxati ochiq bo'lsa yashirinmaydi. Ko'rgazma
 sahifasida shapka + tablar 138 px o'rniga faqat tablar qoladi.
+
+## 7. Ranglar — O'zbekiston bayrog'i, FOODERA naqshi (2026-10-15)
+
+**Markaz ranglari.** SOF EXPO ranglari O'zbekiston bayrog'i ranglari: samoviy `#0099B5`, yashil
+`#1EB53A`, qizil `#CE1126`. Logotip yoylari (`#249CB4`, `#48B454`, `#CC243C`) ularning bosma
+yaqinlashuvi edi; `--brand-stripe` va `--sx-*` endi bayroq qiymatlarida. Matn/havola ko'ki
+`--moss` = `#00738C` (bayroq samoviysi, to'liq to'yingan, bir pog'ona to'q: oqda 5.5:1, kanvasda
+4.9:1). Avvalgi `#21687E` kulrang "petrol" bo'lib, hech kimning ko'kiga o'xshamasdi. Bron tugmasi
+qizili — bayroq qizili `#CE1126` (oq matn 5.6:1). Admin va kabinet: `#0063E4` ko'k va kislotali
+sariq `#F4FD10` o'rniga bayroq samoviysi (`#00738C`, qora yon panelda `#5CCFE3`).
+
+**FOODERA naqshi.** FOODERA'ning naqshi uning badge'ida: tilla islimiy jingalak gullar halqasi.
+`images/brand-masters/foodera-naqsh-ring.png` — badge'dan kesilgan (yulduz va yozuv olib
+tashlangan) halqa; `public/brand/foodera/naqsh.webp` maska sifatida: hero'ning o'ng yuqori
+burchagida badge oltini `#CCA878` bilan, CTA-band va footer'da `--gold-soft` bilan. Avvalgi
+geometrik kvadrat-yulduz plitkasi FOODERA'da shu medalyon bilan almashtirildi.

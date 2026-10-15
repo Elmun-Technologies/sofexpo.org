@@ -1368,6 +1368,17 @@ main > .evnav {
 .calc__date {
   box-shadow: inset 0 5px 0 var(--ic, transparent);
 }
+/* FOODERA's dark panels carry its badge's islimi ring in gold-soft instead of the tiled star */
+html[data-brand='foodera'] .cta-band.sec--forest::after,
+html[data-brand='foodera'] .ftr__main::after {
+  inset: -30% -10% -30% auto !important;
+  width: min(620px, 60%);
+  aspect-ratio: 1;
+  background: var(--gold-soft) !important;
+  opacity: 0.32;
+  -webkit-mask: url('/brand/foodera/naqsh.webp') center / contain no-repeat !important;
+  mask: url('/brand/foodera/naqsh.webp') center / contain no-repeat !important;
+}
 /* the show's logo motif (--brand-pattern) behind its dark CTA band and footer panel, fading in
    from the right; the centre has no pattern, so nothing changes there */
 .cta-band.sec--forest::after,

@@ -25,17 +25,17 @@ const WIDTHS = [640, 1024, 1600, 2048];
 /** name → [source file, focal position] ; position drives the smart crop. */
 const MAP = {
   /* ── the hall, the building, the floor ───────────────────────────── */
-  'hero-hall': ['sofexpo-uz/hall-aerial.jpg', 'centre'],
+  'hero-hall': ['client-2026-10-15/worldedu-hall.jpg', 'centre'],
   'hall-crowd': ['client-2026-10-15/hall-entrance-visitors.jpg', 'centre'],
   'hall-stand': ['sofexpo-uz/stand-glass.jpg', 'centre'],
-  'hall-walk': ['sofexpo-uz/hall-panorama.jpg', 'centre'],
+  'hall-walk': ['client-2026-10-15/hall-textile-aisle.jpg', 'centre'],
   'hall-empty': ['20220624_144816-scaled-1-1536x865.jpg', 'centre'],
   'hall-windows': ['20220624_144839-scaled-1-1536x865.jpg', 'centre'],
   'venue-exterior': ['client-2026-10-15/venue-front-day.jpg', 'centre'],
   /* 2026-10-04 (docs/15 §10): every name below now shows what it says — several pointed at
      stock frames or at another show's stand */
-  'venue-facade': ['sofexpo-uz/exterior-1.jpg', 'centre'],
-  'venue-conference': ['sofexpo-uz/speaker.jpg', 'centre'],
+  'venue-facade': ['client-2026-10-15/buildpro-poster-2022.jpg', 'centre'],
+  'venue-conference': ['client-2026-10-15/prompro-forum-stage.jpg', 'centre'],
   'conference-audience': ['client-2026-10-15/forum-audience.jpg', 'centre'],
   'outdoor-area': ['client-2026-10-15/outdoor-trucks-cranes.jpg', 'centre'],
 
@@ -57,7 +57,7 @@ const MAP = {
   'officials-tour': ['client-2026-10-15/officials-stand-tour.jpg', 'centre'],
   'stand-equipment': ['sofexpo-uz/stand-equip.jpg', 'centre'],
   'stand-agro': ['sofexpo-uz/stand-talk.jpg', 'centre'],
-  'stand-modern': ['12.webp', 'centre'],
+  'stand-modern': ['client-2026-10-15/buildpro-stand-interior.jpg', 'centre'],
   'stand-green': ['13.webp', 'centre'],
   'buyers-talk': ['sofexpo-uz/b2b-talk.jpg', 'centre'],
   'visitors-flowers': ['sofexpo-uz/visitors-flowers.jpg', 'centre'],
@@ -71,7 +71,7 @@ const MAP = {
 
   /* ── more of the floor: the client sent far more than six usable frames ── */
   'stand-agro-chem': ['sofexpo-uz/visitors-7.jpg', 'centre'],
-  'opening-ceremony': ['sofexpo-uz/opening.jpg', 'centre'],
+  'opening-ceremony': ['client-2026-10-15/opening-guests.jpg', 'centre'],
   'stand-fertilizer': ['sofexpo-uz/stand-agro-2.jpg', 'centre'],
   'stand-industrial': ['sofexpo-uz/stand-equip.jpg', 'centre'],
   'conference-room': ['client-2026-10-15/meeting-lounge.jpg', 'centre'],
@@ -92,9 +92,9 @@ const MAP = {
   /* ── 2026-10-12: full-size frames from sofexpo.uz (images/sofexpo-uz/). The names above
      that used to sit on 768px CMS thumbnails now point at the same shots at 1536–1800px,
      and the names below give each page its own frame instead of the same three photos ── */
-  'hall-aerial': ['sofexpo-uz/hall-aerial.jpg', 'centre'],
-  'hall-aerial-2': ['sofexpo-uz/hall-aerial2.jpg', 'centre'],
-  'hall-wide': ['sofexpo-uz/hall-wide-1.jpg', 'centre'],
+  'hall-aerial': ['client-2026-10-15/hall-red-carpet-visitors.jpg', 'centre'],
+  'hall-aerial-2': ['client-2026-10-15/hall-aisle-stands.jpg', 'centre'],
+  'hall-wide': ['client-2026-10-15/agropro-hall-stands.jpg', 'centre'],
   'hall-busy': ['sofexpo-uz/hall-wide-6.jpg', 'centre'],
   'stand-two-level': ['sofexpo-uz/stand-2level.jpg', 'centre'],
   'stand-falcon': ['sofexpo-uz/stand-blue-tall.jpg', 'centre'],
@@ -103,21 +103,21 @@ const MAP = {
   'stand-basalt': ['sofexpo-uz/stand-basalt.jpg', 'centre'],
   'stand-agro-hall': ['sofexpo-uz/stand-agro-2.jpg', 'centre'],
   'stand-house-model': ['sofexpo-uz/stand-house.jpg', 'centre'],
-  'stand-building-models': ['sofexpo-uz/stand-building-models.jpg', 'centre'],
+  'stand-building-models': ['client-2026-10-15/materials-tiles-stand.jpg', 'centre'],
   'stand-shell': ['site-2026-10/stand-1.jpg', 'centre'],
-  'conference-stage': ['sofexpo-uz/conf-stage.jpg', 'centre'],
-  'conference-rows': ['sofexpo-uz/conf-rows.jpg', 'centre'],
+  'conference-stage': ['client-2026-10-15/forum-speaker.jpg', 'centre'],
+  'conference-rows': ['client-2026-10-15/forum-question.jpg', 'centre'],
   'meeting-room': ['sofexpo-uz/meeting-room.jpg', 'centre'],
 
   /* ── 2026-10 redesign (docs/18): real photos from the new site package (sofexpo.uz) ── */
-  'hall-panorama': ['site-2026-10/hall-panorama.jpg', 'centre'],
-  'venue-flags': ['site-2026-10/exterior-1.jpg', 'centre'],
-  'outdoor-tractors': ['site-2026-10/outdoor-tractors-building.jpg', 'centre'],
-  'registan-night': ['site-2026-10/registan-night.jpg', 'centre'],
-  'stand-dark': ['site-2026-10/stand-dark-art.jpg', 'centre'],
-  'b2b-meeting': ['site-2026-10/b2b-meeting-2.jpg', 'centre'],
-  'stand-exhibitor': ['site-2026-10/stand-1.jpg', 'centre'],
-  'opening-crowd': ['site-2026-10/opening-crowd.jpg', 'centre'],
+  'hall-panorama': ['client-2026-10-15/hall-main-aisle.jpg', 'centre'],
+  'venue-flags': ['client-2026-10-15/venue-front-day.jpg', 'centre'],
+  'outdoor-tractors': ['client-2026-10-15/agropro-tractor-cab.jpg', 'centre'],
+  'registan-night': ['client-2026-10-15/samarkand-registan-flag.jpg', 'centre'],
+  'stand-dark': ['client-2026-10-15/prompro-appliances-stand.jpg', 'centre'],
+  'b2b-meeting': ['client-2026-10-15/b2b-stand-meeting.jpg', 'centre'],
+  'stand-exhibitor': ['client-2026-10-15/agropro-agrochem-stand.jpg', 'centre'],
+  'opening-crowd': ['client-2026-10-15/prompro-group.jpg', 'centre'],
 
   /* ── 2026-10-15: the client's photographer archive (images/client-2026-10-15/, 2048px
      masters of 2560px frames). The names above that sat on render, thumbnail or AI-upscaled

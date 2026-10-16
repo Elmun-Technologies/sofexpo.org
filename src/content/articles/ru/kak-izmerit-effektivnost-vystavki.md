@@ -5,6 +5,7 @@ date: 2026-06-10
 category: "guide"
 readingMinutes: 6
 tags: ["эффективность", "аналитика"]
+hero: /images/hall-busy.jpg
 ---
 ### Почему выставка до сих пор работает
 

@@ -5,6 +5,7 @@ date: 2026-06-30
 category: "ecommerce"
 readingMinutes: 6
 tags: ["white label", "marketplaces"]
+hero: /images/contract-signing.jpg
 ---
 ### White label in Uzbek practice
 

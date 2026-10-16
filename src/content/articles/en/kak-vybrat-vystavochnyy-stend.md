@@ -5,6 +5,7 @@ date: 2026-08-12
 category: "guide"
 readingMinutes: 7
 tags: ["stand", "budget"]
+hero: /images/stand-two-level.jpg
 ---
 ### The participation price is not a price per metre
 

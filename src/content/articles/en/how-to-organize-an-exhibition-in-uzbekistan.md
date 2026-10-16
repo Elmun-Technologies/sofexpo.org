@@ -5,7 +5,7 @@ date: 2026-09-19
 category: "guide"
 readingMinutes: 6
 tags: ["event organisers", "venue"]
-hero: /images/conference-stage.jpg
+hero: /images/venue-conference.jpg
 ---
 
 To organize an exhibition in Uzbekistan, you need the same building blocks as anywhere else: a clear format, a realistic timeline, a budget with every line visible, a venue that fits the technical brief and an audience that has a reason to come. This guide is for associations, industry organisers and companies planning their own trade show, conference, congress or corporate event, in the order decisions have to be made.

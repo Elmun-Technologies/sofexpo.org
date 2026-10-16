@@ -5,6 +5,7 @@ date: 2026-09-14
 category: "automotive"
 tags: ["PROMOTORS", "итоги"]
 event: promotors-show-samarkand
+hero: /images/promotors-parade-samarkand.jpg
 ---
 ### Два дня, шесть номинаций, призовой фонд 20 млн сумов
 

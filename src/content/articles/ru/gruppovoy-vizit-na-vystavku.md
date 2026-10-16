@@ -5,6 +5,7 @@ date: 2026-09-12
 category: "guide"
 readingMinutes: 6
 tags: ["делегация", "посетители", "маршрут"]
+hero: /images/delegation-visit.jpg
 ---
 
 ### Делегация едет за решением, а не за впечатлениями

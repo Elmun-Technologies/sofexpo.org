@@ -5,6 +5,7 @@ date: 2026-07-15
 category: "market"
 readingMinutes: 8
 tags: ["food", "export"]
+hero: /images/prompro-dairy-stand.jpg
 ---
 ### Size and growth
 

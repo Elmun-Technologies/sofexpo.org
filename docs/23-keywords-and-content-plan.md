@@ -108,6 +108,13 @@ Stipendium Hungaricum, CSC, GKS, Erasmus Mundus, El-yurt umidi) va oziq-ovqat ma
 «ayrim tovar guruhlari majburiy raqamli markirovkaga tushadi» degan umumiy gap. Ular repodan emas,
 umumiy bilimdan olingan.
 
+**Kannibalizatsiya ogohlantirishlari (6 ta, qabul qilingan).** Audit `/exhibitors/` va
+`/events/foodera-expo/` title'lari bilan maqola title'lari o'xshashligini ko'rsatadi
+(«участие в выставке…», «food exhibition Uzbekistan» ← «Food export…»). Bu yerda niyat har xil:
+sahifa — tijorat so'rovi (A, bron), maqola — axborot so'rovi (C, «qanday qilish»). Maqola o'sha
+tijorat sahifasiga havola beradi. Search Console bitta so'rov bo'yicha ikkala URL navbatma-navbat
+chiqayotganini ko'rsatsa, maqola title'ini o'zgartiring.
+
 ## 4. Yangi maqola qo'shish tartibi
 
 1. `src/content/articles/en/<slug>.md` va `ru/<slug>.md` (frontmatter: title ≤ 65, description

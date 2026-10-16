@@ -15,6 +15,21 @@ const GIT_TIMEOUT = 90_000;
    once would collide on .git/index.lock */
 const repoQueues = new Map();
 
+/* The server checkout (Fly image) has no ~/.gitconfig, so `git commit` would stop at
+   "Author identity unknown" and nothing would ever be pushed. Server commits are signed as
+   the bot unless GIT_AUTHOR_* / GIT_COMMITTER_* (or BLOG_SYNC_GIT_NAME/EMAIL) say otherwise. */
+export function gitEnv(env = process.env) {
+  const name = env.BLOG_SYNC_GIT_NAME || 'SOF EXPO bot';
+  const email = env.BLOG_SYNC_GIT_EMAIL || 'bot@sof-expo.com';
+  return {
+    ...env,
+    GIT_AUTHOR_NAME: env.GIT_AUTHOR_NAME || name,
+    GIT_AUTHOR_EMAIL: env.GIT_AUTHOR_EMAIL || email,
+    GIT_COMMITTER_NAME: env.GIT_COMMITTER_NAME || name,
+    GIT_COMMITTER_EMAIL: env.GIT_COMMITTER_EMAIL || email,
+  };
+}
+
 export class GitPublisher {
   constructor({
     repoDir, remote = 'origin', branch = 'main', debounceMs = 20_000, pushEnabled = false, deployHooks = [], gitRunner, fetchImpl, logger = console,
@@ -28,7 +43,7 @@ export class GitPublisher {
     this.debounceMs = debounceMs;
     this.pushEnabled = pushEnabled;
     this.deployHooks = deployHooks;
-    this.run = gitRunner ?? ((cmd, args) => defaultRunner(cmd, args, { timeout: GIT_TIMEOUT, maxBuffer: 4 * 1024 * 1024 }));
+    this.run = gitRunner ?? ((cmd, args) => defaultRunner(cmd, args, { timeout: GIT_TIMEOUT, maxBuffer: 4 * 1024 * 1024, env: gitEnv() }));
     this.fetch = fetchImpl ?? ((...fetchArgs) => fetch(...fetchArgs));
     this.logger = logger;
     this.paths = paths;

@@ -5,6 +5,7 @@ date: 2026-06-30
 category: "ecommerce"
 readingMinutes: 6
 tags: ["white label", "маркетплейсы"]
+hero: /images/contract-signing.jpg
 ---
 ### Что такое White Label в узбекской практике
 

@@ -6,6 +6,7 @@ category: "agro"
 readingMinutes: 7
 tags: ["machinery", "logistics", "build-up"]
 event: agropro-expo
+hero: /images/machinery-outdoor.jpg
 ---
 
 ### Hall or outdoors: the decision is not about size

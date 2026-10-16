@@ -4,6 +4,7 @@ description: "Новый сайт центра работает на русск�
 date: 2026-08-25
 category: "company"
 tags: ["компания", "сайт"]
+hero: /images/venue-exterior.jpg
 ---
 ### Что изменилось
 

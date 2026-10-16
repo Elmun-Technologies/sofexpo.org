@@ -5,6 +5,7 @@ date: 2026-09-02
 category: "agriculture"
 tags: ["AGROPRO", "2027"]
 event: agropro-expo
+hero: /images/agropro-hall-stands.jpg
 ---
 ### Dates and season logic
 

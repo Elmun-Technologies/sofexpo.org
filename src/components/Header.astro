@@ -278,16 +278,22 @@ const featured: Record<string, { img: string; alt: string; kicker: string; date?
       if (accountPicker?.open) { accountPicker.open = false; accountPicker.querySelector('summary').focus(); }
     });
     /* hide-on-scroll at every width: down = away, up = back, never while the phone menu is
-       open, a mega panel or picker is in use, or near the top of the page */
+       open, a mega panel or picker is in use, or near the top of the page. An in-page jump
+       (a table of contents link) keeps the header: scroll-padding already sets the target just
+       below it, so hiding it would leave the heading under an empty band. */
     {
       let lastY = scrollY;
       let ticking = false;
+      let holdUntil = 0;
+      const hold = () => { holdUntil = performance.now() + 1500; document.documentElement.classList.remove('hdr-away'); };
+      document.addEventListener('click', (e) => { if (e.target.closest?.('a[href^="#"]:not([href="#"])')) hold(); });
+      addEventListener('hashchange', hold);
       const update = () => {
         ticking = false;
         const y = scrollY;
         const root = document.documentElement;
         const busy = document.body.classList.contains('nav-open') || !!document.querySelector('.hdr:hover, .hdr:focus-within, .nav__item[data-keyboard-open]');
-        if (busy || y < 160) root.classList.remove('hdr-away');
+        if (busy || y < 160 || performance.now() < holdUntil) root.classList.remove('hdr-away');
         else if (y > lastY + 6) root.classList.add('hdr-away');
         else if (y < lastY - 6) root.classList.remove('hdr-away');
         lastY = y;

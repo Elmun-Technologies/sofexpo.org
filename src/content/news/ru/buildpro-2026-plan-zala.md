@@ -5,6 +5,7 @@ date: 2026-09-09
 category: "construction"
 tags: ["BUILDPRO", "2026"]
 event: buildpro-expo
+hero: /images/floor-plan.jpg
 ---
 ### Структура экспозиции 2026
 

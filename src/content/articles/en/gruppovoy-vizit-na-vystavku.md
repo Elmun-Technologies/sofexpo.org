@@ -5,6 +5,7 @@ date: 2026-09-12
 category: "guide"
 readingMinutes: 6
 tags: ["delegation", "visitors", "route"]
+hero: /images/delegation-visit.jpg
 ---
 
 ### A delegation travels for a decision, not for impressions

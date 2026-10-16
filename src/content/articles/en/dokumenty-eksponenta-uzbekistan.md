@@ -5,6 +5,7 @@ date: 2026-07-28
 category: "guide"
 readingMinutes: 7
 tags: ["documents", "import"]
+hero: /images/documents.jpg
 ---
 ### What you can show and what you can bring
 

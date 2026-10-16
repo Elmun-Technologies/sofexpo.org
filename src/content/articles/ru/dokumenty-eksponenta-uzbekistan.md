@@ -5,6 +5,7 @@ date: 2026-07-28
 category: "guide"
 readingMinutes: 7
 tags: ["документы", "импорт"]
+hero: /images/documents.jpg
 ---
 ### Что можно показывать, а что ввозить
 

@@ -6,6 +6,7 @@ category: "agro"
 readingMinutes: 7
 tags: ["техника", "логистика", "монтаж"]
 event: agropro-expo
+hero: /images/machinery-outdoor.jpg
 ---
 
 ### Зал или улица: решение принимается не размером

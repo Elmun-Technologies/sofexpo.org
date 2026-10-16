@@ -5,6 +5,7 @@ date: 2026-09-14
 category: "automotive"
 tags: ["PROMOTORS", "results"]
 event: promotors-show-samarkand
+hero: /images/promotors-parade-samarkand.jpg
 ---
 ### Two days, six disciplines, a UZS 20 million prize fund
 

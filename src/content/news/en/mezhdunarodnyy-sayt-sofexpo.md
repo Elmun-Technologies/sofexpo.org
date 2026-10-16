@@ -4,6 +4,7 @@ description: "The centre publishes a new site in Russian and English with exhibi
 date: 2026-08-25
 category: "company"
 tags: ["company", "website"]
+hero: /images/venue-exterior.jpg
 ---
 ### What changed
 

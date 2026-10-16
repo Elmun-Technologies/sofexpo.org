@@ -5,6 +5,7 @@ date: 2026-06-10
 category: "guide"
 readingMinutes: 6
 tags: ["ROI", "analytics"]
+hero: /images/hall-busy.jpg
 ---
 ### Why trade shows still work
 

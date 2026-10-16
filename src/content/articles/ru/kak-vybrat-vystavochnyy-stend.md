@@ -5,6 +5,7 @@ date: 2026-08-12
 category: "guide"
 readingMinutes: 7
 tags: ["стенд", "бюджет"]
+hero: /images/stand-two-level.jpg
 ---
 ### Цена участия — это не цена метра
 

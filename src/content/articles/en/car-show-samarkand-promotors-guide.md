@@ -73,7 +73,7 @@ For exhibitors, plan load-in and load-out times, the delivery of cars and traile
 - Non-motorized racing needs a separate entry and a helmet.
 - Children under 14 come with an adult.
 
-Arrive early for the drift heats, because the best viewing spots around the track fill first, and plan time for the hall, where the car exhibition and the market run through the day.
+Arrive early for the drift heats, because the best viewing spots around the track fill first, and plan time for the hall, where the car exhibition and the brand expo run through the day.
 
 ## How to prepare for the next edition
 

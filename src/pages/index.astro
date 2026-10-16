@@ -2,18 +2,18 @@
 /**
  * Root document = 301 to the EN home (docs/08 §7, Q1 — option A).
  *
- * The real redirect is a host-level rule: scripts/build-hosts.mjs writes
- * `/ /en/ 301` into every host's `_redirects` (Cloudflare Pages / Netlify),
- * and the CDN config (redirects.vanity.md) mirrors it for alias mode.
- * This HTML page is the fallback for hosts that do not read `_redirects`:
- * meta-refresh + two explicit links, so RU users are never stranded.
+ * The real redirect is a host-level rule: vercel.json on Vercel, and on Cloudflare Pages /
+ * Netlify scripts/build-hosts.mjs writes `/ /en/ 301` into every host's `_redirects`.
+ * This page is only the fallback for when that rule is not applied (a host or cache that serves
+ * the file instead). It must never read as a blank white screen with a link list: the redirect
+ * runs from <head> before anything paints, the page wears the brand colour with the SOF EXPO
+ * mark, and the language links only fade in if the visitor is somehow still here after 2 s.
  *
- * hreflang x-default now points at /en/ (src/i18n/config.ts).
+ * hreflang x-default points at /en/ (src/i18n/config.ts).
  */
 import { SITE } from '@/lib/seo';
 
 const en = `${SITE}/en/`;
-const ru = `${SITE}/ru/`;
 ---
 
 <!doctype html>
@@ -21,23 +21,33 @@ const ru = `${SITE}/ru/`;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="robots" content="noindex" />
+    <script is:inline>location.replace('/en/' + location.search + location.hash);</script>
     <meta http-equiv="refresh" content="0; url=/en/" />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#00475a" />
     <link rel="canonical" href={en} />
-    <title>SOF EXPO SAMARKAND — redirecting</title>
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>SOF EXPO Samarkand</title>
+    <style is:inline>
+      html, body { margin: 0; height: 100%; background: #00475a; color: #fff; }
+      body { display: grid; place-items: center; font: 16px/1.5 system-ui, -apple-system, Arial, sans-serif; }
+      .mark { width: 72px; height: 72px; border-radius: 16px; background: #fff url(/favicon.svg) center / 56px no-repeat; }
+      .langs { margin-top: 28px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 18px; opacity: 0; animation: show .3s ease 2s forwards; }
+      .langs a { color: #fff; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,.4); }
+      @keyframes show { to { opacity: 1; } }
+    </style>
   </head>
   <body>
-    <main style="font-family: system-ui, Arial, Helvetica, sans-serif; max-width: 40rem; margin: 15vh auto 0; padding: 0 1.25rem; line-height: 1.6">
-      <p>
-        <a href="/en/">EN home →</a>
-      </p>
-      <p lang="ru">
-        <a href="/ru/">→ Главная на русском</a>
-      </p>
-      <p lang="zh-CN"><a href="/zh/">中文首页 →</a></p>
-      <p lang="tr"><a href="/tr/">Türkçe ana sayfa →</a></p>
-      <p lang="uz"><a href="/uz/">O‘zbekcha bosh sahifa →</a></p>
-      <noscript>JavaScript is off — use the links above.</noscript>
+    <main style="text-align: center">
+      <div class="mark" role="img" aria-label="SOF EXPO Samarkand" style="margin: 0 auto"></div>
+      <nav class="langs" aria-label="Language">
+        <a href="/en/">English</a>
+        <a href="/ru/" lang="ru">Русский</a>
+        <a href="/uz/" lang="uz">O‘zbekcha</a>
+        <a href="/zh/" lang="zh-CN">中文</a>
+        <a href="/tr/" lang="tr">Türkçe</a>
+      </nav>
     </main>
   </body>
 </html>

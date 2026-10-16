@@ -112,7 +112,7 @@ for (const r of [...rows].sort((a, b) => a.score - b.score)) {
   console.log(pad(r.score, 6) + pad(r.priority, 2) + [r.title, r.h1, r.desc, r.first, r.h2, r.body].map(mark).join(' ').replace(/^(\S)/, '$1') + '  ' + pad(r.path, 58) + r.query + (r.secondary.some((s) => !s.found) ? `  [missing: ${r.secondary.filter((s) => !s.found).map((s) => s.q).join('; ')}]` : ''));
 }
 const avg = (xs) => Math.round(xs.reduce((n, r) => n + r.score, 0) / (xs.length || 1));
-console.log(`\naverage score: all ${avg(rows)} · A ${avg(rows.filter((r) => r.priority === 'A'))} · ru ${avg(rows.filter((r) => r.locale === 'ru'))} · en ${avg(rows.filter((r) => r.locale === 'en'))} · uz ${avg(rows.filter((r) => r.locale === 'uz'))}`);
+console.log(`\naverage score: all ${avg(rows)} · A ${avg(rows.filter((r) => r.priority === 'A'))} · ru ${avg(rows.filter((r) => r.locale === 'ru'))} · en ${avg(rows.filter((r) => r.locale === 'en'))} · uz ${avg(rows.filter((r) => r.locale === 'uz'))} · zh ${avg(rows.filter((r) => r.locale === 'zh'))} · tr ${avg(rows.filter((r) => r.locale === 'tr'))}`);
 console.log(`primary query in <title>: ${rows.filter((r) => r.title).length}/${rows.length} · in <h1>: ${rows.filter((r) => r.h1).length}/${rows.length}`);
 if (cannibal.length) {
   console.log(`\npossible cannibalisation (${cannibal.length}):`);

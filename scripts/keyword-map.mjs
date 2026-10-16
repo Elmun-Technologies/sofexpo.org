@@ -183,6 +183,132 @@ export const keywordMap = {
   },
 };
 
+/* Global editions (docs/23): zh and tr are built from the EN page through the catalogs, so their
+   targets check the translated title / h1 / description. A Chinese or Turkish buyer searches by
+   country first («乌兹别克斯坦…展», «Özbekistan … fuarı»), then by city. */
+const global = {
+  '/': {
+    zh: [k('撒马尔罕会展中心', ['撒马尔罕', '会展中心|展览中心'], 'A'), k('乌兹别克斯坦展会', ['乌兹别克斯坦', '展会|博览会'], 'A')],
+    tr: [k('Semerkant fuar merkezi', ['semerkant', 'fuar merkez'], 'A'), k("Özbekistan fuarları", ['özbekistan', 'fuar'], 'A')],
+  },
+  '/events/': {
+    zh: [k('撒马尔罕展会 2026', ['撒马尔罕', '展会', '2026'], 'B'), k('展会日历', ['展会日历'])],
+    tr: [k("Semerkant'ta fuarlar 2026", ['semerkant', 'fuar', '2026'], 'B'), k('fuar takvimi', ['fuar takvim'])],
+  },
+  '/venue/': {
+    zh: [k('撒马尔罕展览场馆', ['撒马尔罕', '展览场馆|展馆'], 'B')],
+    tr: [k("Semerkant fuar mekânı", ['semerkant', 'fuar (mekân|alan|salon)'], 'B')],
+  },
+  '/organizers/': {
+    zh: [k('撒马尔罕展厅租赁', ['撒马尔罕', '展厅', '租赁|租用'], 'B')],
+    tr: [k('Semerkant fuar salonu kiralama', ['semerkant', 'salon', 'kirala'], 'B')],
+  },
+  '/exhibitors/': {
+    zh: [k('乌兹别克斯坦参展', ['乌兹别克斯坦', '参展'], 'B')],
+    tr: [k("Özbekistan'da fuara katılım", ['özbekistan', 'fuar', 'katıl'], 'B')],
+  },
+  '/request-stand/': {
+    zh: [k('预订展位', ['预订', '展位'], 'B')],
+    tr: [k('stand rezervasyonu', ['stan(d|t)', 'rezervasyon|ayırt'], 'B')],
+  },
+  '/events/foodera-expo/': {
+    zh: [k('乌兹别克斯坦食品展', ['食品', '展', '乌兹别克斯坦|撒马尔罕'], 'A'), k('FOODERA EXPO 2026', ['foodera', '2026'])],
+    tr: [k('Özbekistan gıda fuarı', ['gıda|yiyecek', 'fuar', 'özbekistan|semerkant'], 'A'), k('FOODERA EXPO 2026', ['foodera', '2026'])],
+  },
+  '/events/buildpro-expo/': {
+    zh: [k('乌兹别克斯坦建材展', ['建筑|建材', '展', '乌兹别克斯坦|撒马尔罕'], 'A'), k('BUILD PRO EXPO 2026', ['build ?pro', '2026'])],
+    tr: [k('Özbekistan inşaat fuarı', ['inşaat|yapı', 'fuar', 'özbekistan|semerkant'], 'A'), k('BUILD PRO EXPO 2026', ['build ?pro', '2026'])],
+  },
+  '/events/agropro-expo/': {
+    zh: [k('乌兹别克斯坦农业展', ['农业', '展', '乌兹别克斯坦|撒马尔罕'], 'A'), k('AGROPRO EXPO 2027', ['agropro', '2027'])],
+    tr: [k('Özbekistan tarım fuarı', ['tarım', 'fuar', 'özbekistan|semerkant'], 'A'), k('AGROPRO EXPO 2027', ['agropro', '2027'])],
+  },
+  '/events/world-edu-expo/': {
+    zh: [k('乌兹别克斯坦教育展', ['教育|留学', '展', '乌兹别克斯坦|撒马尔罕'], 'A'), k('WORLD EDU EXPO 2027', ['world edu', '2027'])],
+    tr: [k('Özbekistan eğitim fuarı', ['eğitim', 'fuar', 'özbekistan|semerkant'], 'A'), k('WORLD EDU EXPO 2027', ['world edu', '2027'])],
+  },
+  '/events/ecom-retail-expo/': {
+    zh: [k('乌兹别克斯坦电商展', ['电商|电子商务', '乌兹别克斯坦|撒马尔罕'], 'A'), k('ECOM & RETAIL EXPO 2027', ['ecom', '2027'])],
+    tr: [k('Özbekistan e-ticaret fuarı', ['e-ticaret', 'fuar|forum', 'özbekistan|semerkant'], 'A'), k('ECOM & RETAIL EXPO 2027', ['ecom', '2027'])],
+  },
+};
+for (const [path, locales] of Object.entries(global)) Object.assign((keywordMap[path] ??= {}), locales);
+
+/* Insight long-reads (docs/23): one informational query per article, in all five languages. */
+const insights = {
+  'uzbekistan-market-entry-trade-shows': {
+    ru: [k('выход на рынок Узбекистана', ['выход', 'рын', 'узбекистан'], 'C')],
+    en: [k('Uzbekistan market entry', ['uzbekistan', 'market entry'], 'C')],
+    uz: [k("O'zbekiston bozoriga kirish", ["o'zbekiston", 'bozor', 'kirish'], 'C')],
+    zh: [k('进入乌兹别克斯坦市场', ['进入', '乌兹别克斯坦', '市场'], 'C')],
+    tr: [k('Özbekistan pazarına giriş', ['özbekistan', 'pazar', 'giriş'], 'C')],
+  },
+  'exhibiting-in-uzbekistan-foreign-company': {
+    ru: [k('участие в выставке в Узбекистане', ['участи', 'выставк', 'узбекистан'], 'C')],
+    en: [k('exhibiting in Uzbekistan', ['exhibiting', 'uzbekistan'], 'C')],
+    uz: [k("O'zbekistonda ko'rgazmada ishtirok", ["o'zbekiston", "ko'rgazma", 'ishtirok'], 'C')],
+    zh: [k('在乌兹别克斯坦参展', ['乌兹别克斯坦', '参展'], 'C')],
+    tr: [k("Özbekistan'da fuara katılım", ['özbekistan', 'fuar', 'katıl'], 'C')],
+  },
+  'food-export-to-uzbekistan-halal-labelling': {
+    ru: [k('экспорт продуктов питания в Узбекистан', ['экспорт', 'продукт', 'узбекистан'], 'C'), k('халяль сертификация', ['халяль'])],
+    en: [k('food export to Uzbekistan', ['food', 'export', 'uzbekistan'], 'C'), k('halal certification Uzbekistan', ['halal'])],
+    uz: [k("O'zbekistonga oziq-ovqat eksporti", ['oziq-ovqat', 'eksport', "o'zbekiston"], 'C')],
+    zh: [k('向乌兹别克斯坦出口食品', ['出口', '食品', '乌兹别克斯坦'], 'C')],
+    tr: [k("Özbekistan'a gıda ihracatı", ['gıda', 'ihracat', 'özbekistan'], 'C')],
+  },
+  'selling-on-uzbekistan-marketplaces': {
+    ru: [k('продажи на маркетплейсах Узбекистана', ['продаж', 'маркетплейс', 'узбекистан'], 'C'), k('Uzum Market для продавцов', ['uzum'])],
+    en: [k('selling on marketplaces in Uzbekistan', ['selling', 'marketplace', 'uzbekistan'], 'C'), k('Uzum Market sellers', ['uzum'])],
+    uz: [k("O'zbekiston marketpleyslarida sotish", ['marketpleys', 'sot', "o'zbekiston"], 'C')],
+    zh: [k('在乌兹别克斯坦电商平台销售', ['电商|平台', '销售', '乌兹别克斯坦'], 'C')],
+    tr: [k('Özbekistan pazaryerlerinde satış', ['pazaryer', 'satış', 'özbekistan'], 'C')],
+  },
+  'agriculture-in-uzbekistan-greenhouses-irrigation': {
+    ru: [k('сельское хозяйство Узбекистана', ['сельск', 'хозяйств', 'узбекистан'], 'C'), k('капельное орошение', ['капельн'])],
+    en: [k('agriculture in Uzbekistan', ['agriculture', 'uzbekistan'], 'C'), k('drip irrigation Uzbekistan', ['drip'])],
+    uz: [k("O'zbekiston qishloq xo'jaligi", ["qishloq xo'jalig", "o'zbekiston"], 'C')],
+    zh: [k('乌兹别克斯坦农业', ['乌兹别克斯坦', '农业'], 'C')],
+    tr: [k('Özbekistan tarımı', ['özbekistan', 'tarım'], 'C')],
+  },
+  'construction-market-uzbekistan-building-materials': {
+    ru: [k('строительный рынок Узбекистана', ['строительн', 'рын', 'узбекистан'], 'C'), k('стройматериалы', ['стройматериал|строительн\\S* материал'])],
+    en: [k('construction market in Uzbekistan', ['construction', 'market', 'uzbekistan'], 'C'), k('building materials', ['building material'])],
+    uz: [k("O'zbekiston qurilish bozori", ['qurilish', 'bozor', "o'zbekiston"], 'C')],
+    zh: [k('乌兹别克斯坦建筑市场', ['乌兹别克斯坦', '建筑|建材', '市场'], 'C')],
+    tr: [k('Özbekistan inşaat pazarı', ['özbekistan', 'inşaat', 'pazar'], 'C')],
+  },
+  'study-abroad-from-uzbekistan-guide': {
+    ru: [k('обучение за рубежом из Узбекистана', ['обучени', 'рубеж', 'узбекистан'], 'C')],
+    en: [k('study abroad from Uzbekistan', ['study abroad', 'uzbekistan'], 'C')],
+    uz: [k("chet elda o'qish", ['chet el', "o'qish|ta'lim"], 'C')],
+    zh: [k('乌兹别克斯坦出国留学', ['留学', '乌兹别克斯坦'], 'C')],
+    tr: [k("Özbekistan'dan yurt dışında eğitim", ['yurt dışı', 'eğitim', 'özbekistan'], 'C')],
+  },
+  'car-show-samarkand-promotors-guide': {
+    ru: [k('автошоу в Самарканде', ['автошоу', 'самарканд'], 'C')],
+    en: [k('car show in Samarkand', ['car show', 'samarkand'], 'C')],
+    uz: [k('Samarqandda avtoshou', ['avtoshou|avto shou', 'samarqand'], 'C')],
+    zh: [k('撒马尔罕车展', ['撒马尔罕', '车展|汽车'], 'C')],
+    tr: [k('Semerkant otomobil şovu', ['semerkant', 'otomobil|araba'], 'C')],
+  },
+  'business-trip-to-samarkand-guide': {
+    ru: [k('командировка в Самарканд', ['командировк', 'самарканд'], 'C'), k('как добраться до Самарканда', ['добрат'])],
+    en: [k('business trip to Samarkand', ['business trip', 'samarkand'], 'C'), k('how to get to Samarkand', ['get to|getting'])],
+    uz: [k('Samarqandga xizmat safari', ['samarqand', 'safar'], 'C')],
+    zh: [k('撒马尔罕商务出行', ['撒马尔罕', '商务'], 'C')],
+    tr: [k('Semerkant iş seyahati', ['semerkant', 'iş seyahat'], 'C')],
+  },
+  'how-to-organize-an-exhibition-in-uzbekistan': {
+    ru: [k('организовать выставку в Узбекистане', ['организ', 'выставк', 'узбекистан'], 'C')],
+    en: [k('organize an exhibition in Uzbekistan', ['organi[sz]e', 'exhibition', 'uzbekistan'], 'C')],
+    uz: [k("O'zbekistonda ko'rgazma tashkil qilish", ["ko'rgazma", 'tashkil', "o'zbekiston"], 'C')],
+    zh: [k('在乌兹别克斯坦举办展览', ['举办', '展', '乌兹别克斯坦'], 'C')],
+    tr: [k("Özbekistan'da fuar düzenlemek", ['özbekistan', 'fuar', 'düzenle'], 'C')],
+  },
+};
+for (const [slug, locales] of Object.entries(insights)) keywordMap[`/articles/${slug}/`] = locales;
+
 /* Cluster sub-pages: the show name plus the page's job. */
 const showWord = { 'foodera-expo': 'foodera', 'buildpro-expo': 'build ?pro', 'agropro-expo': 'agropro', 'world-edu-expo': 'world edu', 'ecom-retail-expo': 'ecom' };
 for (const [slug, brand] of Object.entries(showWord)) {

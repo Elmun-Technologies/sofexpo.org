@@ -49,6 +49,12 @@ export function localizedURL(value, locale) {
   // Only owned locale-prefixed URLs; external assets, downloads and query values stay intact.
   return value.replace(/(^|https?:\/\/(?:[a-z0-9-]+\.)?sof-expo\.com)\/en(?=\/|$|[?#])/g, `$1/${locale}`);
 }
+/* the post kicker "Insight · 12 October 2026" is dated, so every new post would need its own
+   catalog entry (and a Telegram-synced post would break the strict zh/tr build) */
+const postKickers = {
+  Insight: { zh: '深度分析', tr: 'Analiz', uz: 'Tahlil' },
+  'Press release': { zh: '新闻稿', tr: 'Basın açıklaması', uz: 'Press-reliz' },
+};
 function dynamicText(text, locale, translate) {
   if (locale === 'uz') return dynamicUz(text, translate);
   const home = /^(.*?) — Home$/.exec(text);
@@ -56,8 +62,9 @@ function dynamicText(text, locale, translate) {
   const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   const monthIndex = word => monthNames.findIndex(m => m.toLowerCase().startsWith(word.toLowerCase()));
   const date = /^(?:(.*?) [·—] )?(\d{1,2})(?:[–-](\d{1,2}))? ([A-Za-z]+) (\d{4})$/.exec(text);
-  if (date && monthIndex(date[4]) >= 0 && (!date[1] || protectedText.test(date[1]))) {
-    const [, prefix, start, end, month, year] = date;
+  if (date && monthIndex(date[4]) >= 0 && (!date[1] || protectedText.test(date[1]) || postKickers[date[1]])) {
+    const [, rawPrefix, start, end, month, year] = date;
+    const prefix = postKickers[rawPrefix]?.[locale] ?? rawPrefix;
     const m = monthIndex(month);
     const result = locale === 'zh'
       ? `${year}年${m+1}月${+start}${end ? `日至${+end}` : ''}日`
@@ -79,6 +86,9 @@ function dynamicText(text, locale, translate) {
     const m = monthIndex(text);
     return locale === 'zh' ? `${m+1}月` : new Intl.DateTimeFormat('tr-TR',{month:'short',timeZone:'UTC'}).format(new Date(Date.UTC(2026,m,1))).toLocaleUpperCase('tr-TR');
   }
+  /* the insights index counts its own articles: the number moves with every new piece */
+  const library = /^(\d+) articles · (\d+) min of reading$/.exec(text);
+  if (library) return locale === 'zh' ? `${library[1]}篇文章 · 约${library[2]}分钟阅读` : `${library[1]} yazı · ${library[2]} dakikalık okuma`;
   const sections = /^(\d+) sections?$/.exec(text);
   if (sections) return locale === 'zh' ? `${sections[1]}个展区` : `${sections[1]} bölüm`;
   const countdown = /^(.*?)in (\d+) d$/.exec(text);
@@ -339,9 +349,12 @@ function dynamicUz(text, translate) {
   const mi = w => monthNames.findIndex(m => m.toLowerCase().startsWith(w.toLowerCase()));
   const home = /^(.*?) — Home$/.exec(text);
   if (home && protectedText.test(home[1])) return `${home[1]} — Bosh sahifa`;
+  const library = /^(\d+) articles · (\d+) min of reading$/.exec(text);
+  if (library) return `${library[1]} maqola · ${library[2]} daqiqalik o‘qish`;
   const date = /^(?:(.*?) [·—] )?(\d{1,2})(?:[–-](\d{1,2}))? ([A-Za-z]+) (\d{4})$/.exec(text);
-  if (date && mi(date[4]) >= 0 && (!date[1] || protectedText.test(date[1]))) {
-    const [, prefix, start, end, month, year] = date;
+  if (date && mi(date[4]) >= 0 && (!date[1] || protectedText.test(date[1]) || postKickers[date[1]])) {
+    const [, rawPrefix, start, end, month, year] = date;
+    const prefix = postKickers[rawPrefix]?.uz ?? rawPrefix;
     const r = `${+start}${end ? `–${+end}` : ''} ${uzMonths[mi(month)]} ${year}`;
     return prefix ? `${prefix} · ${r}` : r;
   }

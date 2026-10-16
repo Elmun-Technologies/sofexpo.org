@@ -17,6 +17,22 @@
       "host": "sof-expo.com",
       "event": "promotors-show-samarkand"
     },
+    "/articles/agriculture-in-uzbekistan-greenhouses-irrigation/": {
+      "host": "agropro.sof-expo.com",
+      "event": "agropro-expo"
+    },
+    "/articles/car-show-samarkand-promotors-guide/": {
+      "host": "sof-expo.com",
+      "event": "promotors-show-samarkand"
+    },
+    "/articles/construction-market-uzbekistan-building-materials/": {
+      "host": "buildpro.sof-expo.com",
+      "event": "buildpro-expo"
+    },
+    "/articles/food-export-to-uzbekistan-halal-labelling/": {
+      "host": "foodera.sof-expo.com",
+      "event": "foodera-expo"
+    },
     "/articles/kak-voyti-v-roznichnye-seti-uzbekistana/": {
       "host": "foodera.sof-expo.com",
       "event": "foodera-expo"
@@ -24,6 +40,14 @@
     "/articles/krupnogabaritnaya-tehnika-na-vystavke/": {
       "host": "agropro.sof-expo.com",
       "event": "agropro-expo"
+    },
+    "/articles/selling-on-uzbekistan-marketplaces/": {
+      "host": "ecomretail.sof-expo.com",
+      "event": "ecom-retail-expo"
+    },
+    "/articles/study-abroad-from-uzbekistan-guide/": {
+      "host": "worldedu.sof-expo.com",
+      "event": "world-edu-expo"
     }
   }
 }

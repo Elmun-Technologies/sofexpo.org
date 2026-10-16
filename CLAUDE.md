@@ -111,6 +111,13 @@ in `scripts/site-tags.mjs` (shared by backend and build); the backend materializ
 `src/data/site-tags.json` and pushes it through the shared `GitPublisher`. Do not hand-edit
 that JSON in production; `PUBLIC_*` env vars are only a fallback.
 
+## Keywords & articles (docs/16, docs/23)
+
+Per-page target queries for all 5 locales live in `scripts/keyword-map.mjs` (gate: A-priority < 70
+fails `npm run check`). New long-reads: ru + en markdown, then add every new EN text node to the
+zh/tr/uz catalogs (`I18N_EXTRACT=1 npx astro build && npm run i18n:missing` lists them) — zh/tr builds fail on a missing
+string. Keep article bodies free of inline bold/links mid-sentence (they split the translation key).
+
 ## Useful commands
 
 - `npm run dev` / `npm run build` / `npm run preview` — site

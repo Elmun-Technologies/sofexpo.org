@@ -189,3 +189,38 @@ test('site tags: before the first save the panel shows the codes already in the 
   assert.equal(data.tags.googleVerification, 'tok_seeded123');
   assert.equal(data.updatedAt, null);
 });
+
+test('git publisher commits on a server with no git identity configured (Fly image)', async (t) => {
+  const { execFileSync } = await import('node:child_process');
+  const { GitPublisher } = await import('../scripts/backend/tgblog/publish.mjs');
+  const directory = mkdtempSync(join(tmpdir(), 'sofexpo-noident-'));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const home = join(directory, 'home');
+  const repo = join(directory, 'repo');
+  mkdirSync(home);
+  mkdirSync(join(repo, 'src/data'), { recursive: true });
+  const saved = {};
+  const isolated = { HOME: home, GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_GLOBAL: join(home, 'none') };
+  for (const key of ['HOME', 'GIT_CONFIG_NOSYSTEM', 'GIT_CONFIG_GLOBAL', 'GIT_AUTHOR_NAME', 'GIT_AUTHOR_EMAIL', 'GIT_COMMITTER_NAME', 'GIT_COMMITTER_EMAIL']) {
+    saved[key] = process.env[key];
+    delete process.env[key];
+  }
+  Object.assign(process.env, isolated);
+  t.after(() => {
+    for (const [key, value] of Object.entries(saved)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  });
+  execFileSync('git', ['init', '-q', '-b', 'main', repo], { env: process.env });
+  writeFileSync(join(repo, 'src/data/site-tags.json'), '{"bingVerification": "ABCDEF123456"}\n');
+  const publisher = new GitPublisher({
+    repoDir: repo, debounceMs: 5, pushEnabled: false, paths: ['src/data/site-tags.json'],
+    commitMessage: (title) => `chore(site): ${title} [admin]`, logTag: 'site-tags',
+    logger: { info() {}, error(msg) { throw new Error(`unexpected: ${msg}`); } },
+  });
+  publisher.schedule('site tags: bingVerification');
+  await publisher.flush();
+  const author = execFileSync('git', ['-C', repo, 'log', '-1', '--format=%an <%ae>|%s'], { env: process.env }).toString().trim();
+  assert.equal(author, 'SOF EXPO bot <bot@sof-expo.com>|chore(site): site tags: bingVerification [admin]');
+});

@@ -9,9 +9,12 @@
  * runs from <head> before anything paints, the page wears the brand colour with the SOF EXPO
  * mark, and the language links only fade in if the visitor is somehow still here after 2 s.
  *
+ * Search-engine verification tags live here too: Bing and Yandex check the root URL as such.
+ *
  * hreflang x-default points at /en/ (src/i18n/config.ts).
  */
 import { SITE } from '@/lib/seo';
+import { verificationMeta } from '@/lib/analytics';
 
 const en = `${SITE}/en/`;
 ---
@@ -23,6 +26,8 @@ const en = `${SITE}/en/`;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script is:inline>location.replace('/en/' + location.search + location.hash);</script>
     <meta http-equiv="refresh" content="0; url=/en/" />
+    {/* Bing and Yandex read the verification tag on the root URL itself, not on /en/ (docs/22) */}
+    {verificationMeta.map((v) => <meta name={v.name} content={v.content} />)}
     <meta name="robots" content="noindex" />
     <meta name="theme-color" content="#00475a" />
     <link rel="canonical" href={en} />

@@ -99,7 +99,7 @@ const ru = locale === 'ru';
         © {year} {site.brand[locale]}. {t('footer.rights')} {ru ? site.brand.legal : site.brand.legalEn}.
       </p>
       <p style="margin:0">
-        <a href={P('/legal/privacy/')}>{t('form.privacy')}</a> · <a href={P('/legal/terms/')}>{ru ? 'Пользовательское соглашение' : 'Terms of use'}</a>
+        <a href={P('/legal/privacy/')}>{t('form.privacy')}</a> · <a href={P('/legal/terms/')}>{ru ? 'Пользовательское соглашение' : 'Terms of use'}</a> · <button type="button" class="ftr__consent" data-consent-open>{ru ? 'Настройки cookies' : 'Cookie settings'}</button>
       </p>
       <a href="#top" style="display:inline-flex;gap:.4rem;align-items:center">
         <Icon name="arrow-up" size={14} /> {t('misc.scrollToTop')}

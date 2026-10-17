@@ -54,6 +54,12 @@ const endpoint = (import.meta.env.PUBLIC_ANALYTICS_ENDPOINT ?? '').trim();
     };
 
     const track = (event, data = {}) => {
+      /* no consent yet (EEA/UK/CH visitor, ConsentInit.astro): nothing is stored or sent to
+         the centre's own analytics; Google tags still get the event under Consent Mode */
+      if (window.sofConsent && !window.sofConsent.granted()) {
+        try { window.sofTag?.(event, data); } catch {}
+        return;
+      }
       const payload = {
         event,
         locale,

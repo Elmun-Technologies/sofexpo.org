@@ -1453,3 +1453,17 @@ html.hdr-away main > .evnav { top: 6px; }
 main > .evnav {
   box-shadow: 0 0 0 1px var(--line), 0 8px 22px rgba(11, 28, 34, 0.08);
 }
+
+/* footer "Cookie settings" — a button that opens the cookie choice (CookieBanner.astro),
+   drawn like the legal links beside it */
+.ftr__consent {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.ftr__consent:hover {
+  text-decoration: underline;
+}

@@ -4,6 +4,8 @@
  * Only the real hosts (sof-expo.com and its show subdomains) load them: Vercel previews and
  * local builds must not count as visits. window.sofTag hands the site's own conversion events
  * (Tracking/FormHandler/QuizForm) to every connected tool under the same names.
+ * Consent (ConsentInit.astro): Google tags run under Consent Mode v2; Metrika, Baidu, Meta and
+ * TikTok start only once window.sofConsent is granted.
  */
 import { siteTags, hasTrackers } from '@/lib/analytics';
 import { SITE } from '@/lib/seo';
@@ -36,8 +38,10 @@ const customHead = siteTags.customHead ?? '';
         d.head.appendChild(s);
       };
       w.dataLayer = w.dataLayer || [];
+      /* Google tags always load: Consent Mode v2 (ConsentInit.astro) keeps them cookieless
+         until the visitor accepts. The rest has no consent mode and loads only on consent. */
       if (tags.ga4 || tags.ads) {
-        w.gtag = function () { w.dataLayer.push(arguments); };
+        w.gtag = w.gtag || function () { w.dataLayer.push(arguments); };
         w.gtag('js', new Date());
         if (tags.ga4) w.gtag('config', tags.ga4);
         if (tags.ads) w.gtag('config', tags.ads);
@@ -47,6 +51,7 @@ const customHead = siteTags.customHead ?? '';
         w.dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' });
         load('https://www.googletagmanager.com/gtm.js?id=' + tags.gtm);
       }
+      var thirdParty = function () {
       if (tags.ym) {
         w.ym = w.ym || function () { (w.ym.a = w.ym.a || []).push(arguments); };
         w.ym.l = Date.now();
@@ -98,6 +103,9 @@ const customHead = siteTags.customHead ?? '';
         ttq.load(tags.tiktok);
         ttq.page();
       }
+      };
+      if (w.sofConsent) w.sofConsent.onGrant(thirdParty);
+      else thirdParty();
 
       /* conversion events → every connected tool; page views, scroll and timers are counted
          natively by each tool, so they are not forwarded twice */

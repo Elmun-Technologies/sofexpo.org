@@ -1,0 +1,96 @@
+---
+/**
+ * The cookie choice (docs/22 §5). Shown on its own only to "strict" visitors (EEA/UK/CH time
+ * zones, ConsentInit.astro) who have not decided yet; anyone opens it from the footer's
+ * "Cookie settings". Accept and Reject are equal buttons — refusing is as easy as accepting.
+ * Not a modal: the page stays usable behind it, nothing loads until the choice is made.
+ */
+import type { SourceLocale as Locale } from '@/i18n/config';
+import { localize } from '@/i18n/config';
+
+const { locale } = Astro.props as { locale: Locale };
+const ru = locale === 'ru';
+---
+
+<section class="ckb" data-cookie-banner hidden aria-labelledby="ckb-title" aria-describedby="ckb-text">
+  <p class="ckb__title" id="ckb-title">{ru ? 'Cookies и аналитика' : 'Cookies and analytics'}</p>
+  <p class="ckb__text" id="ckb-text">
+    {ru
+      ? 'Мы хотим считать посещаемость и оценивать рекламу (Google Analytics, Яндекс Метрика, Meta Pixel). Эти сервисы включатся только с вашего согласия.'
+      : 'We would like to measure traffic and our advertising (Google Analytics, Yandex Metrica, Meta Pixel). These services start only with your consent.'}{' '}
+    <a href={localize(locale, '/legal/privacy/')}>{ru ? 'Подробнее' : 'Details'}</a>
+  </p>
+  <div class="ckb__acts">
+    <button type="button" class="btn btn--sm" data-consent="granted">{ru ? 'Принять' : 'Accept'}</button>
+    <button type="button" class="btn btn--sm btn--ghost" data-consent="denied">{ru ? 'Отклонить' : 'Reject'}</button>
+  </div>
+</section>
+
+<script is:inline>
+  (function () {
+    var box = document.querySelector('[data-cookie-banner]');
+    var c = window.sofConsent;
+    if (!box || !c) return;
+    var show = function () { box.hidden = false; };
+    if (c.strict && !c.decided) show();
+    box.addEventListener('click', function (e) {
+      var b = e.target.closest && e.target.closest('[data-consent]');
+      if (!b) return;
+      box.hidden = true;
+      c.set(b.getAttribute('data-consent'));
+    });
+    document.addEventListener('click', function (e) {
+      if (e.target.closest && e.target.closest('[data-consent-open]')) {
+        e.preventDefault();
+        show();
+        var first = box.querySelector('button');
+        if (first) first.focus();
+      }
+    });
+  })();
+</script>
+
+<style>
+  .ckb {
+    position: fixed;
+    z-index: 60;
+    inset: auto auto 16px 16px;
+    width: min(440px, calc(100vw - 32px));
+    padding: 18px 20px;
+    border-radius: var(--r, 16px);
+    background: var(--paper, #fff);
+    color: var(--ink);
+    box-shadow: var(--shadow-lift), 0 0 0 1px var(--line);
+  }
+  .ckb[hidden] {
+    display: none;
+  }
+  .ckb__title {
+    margin: 0 0 0.35rem;
+    font-weight: 650;
+  }
+  .ckb__text {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  .ckb__text a {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .ckb__acts {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 0.9rem;
+  }
+  .ckb__acts .btn {
+    flex: 1 1 0;
+    justify-content: center;
+    min-height: 44px;
+  }
+  @media print {
+    .ckb {
+      display: none;
+    }
+  }
+</style>

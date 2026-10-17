@@ -76,7 +76,7 @@ const posterSpeakers = event.slug === 'ecom-retail-expo'
 
 const ld: Record<string, unknown>[] = [
   organizationJsonLd(),
-  eventJsonLd({ ...event, locale, performers: posterSpeakers }),
+  eventJsonLd({ ...event, locale, performers: posterSpeakers, offersUrl: past ? undefined : abs(L(`/events/${event.slug}/visitors/`)) }),
 ];
 const _kind = page.path.split('/').filter(Boolean)[2] ?? 'overview';
 const _owner = ['exhibitors', 'overview', 'visitors', 'program'].find((k) => ((eventPages[event.slug] as any)?.[k]?.after ?? []).includes('faq'));

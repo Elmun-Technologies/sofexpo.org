@@ -31,12 +31,12 @@ export const eventPages: Record<string, EventPages> = {
             title:
               "FOODERA EXPO 2026 — выставка продуктов питания, Самарканд, Узбекистан",
             description:
-              "Выставка продуктов питания и напитков в Самарканде, 27–29 октября 2026: 12 разделов, дегустации, закупочная биржа с сетями, форум Food Retail. Бронирование стендов.",
+              "Выставка продуктов питания и напитков в Самарканде, 27–29 октября 2026: 15 разделов, 4000+ посетителей, закупщики из 6 стран, дегустации и закупочная биржа. Бронирование стендов.",
           },
           en: {
             title: "FOODERA EXPO 2026 — food exhibition, Samarkand, Uzbekistan",
             description:
-              "Food and beverage exhibition in Samarkand, 27–29 October 2026: 12 sections, tastings, a buying marketplace with retail chains, Food Retail forum. Stand booking open.",
+              "Food and beverage exhibition in Samarkand, 27–29 October 2026: 15 sections, 4,000+ visitors, buyers from 6 countries, tastings and a buying marketplace. Stand booking open.",
           },
         },
         hero: {
@@ -53,7 +53,7 @@ export const eventPages: Record<string, EventPages> = {
             en: "Producers, distributors and suppliers meet retail, wholesale, HoReCa and catering buyers. Tastings, a buying marketplace and the Food Retail forum on one site.",
           },
           bullets: [
-            { ru: "12 тематических разделов", en: "12 sections on show" },
+            { ru: "15 тематических разделов", en: "15 sections on show" },
             {
               ru: "Закупочная биржа с pre-matched встречами",
               en: "Pre-matched buying meetings",

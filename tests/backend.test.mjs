@@ -86,6 +86,19 @@ test('lead normalization validates required contacts and strips tracking queries
   assert.throws(() => normalizeLead({ name: 'Valid Name', phone: '123456', formType: 'exhibitor', company: 'ACME' }), /Majburiy maydon/);
 });
 
+test('ad click ids travel with the UTM set and never become custom fields', () => {
+  const lead = normalizeLead({
+    name: 'Ad Visitor', company: 'ACME', phone: '+998 90 123 45 67', utm_source: 'google', utm_medium: 'cpc',
+    gclid: 'Cj0KCQjw-test_click_id', fbclid: 'IwAR-test', comment: 'from an ad', consent: 'yes',
+  });
+  assert.deepEqual(lead.utm, { utm_source: 'google', utm_medium: 'cpc', gclid: 'Cj0KCQjw-test_click_id', fbclid: 'IwAR-test' });
+  assert.equal(lead.payload.gclid, undefined);
+  assert.equal(lead.payload.fbclid, undefined);
+  const message = formatLead({ ...lead, ...lead.payload });
+  assert.match(message, /utm_source=google, utm_medium=cpc, gclid, fbclid/);
+  assert.doesNotMatch(message, /Cj0KCQjw/);
+});
+
 test('legacy lead formatter and summary stay backward-compatible', () => {
   const message = formatLead({
     quiz: 'stand', name: 'Aziz Karimov', company: 'ACME', phone: '+998 90 123 45 67',

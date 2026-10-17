@@ -378,6 +378,40 @@ const heroKicker =
       min-height: 640px;
     }
   }
+  /* phone: ad traffic lands here, so the booking action must sit on the first screen — a
+     smaller logo, tighter rhythm, and the lead paragraph moves below the buttons (it was
+     pushing "Book a stand" ~170px below the fold on a 390×664 viewport) */
+  @media (max-width: 600px) {
+    .ehero__main :global(.ehero__logo) {
+      margin-bottom: 1rem;
+    }
+    .ehero__main :global(.ehero__logo img) {
+      height: 60px;
+    }
+    .ehero :global(h1 > .kicker) {
+      margin-bottom: 0.6rem;
+    }
+    .ehero__date {
+      margin-top: 0.9rem;
+    }
+    .ehero__facts {
+      margin: 0.9rem 0 1.1rem;
+    }
+    .ehero__main .btn-row {
+      order: 1;
+      margin-top: 0;
+    }
+    .ehero__main .hero__lead {
+      order: 2;
+      margin-top: 1.2rem;
+    }
+    .ehero__note {
+      order: 3;
+    }
+    .ehero__main > :global(:last-child:not(.btn-row):not(.hero__lead):not(.ehero__note)) {
+      order: 4;
+    }
+  }
 
   /* ---------- light hero: logos drawn on white (FOODERA, AGROPRO, WORLD EDU) ----------
      the panel is white tinted with the show's mark colour, text in the show's own dark ink,
@@ -440,6 +474,11 @@ const heroKicker =
   .ehero--light .hero__lead,
   .ehero--light .ehero__facts li {
     color: var(--ink);
+  }
+  /* the "sales open" chip sits on its own filled ground: the light hero's ink rule above
+     turned its label dark-on-blue (2.9:1) */
+  .ehero--light .ehero__facts li.chip--live {
+    color: #fff;
   }
   .ehero--light .ehero__facts :global(svg) {
     color: var(--gold);

@@ -38,7 +38,10 @@ const LEAD_TEXT_FIELDS = {
   purpose: 'Цель', industry: 'Отрасль', package: 'Пакет', eventType: 'Формат', attendees: 'Гостей',
   count: 'Человек', visitorType: 'Кто', date: 'Дата', time: 'Время', channel: 'Канал', messenger: 'Мессенджер', comment: 'Комментарий',
 };
-const LEAD_SKIP_FIELDS = new Set(['ts', 'locale', 'url', 'referrer', 'source', 'src', '_error', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'page', 'landing', 'sessionId']);
+/* UTM set plus ad click ids (Google gclid/gbraid/wbraid, Meta fbclid, Yandex yclid, TikTok
+   ttclid): stored together in utm_json so a lead can be matched back to its ad click */
+const ATTRIBUTION_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'gbraid', 'wbraid', 'fbclid', 'yclid', 'ttclid'];
+const LEAD_SKIP_FIELDS = new Set(['ts', 'locale', 'url', 'referrer', 'source', 'src', '_error', ...ATTRIBUTION_KEYS, 'page', 'landing', 'sessionId']);
 const REQUIRED_BY_FORM = {
   generic: ['company', 'consent'], press: ['company', 'consent'],
   exhibitor: ['company', 'industry', 'area', 'consent'],
@@ -99,9 +102,8 @@ function safePath(value, { includeOrigin = false } = {}) {
 }
 
 function cleanUtm(input) {
-  const keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
   const result = {};
-  for (const key of keys) {
+  for (const key of ATTRIBUTION_KEYS) {
     const value = cleanText(input?.[key], 160);
     if (value) result[key] = value;
   }
@@ -190,9 +192,12 @@ export function formatLead(lead = {}) {
   const channel = get('channel');
   if (channel) lines.push(`📡 Канал: ${cut(({ call: 'Позвонить', telegram: 'Telegram', whatsapp: 'WhatsApp', email: 'Email' })[channel] || channel)}`);
   if (lead.source || lead.src) lines.push(`📍 Источник: ${cut(lead.source || lead.src, 120)}`);
+  /* a click id is a 100-char token: the manager only needs to know which network it came from;
+     the full value stays in the CRM for offline-conversion upload */
+  const tag = ([key, value]) => key.startsWith('utm_') ? `${key}=${cut(value, 80)}` : key;
   const utm = lead.utm && typeof lead.utm === 'object'
-    ? Object.entries(lead.utm).map(([key, value]) => `${key}=${cut(value, 80)}`).join(', ')
-    : ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].filter((key) => lead[key]).map((key) => `${key}=${cut(lead[key], 80)}`).join(', ');
+    ? Object.entries(lead.utm).map(tag).join(', ')
+    : ATTRIBUTION_KEYS.filter((key) => lead[key]).map((key) => tag([key, lead[key]])).join(', ');
   if (utm) lines.push(`🏷 UTM: ${utm}`);
   if (lead.landing) lines.push(`🚪 Лендинг: ${cut(lead.landing, 200)}`);
   const comment = get('comment');

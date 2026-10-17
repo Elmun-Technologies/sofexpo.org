@@ -231,7 +231,6 @@ export const events: ExpoEvent[] = [
     speakers: [],
     materials: [
       { title: { ru: 'Презентация FOODERA EXPO 2026', en: 'FOODERA EXPO 2026 presentation' }, type: 'pdf', href: '/files/foodera-2026-presentation.pdf' },
-      { title: { ru: 'Каталог участников', en: 'Exhibitor catalogue' }, type: 'catalog', href: '/files/foodera-catalogue.pdf' },
     ],
     faq: [
       { q: { ru: 'Подходит ли выставка региональным брендам?', en: 'Is it suitable for regional brands?' }, a: { ru: 'Да. Значительная часть аудитории — оптовики и сети, которые ищут локальных поставщиков и private label производителей.', en: 'Yes. A large share of the audience are wholesalers and chains looking for local suppliers and private label producers.' } },
@@ -333,13 +332,13 @@ export const events: ExpoEvent[] = [
         ru: 'Знак победителя на стенде, разворот в каталоге, публикация в медиа-подборке выставки и приоритет при бронировании площади на FOODERA 2027.',
         en: 'A winner\'s mark on the stand, a spread in the catalogue, a feature in the show\'s media round-up and priority when booking space for FOODERA 2027.',
       },
-      note: { ru: 'Участие в конкурсе бесплатное для экспонентов; состав жюри объявляется до 5 октября.', en: 'Entry is free for exhibitors; the jury line-up is announced before 5 October.' },
+      note: { ru: 'Участие в конкурсе бесплатное для экспонентов.', en: 'Entry is free for exhibitors.' },
     },
     highlight: {
       label: { ru: 'Бронирование открыто', en: 'Booking open' },
       text: {
-        ru: 'Осталось 38 премиум-стендов, 12 тематических разделов. Место фиксируется договором.',
-        en: '38 premium stands left across 12 thematic sections. Location is fixed by contract.',
+        ru: 'Приём заявок открыт в 15 тематических разделах. Место фиксируется договором.',
+        en: 'Applications are open across 15 thematic sections. Location is fixed by contract.',
       },
     },
     searchTerms: [

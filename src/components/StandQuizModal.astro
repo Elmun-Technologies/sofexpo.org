@@ -36,10 +36,14 @@ const telHref = `tel:${site.contacts.phoneMain.replace(/\s/g, '')}`;
     var dialog = document.querySelector('[data-quiz-modal]');
     if (!dialog || dialog.dataset.modalReady) return;
     dialog.dataset.modalReady = '1';
-    /* Lead attribution: remember the landing page, referrer and UTM set once per
-       session, so a lead submitted from any page still says where it came from. */
+    /* Lead attribution: remember the landing page, referrer, UTM set and ad click ids
+       (gclid/fbclid/yclid…), so a lead submitted from any page — the ad lands on the show
+       page, the form lives on /request-stand/ — still says which campaign produced it.
+       A new ad click mid-session replaces the old one; a return visit within 30 days
+       without tags keeps the last campaign (localStorage, no personal data). */
     var CTX_KEY = 'sofexpo.leadctx';
-    var utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+    var LAST_KEY = 'sofexpo.lastad';
+    var utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'gbraid', 'wbraid', 'fbclid', 'yclid', 'ttclid'];
     var readCtx = function () {
       try {
         return JSON.parse(sessionStorage.getItem(CTX_KEY) || '{}');
@@ -53,14 +57,25 @@ const telHref = `tel:${site.contacts.phoneMain.replace(/\s/g, '')}`;
       } catch (err) {}
     };
     try {
-      if (!sessionStorage.getItem(CTX_KEY)) {
-        var qs = new URLSearchParams(location.search);
-        var utm = {};
-        utmKeys.forEach(function (k) {
-          var v = qs.get(k);
-          if (v) utm[k] = v;
-        });
-        writeCtx({ landing: location.pathname + location.search, ref: document.referrer || '', utm: utm });
+      var qs = new URLSearchParams(location.search);
+      var utm = {};
+      utmKeys.forEach(function (k) {
+        var v = qs.get(k);
+        if (v) utm[k] = v.slice(0, 160);
+      });
+      var tagged = Object.keys(utm).length > 0;
+      if (tagged) {
+        try { localStorage.setItem(LAST_KEY, JSON.stringify({ at: Date.now(), utm: utm })); } catch (err) {}
+      }
+      if (!sessionStorage.getItem(CTX_KEY) || tagged) {
+        if (!tagged) {
+          try {
+            var last = JSON.parse(localStorage.getItem(LAST_KEY) || 'null');
+            if (last && last.utm && Date.now() - last.at < 30 * 864e5) utm = last.utm;
+          } catch (err) {}
+        }
+        var prev = readCtx();
+        writeCtx({ landing: location.pathname + location.search, ref: document.referrer || '', utm: utm, src: prev.src });
       }
     } catch (err) {}
     var opener = null;

@@ -235,8 +235,8 @@ export const events: ExpoEvent[] = [
       { q: { ru: 'Нужна ли сертификация продукции?', en: 'Do my products need certification?' }, a: { ru: 'Для дегустаций требуется комплект документов на продукцию. Менеджер вышлет чек-лист при подаче заявки.', en: 'Tastings require a product document pack. The account manager sends a checklist with your application.' } },
       { q: { ru: 'Сколько стоит вход для посетителей?', en: 'What does a visitor pass cost?' }, a: { ru: 'Для специалистов отрасли вход бесплатный по предварительной регистрации: электронный билет приходит сразу. Регистрация на кассе тоже бесплатна, но займёт 10–15 минут.', en: 'Entry is free for trade professionals who pre-register: the e-ticket arrives at once. Registering at the desk is free as well, but takes 10–15 minutes.' } },
       { q: { ru: 'Можно ли заранее назначить встречи с закупщиками?', en: 'Can I book meetings with buyers in advance?' }, a: { ru: 'Да, через закупочную биржу: 60 слотов по 15 минут, расписание приходит за неделю до выставки. Участие входит в пакеты «Стандартный» и выше.', en: 'Yes, through the buying marketplace: 60 slots of 15 minutes, with the schedule sent a week before the show. It is included in Standard packages and above.' } },
-      { q: { ru: 'Как попасть в программу для закупщиков?', en: 'How do I join the buyer programme?' }, a: { ru: 'Подайте заявку до 10 октября 2026: профиль проверяем за два рабочих дня. Программа бесплатная, число мест ограничено столами в зоне переговоров.', en: 'Apply by 10 October 2026; we check the profile within two working days. The programme is free, and places are limited by the tables in the negotiation area.' } },
-      { q: { ru: 'Как подать продукт на конкурс «Лучший продукт»?', en: 'How do I enter the Best Product contest?' }, a: { ru: 'Конкурс бесплатный и открыт только для экспонентов. Заявки принимаются до 10 октября 2026, награждение — 27 октября, в первый день выставки.', en: 'The contest is free and open to exhibitors only. Entries close on 10 October 2026; the awards take place on 27 October, the opening day.' } },
+      { q: { ru: 'Как попасть в программу для закупщиков?', en: 'How do I join the buyer programme?' }, a: { ru: 'Заявки принимались до 10 октября 2026. Если вы ещё хотите попасть в программу, напишите менеджеру: проверим, остались ли свободные столы в зоне переговоров. Программа бесплатная.', en: 'Applications closed on 10 October 2026. If you still want to join, message the manager and we will check whether tables are left in the negotiation area. The programme is free.' } },
+      { q: { ru: 'Как подать продукт на конкурс «Лучший продукт»?', en: 'How do I enter the Best Product contest?' }, a: { ru: 'Конкурс бесплатный и открыт только для экспонентов. Приём заявок завершён 10 октября 2026, награждение — 27 октября, в первый день выставки.', en: 'The contest is free and open to exhibitors only. Entries closed on 10 October 2026; the awards take place on 27 October, the opening day.' } },
       { q: { ru: 'Как добраться до площадки?', en: 'How do I get to the venue?' }, a: { ru: 'SOF EXPO Samarkand — в 16 км от аэропорта и в 23 км от вокзала. Парковка у входа бесплатная, трансфер от аэропорта и вокзала бронируется через менеджера.', en: 'SOF EXPO Samarkand is 16 km from the airport and 23 km from the railway station. Parking at the gate is free; transfers from the airport and the station are booked through the manager.' } },
     ],
     socials: { telegram: 'https://t.me/sofexpo', instagram: 'https://www.instagram.com/sofexpo.uz/' },
@@ -248,7 +248,7 @@ export const events: ExpoEvent[] = [
         ru: 'Программа для закупщиков сетей, опта и HoReCa, которые приезжают за конкретными позициями. Мы отбираем участников по профилю закупки, знакомим их со списком экспонентов и собираем расписание встреч до открытия — вы приезжаете не на прогулку по залу, а на переговоры.',
         en: 'A programme for chain, wholesale and HoReCa buyers who come for specific lines. We check the purchasing profile, share the exhibitor list in advance and build a meeting schedule before the doors open — you arrive for negotiations, not for a walk around the hall.',
       },
-      deadline: { label: { ru: 'Заявки до', en: 'Applications until' }, value: { ru: '10 октября 2026', en: '10 October 2026' } },
+      deadline: { label: { ru: 'Приём заявок завершён', en: 'Applications closed' }, value: { ru: '10 октября 2026', en: '10 October 2026' } },
       steps: [
         {
           label: { ru: 'Заявка', en: 'Application' },
@@ -318,7 +318,7 @@ export const events: ExpoEvent[] = [
         { ru: 'Лучший продукт для HoReCa', en: 'Best product for HoReCa' },
       ],
       timeline: [
-        { label: { ru: 'Приём заявок', en: 'Entries open' }, when: { ru: 'до 10 октября 2026', en: 'until 10 October 2026' } },
+        { label: { ru: 'Приём заявок завершён', en: 'Entries closed' }, when: { ru: '10 октября 2026', en: '10 October 2026' } },
         { label: { ru: 'Слепая дегустация жюри', en: 'Blind jury tasting' }, when: { ru: '14–16 октября', en: '14–16 October' } },
         { label: { ru: 'Награждение', en: 'Awards' }, when: { ru: '27 октября, день 1', en: '27 October, day 1' } },
         { label: { ru: 'Публикация результатов', en: 'Results published' }, when: { ru: '23 октября', en: '23 October' } },

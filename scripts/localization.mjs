@@ -10,6 +10,7 @@ import reviewed from '../src/i18n/reviewed.json' with { type: 'json' };
 import zh from '../src/i18n/catalogs/zh.json' with { type: 'json' };
 import tr from '../src/i18n/catalogs/tr.json' with { type: 'json' };
 import uz from '../src/i18n/catalogs/uz.json' with { type: 'json' };
+import { downloadFor } from '../src/lib/downloads.mjs';
 
 export const editions = ['zh', 'tr', 'uz'];
 /** editions that must be 100% translated at build time; the rest publish page-by-page
@@ -46,6 +47,8 @@ export function localizedURL(value, locale) {
     const tourLocale = locale === 'ru' || locale === 'uz' ? locale : 'en';
     value = `${hostedTour[1]}/${tourLocale}/${hostedTour[2]}${hostedTour[3] ?? ''}`;
   }
+  // A download published in this locale's language (downloads.json `variants`) replaces the EN file.
+  if (/\/files\//.test(value)) value = downloadFor(value, locale);
   // Only owned locale-prefixed URLs; external assets, downloads and query values stay intact.
   return value.replace(/(^|https?:\/\/(?:[a-z0-9-]+\.)?sof-expo\.com)\/en(?=\/|$|[?#])/g, `$1/${locale}`);
 }

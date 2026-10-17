@@ -43,9 +43,21 @@
     "status": "placeholder",
     "language": "en"
   },
+  "/files/foodera-2026-presentation-ru.pdf": {
+    "status": "ready",
+    "language": "ru"
+  },
+  "/files/foodera-2026-presentation-uz.pdf": {
+    "status": "ready",
+    "language": "uz"
+  },
   "/files/foodera-2026-presentation.pdf": {
-    "status": "placeholder",
-    "language": "en"
+    "status": "ready",
+    "language": "en",
+    "variants": {
+      "ru": "/files/foodera-2026-presentation-ru.pdf",
+      "uz": "/files/foodera-2026-presentation-uz.pdf"
+    }
   },
   "/files/foodera-catalogue.pdf": {
     "status": "placeholder",

@@ -4,8 +4,9 @@
  * edge never shows. Renders nothing for a show whose logo has not been delivered yet
  * (AGROPRO, WORLD EDU) — callers keep their typeset wordmark in that case.
  *
- * Decorative by default (`alt=""`): every place that shows it also prints the show's name
- * in text next to it. Pass `label` when the logo stands alone (header link).
+ * Decorative by default (aria-hidden): every place that shows it also prints the show's name
+ * in text next to it. Pass `label` when the logo stands alone (header link). The <img> still
+ * carries the show's name as alt — Bing's site scan reports every alt="" as a missing alt.
  */
 import { logoFor } from '@/lib/showLogos';
 
@@ -20,6 +21,9 @@ interface Props {
 const { slug, height = 48, class: cls, label, eager = false } = Astro.props as Props;
 const logo = logoFor(slug);
 const width = logo ? Math.round((logo.width / logo.height) * height) : 0;
+/* the master file's lettering ("e-com & retail EXPO SAMARKAND") is not the brand spelling the
+   localizer protects, so the alt uses the site's own form */
+const alt = logo ? logo.name.replace(/^e-com & retail EXPO SAMARKAND$/i, 'ECOM & RETAIL EXPO') : '';
 ---
 
 {
@@ -33,7 +37,7 @@ const width = logo ? Math.round((logo.width / logo.height) * height) : 0;
     >
       <picture>
         <source srcset={logo.webp} type="image/webp" />
-        <img src={logo.png} alt="" aria-hidden="true" width={width} height={height} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+        <img src={logo.png} alt={alt} aria-hidden="true" width={width} height={height} loading={eager ? 'eager' : 'lazy'} decoding="async" />
       </picture>
     </span>
   )

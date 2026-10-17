@@ -638,6 +638,10 @@ a.chip:hover {
   border-color: var(--moss);
   color: #fff;
 }
+/* the live dot is moss too — invisible on the chip's own moss ground */
+.chip--live .dot {
+  background: currentColor;
+}
 
 .dot {
   width: 7px;

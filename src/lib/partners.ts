@@ -65,6 +65,8 @@ const EVENT: Partner[] = [
   /* FOODERA EXPO 2026 — the organizer is the co-hosts + retail/food bodies */
   { id: 'foodera-organizer', kind: 'org', show: 'event', event: 'foodera-expo', name: { ru: 'RESOF EXPO', en: 'RESOF EXPO' }, note: { ru: 'организатор', en: 'organizer' } },
   { id: 'foodera-retail', kind: 'org', show: 'event', event: 'foodera-expo', name: { ru: 'Союз предприятий пищевой промышленности', en: 'Food Industry Union' }, note: { ru: 'отраслевой союз', en: 'industry union' } },
+  /* named as a supporter on the FOODERA EXPO 2026 presentation */
+  { id: 'foodera-exporters', kind: 'org', show: 'event', event: 'foodera-expo', name: { ru: 'Ассоциация экспортёров Узбекистана', en: 'Uzbekistan Exporters Association' }, note: { ru: 'при поддержке', en: 'with support of' } },
   /* BUILDPRO EXPO 2026 */
   { id: 'buildpro-organizer', kind: 'org', show: 'event', event: 'buildpro-expo', name: { ru: 'RESOF EXPO', en: 'RESOF EXPO' }, note: { ru: 'организатор', en: 'organizer' } },
   { id: 'buildpro-union', kind: 'org', show: 'event', event: 'buildpro-expo', name: { ru: 'Союз строителей Узбекистана', en: 'Builders Union of Uzbekistan' }, note: { ru: 'отраслевой партнёр', en: 'industry partner' } },

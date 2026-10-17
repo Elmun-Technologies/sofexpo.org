@@ -773,8 +773,6 @@ export const companyPages: PageDef[] = [
           kicker: "Бронирование стенда · Самарканд",
           title: "Заявка вместо переписки",
           lead: "Опишите участие в одной форме — вы получите план зала со свободными метрами, расчёт пакета и проект договора. Не нужно гадать, какое событие вам подходит: если сомневаетесь, напишите в комментарии.",
-          image: "/images/event-buildpro.jpg",
-          imageAlt: "Экспозиция строительной выставки",
         },
         {
           type: "quiz",
@@ -836,8 +834,6 @@ export const companyPages: PageDef[] = [
           kicker: "Book a stand · Samarkand",
           title: "One form instead of an email chain",
           lead: "Describe your participation once — you get the hall plan with free space, the package quote and a draft contract. Unsure which show fits? Write it in the comment and we will route you.",
-          image: "/images/event-buildpro.jpg",
-          imageAlt: "Construction exhibition",
         },
         {
           type: "quiz",

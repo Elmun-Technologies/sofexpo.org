@@ -37,12 +37,15 @@ const endpoint = (import.meta.env.PUBLIC_ANALYTICS_ENDPOINT ?? '').trim();
 
     // UTM & referrer
     const params = new URLSearchParams(location.search);
+    let ctxUtm = {};
+    try { ctxUtm = JSON.parse(sessionStorage.getItem('sofexpo.leadctx') || '{}').utm || {}; } catch {}
+    const pick = (k) => params.get(k) || ctxUtm[k] || '';
     const utm = {
-      source: params.get('utm_source') || '',
-      medium: params.get('utm_medium') || '',
-      campaign: params.get('utm_campaign') || '',
-      content: params.get('utm_content') || '',
-      term: params.get('utm_term') || '',
+      source: pick('utm_source'),
+      medium: pick('utm_medium'),
+      campaign: pick('utm_campaign'),
+      content: pick('utm_content'),
+      term: pick('utm_term'),
     };
     const referrer = document.referrer || '';
 

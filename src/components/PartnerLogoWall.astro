@@ -192,7 +192,15 @@ const L = {
     line-height: 1.22;
     letter-spacing: -0.01em;
     color: var(--ink);
-    overflow-wrap: anywhere;
+    /* break inside a word only when it cannot fit on its own line — "anywhere" split
+       «промышленности» into «промышленност / и» on a 390px phone */
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+  @media (max-width: 600px) {
+    .pwl__word {
+      font-size: 0.9rem;
+    }
   }
   .pwl__name {
     font-size: 0.8rem;

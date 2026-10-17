@@ -39,7 +39,8 @@
       count: 'Человек', date: 'Дата', time: 'Время', channel: 'Связь', messenger: 'Мессенджер',
       comment: 'Комментарий', page: 'Страница',
     };
-    const RELAY_SKIP = new Set(['consent', 'ts', 'locale', 'url', 'referrer', 'source', '_error', 'utm_source', 'utm_medium', 'utm_campaign']);
+    const ATTRIBUTION_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'gbraid', 'wbraid', 'fbclid', 'yclid', 'ttclid'];
+    const RELAY_SKIP = new Set(['consent', 'ts', 'locale', 'url', 'referrer', 'source', '_error', 'landing', ...ATTRIBUTION_KEYS]);
     const relayText = (payload) => {
       const lines = ['Заявка с сайта SOF EXPO'];
       for (const [k, v] of Object.entries(payload)) {
@@ -132,12 +133,17 @@
         payload.url = location.href;
         payload.referrer = document.referrer || '';
         try { payload.sessionId = window.sofSessionId || sessionStorage.getItem('sofexpo.session') || ''; } catch {}
-        // UTM
+        // attribution: this URL first, else the session context StandQuizModal keeps (the ad
+        // usually lands on another page than the form)
         try {
           const params = new URLSearchParams(location.search);
-          payload.utm_source = params.get('utm_source') || '';
-          payload.utm_medium = params.get('utm_medium') || '';
-          payload.utm_campaign = params.get('utm_campaign') || '';
+          const ctx = JSON.parse(sessionStorage.getItem('sofexpo.leadctx') || '{}');
+          for (const k of ATTRIBUTION_KEYS) {
+            const v = params.get(k) || ctx.utm?.[k];
+            if (v) payload[k] = v;
+          }
+          if (ctx.landing) payload.landing = ctx.landing;
+          if (!payload.referrer && ctx.ref) payload.referrer = ctx.ref;
         } catch {}
 
         if (msg) { msg.hidden = true; msg.textContent = ''; }

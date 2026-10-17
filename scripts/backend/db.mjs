@@ -129,7 +129,7 @@ function normalizeLegacyLead(input) {
     page: text('page', 300),
     landing: text('landing', 500),
     referrer: text('referrer', 500),
-    utm: Object.fromEntries(['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].map((key) => [key, text(key, 160)]).filter(([, value]) => value)),
+    utm: Object.fromEntries(['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'gbraid', 'wbraid', 'fbclid', 'yclid', 'ttclid'].map((key) => [key, text(key, 160)]).filter(([, value]) => value)),
     payload,
   };
 }

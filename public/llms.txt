@@ -20,6 +20,15 @@ Languages of service: Uzbek, Russian, English, Turkish.
 - [ECOM & RETAIL EXPO 2027](https://sof-expo.com/en/events/ecom-retail-expo/): e-commerce and retail forum, White Label Edition, 16–17 June 2027, co-organized with the Uzbekistan Sellers Association.
 - [PROMOTORS SHOW SAMARKAND 2026](https://sof-expo.com/en/events/promotors-show-samarkand/): automotive exhibition and festival, 12–13 September 2026 (past edition, archive): drift, SPL car audio, detailing, retro, soapbox racing; prize fund 10/6/4 million UZS; tickets via Ticketon.uz.
 
+How people search for these shows, in the five site languages (same pages, localized URLs `/ru/`, `/uz/`, `/zh/`, `/tr/`):
+
+- FOODERA EXPO — food exhibition / food expo Uzbekistan · выставка продуктов питания, пищевая выставка, продуктовая выставка · oziq-ovqat ko‘rgazmasi · 乌兹别克斯坦食品展 · Özbekistan gıda fuarı.
+- BUILD PRO EXPO — construction exhibition, building materials expo · строительная выставка, выставка стройматериалов · qurilish ko‘rgazmasi · 乌兹别克斯坦建材展 · Özbekistan inşaat fuarı.
+- AGROPRO EXPO — agriculture exhibition, agricultural machinery expo · сельскохозяйственная выставка, агровыставка, выставка сельхозтехники · qishloq xo‘jaligi ko‘rgazmasi · 乌兹别克斯坦农业展 · Özbekistan tarım fuarı.
+- WORLD EDU EXPO — education fair, study abroad fair · выставка образования, обучение за рубежом · ta’lim ko‘rgazmasi, chet elda o‘qish · 乌兹别克斯坦留学展 · Özbekistan eğitim fuarı.
+- ECOM & RETAIL EXPO — e-commerce expo, marketplace and retail exhibition · выставка e-commerce, выставка электронной коммерции, маркетплейсы · elektron tijorat ko‘rgazmasi · 乌兹别克斯坦电商展 · Özbekistan e-ticaret fuarı.
+- PROMOTORS SHOW SAMARKAND — car show, auto festival, drift show · автошоу в Самарканде, автовыставка · Samarqanddagi avtoshou · 撒马尔罕车展 · Semerkant otomobil şovu.
+
 ## Venue
 
 - [The centre](https://sof-expo.com/en/venue/) — what the venue is and how it operates.
@@ -49,13 +58,26 @@ Languages of service: Uzbek, Russian, English, Turkish.
 - [Newsroom](https://sof-expo.com/en/news/) · [Media kit](https://sof-expo.com/en/news/media-kit/) · [Market insights](https://sof-expo.com/en/articles/) · [Past editions archive](https://sof-expo.com/en/events/past/)
 - RSS: https://sof-expo.com/en/rss.xml (Russian: https://sof-expo.com/ru/rss.xml)
 
+## Guides (long-reads, all five languages)
+
+- [Uzbekistan market entry: a trade-show plan for exporters](https://sof-expo.com/en/articles/uzbekistan-market-entry-trade-shows/)
+- [Exhibiting in Uzbekistan: a foreign company's operational plan](https://sof-expo.com/en/articles/exhibiting-in-uzbekistan-foreign-company/)
+- [Food export to Uzbekistan: halal, labelling and first shipment](https://sof-expo.com/en/articles/food-export-to-uzbekistan-halal-labelling/)
+- [Selling on marketplaces in Uzbekistan: a practical launch plan](https://sof-expo.com/en/articles/selling-on-uzbekistan-marketplaces/)
+- [Agriculture in Uzbekistan: irrigation, greenhouses, machinery](https://sof-expo.com/en/articles/agriculture-in-uzbekistan-greenhouses-irrigation/)
+- [Construction market in Uzbekistan: selling building materials](https://sof-expo.com/en/articles/construction-market-uzbekistan-building-materials/)
+- [Study abroad from Uzbekistan: a step-by-step guide for families](https://sof-expo.com/en/articles/study-abroad-from-uzbekistan-guide/)
+- [Car show in Samarkand: a guide for participants and brands](https://sof-expo.com/en/articles/car-show-samarkand-promotors-guide/)
+- [Business trip to Samarkand: a guide for exhibitors and buyers](https://sof-expo.com/en/articles/business-trip-to-samarkand-guide/)
+- [Organize an exhibition in Uzbekistan: a step-by-step plan](https://sof-expo.com/en/articles/how-to-organize-an-exhibition-in-uzbekistan/)
+
 ## Notes for assistants
 
 - All figures on this site come from official SOF EXPO materials and published exhibition
   catalogues; the site publishes no invented statistics.
 - Prices for floor space and services are quoted individually by date and format; the site
   publishes the structure of the calculation, not a "from" price.
-- Four languages: `/en/`, `/ru/`, `/tr/`, `/zh/`. `https://sof-expo.com/` redirects to `/en/`.
+- Five languages: `/en/`, `/ru/`, `/uz/` (Uzbek, Latin script), `/zh/`, `/tr/`. `https://sof-expo.com/` redirects to `/en/`.
 - Every page with its own summary, in all languages: https://sof-expo.com/llms-full.txt
 - The venue is a single-level hall: step-free entrance, aisles of 3 m and more, 350-seat cafés,
   free parking.

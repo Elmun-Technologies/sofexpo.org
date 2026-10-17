@@ -34,6 +34,27 @@ Holat: 2026-10-16. Davomi: `docs/16-keyword-audit.md` (metodika) va `docs/02-sem
 
 **Sayt ichida qilib bo'lmaydigan ishlar (off-page) — hozir eng katta richag shular:** §5.
 
+## 1.1. Ko'rgazmalar bo'yicha aniq kalit so'zlar (2026-10-17)
+
+Har bir ko'rgazmaning asosiy sahifasi endi bir xil qoida bilan quriladi:
+
+1. **Title** — brend + soha so'rovi + shahar + **mamlakat**: «FOODERA EXPO 2026 — выставка продуктов
+   питания, Самарканд, Узбекистан». Mamlakat avval yo'q edi, holbuki odamlar «… Узбекистан» deb qidiradi.
+2. **Qidiruv FAQ** (`src/data/search-faq.ts`) — sahifa oxirida 5 ta savol-javob. H2'da asosiy so'rov,
+   savollarda sinonimlar: «пищевая выставка», «продуктовая выставка», "food expo", "food fair",
+   «oziq-ovqat yarmarkasi», «agro ko‘rgazma», «выставка стройматериалов», «автошоу Самарканд»…
+   Javoblar faqat `events.ts` dagi faktlardan. FAQPage JSON-LD — Google, Bing/ChatGPT, Perplexity
+   javobda aynan shu matnni keltiradi.
+3. **Sinonimlar auditda** (`synonyms` bloki, `scripts/keyword-map.mjs`) — sahifa sinonimni yo'qotsa,
+   `npm run audit:keywords` uni `[missing]` deb ko'rsatadi.
+4. **llms.txt** — har bir ko'rgazmaning 5 tildagi qidiruv nomlari va 10 ta qo'llanma ro'yxati.
+5. **IndexNow** (`scripts/indexnow.mjs`, `.github/workflows/indexnow.yml`) — `main` ga har push'dan
+   4 daqiqa keyin o'zgargan sahifalar Bing/Yandex'ga yuboriladi. ChatGPT qidiruvi Bing indeksidan
+   foydalanadi, shuning uchun yangi maqola AI javoblarga soatlar ichida yetadi. Hamma sahifani bir
+   marta yuborish: GitHub → Actions → indexnow → Run workflow → «all».
+
+Natija (audit): ko'rgazma sahifalari ru 95, en/uz/zh/tr 100 (ECOM ru 70: H1 kicker'ida mamlakat yo'q).
+
 ## 2. Kalit so'z klasterlari — 5 til
 
 > ⚠️ **Hajmlar o'lchanmagan.** Bizda Wordstat / Keyword Planner / Baidu Index'ga kirish yo'q,

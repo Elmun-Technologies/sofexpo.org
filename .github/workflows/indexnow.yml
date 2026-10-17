@@ -1,0 +1,44 @@
+name: indexnow
+
+# docs/23 §5: after a push to main, tell Bing/Yandex (and through Bing, ChatGPT search) which
+# pages changed. Vercel deploys the push on its own; the wait lets the new pages go live first.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'public/llms.txt'
+  workflow_dispatch:
+    inputs:
+      all:
+        description: 'Submit every sitemap URL (builds the site first)'
+        type: boolean
+        default: false
+
+concurrency:
+  group: indexnow
+  cancel-in-progress: false
+
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Wait for the Vercel deploy
+        run: sleep 240
+      - name: Submit changed pages
+        if: ${{ github.event_name == 'push' }}
+        run: node scripts/indexnow.mjs --changed HEAD~1
+      - name: Build and submit every page
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.all }}
+        run: |
+          npm ci
+          npm run build
+          node scripts/indexnow.mjs --all

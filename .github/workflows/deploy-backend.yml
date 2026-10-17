@@ -2,7 +2,7 @@ name: deploy-backend
 
 # The Fly.io backend (sofexpo-api, docs/20) deploys from GitHub's runner instead of an
 # operator laptop: the Docker context is the whole checkout (~500 MB with .git and images),
-# which a slow uplink cannot push. Runs when backend code changes on main, or by hand
+# which a slow uplink cannot push. Runs when backend code (or this file) changes on main, or by hand
 # (Actions → deploy-backend → Run workflow). Needs one repo secret, FLY_API_TOKEN
 # (`flyctl tokens create deploy --app sofexpo-api`); without it the job is skipped.
 # Telegram blog commits only touch src/content and public/images, so they do not redeploy.
@@ -14,6 +14,8 @@ on:
       - 'Dockerfile'
       - '.dockerignore'
       - 'fly.toml'
+      # an edit to this workflow is proved by a real deploy
+      - '.github/workflows/deploy-backend.yml'
   workflow_dispatch:
 
 concurrency:

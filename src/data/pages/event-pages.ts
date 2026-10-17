@@ -29,12 +29,12 @@ export const eventPages: Record<string, EventPages> = {
         meta: {
           ru: {
             title:
-              "FOODERA EXPO 2026 — выставка продуктов и напитков, Самарканд",
+              "FOODERA EXPO 2026 — выставка продуктов питания, Самарканд, Узбекистан",
             description:
               "Выставка продуктов питания и напитков в Самарканде, 27–29 октября 2026: 12 разделов, дегустации, закупочная биржа с сетями, форум Food Retail. Бронирование стендов.",
           },
           en: {
-            title: "FOODERA EXPO 2026 — food and drink exhibition, Samarkand",
+            title: "FOODERA EXPO 2026 — food exhibition, Samarkand, Uzbekistan",
             description:
               "Food and beverage exhibition in Samarkand, 27–29 October 2026: 12 sections, tastings, a buying marketplace with retail chains, Food Retail forum. Stand booking open.",
           },
@@ -808,12 +808,12 @@ eventPages["buildpro-expo"] = {
     image: "/images/event-buildpro.jpg",
     meta: {
       ru: {
-        title: "BUILD PRO EXPO 2026 — строительная выставка в Самарканде",
+        title: "BUILD PRO EXPO 2026 — строительная выставка, Самарканд, Узбекистан",
         description:
           "Строительная выставка в Самарканде, 9–11 ноября 2026: стройматериалы, оборудование, форум архитекторов, демо монтажа; 1 600+ посетителей и 80+ экспонентов в 2025 году.",
       },
       en: {
-        title: "BUILD PRO EXPO 2026 — construction exhibition in Samarkand",
+        title: "BUILD PRO EXPO 2026 — construction exhibition, Samarkand, Uzbekistan",
         description:
           "Construction exhibition in Samarkand, 9–11 November 2026: building materials, equipment, architects forum, live installation demos; 1,600+ visitors and 80+ exhibitors in 2025.",
       },
@@ -1429,13 +1429,13 @@ eventPages["agropro-expo"] = {
     image: "/images/event-agropro.jpg",
     meta: {
       ru: {
-        title: "AGROPRO EXPO 2027 — агровыставка в Самарканде, 2–4 марта",
+        title: "AGROPRO EXPO 2027 — агровыставка в Узбекистане, Самарканд, 2–4 марта",
         description:
           "Сельскохозяйственная выставка в Самарканде, 2–4 марта 2027: сельхозтехника, орошение, семена, агрохимия, теплицы, хранение. 100+ компаний и 4 500+ специалистов в 2026 году.",
       },
       en: {
         title:
-          "AGROPRO EXPO 2027 — agriculture exhibition in Samarkand, 2–4 March",
+          "AGROPRO EXPO 2027 — agriculture exhibition, Uzbekistan, 2–4 March",
         description:
           "Agriculture exhibition in Samarkand, 2–4 March 2027: farm machinery, irrigation, seeds, agrochemistry, greenhouses, storage. 100+ companies and 4,500+ specialists in 2026.",
       },
@@ -1999,12 +1999,12 @@ eventPages["promotors-show-samarkand"] = {
     image: "/images/event-promotors.jpg",
     meta: {
       ru: {
-        title: "PROMOTORS SHOW SAMARKAND 2026 — итоги авто-фестиваля",
+        title: "PROMOTORS SHOW SAMARKAND 2026 — итоги автошоу в Самарканде",
         description:
           "Архив редакции 12–13 сентября 2026: дрифт, SPL-автотюнинг, детейлинг, ретро, гонки безмоторных машин, призовой фонд 10/6/4 млн сумов и экспозиция автобизнеса.",
       },
       en: {
-        title: "PROMOTORS SHOW SAMARKAND 2026 — festival results",
+        title: "PROMOTORS SHOW SAMARKAND 2026 — car show and auto festival results",
         description:
           "Archive of the 12–13 September 2026 edition: drift, SPL audio, detailing, retro builds, soapbox racing, a 10/6/4 million UZS prize fund and the automotive expo.",
       },
@@ -2515,12 +2515,12 @@ eventPages["world-edu-expo"] = {
     image: "/images/event-worldedu.jpg",
     meta: {
       ru: {
-        title: "WORLD EDU EXPO 2027 — выставка образования в Самарканде",
+        title: "WORLD EDU EXPO 2027 — выставка образования, Самарканд, Узбекистан",
         description:
           "Выставка образования в Самарканде, 9–10 апреля 2027: вузы Узбекистана, России, Беларуси, Казахстана, Европы и Турции, обучение за рубежом, стипендии, IELTS, GMAT и SAT.",
       },
       en: {
-        title: "WORLD EDU EXPO 2027 — education exhibition in Samarkand",
+        title: "WORLD EDU EXPO 2027 — education fair, Samarkand, Uzbekistan",
         description:
           "Education fair in Samarkand, 9–10 April 2027: universities from Uzbekistan, Russia, Belarus, Kazakhstan, Europe and Turkey, study abroad, scholarships, IELTS, GMAT and SAT.",
       },
@@ -3088,12 +3088,12 @@ eventPages["ecom-retail-expo"] = {
     image: "/images/supermarket-aisle.jpg",
     meta: {
       ru: {
-        title: "ECOM & RETAIL EXPO 2027 — форум e-commerce в Самарканде",
+        title: "ECOM & RETAIL EXPO 2027 — выставка e-commerce, Самарканд, Узбекистан",
         description:
           "Выставка-форум e-commerce и ритейла в Самарканде, 16–17 июня 2027: производители, селлеры, маркетплейсы, логистика и финтех. Биржа контактов и треки программы.",
       },
       en: {
-        title: "ECOM & RETAIL EXPO 2027 — e-commerce forum in Samarkand",
+        title: "ECOM & RETAIL EXPO 2027 — e-commerce and retail expo, Uzbekistan",
         description:
           "E-commerce and retail expo in Samarkand, 16–17 June 2027: manufacturers, sellers, marketplaces, logistics and fintech. Contact exchange and programme tracks.",
       },

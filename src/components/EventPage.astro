@@ -22,6 +22,7 @@ import { events } from '@/data/events';
 import { eventPages } from '@/data/pages/event-pages';
 import { brandForEvent } from '@/data/brands';
 import { speakers as speakerWall } from '@/data/speakers';
+import { searchFaq } from '@/data/search-faq';
 
 const { locale, event, page } = Astro.props as { locale: Locale; event: ExpoEvent; page: EventPage };
 /* a branded show unfurls with its own social card, not the AI hall render */
@@ -30,7 +31,13 @@ const t = useUI(locale);
 const ru = locale === 'ru';
 const L = (p: string) => localize(locale, p);
 const meta = page.meta[locale];
-const blocks = page.blocks[locale];
+/* the overview page closes with the search-intent FAQ (src/data/search-faq.ts): its h2 carries
+   the show's primary query and its FAQPage is what answer engines quote */
+const isOverview = page.path === `/events/${event.slug}/`;
+const seoFaq = isOverview ? searchFaq[event.slug]?.[locale] : undefined;
+const blocks = seoFaq
+  ? [...page.blocks[locale], { type: 'faq', title: seoFaq.title, items: seoFaq.items } as unknown as (typeof page.blocks)[typeof locale][number]]
+  : page.blocks[locale];
 /* Exhibitions / <show> / <section>: the show's own pages are not in the site menu, so the
    trail is built from the show itself — never from the URL slug ("program") */
 const showBase = `/events/${event.slug}/`;
@@ -69,7 +76,7 @@ const posterSpeakers = event.slug === 'ecom-retail-expo'
 
 const ld: Record<string, unknown>[] = [
   organizationJsonLd(),
-  eventJsonLd({ ...event, locale, performers: posterSpeakers }),
+  eventJsonLd({ ...event, locale, performers: posterSpeakers, offersUrl: past ? undefined : abs(L(`/events/${event.slug}/visitors/`)) }),
 ];
 const _kind = page.path.split('/').filter(Boolean)[2] ?? 'overview';
 const _owner = ['exhibitors', 'overview', 'visitors', 'program'].find((k) => ((eventPages[event.slug] as any)?.[k]?.after ?? []).includes('faq'));

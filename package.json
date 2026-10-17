@@ -21,6 +21,7 @@
     "test:e2e": "playwright test",
     "i18n:extract": "node scripts/extract-translations.mjs",
     "i18n:missing": "node scripts/i18n-missing.mjs",
+    "indexnow": "node scripts/indexnow.mjs",
     "audit:translations": "node scripts/audit-translations.mjs",
     "audit:downloads": "node scripts/audit-downloads.mjs",
     "check:release": "npm run check && npm run audit:downloads -- --require-final",

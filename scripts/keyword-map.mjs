@@ -234,6 +234,57 @@ const global = {
 };
 for (const [path, locales] of Object.entries(global)) Object.assign((keywordMap[path] ??= {}), locales);
 
+/* Show synonyms (docs/23 §2.2): the other ways people phrase the same show query — «пищевая
+   выставка», "food expo", «oziq-ovqat yarmarkasi». Secondary queries: reported as [missing] when
+   a page loses them, answered mostly by the overview's search FAQ (src/data/search-faq.ts). */
+const synonyms = {
+  '/events/foodera-expo/': {
+    ru: [k('пищевая выставка', ['пищев', 'выставк']), k('продуктовая выставка', ['продуктов', 'выставк']), k('выставка продуктов питания Узбекистан', ['продукт', 'питани', 'узбекистан'])],
+    en: [k('food expo', ['food expo']), k('food fair', ['food fair']), k('food trade show', ['food (and beverage )?trade show'])],
+    uz: [k("oziq-ovqat yarmarkasi", ['yarmarka']), k("oziq-ovqat ko'rgazmasi O'zbekiston", ["oziq-ovqat ko'rgazma", "o'zbekiston"])],
+    zh: [k('中亚食品展', ['中亚', '食品展'])],
+    tr: [k('Orta Asya gıda fuarı', ['orta asya', 'gıda'])],
+  },
+  '/events/buildpro-expo/': {
+    ru: [k('выставка строительных материалов', ['строительных материал']), k('выставка стройматериалов', ['стройматериал']), k('строительная выставка Узбекистан', ['строительн', 'узбекистан'])],
+    en: [k('building materials expo', ['building materials expo']), k('construction trade show', ['construction trade show'])],
+    uz: [k("qurilish materiallari ko'rgazmasi", ['qurilish materiallari'])],
+    zh: [k('建筑展', ['建筑展'])],
+    tr: [k('yapı malzemeleri fuarı', ['yapı malzemeleri'])],
+  },
+  '/events/agropro-expo/': {
+    ru: [k('агровыставка', ['агровыставк']), k('выставка сельхозтехники', ['сельхозтехник']), k('сельскохозяйственная выставка Узбекистан', ['сельскохозяйственн', 'узбекистан'])],
+    en: [k('agricultural machinery expo', ['agricultural machinery']), k('agro expo', ['agro expo'])],
+    uz: [k("agro ko'rgazma", ['agro']), k("qishloq xo'jaligi texnikasi", ["qishloq xo'jaligi texnika"])],
+    zh: [k('农机展', ['农机'])],
+    tr: [k('tarım makineleri fuarı', ['tarım makine'])],
+  },
+  '/events/world-edu-expo/': {
+    ru: [k('образовательная выставка', ['образовательн', 'выставк']), k('выставка вузов', ['выставк', 'вуз']), k('обучение за рубежом', ['рубеж'])],
+    en: [k('study abroad fair', ['study abroad fair']), k('university fair', ['university fair'])],
+    uz: [k("chet elda o'qish", ["chet elda o'qish"]), k("universitetlar ko'rgazmasi", ["universitetlar ko'rgazma"])],
+    zh: [k('留学展', ['留学'])],
+    tr: [k('yurt dışı eğitim fuarı', ['yurt dışı eğitim'])],
+  },
+  '/events/ecom-retail-expo/': {
+    ru: [k('выставка электронной коммерции', ['электронной коммерци']), k('выставка ритейла', ['ритейл']), k('маркетплейсы Узбекистан', ['маркетплейс', 'узбекистан'])],
+    en: [k('e-commerce exhibition', ['e-commerce exhibition']), k('retail expo', ['retail (and marketplace )?expo'])],
+    uz: [k("elektron tijorat ko'rgazmasi", ["elektron tijorat ko'rgazma"]), k('marketpleyslar', ['marketpleys'])],
+    zh: [k('电商平台', ['电商平台'])],
+    tr: [k('pazaryeri fuarı', ['pazaryeri'])],
+  },
+  '/events/promotors-show-samarkand/': {
+    ru: [k('автошоу Самарканд', ['автошоу', 'самарканд']), k('автовыставка', ['автовыставк']), k('дрифт шоу', ['дрифт'])],
+    en: [k('car show Samarkand', ['car show', 'samarkand']), k('auto show', ['auto show']), k('drift show', ['drift show'])],
+    uz: [k('avtoshou Samarqand', ['avtoshou', 'samarqand'])],
+    zh: [k('撒马尔罕车展', ['撒马尔罕', '车展'])],
+    tr: [k('Semerkant otomobil şovu', ['semerkant', 'otomobil şov'])],
+  },
+};
+for (const [path, locales] of Object.entries(synonyms)) {
+  for (const [locale, kws] of Object.entries(locales)) ((keywordMap[path] ??= {})[locale] ??= []).push(...kws);
+}
+
 /* Insight long-reads (docs/23): one informational query per article, in all five languages. */
 const insights = {
   'uzbekistan-market-entry-trade-shows': {

@@ -172,6 +172,9 @@ for (const file of files) {
        a description. */
     const decorative = /role="presentation"|aria-hidden="true"/.test(tag);
     if (!/alt="[^"]*"/.test(tag)) warn(url, "img without alt attribute");
+    /* decorative or not: Bing's Site Scan reports every alt="" as "alt attribute missing"
+       (710 pages, 2026-10). Decorative logos stay aria-hidden but still carry their name. */
+    else if (/alt=""/.test(tag)) warn(url, `img with empty alt (Bing counts it as missing): ${tag.slice(0, 90)}`);
     else if (!new RegExp(`alt="[^"]{${cjk ? 2 : 8},}"`).test(tag) && !decorative)
       warn(url, `img with thin or empty alt: ${tag.slice(0, 90)}`);
     if (/alt="\/images\/|alt="[a-z0-9-]+\.jpe?g"/i.test(tag))

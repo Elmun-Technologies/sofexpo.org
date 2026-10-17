@@ -95,6 +95,27 @@ curl -fsS https://api.sof-expo.com/api/portal/options
 Birinchi javobda `ok: true`, ikkinchisida portal event’lari bo‘lishi kerak. Admin sahifa:
 `https://api.sof-expo.com/admin`; portal: `https://api.sof-expo.com/cabinet`.
 
+### 3.1. Avtomatik deploy (GitHub Actions) — tavsiya etiladi
+
+Build context butun checkout (`.git` va rasmlar bilan ~500 MB): sekin internetda operator
+kompyuteridan `flyctl deploy` soatlab yuklanadi. Shuning uchun `.github/workflows/deploy-backend.yml`
+deploy’ni GitHub runner’idan qiladi: `main` ga `scripts/**`, `Dockerfile`, `.dockerignore` yoki
+`fly.toml` o‘zgarishi tushganda (yoki Actions → **deploy-backend** → **Run workflow**) backend
+testlari o‘tadi, `flyctl deploy --remote-only` bajariladi va `/health` tekshiriladi. Telegram blog
+commit’lari (faqat `src/content`, `public/images`) qayta deploy qilmaydi.
+
+Bir martalik sozlash (operator):
+
+1. Deploy token: `flyctl tokens create deploy --app sofexpo-api` (yoki Fly dashboard → sofexpo-api →
+   Tokens → Create deploy token).
+2. GitHub → repo **Settings → Secrets and variables → Actions → New repository secret**:
+   nom `FLY_API_TOKEN`, qiymat — shu token. Tokenni chatga/commit’ga yozmang.
+3. Actions → **deploy-backend** → **Run workflow** bilan birinchi deploy’ni ishga tushiring.
+
+Secret bo‘lmasa workflow deploy’siz o‘tib ketadi (ogohlantirish bilan). Checkout
+`persist-credentials: false` bilan olinadi — workflow’ning GitHub tokeni image’dagi `.git/config` ga
+tushmaydi; publisher runtime’da o‘zining `GITHUB_TOKEN` Fly secret’idan foydalanadi.
+
 ## 4. Namecheap DNS va TLS
 
 Deploy’dan so‘ng Fly’da custom certificate yarating va DNS uchun Fly ko‘rsatgan target’ni ko‘ring:

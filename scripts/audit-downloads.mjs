@@ -14,7 +14,9 @@ export function inspectDownloads(publicRoot, inventory) {
     if (!href.startsWith('/files/') || !path.startsWith(resolve(root,'files') + sep) || !href.endsWith('.pdf')) {
       errors.push(`${href}: invalid inventory path`); continue;
     }
-    if (!['placeholder', 'ready'].includes(metadata.status) || !['en','ru','zh-CN','tr','multilingual'].includes(metadata.language)) errors.push(`${href}: invalid status or language`);
+    if (!['placeholder', 'ready'].includes(metadata.status) || !['en','ru','uz','zh-CN','tr','multilingual'].includes(metadata.language)) errors.push(`${href}: invalid status or language`);
+    /* a per-locale edition of the same document (docs/23): it must itself be inventoried */
+    for (const [locale, variant] of Object.entries(metadata.variants ?? {})) if (!inventory[variant]) errors.push(`${href}: ${locale} variant ${variant} has no publication metadata`);
     found.delete(path);
     if (!existsSync(path)) { errors.push(`${href}: file is missing`); continue; }
     const content = readFileSync(path).toString('latin1');

@@ -41,4 +41,4 @@ hero: /images/prompro-dairy-stand.jpg
 
 FOODERA EXPO в Самарканде даёт три вещи, которых нет у холодного аутрича: аудиторию закупщиков в одном месте за три дня, физическую дегустацию и контекст переговоров — договоры на отраслевой выставке подписываются чаще, потому что обе стороны приходят уже в процессе.
 
-[Раздел для экспонентов FOODERA](/ru/events/foodera-expo/exhibitors/) · [Скачать презентацию](/files/foodera-2026-presentation.pdf)
+[Раздел для экспонентов FOODERA](/ru/events/foodera-expo/exhibitors/) · [Скачать презентацию](/files/foodera-2026-presentation-ru.pdf)

@@ -15,6 +15,11 @@
       "source": "/",
       "destination": "/en/",
       "statusCode": 301
+    },
+    {
+      "source": "/:locale(en|ru|zh|tr|uz)/events/foodera-expo/sections/delicacies/",
+      "destination": "/:locale/events/foodera-expo/sections/fruits-vegetables/",
+      "statusCode": 301
     }
   ]
 }

@@ -404,8 +404,8 @@ export const nav: NavItem[] = [
         ru: "FOODERA EXPO — продукты и напитки",
         en: "FOODERA EXPO — food & drink",
         note: {
-          ru: "27–29 октября 2026 · 12 разделов food & beverage",
-          en: "27–29 Oct 2026 · 12 food & beverage sections",
+          ru: "27–29 октября 2026 · 15 разделов food & beverage",
+          en: "27–29 Oct 2026 · 15 food & beverage sections",
         },
       },
       {

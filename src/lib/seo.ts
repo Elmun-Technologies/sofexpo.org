@@ -170,8 +170,8 @@ export function serviceJsonLd(locale: Locale, url: string) {
     serviceType: 'Exhibition hall rental',
     description:
       locale === 'ru'
-        ? 'Аренда выставочных площадей 13 680 м², логистика, строительство стендов и организационное сопровождение мероприятий в выставочном центре SOF EXPO, Самарканд.'
-        : 'Rental of 13,680 m² of exhibition space plus logistics, stand construction and event management at the SOF EXPO exhibition centre, Samarkand.',
+        ? 'Аренда зала 4 400 м² и открытой площадки 5 000 м², логистика, строительство стендов и организационное сопровождение мероприятий в выставочном центре SOF EXPO, Самарканд.'
+        : 'Rental of a 4,400 m² hall and a 5,000 m² open area plus logistics, stand construction and event management at the SOF EXPO exhibition centre, Samarkand.',
     url,
     provider: { '@id': `${SITE}/#organization` },
     serviceLocation: { '@id': `${SITE}/#venue` },

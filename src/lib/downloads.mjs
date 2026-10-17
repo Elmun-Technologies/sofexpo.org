@@ -12,3 +12,15 @@ export function downloadInfo(href) {
 }
 
 export const isSampleDownload = href => downloadInfo(href)?.status === 'placeholder';
+
+/**
+ * The edition of an owned download for one locale: a document published in several languages
+ * lists them under `variants` in downloads.json ({ ru: '/files/x-ru.pdf', uz: … }); every other
+ * locale gets the base file. Query and fragment are kept.
+ */
+export function downloadFor(href, locale) {
+  const variant = downloadInfo(href)?.variants?.[locale];
+  if (!variant) return href;
+  const url = new URL(href, 'https://sof-expo.com');
+  return href.replace(url.pathname, variant);
+}

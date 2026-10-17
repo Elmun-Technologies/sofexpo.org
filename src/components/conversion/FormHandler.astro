@@ -216,7 +216,8 @@
               link.href = '/files/catalog-' + (payload.event || 'general') + '.pdf';
               link.download = '';
               // fallback to general catalog
-              link.href = '/files/foodera-2026-presentation.pdf';
+              const lang = document.documentElement.lang.slice(0, 2);
+              link.href = '/files/foodera-2026-presentation' + (lang === 'ru' || lang === 'uz' ? '-' + lang : '') + '.pdf';
               // don't auto download without user gesture in some browsers, but try
               try { link.click(); } catch {}
             }, 800);

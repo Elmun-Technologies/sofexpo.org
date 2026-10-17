@@ -73,6 +73,9 @@ async function redirectsFor(host) {
      centre additionally carries the legacy event-path redirects. */
   const lines = [`/ /en/ 301`];
   if (host !== map.root) return lines.join("\n");
+  /* retired FOODERA section (2026 presentation: dried fruit and nuts moved to fruits-vegetables);
+     mirrored in vercel.json */
+  lines.push(`/:locale/events/foodera-expo/sections/delicacies/ /:locale/events/foodera-expo/sections/fruits-vegetables/ 301`);
   lines.push(
     ...(await movedRedirectsAsync(mode)).map((r) => `${r.from} ${r.to} 301`),
   );

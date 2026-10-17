@@ -19,7 +19,7 @@ import Faq from '@/components/Faq.astro';
 import EventCard from '@/components/EventCard.astro';
 import Icon from '@/components/Icon.astro';
 import DownloadNotice from '@/components/DownloadNotice.astro';
-import { isSampleDownload } from '@/lib/downloads.mjs';
+import { downloadFor, isSampleDownload } from '@/lib/downloads.mjs';
 import { useUI } from '@/i18n/ui';
 import SpeakerWall from '@/components/SpeakerWall.astro';
 import { speakers as posterSpeakers } from '@/data/speakers';
@@ -280,7 +280,7 @@ const progDays: { day: number; label: string; items: typeof event.program }[] = 
         <DownloadNotice locale={locale} hrefs={event.materials.map(m => m.href)} />
         <div class="files">
           {event.materials.map((m) => (
-            <a href={m.href.startsWith('http') ? m.href : m.href} rel="noopener" download={!m.href.startsWith('http')}>
+            <a href={downloadFor(m.href, locale)} rel="noopener" download={!m.href.startsWith('http')}>
               <span class="files__ico">
                 <Icon name={m.type === 'video' ? 'play' : m.type === 'photo' ? 'image' : 'doc'} size={20} />
               </span>

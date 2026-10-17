@@ -25,7 +25,7 @@ FOODERA connects manufacturers, distributors, importers and suppliers with retai
 
 #### Thematic sections
 
-Grocery, soft drinks, tea and coffee, confectionery and bakery, dairy and cheese, meat, poultry and eggs, frozen and semi-finished products, preserves, oils, fats and sauces, gastronomic delicacies, organic and healthy food, packaging and equipment.
+Soft drinks, grocery, frozen and semi-finished products, confectionery and bakery, preserves, oils, fats and sauces, dairy and cheese, meat, poultry and eggs, organic and healthy food, fish and seafood, tea and coffee, components and ingredients, dried and freeze-dried fruit and vegetables, processing and packaging equipment, logistics.
 
 #### Business programme
 

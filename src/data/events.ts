@@ -129,8 +129,8 @@ export const events: ExpoEvent[] = [
       en: 'FOODERA EXPO brings manufacturers, distributors, importers and suppliers together with retail, wholesale, HoReCa and catering buyers. Three days of negotiations, tastings and presentations at SOF EXPO Samarkand.',
     },
     pitch: {
-      ru: 'Регион Центральной Азии и Афганистана — рынок от 58 до 78 млрд долларов и более 125 млн потребителей. Розница Узбекистана в 2024 году достигла 182 трлн сумов. FOODERA — точка входа в этот рынок с готовой аудиторией закупщиков. В рамках выставки проходит Узбекско-афганский бизнес-форум: товарооборот двух стран в 2025 году достиг 1,6 млрд долларов, на 45% больше, чем в 2024-м.',
-      en: 'Central Asia and Afghanistan is a market of $58–78 billion and 125 million+ consumers. Uzbekistan retail reached UZS 182 trillion in 2024. FOODERA is the entry point with a pre-built audience of buyers. The Uzbekistan–Afghanistan Business Forum takes place within the show: trade between the two countries reached $1.6 billion in 2025, up 45% on 2024.',
+      ru: 'Регион Центральной Азии и Афганистана — рынок от 58 до 78 млрд долларов и более 125 млн потребителей. Розница Узбекистана в 2024 году достигла 182 трлн сумов. FOODERA — точка входа в этот рынок с готовой аудиторией закупщиков. Все три дня выставки проходит Узбекско-афганский бизнес-форум: товарооборот двух стран в 2025 году достиг 1,6 млрд долларов, на 45% больше, чем в 2024-м.',
+      en: 'Central Asia and Afghanistan is a market of $58–78 billion and 125 million+ consumers. Uzbekistan retail reached UZS 182 trillion in 2024. FOODERA is the entry point with a pre-built audience of buyers. The Uzbekistan–Afghanistan Business Forum runs on all three days of the show: trade between the two countries reached $1.6 billion in 2025, up 45% on 2024.',
     },
     categories: [
       { name: { ru: 'Безалкогольные напитки', en: 'Soft drinks' }, icon: 'drink' },
@@ -159,6 +159,7 @@ export const events: ExpoEvent[] = [
       { title: { ru: 'Дегустационная зона', en: 'Tasting area' }, text: { ru: 'Слепые дегустации для закупщиков сетей и голосование за лучший продукт выставки.', en: 'Blind tastings for retail buyers and voting for the best product of the show.' } , day: 1},
       { title: { ru: 'Закупочная биржа', en: 'Buying marketplace' }, text: { ru: 'Pre-matched 15-minute meetings с категорийными менеджерами розничных сетей.', en: 'Pre-matched 15-minute meetings with category managers of retail chains.' } , day: 2},
       { title: { ru: 'Форум Food Retail', en: 'Food Retail forum' }, text: { ru: 'Полки, логистика, ценообразование и private label в Узбекистане.', en: 'Shelves, logistics, pricing and private label in Uzbekistan.' } , day: 2},
+      { title: { ru: 'Узбекско-афганский бизнес-форум', en: 'Uzbekistan–Afghanistan Business Forum' }, text: { ru: 'Все три дня выставки, 27–29 октября: переговоры афганских импортёров с производителями, поставщиками оборудования и логистами.', en: 'All three days of the show, 27–29 October: Afghan importers meet producers, equipment suppliers and logistics companies.' } , day: 1},
       { title: { ru: 'Конкурс «Лучший продукт»', en: 'Best Product contest' }, text: { ru: 'Экспертное жюри и награждение участников в первый день выставки.', en: 'Expert jury and awards for exhibitors on the opening day.' } , day: 1},
     ],
     audience: [

@@ -1,0 +1,83 @@
+---
+/**
+ * Cookie consent state + Google Consent Mode v2 defaults (docs/22 §5). Rendered in <head>
+ * before SiteTags so every tag starts from a decided state.
+ *
+ * Who is asked: a static site has no server-side geo, so the browser's time zone stands in —
+ * EEA, UK and Switzerland zones are "strict": every non-essential tool waits for "Accept"
+ * (Google tags run cookieless under Consent Mode, Metrika/Meta/TikTok/Baidu do not load at
+ * all). Everyone else starts granted, so the Uzbek ad landing shows no banner; the footer's
+ * "Cookie settings" lets anyone change it. `?consent-region=eu|other` previews either path.
+ *
+ * window.sofConsent: { strict, decided, state: 'granted'|'denied'|'pending', granted(),
+ * onGrant(fn), set('granted'|'denied') }. The choice lives in localStorage for 12 months.
+ */
+---
+
+<script is:inline>
+  (function () {
+    var w = window;
+    var KEY = 'sofexpo.consent';
+    var TTL = 365 * 864e5;
+    var EU_ZONES = { 'Atlantic/Reykjavik': 1, 'Atlantic/Canary': 1, 'Atlantic/Madeira': 1, 'Atlantic/Azores': 1, 'Atlantic/Faroe': 1, 'Asia/Nicosia': 1, 'Asia/Famagusta': 1, 'Arctic/Longyearbyen': 1, GB: 1, Eire: 1 };
+    /* Europe/* zones outside the EEA/UK/CH */
+    var NOT_EU = /^Europe\/(Moscow|Minsk|Kaliningrad|Samara|Volgograd|Saratov|Ulyanovsk|Astrakhan|Kirov|Simferopol|Istanbul|Kiev|Kyiv|Uzhgorod|Zaporozhye|Chisinau|Tiraspol)$/;
+    var tz = '';
+    try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) {}
+    var strict = !!(EU_ZONES[tz] || (/^Europe\//.test(tz) && !NOT_EU.test(tz)));
+    try {
+      var preview = new URLSearchParams(location.search).get('consent-region');
+      if (preview === 'eu') strict = true;
+      else if (preview === 'other') strict = false;
+    } catch (e) {}
+    var saved = null;
+    try {
+      saved = JSON.parse(localStorage.getItem(KEY) || 'null');
+      if (!saved || !/^(granted|denied)$/.test(saved.v) || Date.now() - saved.at > TTL) saved = null;
+    } catch (e) {}
+    var modes = function (v) {
+      var g = v === 'granted' ? 'granted' : 'denied';
+      return { ad_storage: g, ad_user_data: g, ad_personalization: g, analytics_storage: g };
+    };
+    var waiting = [];
+    var api = {
+      strict: strict,
+      decided: !!saved,
+      state: saved ? saved.v : strict ? 'pending' : 'granted',
+      granted: function () { return api.state === 'granted'; },
+      onGrant: function (fn) {
+        if (api.granted()) fn();
+        else waiting.push(fn);
+      },
+      set: function (v) {
+        var was = api.state;
+        api.state = v;
+        api.decided = true;
+        try { localStorage.setItem(KEY, JSON.stringify({ v: v, at: Date.now() })); } catch (e) {}
+        try { w.gtag('consent', 'update', modes(v)); } catch (e) {}
+        if (v === 'granted') {
+          var run = waiting;
+          waiting = [];
+          run.forEach(function (fn) { try { fn(); } catch (e) {} });
+        } else if (was === 'granted') {
+          /* pixels already running cannot be unloaded — a reload starts the page without them */
+          location.reload();
+          return;
+        }
+        try { document.dispatchEvent(new CustomEvent('sofconsent', { detail: v })); } catch (e) {}
+      },
+    };
+    w.sofConsent = api;
+    w.dataLayer = w.dataLayer || [];
+    w.gtag = w.gtag || function () { w.dataLayer.push(arguments); };
+    var defaults = modes(api.state);
+    defaults.functionality_storage = 'granted';
+    defaults.security_storage = 'granted';
+    defaults.wait_for_update = 500;
+    w.gtag('consent', 'default', defaults);
+    if (!api.granted()) {
+      w.gtag('set', 'ads_data_redaction', true);
+      w.gtag('set', 'url_passthrough', true);
+    }
+  })();
+</script>

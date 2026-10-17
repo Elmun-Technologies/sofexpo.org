@@ -64,11 +64,13 @@ const telHref = `tel:${site.contacts.phoneMain.replace(/\s/g, '')}`;
         if (v) utm[k] = v.slice(0, 160);
       });
       var tagged = Object.keys(utm).length > 0;
-      if (tagged) {
+      /* the 30-day memory is marketing storage: only with consent (ConsentInit.astro) */
+      var mayRemember = !window.sofConsent || window.sofConsent.granted();
+      if (tagged && mayRemember) {
         try { localStorage.setItem(LAST_KEY, JSON.stringify({ at: Date.now(), utm: utm })); } catch (err) {}
       }
       if (!sessionStorage.getItem(CTX_KEY) || tagged) {
-        if (!tagged) {
+        if (!tagged && mayRemember) {
           try {
             var last = JSON.parse(localStorage.getItem(LAST_KEY) || 'null');
             if (last && last.utm && Date.now() - last.at < 30 * 864e5) utm = last.utm;

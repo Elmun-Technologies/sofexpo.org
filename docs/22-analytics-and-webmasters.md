@@ -90,3 +90,13 @@ ikki marta yuborilmaydi. `form_submit` dagi `success: true` ariza serverga yetga
   konsolda yuborilgan maqsadlar ko'rinadi.
 - **Meta:** "Meta Pixel Helper" kengaytmasi yoki Events Manager → Test events.
 - **TikTok:** "TikTok Pixel Helper".
+
+## 5. Cookie roziligi (Consent Mode v2)
+
+- `src/components/conversion/ConsentInit.astro` (`<head>`da, `SiteTags`dan oldin) — rozilik holati va Google Consent Mode v2 standart qiymatlari.
+- Kim so‘raladi: statik saytda server geo yo‘q, shuning uchun brauzer vaqt zonasi ishlatiladi. **EEA, Buyuk Britaniya va Shveytsariya** zonalari — “strict”: `analytics_storage`, `ad_storage`, `ad_user_data`, `ad_personalization` = `denied`, pastda panel chiqadi. Qolgan hamma (O‘zbekiston, MDH, Turkiya, Xitoy…) — `granted`, panel chiqmaydi (reklama landingi konversiyasi uchun).
+- Rozilikkacha: GA4/Google Ads/GTM yuklanadi, lekin cookie-siz (Consent Mode modellashtirish uchun ping); **Yandex Metrika (Vebvizor), Baidu, Meta Pixel, TikTok yuklanmaydi**; markazning o‘z analitikasi (`Tracking.astro`) hech narsa saqlamaydi/yubormaydi; reklama atributsiyasi faqat sessiyada (30 kunlik eslab qolish yo‘q).
+- “Принять” → `gtag('consent','update', granted)` va qolgan pixellar ishga tushadi. “Отклонить” → rad etildi; avval rozi bo‘lgan bo‘lsa sahifa qayta yuklanadi (ishlab turgan pixelni o‘chirib bo‘lmaydi).
+- Tanlov `localStorage['sofexpo.consent']`da 12 oy saqlanadi. Footer’dagi “Настройки cookies / Cookie settings” tugmasi panelni istalgan tashrif buyuruvchiga qayta ochadi.
+- Tekshirish: `?consent-region=eu` panelni har qanday joydan ko‘rsatadi, `?consent-region=other` — o‘chiradi. E2E: `tests/browser/consent.spec.ts` (Europe/Berlin va Asia/Tashkent).
+- Eslatma: admin’dagi “Custom head” HTML rozilikka bog‘lanmagan — u yerga kuzatuv kodi qo‘ymang, ID maydonlaridan foydalaning.

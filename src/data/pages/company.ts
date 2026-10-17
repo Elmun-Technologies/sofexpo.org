@@ -1128,7 +1128,7 @@ export const companyPages: PageDef[] = [
             },
             {
               title: "Cookies и аналитика",
-              text: "Кабинет устанавливает необходимую first-party cookie для входа и защиты сессии. Обезличенная статистика (просмотры страниц, нажатия кнопок, отправки форм — без имени, телефона и IP-адреса) собирается на собственном сервере центра. Для подсчёта посещаемости и оценки рекламы сайт также использует Google Analytics, Яндекс Метрику (включая Вебвизор), Meta Pixel и аналогичные сервисы: они ставят свои cookie, их можно отключить в настройках браузера.",
+              text: "Кабинет устанавливает необходимую first-party cookie для входа и защиты сессии. Обезличенная статистика (просмотры страниц, нажатия кнопок, отправки форм — без имени, телефона и IP-адреса) собирается на собственном сервере центра. Для подсчёта посещаемости и оценки рекламы сайт также использует Google Analytics, Яндекс Метрику (включая Вебвизор), Meta Pixel и аналогичные сервисы: они ставят свои cookie. Посетителям из ЕЭЗ, Великобритании и Швейцарии эти сервисы включаются только после согласия; изменить выбор можно по ссылке «Настройки cookies» внизу каждой страницы или в настройках браузера.",
             },
             {
               title: "Ваши права",
@@ -1173,7 +1173,7 @@ export const companyPages: PageDef[] = [
             },
             {
               title: "Cookies and analytics",
-              text: "The cabinet sets an essential first-party session cookie for login and security. Anonymous statistics (page views, button clicks, form submissions — without name, phone or IP address) are collected on the centre's own server. To measure traffic and advertising the site also uses Google Analytics, Yandex Metrica (including Webvisor), Meta Pixel and similar services: they set their own cookies, which you can block in your browser settings.",
+              text: "The cabinet sets an essential first-party session cookie for login and security. Anonymous statistics (page views, button clicks, form submissions — without name, phone or IP address) are collected on the centre's own server. To measure traffic and advertising the site also uses Google Analytics, Yandex Metrica (including Webvisor), Meta Pixel and similar services: they set their own cookies. For visitors from the EEA, the UK and Switzerland these services start only after consent; the choice can be changed with the “Cookie settings” link at the bottom of every page or in the browser settings.",
             },
             {
               title: "Your rights",

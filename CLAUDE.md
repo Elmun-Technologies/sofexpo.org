@@ -22,8 +22,9 @@ subdomains) from shared sources — see `docs/05-subdomains.md` and `docs/06-dep
   hostname, `PUBLIC_HOSTS_MODE=subdomain`, `.github/workflows/deploy.yml`) stays maintained
   for when exhibition subdomains are connected — host topology lives in `src/data/host-map.json`.
   The backend is a separate long-lived Node service on **Fly.io** (`sofexpo-api`, Istanbul,
-  one machine with the persistent `/data/sofexpo.sqlite` volume); it is not deployed by Vercel
-  or the static-site CI. Follow `docs/20-fly-deploy.md` for production provisioning and
+  one machine with the persistent `/data/sofexpo.sqlite` volume); it is not deployed by Vercel.
+  `.github/workflows/deploy-backend.yml` deploys it from GitHub Actions when backend files change on
+  `main` (repo secret `FLY_API_TOKEN`, docs/20 §3.1). Follow `docs/20-fly-deploy.md` for production provisioning and
   `docs/17-backend-admin.md` for backend architecture.
 - **Tests:** `node:test` (`npm test` → `tests/*.test.mjs`), Playwright for e2e
   (`npm run test:e2e`). There is **no** Jest/Vitest — use `node:test` + `node:assert`.

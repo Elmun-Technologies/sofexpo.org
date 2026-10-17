@@ -1,0 +1,63 @@
+name: deploy-backend
+
+# The Fly.io backend (sofexpo-api, docs/20) deploys from GitHub's runner instead of an
+# operator laptop: the Docker context is the whole checkout (~500 MB with .git and images),
+# which a slow uplink cannot push. Runs when backend code changes on main, or by hand
+# (Actions → deploy-backend → Run workflow). Needs one repo secret, FLY_API_TOKEN
+# (`flyctl tokens create deploy --app sofexpo-api`); without it the job is skipped.
+# Telegram blog commits only touch src/content and public/images, so they do not redeploy.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/**'
+      - 'Dockerfile'
+      - '.dockerignore'
+      - 'fly.toml'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-backend
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+    steps:
+      - name: Skip without FLY_API_TOKEN
+        if: env.FLY_API_TOKEN == ''
+        run: echo "::notice::FLY_API_TOKEN is not set — backend deploy skipped (docs/20 §3.1)."
+      - uses: actions/checkout@v4
+        if: env.FLY_API_TOKEN != ''
+        with:
+          # the Telegram publisher commits from this checkout inside the image (Dockerfile)
+          fetch-depth: 0
+          # never bake the workflow's GitHub token into the image's .git/config
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        if: env.FLY_API_TOKEN != ''
+        with:
+          node-version: 22
+          cache: npm
+      - if: env.FLY_API_TOKEN != ''
+        run: npm ci
+      - name: Backend tests
+        if: env.FLY_API_TOKEN != ''
+        run: npm run test:backend
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+        if: env.FLY_API_TOKEN != ''
+      - name: Deploy to Fly
+        if: env.FLY_API_TOKEN != ''
+        run: flyctl deploy --remote-only --config fly.toml --app sofexpo-api
+      - name: Health check
+        if: env.FLY_API_TOKEN != ''
+        run: |
+          for i in 1 2 3 4 5 6; do
+            curl -fsS https://api.sof-expo.com/health && exit 0
+            sleep 10
+          done
+          echo "::error::https://api.sof-expo.com/health did not answer after deploy — see flyctl logs --app sofexpo-api"
+          exit 1

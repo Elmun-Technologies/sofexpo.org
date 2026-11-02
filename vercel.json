@@ -17,6 +17,26 @@
       "statusCode": 301
     },
     {
+      "source": "/admin",
+      "destination": "https://api.sof-expo.com/admin",
+      "statusCode": 302
+    },
+    {
+      "source": "/admin/:path*",
+      "destination": "https://api.sof-expo.com/admin",
+      "statusCode": 302
+    },
+    {
+      "source": "/cabinet",
+      "destination": "https://api.sof-expo.com/cabinet",
+      "statusCode": 302
+    },
+    {
+      "source": "/cabinet/:path*",
+      "destination": "https://api.sof-expo.com/cabinet",
+      "statusCode": 302
+    },
+    {
       "source": "/:locale(en|ru|zh|tr|uz)/events/foodera-expo/sections/delicacies/",
       "destination": "/:locale/events/foodera-expo/sections/fruits-vegetables/",
       "statusCode": 301

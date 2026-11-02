@@ -53,7 +53,11 @@ const days = Math.max(
 const ics = eventIcsPath(event.slug, event.dates.start);
 /* a finished edition offers its report and the coming shows — not a ticket, a calendar file
    or a "next edition" link that pointed back at this very page */
-const report = upcoming ? undefined : archive.find((x) => x.eventSlug === event.slug);
+const report = upcoming
+  ? undefined
+  : archive.filter((x) => x.eventSlug === event.slug).sort((a, b) => b.start.localeCompare(a.start))[0];
+/* a finished show whose next dates are announced says so — the visitor came for "when" */
+const next = upcoming ? undefined : event.nextEdition;
 const actions: { label: string; href: string; icon?: string; download?: boolean }[] = upcoming
   ? [
       { label: t('cta.stand'), href: L('/request-stand/') + `?event=${event.slug}` },
@@ -102,6 +106,14 @@ const heroKicker =
         <Icon name="clock" size={17} /> {days} {ru ? (days === 1 ? 'день' : days < 5 ? 'дня' : 'дней') : days === 1 ? 'day' : 'days'} · {ru ? 'Самарканд, Джамбайский район' : 'Samarkand, Dzhambay district'}
       </li>
       {event.status === 'open' && <li class="chip chip--live"><span class="dot" /> {ru ? 'Идёт набор участников' : 'Exhibitor sales open'}</li>}
+      {!upcoming && (
+        <li class="chip">
+          <Icon name="calendar" size={15} />{' '}
+          {next
+            ? <><span>{ru ? 'Следующая выставка' : 'Next edition'}</span> <b>{next.display[locale]}</b></>
+            : ru ? 'Выставка завершена · даты следующей скоро' : 'This edition is over · next dates coming soon'}
+        </li>
+      )}
     </ul>
     <div class="btn-row">
       {actions.map((a, i) => (

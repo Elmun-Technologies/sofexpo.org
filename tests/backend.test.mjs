@@ -8,6 +8,10 @@ import { createLeadServer, formatLead, normalizeLead, summarize } from '../scrip
 const ADMIN_EMAIL = 'admin@sofexpo.test';
 const ADMIN_PASSWORD = 'test-admin-password-2026';
 
+/* these suites send requests for FOODERA 2026; the show timeline (shows.mjs) closes it on
+   30.10.2026, so they run on a clock from before the show */
+const BEFORE_FOODERA = () => new Date('2026-10-01T12:00:00+05:00');
+
 async function startBackend(t, options = {}) {
   const directory = mkdtempSync(join(tmpdir(), 'sofexpo-backend-test-'));
   const server = createLeadServer({
@@ -340,7 +344,7 @@ test('admin and portal panel assets load with noindex and security headers', asy
 });
 
 test('visitor and exhibitor accounts have isolated profiles and their own CRM-tracked requests', async (t) => {
-  const { server, base } = await startBackend(t);
+  const { server, base } = await startBackend(t, { now: BEFORE_FOODERA });
   const options = await jsonRequest(base, '/api/portal/options');
   assert.equal(options.response.status, 200);
   assert.equal(options.data.events.find((event) => event.slug === 'foodera-expo').dates, '27–29 oktabr 2026');
@@ -419,7 +423,7 @@ test('visitor and exhibitor accounts have isolated profiles and their own CRM-tr
 });
 
 test('admin portal account workspace filters profiles, tracks request lifecycles, and revokes disabled sessions', async (t) => {
-  const { server, base } = await startBackend(t);
+  const { server, base } = await startBackend(t, { now: BEFORE_FOODERA });
   const registration = await jsonRequest(base, '/api/portal/register', {
     method: 'POST', body: {
       accountType: 'visitor', name: 'Admin View Visitor', email: 'admin-view@example.test',

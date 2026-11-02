@@ -7,7 +7,7 @@
  */
 import type { SourceLocale as Locale } from '@/i18n/config';
 import { localize } from '@/i18n/config';
-import { events, upcoming } from '@/data/events';
+import { events, upcoming, nextEvent } from '@/data/events';
 import { archive } from '@/data/archive';
 import { rootOnlyPaths } from '@/lib/hostRoutes';
 import { site } from '@/data/site';
@@ -27,7 +27,7 @@ export function getStaticPaths() {
 const locale = Astro.params.locale as Locale;
 const ru = locale === 'ru';
 const L = (p: string) => localize(locale, p);
-const next = upcoming[0];
+const next = nextEvent();
 const rows = [...upcoming].sort((a, b) => a.dates.start.localeCompare(b.dates.start));
 /** filter chips: only industries that actually have an upcoming show */
 const filters = [...new Set(rows.map((e) => e.industry))];

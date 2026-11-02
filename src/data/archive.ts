@@ -48,6 +48,34 @@ export interface Edition {
 
 export const archive: Edition[] = [
   {
+    /* Held 27–29.10.2026. Only the format of the edition is stated here; the attendance and
+       exhibitor figures go into `results` / `report.method` once the organiser counts them —
+       a guessed number is worse than none (docs/13 §P0-5). */
+    id: 'foodera-2026',
+    start: '2026-10-27',
+    eventSlug: 'foodera-expo',
+    year: 2026,
+    dates: '27–29.10.2026',
+    title: { ru: 'FOODERA EXPO 2026 · итоги', en: 'FOODERA EXPO 2026 · results' },
+    summary: {
+      ru: 'Выставка продуктов питания и напитков: 15 разделов food & beverage, производители, дистрибьюторы и закупщики розницы, опта и HoReCa, Узбекско-афганский бизнес-форум все три дня.',
+      en: 'The food and beverage exhibition: 15 food & beverage sections, producers, distributors and buyers from retail, wholesale and HoReCa, with the Uzbekistan–Afghanistan Business Forum on all three days.',
+    },
+    results: [
+      { value: '3', label: { ru: 'дня выставки', en: 'show days' } },
+      { value: '15', label: { ru: 'выставочных разделов', en: 'exhibition sections' } },
+      { value: '4', label: { ru: 'номинации конкурса продуктов', en: 'product contest nominations' } },
+    ],
+    report: {
+      highlights: [
+        { ru: '15 разделов: от напитков и бакалеи до упаковочного оборудования и логистики', en: '15 sections, from drinks and grocery to packaging equipment and logistics' },
+        { ru: 'Узбекско-афганский бизнес-форум все три дня выставки', en: 'The Uzbekistan–Afghanistan Business Forum on all three days of the show' },
+        { ru: 'Конкурс «Лучший продукт FOODERA 2026» в четырёх номинациях', en: 'The FOODERA 2026 Best Product contest in four nominations' }
+      ],
+    },
+  },
+
+  {
     id: 'promotors-2026',
     start: '2026-09-12',
     eventSlug: 'promotors-show-samarkand',

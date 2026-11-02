@@ -3,7 +3,7 @@ import Base from '@/layouts/Base.astro';
 import { localize } from '@/i18n/config';
 import { localePaths } from '@/lib/pages';
 import { site } from '@/data/site';
-import { upcoming, events } from '@/data/events';
+import { upcoming, finished, events } from '@/data/events';
 import { brandForEvent } from '@/data/brands';
 import { CURRENT_EVENT } from '@/data/hosts';
 import { eventPages } from '@/data/pages/event-pages';
@@ -33,7 +33,8 @@ const hostPage = hostEvent ? eventPages[hostEvent.slug]?.overview ?? null : null
 const { locale } = Astro.params as { locale: 'ru' | 'en' };
 const P = (p: string) => localize(locale, p);
 const ru = locale === 'ru';
-const next = upcoming[0];
+/* the soonest show still ahead — the day after a show closes, the next one takes this card */
+const next = upcoming[0] ?? finished[0];
 /* the next-show card wears that show's own logo band, so the card reads FOODERA (blue/gold)
    long before the visitor opens its page (docs/21 §5) */
 const nextStripe = brandForEvent(next.slug)?.stripe;
@@ -72,7 +73,7 @@ const copy = {
     showsK: 'Выставки в Узбекистане 2026–2027',
     showsT: 'Шесть отраслей. Один центр.',
     allEvents: 'Весь календарь',
-    status: { open: 'Регистрация открыта', registration: 'Приём заявок', past: 'Итоги 2026' },
+    status: { open: 'Регистрация открыта', registration: 'Приём заявок' } as Record<string, string>,
     aud: [
       { t: 'Экспонентам', d: 'Готовый стенд, место на плане зала и список закупщиков до открытия выставки.', href: '/exhibitors/', img: '/images/stand-dark.jpg', alt: 'Стенд экспонента индивидуальной застройки', tags: ['Пакеты', 'Застройка стендов', 'Спонсорство'], tone: 'ink' },
       { t: 'Посетителям', d: 'Бесплатный вход в торговые дни, QR-билет, деловая программа и отели.', href: '/visitors/', img: '/images/b2b-meeting.jpg', alt: 'Переговоры гостей на стенде', tags: ['Регистрация', 'Отели', 'Трансфер'], tone: 'blue' },
@@ -134,7 +135,7 @@ const copy = {
     showsK: 'Exhibitions in Uzbekistan 2026–2027',
     showsT: 'Six industries. One centre.',
     allEvents: 'Full calendar',
-    status: { open: 'Registration open', registration: 'Applications open', past: '2026 results' },
+    status: { open: 'Registration open', registration: 'Applications open' } as Record<string, string>,
     aud: [
       { t: 'For exhibitors', d: 'A ready stand, a place on the floor plan and the buyer list before the show opens.', href: '/exhibitors/', img: '/images/stand-dark.jpg', alt: 'A custom-built exhibitor stand', tags: ['Packages', 'Stand construction', 'Sponsorship'], tone: 'ink' },
       { t: 'For visitors', d: 'Free entry on trade days, a QR ticket, the business programme and hotels.', href: '/visitors/', img: '/images/b2b-meeting.jpg', alt: 'Guests in a meeting at a stand', tags: ['Registration', 'Hotels', 'Transfer'], tone: 'blue' },
@@ -176,7 +177,7 @@ const copy = {
 }[locale];
 
 /* the six shows of the season: the five ahead, then the one whose results are in */
-const shows = [...upcoming, ...events.filter((e) => e.status === 'past')].slice(0, 6);
+const shows = [...upcoming, ...finished].slice(0, 6);
 
 /* why Samarkand: the five neighbours by distance; totals computed, never typed */
 const markets = [...neighbours].sort((a, b) => a.distanceKm - b.distanceKm);
@@ -294,7 +295,7 @@ const jsonLd = [
           <span class="h-card__body">
             <span class="h-card__name"><b>{e.brand[locale]}</b><span aria-hidden="true">{String(i + 1).padStart(2, '0')}</span></span>
             <span class="h-card__desc">{e.tagline[locale]}</span>
-            <span class="h-card__foot"><span class="h-card__status">{copy.status[e.status]}</span><span class="arr" aria-hidden="true"><Icon name="arrow-ne" size={16} /></span></span>
+            <span class="h-card__foot"><span class="h-card__status">{e.status === 'past' ? (ru ? `Итоги ${e.dates.start.slice(0, 4)}` : `${e.dates.start.slice(0, 4)} results`) : copy.status[e.status]}</span><span class="arr" aria-hidden="true"><Icon name="arrow-ne" size={16} /></span></span>
           </span>
         </a>
       ))}

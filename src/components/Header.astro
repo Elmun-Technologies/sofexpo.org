@@ -3,7 +3,7 @@ import { nav, site } from '@/data/site';
 import { CURRENT_BRAND, CURRENT_EVENT } from '@/data/hosts';
 import ShowLogo from '@/components/ShowLogo.astro';
 import { logoFor } from '@/lib/showLogos';
-import { events } from '@/data/events';
+import { events, nextEvent } from '@/data/events';
 import BrandMark from '@/components/BrandMark.astro';
 import { localize, localeMeta, supportedLocales, type SourceLocale as Locale } from '@/i18n/config';
 import { useUI } from '@/i18n/ui';
@@ -40,9 +40,7 @@ const portalBase = (() => {
 const visitorPortalHref = portalBase ? `${portalBase}/cabinet?type=visitor&lang=${locale}` : '';
 const exhibitorPortalHref = portalBase ? `${portalBase}/cabinet?type=exhibitor&lang=${locale}` : '';
 /* the mega-menu's featured card: the next show that is still open */
-const nextShow = events
-  .filter((e) => e.status !== 'past')
-  .sort((a, b) => a.dates.start.localeCompare(b.dates.start))[0];
+const nextShow = nextEvent();
 /**
  * One bar, six items (docs/08 §3.1). The old utility bar (address · phone · hours · telegram)
  * moved to /contacts/ and the footer; «Новости» is in the footer — the first screen belongs

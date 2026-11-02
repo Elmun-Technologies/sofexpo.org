@@ -105,10 +105,27 @@ const reading = (
 const kind = page.path.split('/').filter(Boolean)[2] ?? 'overview';
 const name = event.brand[locale];
 const when = event.dates.display[locale];
+const sn = event.shortName;
 const ctaText = past
-  ? ru
-    ? `${name} завершилась. Оставьте заявку — пришлём даты следующей редакции и условия раннего бронирования.`
-    : `${name} has closed. Leave a request and we will send the next edition's dates and early-booking terms.`
+  ? ({
+      exhibitors: ru
+        ? `Хотите стенд на следующей ${sn}? Заявка сейчас — первая очередь на выбор места в зале.`
+        : `Exhibiting at the next ${sn}? A request now puts you first in line for a spot on the floor plan.`,
+      visitors: ru
+        ? `${sn} в этом году завершилась. Оставьте заявку — сообщим даты следующей выставки, как только они будут утверждены.`
+        : `${sn} is over for this year. Leave a request and we will send the next edition's dates as soon as they are set.`,
+      program: ru
+        ? `Хотите выступить на следующей ${sn}? Первые слоты деловой программы — у экспонентов и партнёров.`
+        : `Want to speak at the next ${sn}? Exhibitors and partners get the first business-programme slots.`,
+      buyers: ru
+        ? `Программа закупщика ${sn} откроется вместе с датами следующей выставки — оставьте заявку, сообщим первыми.`
+        : `The ${sn} buyer programme reopens with the next edition's dates — leave a request and we will tell you first.`,
+      award: ru
+        ? `Конкурс следующей ${sn} объявим вместе с датами выставки — оставьте заявку, чтобы подать продукт первым.`
+        : `The next ${sn} contest is announced with the show's dates — leave a request to enter your product first.`,
+    } as Record<string, string>)[kind] ?? (ru
+      ? `${name} завершилась. Оставьте заявку — пришлём даты следующей редакции и условия раннего бронирования.`
+      : `${name} has closed. Leave a request and we will send the next edition's dates and early-booking terms.`)
   : ({
       overview: ru
         ? `${name}, ${when}, Самарканд. Укажите продукт и площадь — пришлём план зала и расчёт.`

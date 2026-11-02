@@ -1,0 +1,46 @@
+name: daily-rebuild
+
+# The show timeline (docs/24): the site is static, so "which show is next" is decided at
+# build time from the dates in src/data/events.ts. This rebuilds the site every night right
+# after midnight in Samarkand, so the morning after a show closes it is already in the archive
+# and the next show is on the home page, the promo bar and the menu — nobody has to push.
+#
+#   VERCEL_DEPLOY_HOOK_URL  Vercel → Project → Settings → Git → Deploy Hooks → "main"
+#                           (the production host, sof-expo.com). Unset = the step is skipped
+#                           with a notice, nothing fails.
+# The Cloudflare Pages flow (deploy.yml) is dispatched too; it stops by itself until its own
+# secrets exist.
+on:
+  schedule:
+    - cron: '11 19 * * *' # 00:11 Asia/Samarkand (UTC+5)
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Vercel deploy hook
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "::notice::VERCEL_DEPLOY_HOOK_URL is not set — add it to rebuild sof-expo.com nightly (docs/24 §3)."
+            exit 0
+          fi
+          case "$HOOK" in https://*) ;; *) echo "::error::VERCEL_DEPLOY_HOOK_URL must be https"; exit 1;; esac
+          for i in 1 2 3; do
+            if curl -fsS -X POST --max-time 30 "$HOOK" > /dev/null; then echo "Vercel rebuild queued"; exit 0; fi
+            sleep $((i * 10))
+          done
+          echo "::error::the Vercel deploy hook did not answer"
+          exit 1
+
+      - name: Cloudflare Pages (deploy.yml)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml --repo "$GITHUB_REPOSITORY" --ref main

@@ -112,6 +112,16 @@ in `scripts/site-tags.mjs` (shared by backend and build); the backend materializ
 `src/data/site-tags.json` and pushes it through the shared `GitPublisher`. Do not hand-edit
 that JSON in production; `PUBLIC_*` env vars are only a fallback.
 
+## Show timeline (docs/24)
+
+A show's status is computed from its dates, not set by hand: the day after `dates.end`
+(Samarkand, UTC+5) it becomes `past`, loses its `highlight`, and the next show takes the home
+page (`onTimeline()` in `src/data/events.ts`; use `events`/`upcoming`/`finished`/`nextEvent()`,
+never the raw `catalogue`). The backend follows the same clock (`shows.mjs`, `options.now`).
+`daily-rebuild.yml` rebuilds the static site every night (secret `VERCEL_DEPLOY_HOOK_URL`).
+`SITE_TODAY=YYYY-MM-DD` pins the build date; after adding a show or changing show copy run
+`npm run timeline:check` — a rollover with an untranslated zh/tr string would fail that night's build.
+
 ## Keywords & articles (docs/16, docs/23)
 
 Per-page target queries for all 5 locales live in `scripts/keyword-map.mjs` (gate: A-priority < 70

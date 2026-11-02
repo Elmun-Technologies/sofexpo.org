@@ -21,8 +21,9 @@ const ic = showColor(event.slug, industryColor(event.industry));
 const n = event.categories.length;
 const ruPlural = (k: number, one: string, few: string, many: string) =>
   k % 10 === 1 && k % 100 !== 11 ? one : k % 10 >= 2 && k % 10 <= 4 && (k % 100 < 10 || k % 100 >= 20) ? few : many;
+const past = event.status === 'past';
 const sectionsLine = `${n} ${ru ? ruPlural(n, 'раздел', 'раздела', 'разделов') : n === 1 ? 'section' : 'sections'} · ${
-  event.status === 'past' ? (ru ? 'архив' : 'archive') : ru ? 'идёт набор' : 'booking open'
+  past ? (ru ? 'архив' : 'archive') : ru ? 'идёт набор' : 'booking open'
 }`;
 import ShowLogo from '@/components/ShowLogo.astro';
 import { logoFor } from '@/lib/showLogos';
@@ -54,7 +55,7 @@ import { logoFor } from '@/lib/showLogos';
     <div class="ev__foot">
       <span class="ev__sections">{sectionsLine}</span>
       <a class="ev__more" href={href}>
-        {event.status === 'past' ? (ru ? 'Итоги' : 'Report') : (ru ? 'Подробнее' : 'Details')} <Icon name="arrow" size={14} />
+        {past ? (ru ? 'Итоги' : 'Report') : (ru ? 'Подробнее' : 'Details')} <Icon name="arrow" size={14} />
       </a>
     </div>
   </div>

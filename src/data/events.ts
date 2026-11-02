@@ -76,7 +76,19 @@ export interface ExpoEvent {
   industry: string;
   dates: { start: string; end: string; display: L };
   edition: L;
+  /**
+   * The status the editor sets for a show that is still ahead ('open' = exhibitor sales,
+   * 'registration' = applications). 'past' is never needed by hand: once `dates.end` is behind
+   * the build date (Samarkand time) the timeline below flips the show to 'past' on its own,
+   * drops its `highlight` and the next show takes the home page (docs/24).
+   */
   status: 'open' | 'registration' | 'past';
+  /**
+   * The next edition, once the organiser has announced its dates. A finished show then
+   * prints "Next edition: …" on its hero and cards instead of only looking back.
+   * Leave unset until the dates are confirmed — no guessed dates.
+   */
+  nextEdition?: { start: string; end: string; display: L };
   heroImage: string;
   tagline: L;
   intro: L;
@@ -106,7 +118,7 @@ export interface ExpoEvent {
   searchTerms: L[];
 }
 
-export const events: ExpoEvent[] = [
+const catalogue: ExpoEvent[] = [
   {
     slug: 'foodera-expo',
     brand: { ru: 'FOODERA EXPO 2026', en: 'FOODERA EXPO 2026' },
@@ -760,9 +772,44 @@ export const events: ExpoEvent[] = [
   },
 ];
 
+/* ------------------------------------------------------------------ timeline (docs/24)
+ * The site is static, so "today" is the build date — the daily rebuild
+ * (.github/workflows/daily-rebuild.yml) keeps it current. `SITE_TODAY=YYYY-MM-DD` pins it
+ * for tests and previews ("what does the site look like on 12 November?"). */
+
+/** today's date in Samarkand (UTC+5, no DST) as YYYY-MM-DD */
+export function samarkandToday(now = new Date()): string {
+  return new Date(now.getTime() + 5 * 36e5).toISOString().slice(0, 10);
+}
+
+const envToday = typeof process !== 'undefined' ? process.env?.SITE_TODAY : undefined;
+/** the build date the whole site is rendered for */
+export const TODAY: string = envToday && /^\d{4}-\d{2}-\d{2}$/.test(envToday) ? envToday : samarkandToday();
+
+/** where a show stands on `today`: ahead, running (doors open) or finished */
+export function phaseOf(e: Pick<ExpoEvent, 'dates' | 'status'>, today = TODAY): 'ahead' | 'live' | 'past' {
+  if (e.dates.end < today) return 'past';
+  if (e.status === 'past') return 'past';
+  return e.dates.start <= today ? 'live' : 'ahead';
+}
+
+/** the show as it reads on `today`: a finished edition becomes 'past' and stops shouting */
+export function onTimeline(e: ExpoEvent, today = TODAY): ExpoEvent {
+  if (phaseOf(e, today) !== 'past') return e;
+  return { ...e, status: 'past', highlight: null };
+}
+
+export const events: ExpoEvent[] = catalogue.map((e) => onTimeline(e));
+
+/** shows still ahead (or running today), soonest first */
 export const upcoming = events
   .filter((e) => e.status !== 'past')
   .sort((a, b) => a.dates.start.localeCompare(b.dates.start));
+
+/** finished shows, most recent first */
+export const finished = events
+  .filter((e) => e.status === 'past')
+  .sort((a, b) => b.dates.end.localeCompare(a.dates.end));
 
 export const byIndustry = [...new Set(events.map((e) => e.industry))];
 
@@ -770,9 +817,6 @@ export function getEvent(slug: string): ExpoEvent | undefined {
   return events.find((e) => e.slug === slug);
 }
 
-export function nextEvent(from = new Date()): ExpoEvent {
-  return (
-    upcoming.find((e) => new Date(e.dates.end) >= from) ??
-    upcoming[0]
-  );
+export function nextEvent(today = TODAY): ExpoEvent {
+  return upcoming.find((e) => e.dates.end >= today) ?? upcoming[0] ?? finished[0];
 }

@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import {
   BackendStore, CURRENCIES, FILE_KINDS, LEAD_PRIORITIES, LEAD_STATUSES, NOTE_KINDS, SHOWCASE_STATUSES, USER_ROLES,
 } from './db.mjs';
-import { PORTAL_EVENTS, SHOWS } from './shows.mjs';
+import { PORTAL_EVENTS, SHOWS, portalEventsOn, showsOn } from './shows.mjs';
 import {
   SHOWCASE_LIMITS, SOCIAL_NETWORKS, UPLOAD_LIMITS, cleanFileName, cleanFileTitle, editionLabel, fileTitleFromName, normalizeShowcase,
   sniffUpload, submitErrors,
@@ -363,6 +363,8 @@ export function createLeadServer(options = {}) {
   const adminEmail = options.adminEmail ?? process.env.ADMIN_EMAIL ?? '';
   const adminPassword = options.adminPassword ?? process.env.ADMIN_PASSWORD ?? '';
   const dbPath = options.dbPath ?? process.env.LEAD_WEBHOOK_DB ?? '.data/sofexpo.sqlite';
+  /* the show timeline (shows.mjs) reads this clock: tests pin a date, production uses now */
+  const clock = typeof options.now === 'function' ? options.now : () => new Date();
   const origins = parseOriginList(options.origins ?? process.env.LEAD_WEBHOOK_ORIGINS ?? process.env.LEAD_WEBHOOK_ORIGIN ?? 'https://sof-expo.com');
   const allowedOrigins = new Set(origins.map(originOf).filter(Boolean));
   const wildcardOrigin = origins.includes('*');
@@ -843,8 +845,8 @@ export function createLeadServer(options = {}) {
     if (req.method === 'GET' && path === '/api/portal/options') {
       return sendJson(res, 200, {
         ok: true,
-        events: PORTAL_EVENTS,
-        shows: SHOWS,
+        events: portalEventsOn(clock()),
+        shows: showsOn(clock()),
         fileKinds: FILE_KINDS.filter((kind) => kind !== 'logo'),
         socials: SOCIAL_NETWORKS,
         limits: { ...SHOWCASE_LIMITS, ...UPLOAD_LIMITS },
@@ -957,7 +959,7 @@ export function createLeadServer(options = {}) {
         verifyCsrf(req, session);
         if (!rateAllowed(`portal-request:${session.account_id}`, 10, 60 * 60_000)) throw new HttpError(429, 'So‘rovlar soni ko‘p. Birozdan keyin urinib ko‘ring.');
         const body = await readJson(req, 12_000);
-        const event = PORTAL_EVENTS.find((item) => item.slug === cleanText(body.event, 60));
+        const event = portalEventsOn(clock()).find((item) => item.slug === cleanText(body.event, 60));
         if (!event) throw new HttpError(422, 'Ro‘yxatdan tadbirni tanlang.');
         if (!CONSENT_VALUES.has(String(body.consent ?? '').toLowerCase())) throw new HttpError(422, 'Ushbu murojaatni yuborishga rozilik bering.');
         const account = store.getPortalAccountById(session.account_id);
@@ -1166,7 +1168,7 @@ export function createLeadServer(options = {}) {
           ok: true,
           team: store.listTeam(),
           events: [...new Set([...PORTAL_EVENTS.map((item) => item.name), ...SHOWS.map((show) => show.name)])],
-          shows: SHOWS,
+          shows: showsOn(clock()),
           currencies: CURRENCIES,
           noteKinds: NOTE_KINDS,
           statuses: LEAD_STATUSES,

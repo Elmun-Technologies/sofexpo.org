@@ -224,6 +224,27 @@ Git yoki Vercel `PUBLIC_*` o‘zgaruvchilariga kirmasligi kerak.
 - `BLOG_SYNC_GIT_PUSH=1` faqat Fly runtime’da qoladi. Blog sync push’i muvaffaqiyatsiz bo‘lsa,
   `flyctl logs` dagi `[tg-blog]` xabarlarini va `GITHUB_TOKEN` ruxsatini tekshiring.
 
+## 7.1. Admin panel ochilmasa — diagnostika
+
+Admin `https://api.sof-expo.com/admin` da (sayt `sof-expo.com/admin` va `/cabinet` shu yerga 302 bilan
+yo‘naltiradi). Ochilmasa, operator kompyuterida tartib bilan:
+
+1. `curl -sS -m 15 https://api.sof-expo.com/health` va `curl -sS -m 15 https://sofexpo-api.fly.dev/health`.
+   Ikkalasi ham javob bermasa — app ishlamayapti (2-qadam). Faqat `fly.dev` ishlasa — DNS/sertifikat (4-qadam).
+   Ikkalasi ham ishlasa-yu brauzer ochmasa — provayder bloki yoki brauzer keshi (mobil internet/VPN bilan sinang).
+2. `flyctl status --app sofexpo-api` va `flyctl machines list --app sofexpo-api`: machine `stopped`/`suspended`
+   bo‘lsa — `flyctl machine start <ID> --app sofexpo-api`.
+3. Fly dashboard → **Billing**: trial tugagan yoki karta yo‘q bo‘lsa Fly machine’larni to‘xtatadi —
+   to‘lov usulini qo‘shing, so‘ng 2-qadam.
+4. `flyctl certs check api.sof-expo.com --app sofexpo-api` va Namecheap’da `api` CNAME → `sofexpo-api.fly.dev`.
+5. `flyctl logs --app sofexpo-api --no-tail` — `GITHUB_TOKEN must be set` (fly-start.sh), SQLite yoki
+   port xatolari. Kerak bo‘lsa Actions → **deploy-backend** → Run workflow bilan qayta deploy.
+6. Sahifa ochilib, kirish rad etilsa: 401 — parol noto‘g‘ri; 429 — 10 daqiqa blok (ko‘p urinish);
+   503 — admin yo‘q (`ADMIN_EMAIL`/`ADMIN_PASSWORD` secrets).
+
+`.github/workflows/backend-uptime.yml` `/health` ni har soat tekshiradi; javob bo‘lmasa run qizil
+bo‘ladi va GitHub email yuboradi.
+
 ## 8. Qo‘lda bajariladigan yakuniy checklist
 
 1. `flyctl` o‘rnating, signup/login qiling, `sofexpo-api` app va `sofexpo_data` volume’ni yarating.

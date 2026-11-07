@@ -1,5 +1,9 @@
 # 20 · Fly.io: backend production deploy
 
+> **Migratsiya:** backend hozir shu qo‘llanma bo‘yicha Fly.io’da ishlaydi, lekin Xezner (Coolify)
+> serveriga ko‘chirish rejalashtirilgan — `docs/25-hetzner-coolify-deploy.md`. Haqiqiy cutover
+> (DNS, Telegram webhook) bajarilmaguncha bu hujjat amaldagi production manbasi bo‘lib qoladi.
+
 Ushbu qo‘llanma faqat uzoq ishlaydigan Node backend’ni `api.sof-expo.com` ga chiqaradi.
 Ommaviy Astro sayt alohida: `sof-expo.com` Vercel’da statik quriladi (`vercel.json`,
 `PUBLIC_HOSTS_MODE=alias`). Fly.io’da backend’ni Vercel serverless funksiyasi sifatida ishga
@@ -237,7 +241,7 @@ yo‘naltiradi). Ochilmasa, operator kompyuterida tartib bilan:
 3. Fly dashboard → **Billing**: trial tugagan yoki karta yo‘q bo‘lsa Fly machine’larni to‘xtatadi —
    to‘lov usulini qo‘shing, so‘ng 2-qadam.
 4. `flyctl certs check api.sof-expo.com --app sofexpo-api` va Namecheap’da `api` CNAME → `sofexpo-api.fly.dev`.
-5. `flyctl logs --app sofexpo-api --no-tail` — `GITHUB_TOKEN must be set` (fly-start.sh), SQLite yoki
+5. `flyctl logs --app sofexpo-api --no-tail` — `GITHUB_TOKEN must be set` (docker-start.sh), SQLite yoki
    port xatolari. Kerak bo‘lsa Actions → **deploy-backend** → Run workflow bilan qayta deploy.
 6. Sahifa ochilib, kirish rad etilsa: 401 — parol noto‘g‘ri; 429 — 10 daqiqa blok (ko‘p urinish);
    503 — admin yo‘q (`ADMIN_EMAIL`/`ADMIN_PASSWORD` secrets).

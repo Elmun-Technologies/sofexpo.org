@@ -1,3 +1,5 @@
+# Host-agnostic backend image: built the same way on Fly.io (docs/20) and on the Hetzner/
+# Coolify target (docs/25, migration in progress). Nothing below assumes either host.
 FROM node:22-slim
 
 ENV NODE_ENV=production \
@@ -21,8 +23,8 @@ RUN npm ci --prefix scripts/backend --omit=dev --ignore-scripts --no-audit --no-
 # generated content from this checkout. .dockerignore excludes local env/node_modules.
 COPY . .
 
-RUN chmod +x scripts/backend/fly-start.sh && mkdir -p /data
+RUN chmod +x scripts/backend/docker-start.sh && mkdir -p /data
 
 EXPOSE 8787
 
-CMD ["/app/scripts/backend/fly-start.sh"]
+CMD ["/app/scripts/backend/docker-start.sh"]

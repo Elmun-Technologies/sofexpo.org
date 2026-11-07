@@ -26,6 +26,11 @@ subdomains) from shared sources — see `docs/05-subdomains.md` and `docs/06-dep
   `.github/workflows/deploy-backend.yml` deploys it from GitHub Actions when backend files change on
   `main` (repo secret `FLY_API_TOKEN`, docs/20 §3.1). Follow `docs/20-fly-deploy.md` for production provisioning and
   `docs/17-backend-admin.md` for backend architecture.
+  **Migration in progress:** the backend is moving from Fly.io to a self-hosted Hetzner server
+  via Coolify — `docs/25-hetzner-coolify-deploy.md`, `docker-compose.coolify.yml`. The root
+  `Dockerfile` and `scripts/backend/docker-start.sh` are shared by both hosts (host-agnostic);
+  keep them that way. Until the DNS cutover in docs/25 §4 happens, Fly.io is still production —
+  never configure both hosts to write production data at the same time (SQLite is single-writer).
 - **Tests:** `node:test` (`npm test` → `tests/*.test.mjs`), Playwright for e2e
   (`npm run test:e2e`). There is **no** Jest/Vitest — use `node:test` + `node:assert`.
 

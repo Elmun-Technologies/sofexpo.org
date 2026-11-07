@@ -1,5 +1,8 @@
 # CLAUDE.md — SOF EXPO Samarkand (sof-expo.com)
 
+**Yangi sessiya boshida**: joriy holat (nima qilindi, nima qolgan, qaysi branch) —
+**[`docs/HOLAT.md`](docs/HOLAT.md)**. Katta ish tugagach shu faylni yangilang.
+
 ## Overview
 
 Marketing site for the SOF EXPO Samarkand international exhibition centre plus a small

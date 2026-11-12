@@ -1,9 +1,10 @@
 name: backend-uptime
 
-# The Fly backend (admin, CRM, lead forms, Telegram → blog) once went unreachable for two weeks
+# The backend (admin, CRM, lead forms, Telegram → blog) once went unreachable for two weeks
 # without anyone noticing. This pings /health every hour; a failed run makes GitHub email the
 # repo's workflow owner (Settings → Notifications → Actions), so an outage is seen the same day.
-# The Fly app status itself (stopped machine, billing) still needs `flyctl status` — docs/20 §7.
+# The backend runs on Hetzner via Coolify — check the Coolify resource's status/logs there if
+# this goes red (docs/25 §7); it is no longer on Fly.io.
 on:
   schedule:
     - cron: '17 * * * *'
@@ -20,5 +21,5 @@ jobs:
             if curl -fsS --max-time 15 https://api.sof-expo.com/health; then exit 0; fi
             sleep 20
           done
-          echo "::error::https://api.sof-expo.com/health is not answering — run flyctl status --app sofexpo-api (docs/20 §7)"
+          echo "::error::https://api.sof-expo.com/health is not answering — check the Coolify resource's status/logs (docs/25 §7)"
           exit 1

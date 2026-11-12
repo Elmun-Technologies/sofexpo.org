@@ -392,6 +392,7 @@ export function createLeadServer(options = {}) {
     legacyEventsPath: options.legacyEventsPath ?? process.env.LEAD_WEBHOOK_EVENTS ?? '.cache/events.jsonl',
     adminEmail,
     adminPassword,
+    clock,
   });
   const rateBuckets = new Map();
   const loginFailures = new Map();

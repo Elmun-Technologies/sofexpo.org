@@ -141,9 +141,14 @@ export class BackendStore {
     legacyEventsPath = '.cache/events.jsonl',
     adminEmail = '',
     adminPassword = '',
+    /* the show timeline clock (shows.mjs): createLeadServer passes its own options.now
+       override through so the exhibitor directory's "currently exhibiting" flag (below)
+       reads the same clock as every other timeline-aware route, not the real wall clock */
+    clock = () => new Date(),
   } = {}) {
     if (dbPath !== ':memory:') mkdirSync(dirname(dbPath), { recursive: true });
     this.path = dbPath;
+    this.clock = clock;
     this.db = new DatabaseSync(dbPath);
     this.db.exec(`
       PRAGMA foreign_keys = ON;
@@ -1396,7 +1401,7 @@ export class BackendStore {
       const participation = (content.participation || []).map((item) => ({
         ...item,
         label: editionLabel(item.event, item.year),
-        upcoming: isUpcomingEdition(item.event, item.year),
+        upcoming: isUpcomingEdition(item.event, item.year, this.clock()),
       }));
       if (event && !participation.some((item) => item.event === event)) continue;
       const scoped = event ? participation.filter((item) => item.event === event) : participation;

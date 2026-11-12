@@ -1,8 +1,11 @@
-# 20 · Fly.io: backend production deploy
+# 20 · Fly.io: backend production deploy (TARIXIY — endi ishlatilmaydi)
 
-> **Migratsiya:** backend hozir shu qo‘llanma bo‘yicha Fly.io’da ishlaydi, lekin Xezner (Coolify)
-> serveriga ko‘chirish rejalashtirilgan — `docs/25-hetzner-coolify-deploy.md`. Haqiqiy cutover
-> (DNS, Telegram webhook) bajarilmaguncha bu hujjat amaldagi production manbasi bo‘lib qoladi.
+> **2026-11-12: Fly.io production'dan chiqarildi.** Backend endi Xezner serverida Coolify
+> orqali ishlaydi — `docs/25-hetzner-coolify-deploy.md`. Fly app `sofexpo-api` o‘chirilgan,
+> `fly.toml` va `deploy-backend.yml` repodan olib tashlangan. Bu hujjat faqat tarixiy
+> ma’lumot/arxiv sifatida saqlanadi (eski secret nomlari, DNS/TLS qadamlari — vaqti kelib
+> boshqa provayderga o‘tilsa shablon sifatida foydali bo‘lishi mumkin). **Joriy production
+> deploy uchun bu hujjatni EMAS, `docs/25`ni ishlating.**
 
 Ushbu qo‘llanma faqat uzoq ishlaydigan Node backend’ni `api.sof-expo.com` ga chiqaradi.
 Ommaviy Astro sayt alohida: `sof-expo.com` Vercel’da statik quriladi (`vercel.json`,

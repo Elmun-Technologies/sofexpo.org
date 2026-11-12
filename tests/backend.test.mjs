@@ -8,9 +8,12 @@ import { createLeadServer, formatLead, normalizeLead, summarize } from '../scrip
 const ADMIN_EMAIL = 'admin@sofexpo.test';
 const ADMIN_PASSWORD = 'test-admin-password-2026';
 
-/* these suites send requests for FOODERA 2026; the show timeline (shows.mjs) closes it on
-   30.10.2026, so they run on a clock from before the show */
-const BEFORE_FOODERA = () => new Date('2026-10-01T12:00:00+05:00');
+/* Any suite whose fixtures lean on an edition still being "upcoming" (shows.mjs computes
+   that from `end` against the real clock, docs/24) needs a pinned `now` from before every
+   edition it touches closes, or it silently breaks on the day after that show ends — as
+   happened here once already. FOODERA EXPO 2026 closes 30.10, BUILD PRO EXPO 2026 closes
+   12.11; this date is before both. Reuse it for any new fixture that references a 2026 show. */
+const SHOWS_STILL_UPCOMING = () => new Date('2026-10-01T12:00:00+05:00');
 
 async function startBackend(t, options = {}) {
   const directory = mkdtempSync(join(tmpdir(), 'sofexpo-backend-test-'));
@@ -344,7 +347,7 @@ test('admin and portal panel assets load with noindex and security headers', asy
 });
 
 test('visitor and exhibitor accounts have isolated profiles and their own CRM-tracked requests', async (t) => {
-  const { server, base } = await startBackend(t, { now: BEFORE_FOODERA });
+  const { server, base } = await startBackend(t, { now: SHOWS_STILL_UPCOMING });
   const options = await jsonRequest(base, '/api/portal/options');
   assert.equal(options.response.status, 200);
   assert.equal(options.data.events.find((event) => event.slug === 'foodera-expo').dates, '27–29 oktabr 2026');
@@ -423,7 +426,7 @@ test('visitor and exhibitor accounts have isolated profiles and their own CRM-tr
 });
 
 test('admin portal account workspace filters profiles, tracks request lifecycles, and revokes disabled sessions', async (t) => {
-  const { server, base } = await startBackend(t, { now: BEFORE_FOODERA });
+  const { server, base } = await startBackend(t, { now: SHOWS_STILL_UPCOMING });
   const registration = await jsonRequest(base, '/api/portal/register', {
     method: 'POST', body: {
       accountType: 'visitor', name: 'Admin View Visitor', email: 'admin-view@example.test',
@@ -663,7 +666,9 @@ async function upload(base, { cookie, csrf, kind, name, body }) {
 }
 
 test('exhibitor company page: uploads, moderation and the public directory', async (t) => {
-  const { base } = await startBackend(t);
+  /* this fixture's participation is BUILD PRO EXPO 2026, so `when=current` below needs a
+     clock from before that edition closes (12.11.2026) — see SHOWS_STILL_UPCOMING above */
+  const { base } = await startBackend(t, { now: SHOWS_STILL_UPCOMING });
   let result = await jsonRequest(base, '/api/portal/register', {
     method: 'POST', body: {
       accountType: 'exhibitor', name: 'Aziz Eksponent', email: 'aziz@beton.test', password: 'exhibitor-password-2026',

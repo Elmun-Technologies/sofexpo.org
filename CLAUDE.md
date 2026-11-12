@@ -24,16 +24,13 @@ subdomains) from shared sources — see `docs/05-subdomains.md` and `docs/06-dep
   `PUBLIC_HOSTS_MODE=alias`). The Cloudflare Pages multi-host flow (one Pages project per
   hostname, `PUBLIC_HOSTS_MODE=subdomain`, `.github/workflows/deploy.yml`) stays maintained
   for when exhibition subdomains are connected — host topology lives in `src/data/host-map.json`.
-  The backend is a separate long-lived Node service on **Fly.io** (`sofexpo-api`, Istanbul,
-  one machine with the persistent `/data/sofexpo.sqlite` volume); it is not deployed by Vercel.
-  `.github/workflows/deploy-backend.yml` deploys it from GitHub Actions when backend files change on
-  `main` (repo secret `FLY_API_TOKEN`, docs/20 §3.1). Follow `docs/20-fly-deploy.md` for production provisioning and
-  `docs/17-backend-admin.md` for backend architecture.
-  **Migration in progress:** the backend is moving from Fly.io to a self-hosted Hetzner server
-  via Coolify — `docs/25-hetzner-coolify-deploy.md`, `docker-compose.coolify.yml`. The root
-  `Dockerfile` and `scripts/backend/docker-start.sh` are shared by both hosts (host-agnostic);
-  keep them that way. Until the DNS cutover in docs/25 §4 happens, Fly.io is still production —
-  never configure both hosts to write production data at the same time (SQLite is single-writer).
+  The backend is a separate long-lived Node service, self-hosted on a **Hetzner** server via
+  **Coolify** (`docker-compose.coolify.yml`); it is not deployed by Vercel. Provisioning and
+  the env/secrets list: `docs/25-hetzner-coolify-deploy.md`; backend architecture:
+  `docs/17-backend-admin.md`. The backend previously ran on Fly.io — that setup is
+  decommissioned; `docs/20-fly-deploy.md` is kept only as historical reference, do not follow
+  it for current deploys. The root `Dockerfile` and `scripts/backend/docker-start.sh` build
+  and start the backend the same way regardless of host.
 - **Tests:** `node:test` (`npm test` → `tests/*.test.mjs`), Playwright for e2e
   (`npm run test:e2e`). There is **no** Jest/Vitest — use `node:test` + `node:assert`.
 

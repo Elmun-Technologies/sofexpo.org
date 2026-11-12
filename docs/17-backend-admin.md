@@ -80,7 +80,7 @@ yozish kerak.
 | `analytics_events` | Privacy-minimal hodisalar; IP va raw URL yo‘q |
 | `audit_log` | Status/ustuvorlik/mas’ul/foydalanuvchi o‘zgarishlari, kompaniya sahifasini nashr/rad/yashirish |
 | `exhibitor_showcases` | Eksponentning kompaniya sahifasi: qoralama (`draft_json`), nashr qilingan nusxa (`published_json`), holat, slug, moderator izohi |
-| `portal_files` | Eksponent yuklagan logo va materiallar (katalog, buklet, listovka, taqdimot, prays-list, foto): tur, sarlavha, MIME, hajm, sha256, `published` belgisi; fayl o‘zi `UPLOADS_DIR` papkasida (standart: SQLite fayli yonidagi `uploads/`, ya’ni Fly volume’da) |
+| `portal_files` | Eksponent yuklagan logo va materiallar (katalog, buklet, listovka, taqdimot, prays-list, foto): tur, sarlavha, MIME, hajm, sha256, `published` belgisi; fayl o‘zi `UPLOADS_DIR` papkasida (standart: SQLite fayli yonidagi `uploads/`, ya’ni Hetzner’dagi persistent volume’da) |
 | `schema_migrations` | Eski `.cache/leads.jsonl` va `events.jsonl` ni bir marta import qilish belgisi |
 
 Lead hayot sikli (bosqichlar): `new → contacted → qualified → proposal → negotiation → won`, yopilish
@@ -232,22 +232,25 @@ Kirish ma’lumotlari start logida chiqadi: admin `admin@sof-expo.com` / `admin-
 
 ## 6. Production sozlash
 
-1. Production backend Fly.io’da ishlaydi: app `sofexpo-api`, region `ist`, bitta 512 MB machine va
-   `/data` persistent volume. App/volume yaratish hamda deploy tartibi `docs/20-fly-deploy.md` da.
-2. `api.sof-expo.com` DNS/TLS’ni Fly app’iga ulang (Namecheap va sertifikat qadamlari docs/20’da).
-   Fly Proxy orqali keladigan so‘rovlar uchun `LEAD_WEBHOOK_TRUST_PROXY=1`; bevosita internetga
-   ochiladigan boshqa runtime’da faqat ishonchli reverse proxy forwarded header’larni yozsa yoqing.
+1. Production backend Xezner serverida **Coolify** orqali ishlaydi (`docker-compose.coolify.yml`,
+   `/data` persistent volume). O‘rnatish, env/secret ro‘yxati va deploy tartibi
+   `docs/25-hetzner-coolify-deploy.md`da. (Ilgari Fly.io’da ishlagan — `docs/20-fly-deploy.md`
+   endi faqat tarixiy ma’lumot, joriy deploy uchun ishlatilmaydi.)
+2. `api.sof-expo.com` DNS/TLS’ni Coolify resursiga ulang (Coolify o‘zining Traefik’i orqali
+   Let’s Encrypt sertifikatini oladi). Coolify’ning reverse proxy’si orqali keladigan so‘rovlar
+   uchun `LEAD_WEBHOOK_TRUST_PROXY=1`; bevosita internetga ochiladigan boshqa runtime’da faqat
+   ishonchli reverse proxy forwarded header’larni yozsa yoqing.
 3. `LEAD_WEBHOOK_DB` persistent volume’dagi `/data/sofexpo.sqlite` bo‘lsin; `.data/` Git’ga kirmaydi.
    SQLite bitta machine/single-writer uchun: volume’ni bir nechta backend process’iga ulamang va
-   muntazam snapshot hamda alohida backup/restore tartibini saqlang (`docs/20-fly-deploy.md` §7).
-4. Fly secrets’da haqiqiy `ADMIN_EMAIL`, uzun random `ADMIN_PASSWORD`, Telegram bot/webhook secrets
-   hamda kerak bo‘lsa CRM URL/token’ni sozlang. `LEAD_WEBHOOK_ORIGINS` secret emas: production
-   saytining aniq origin’lari Fly config’da beriladi. Bot/CRM credentials’larini public/static env’ga
-   qo‘ymang.
+   muntazam snapshot hamda alohida backup/restore tartibini saqlang (`docs/25 §7`).
+4. Coolify’ning environment variable’larida haqiqiy `ADMIN_EMAIL`, uzun random `ADMIN_PASSWORD`,
+   Telegram bot/webhook secrets hamda kerak bo‘lsa CRM URL/token’ni sozlang. `LEAD_WEBHOOK_ORIGINS`
+   secret emas: production saytining aniq origin’lari compose config’da beriladi. Bot/CRM
+   credentials’larini public/static env’ga qo‘ymang.
 5. Statik saytning asosiy deploy’i **Vercel**’da (`vercel.json`, `PUBLIC_HOSTS_MODE=alias`). Vercel
    Production env’da `PUBLIC_LEAD_ENDPOINT=https://api.sof-expo.com/lead`,
    `PUBLIC_ANALYTICS_ENDPOINT=https://api.sof-expo.com/event` va `PUBLIC_PORTAL_URL=https://api.sof-expo.com`
-   qiymatlarini belgilang; `PUBLIC_*` build-time qiymatlar, ularga secret token qo‘ymang. Fly backend
+   qiymatlarini belgilang; `PUBLIC_*` build-time qiymatlar, ularga secret token qo‘ymang. Backend
    Vercel tomonidan deploy qilinmaydi. Cloudflare Pages workflow keyingi multi-host topology uchun
    saqlanadi, current root-domain deployment o‘rnini bosmaydi.
 6. Admin panel: `https://api.sof-expo.com/admin`; portal login/registratsiya: `https://api.sof-expo.com/cabinet`.

@@ -1,14 +1,11 @@
 # Coolify deployment of the backend on the Hetzner server (docs/25-hetzner-coolify-deploy.md).
-# This is the Hetzner/Coolify counterpart of fly.toml — same root Dockerfile, same image,
-# different host. It is NOT used by `docker compose up` on a laptop: it has no bind mounts for
-# local dev (use `npm run lead-webhook` for that, docs/17). Point Coolify's "Docker Compose"
-# resource at this file.
+# This is how the backend runs on Hetzner, deployed by Coolify's "Docker Compose" resource.
+# It is NOT used by `docker compose up` on a laptop: it has no bind mounts for local dev
+# (use `npm run lead-webhook` for that, docs/17).
 #
 # Env vars: set every value below as a Coolify "Environment Variable" on this resource —
-# never commit real values here. The required/optional split matches docs/20 §2 (Fly secrets)
-# exactly; the same secret VALUES should be reused so Telegram/admin stay identical across
-# the two hosts during migration (never run both hosts live against production traffic at
-# once — see docs/25 §4, SQLite is single-writer).
+# never commit real values here. The required/optional split and names match docs/25 §2
+# exactly.
 services:
   backend:
     build:
@@ -24,7 +21,7 @@ services:
     volumes:
       # Everything stateful lives under /data: the SQLite db (WAL mode) and, next to it,
       # exhibitor uploads (server.mjs defaults UPLOADS_DIR to <dirname of LEAD_WEBHOOK_DB>/uploads
-      # when UPLOADS_DIR is unset) — one volume covers both, same as the Fly `sofexpo_data` mount.
+      # when UPLOADS_DIR is unset) — one volume covers both.
       - sofexpo_data:/data
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8787/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
@@ -49,25 +46,25 @@ services:
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:?set TELEGRAM_BOT_TOKEN in Coolify}
       TELEGRAM_WEBHOOK_SECRET: ${TELEGRAM_WEBHOOK_SECRET:?set TELEGRAM_WEBHOOK_SECRET in Coolify}
       TELEGRAM_CHANNEL_ID: ${TELEGRAM_CHANNEL_ID:?set TELEGRAM_CHANNEL_ID in Coolify}
-      # only read when BLOG_SYNC_GIT_PUSH=1 below (docker-start.sh) — left optional here so a
-      # deploy with push still disabled does not need it set yet
-      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+      # required because BLOG_SYNC_GIT_PUSH=1 below — docker-start.sh enforces this at
+      # container start too, but failing here is faster (before even building the image)
+      GITHUB_TOKEN: ${GITHUB_TOKEN:?set GITHUB_TOKEN in Coolify (BLOG_SYNC_GIT_PUSH=1 needs it)}
       # --- optional secrets (leave unset in Coolify to disable the feature) ---
       TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:-}
       CRM_WEBHOOK_URL: ${CRM_WEBHOOK_URL:-}
       CRM_WEBHOOK_TOKEN: ${CRM_WEBHOOK_TOKEN:-}
       LEAD_WEBHOOK_SECRET: ${LEAD_WEBHOOK_SECRET:-}
       LEAD_WEBHOOK_STATS_TOKEN: ${LEAD_WEBHOOK_STATS_TOKEN:-}
-      # --- Telegram -> blog sync (docs/telegram-blog-sync.md); same values as Fly ---
+      # --- Telegram -> blog sync (docs/telegram-blog-sync.md) ---
       BLOG_SYNC_ENABLED: "1"
       BLOG_SYNC_MODE: auto
       BLOG_SYNC_COLLECTION: news
       BLOG_SYNC_LOCALE: ru
       BLOG_SYNC_MAX_FILE_MB: "20"
       BLOG_SYNC_REPO_DIR: /app
-      # Keep this 0 until the Hetzner instance is the single writer (docs/25 §4) — with both
-      # Fly and Hetzner pushing to `main` at once, blog posts and admin/CRM data can fork.
-      BLOG_SYNC_GIT_PUSH: "0"
+      # SQLite is single-writer: never run a second backend instance pushing to `main` at the
+      # same time as this one, or blog posts and admin/CRM data can fork (docs/25 §4).
+      BLOG_SYNC_GIT_PUSH: "1"
       BLOG_SYNC_GIT_REMOTE: origin
       BLOG_SYNC_GIT_BRANCH: main
       BLOG_SYNC_PUSH_DEBOUNCE_MS: "20000"

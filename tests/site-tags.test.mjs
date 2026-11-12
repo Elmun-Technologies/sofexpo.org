@@ -190,7 +190,7 @@ test('site tags: before the first save the panel shows the codes already in the 
   assert.equal(data.updatedAt, null);
 });
 
-test('git publisher commits on a server with no git identity configured (Fly image)', async (t) => {
+test('git publisher commits on a server with no git identity configured (Docker image)', async (t) => {
   const { execFileSync } = await import('node:child_process');
   const { GitPublisher } = await import('../scripts/backend/tgblog/publish.mjs');
   const directory = mkdtempSync(join(tmpdir(), 'sofexpo-noident-'));

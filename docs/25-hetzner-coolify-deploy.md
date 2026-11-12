@@ -1,13 +1,17 @@
-# 25 · Hetzner + Coolify: backend migration from Fly.io
+# 25 · Hetzner + Coolify: backend production deploy
 
-Holat: 2026-11-07. Backend hozir Fly.io’da ishlaydi (`docs/20-fly-deploy.md`). Bu hujjat uni
-Xezner serveridagi self-hosted Coolify’ga ko‘chirish uchun **tayyorgarlik** hujjati: kod va
-konfiguratsiya tayyor, lekin bu sessiyadan Xezner serveriga SSH orqali ulanish yo‘q — quyidagi
-qadamlarni operator o‘zining terminalidan bajaradi.
+**Holat: 2026-11-12 — migratsiya yakunlangan.** Backend Xezner serverida Coolify orqali
+ishlaydi; Fly.io app (`sofexpo-api`) o‘chirilgan, `fly.toml` va Fly’ga xos CI workflow repodan
+olib tashlangan. `backend-uptime.yml`ning har soatlik tekshiruvi 2026-11-10’dan beri barqaror
+yashil — `api.sof-expo.com/health` Xezner’dan javob beryapti. Quyidagi qadamlar **shu
+cutover’ning o‘zi qanday bajarilgani** — endi yangi serverga ko‘chirish yoki shu serverni
+qayta tiklash kerak bo‘lsa shablon sifatida, va 6–7-bandlar (ishlatish/backup) joriy
+texnik xizmat ko‘rsatish bo‘yicha qo‘llanma sifatida ishlatiladi. Eski Fly runbook
+(`docs/20-fly-deploy.md`) endi faqat tarixiy ma’lumot.
 
-**Ko‘lam:** faqat backend (`api.sof-expo.com`) ko‘chadi. Statik sayt (`sof-expo.com`) Vercel’da
-qoladi — `docs/20` dagi 5-band (Vercel `PUBLIC_*` env’lari) o‘zgarmaydi, chunki ular backend
-manzilini `https://api.sof-expo.com` deb bilib qoladi, qaysi server shu nomni javob bersa ham.
+**Ko‘lam:** faqat backend (`api.sof-expo.com`). Statik sayt (`sof-expo.com`) Vercel’da
+ishlaydi va o‘zgarmagan — u backend manzilini `https://api.sof-expo.com` deb bilib qoladi,
+qaysi server shu nomni javob bersa ham.
 
 > **SQLite cheklovi (docs/20’dagi bilan bir xil, lekin endi ikki host darajasida):** backend
 > bitta yoziladigan SQLite fayl bilan ishlaydi. Fly va Hetzner’ni **bir vaqtda** production
@@ -173,41 +177,32 @@ rollback vaqtida Hetzner’da yozilgan yangi ma’lumotlar (4-banddan keyin kelg
 post’lar) Fly’ning eski bazasida bo‘lmaydi — rollback faqat “hali hech kim Hetzner’ga yozmagan”
 qisqa oyna ichida xavfsiz. Shuning uchun 4-bandni qisqa ushlang va darhol tekshiring.
 
-## 6. Fly’ni nihoyat o‘chirish (faqat barcha narsa bir necha kun barqaror ishlagach)
+## 6. Fly’ni o‘chirish — ✅ bajarilgan
 
-```sh
-flyctl apps destroy sofexpo-api
-```
+Fly app `sofexpo-api` o‘chirilgan. `fly.toml` va `.github/workflows/deploy-backend.yml` repodan
+olib tashlangan; `docs/20-fly-deploy.md` boshiga tarixiy eslatma qo‘shilgan. Agar kelajakda
+yana bir Fly-uslubidagi deploy kerak bo‘lsa, o‘sha hujjat shablon sifatida qoladi (DNS/TLS/
+secrets qadamlari hali to‘g‘ri, faqat “joriy production” emas).
 
-Buni **shoshilmay**, kamida bir necha kun Hetzner’da hamma narsa (admin, portal, Telegram sync,
-CRON uptime check) barqaror ishlaganini ko‘rgandan keyin bajaring. Shundan so‘ng:
+## 7. Backup va monitoring (Hetzner’da) — joriy texnik xizmat ko‘rsatish
 
-- `fly.toml`, `.github/workflows/deploy-backend.yml` ni repodan olib tashlash mumkin (yoki
-  tarix uchun saqlab, ishlatilmayotganini hujjatlashtirish mumkin) — bu alohida, keyingi PR.
-- `docs/20-fly-deploy.md` boshidagi migratsiya eslatmasini “bekor qilindi, Hetzner production”
-  ga yangilang.
-
-## 7. Backup va monitoring (Hetzner’da)
-
-- SQLite WAL rejimida ishlaydi — Fly’dagi kabi, faol faylni oddiy `cp` qilish izchil backup
-  emas (`docs/20 §7`). Hetzner’da muntazam backup uchun: konteynerni to‘xtatmasdan
+- SQLite WAL rejimida ishlaydi — faol faylni oddiy `cp` qilish izchil backup emas. Muntazam
+  backup uchun: konteynerni to‘xtatmasdan
   `sqlite3 /data/sofexpo.sqlite ".backup /data/backup-$(date +%F).sqlite"` kabi SQLite’ning
   o‘z backup buyrug‘idan foydalaning (atomik, WAL bilan mos), so‘ng natijani serverdan
   tashqariga (masalan Hetzner Storage Box yoki boshqa off-site joyga) ko‘chiring. Buni cron
-  bilan avtomatlashtirish — alohida vazifa.
-- `.github/workflows/backend-uptime.yml` o‘zgarishsiz qoladi — u `https://api.sof-expo.com/health`
-  ni tekshiradi, DNS Hetzner’ga ko‘chgach avtomatik ravishda Hetzner’ni tekshira boshlaydi.
-- Coolify’ning o‘z monitoring/log paneli bor (**Logs** tab resurs sahifasida) — `flyctl logs`
-  o‘rnini shu bosadi.
+  bilan avtomatlashtirish hali qilinmagan — alohida vazifa.
+- `.github/workflows/backend-uptime.yml` `https://api.sof-expo.com/health` ni har soat
+  tekshiradi; 2026-11-10’dan beri barqaror yashil.
+- Coolify’ning o‘z monitoring/log paneli bor (**Logs** tab resurs sahifasida).
 
-## 8. Qisqa checklist
+## 8. Qisqa checklist — bajarilgan (tarixiy)
 
-1. Coolify’ni Xezner serveriga o‘rnating (1-band), agar hali yo‘q bo‘lsa.
-2. Coolify’da `docker-compose.coolify.yml` asosida resurs yarating, barcha env/secret’larni
-   Fly’dagi bilan bir xil kiriting, `BLOG_SYNC_GIT_PUSH=0` bilan sinov deploy qiling (2-band).
-3. Vaqtinchalik domen orqali `/health`, `/api/portal/options`, admin panelni tekshiring.
-4. Past trafik vaqtida: Fly’ni yozishdan to‘xtating → `/data` ni ko‘chiring → Coolify’ni
-   qayta deploy qiling → `api.sof-expo.com` ni Coolify’ga DNS bilan ulang → `BLOG_SYNC_GIT_PUSH=1`
-   qiling → Telegram webhook’ni tekshiring (4-band, 1–9 qadamlar).
-5. Bir necha kun barqarorlikni kuzating, so‘ng Fly app’ini o‘chiring (6-band).
-6. Hetzner’da muntazam SQLite backup’ni sozlang (7-band).
+1. ✅ Coolify Xezner serveriga o‘rnatildi (1-band).
+2. ✅ Coolify’da `docker-compose.coolify.yml` asosida resurs yaratildi, env/secret’lar
+   kiritildi (2-band).
+3. ✅ Vaqtinchalik domen orqali tekshirildi.
+4. ✅ Fly’dan ma’lumot ko‘chirildi, `api.sof-expo.com` Coolify’ga DNS bilan ulandi,
+   `BLOG_SYNC_GIT_PUSH=1` qilindi, Telegram webhook tekshirildi (4-band).
+5. ✅ Barqarorlik kuzatildi, Fly app o‘chirildi (6-band).
+6. ⬜ Hetzner’da muntazam SQLite backup hali sozlanmagan (7-band) — qolgan yagona ochiq band.

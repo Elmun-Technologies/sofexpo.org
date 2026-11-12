@@ -9,24 +9,26 @@ qisqa yangilang (3–10 qator yetarli — bu uzun hisobot emas).
 
 ## Branch
 
-`main` — oxirgi birlashtirilgan holat `f4d661e`da (PR #50 timeline + PR #51 Hetzner/Coolify
-tayyorgarlik). Joriy branch'da tugallanmagan ish bo'lsa shu yerga yozing.
+`main` — oxirgi birlashtirilgan holat `f4d661e`da (PR #50 timeline + PR #51 Hetzner/Coolify).
+PR #52 ochiq (`claude/awesome-meitner-wux8pn`): db.mjs clock fix + AGROPRO'ni bosh sahifaga
+chiqarish uchun yangi commit; shu PR'da Fly.io ham repodan butunlay olib tashlandi (quyida).
 
 ## Joriy / bloklangan
 
-- 🔴 **Fly.io production (`api.sof-expo.com`) ishlamayapti** — `deploy-backend` "app not
-  found", DNS resolve bo'lmayapti, 2-noyabrdan beri barcha soatlik uptime-tekshiruv
-  muvaffaqiyatsiz. Operatorga aytilgan (`flyctl apps list` / dashboard'da Volumes/snapshot
-  tekshirish kerak), javob kutilmoqda. Buni hal qilmasdan Xezner cutover (`docs/25`)
-  boshlanmasin — Fly volume o'chgan bo'lsa ko'chiradigan ma'lumot qolmagan bo'lishi mumkin.
-- 🟡 **`VERCEL_DEPLOY_HOOK_URL` sozlanmagan** — `daily-rebuild.yml` har kecha hech narsa
+- ✅ **Fly.io → Xezner/Coolify migratsiyasi yakunlangan** (operator tasdiqladi, 2026-11-12).
+  `backend-uptime` 10-noyabrdan beri yashil. `fly.toml`, `deploy-backend.yml` o'chirildi;
+  `docs/20` tarixiy belgilandi, `docs/25` "bajarilgan" holatga yangilandi, CLAUDE.md/docs/17
+  Hetzner/Coolify'ga moslandi.
+- 🟡 **`VERCEL_DEPLOY_HOOK_URL` hali sozlanmagan** — `daily-rebuild.yml` har kecha hech narsa
   qilmay o'tib ketyapti (faqat notice). Vercel faqat `main`ga yangi commit kelganda o'zi
-  qayta quradi (git integratsiya, deploy hook shart emas — docs/20 §6), shuning uchun
-  ko'rgazmalar orasida uzoq tanaffus bo'lsa (kod o'zgarmasa) sayt eski holatda qotib qoladi.
-  Bir martalik tuzatish: Vercel → Deploy Hooks → secret qo'shish (docs/24 §3).
-- `db.mjs`dagi `isUpcomingEdition()` chaqiruvi server clock'ini olmasligi tuzatildi
-  (production'da farq qilmagan, lekin test'larni qotirishga to'sqinlik qilgan edi) — yangi
-  PR'da, bosh sahifada AGROPRO'ni chiqarish uchun shu bilan birga `main`ga push qilinadi.
+  qayta quradi (git integratsiya), shuning uchun ko'rgazmalar orasida uzoq tanaffus bo'lsa
+  (kod o'zgarmasa) sayt eski holatda qotib qoladi. Bir martalik tuzatish: Vercel → Deploy
+  Hooks → secret qo'shish (docs/24 §3).
+- 🟡 **Coolify'dagi `BLOG_SYNC_GIT_PUSH`ni tekshiring** — `docker-compose.coolify.yml` shablonda
+  endi `"1"` (migratsiya tugagani uchun), lekin bu reponing fayli Coolify'ning haqiqiy
+  environment variable'ini avtomatik o'zgartirmaydi — operator Coolify UI'da shu qiymat `1`
+  ekanini tasdiqlasin (aks holda Telegram → blog sync ishlamaydi).
+- ⬜ Hetzner'da muntazam SQLite backup hali sozlanmagan (docs/25 §7) — yagona ochiq band.
 
 ## Limitni tejash
 

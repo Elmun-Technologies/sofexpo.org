@@ -15,7 +15,7 @@ const GIT_TIMEOUT = 90_000;
    once would collide on .git/index.lock */
 const repoQueues = new Map();
 
-/* The server checkout (Fly image) has no ~/.gitconfig, so `git commit` would stop at
+/* The server checkout (the backend's Docker image) has no ~/.gitconfig, so `git commit` would stop at
    "Author identity unknown" and nothing would ever be pushed. Server commits are signed as
    the bot unless GIT_AUTHOR_* / GIT_COMMITTER_* (or BLOG_SYNC_GIT_NAME/EMAIL) say otherwise. */
 export function gitEnv(env = process.env) {

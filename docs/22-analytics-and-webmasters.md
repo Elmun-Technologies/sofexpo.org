@@ -74,7 +74,7 @@ ikki marta yuborilmaydi. `form_submit` dagi `success: true` ariza serverga yetga
 
 ## 3. Shartlar
 
-- Backend Fly'da ishlab turishi kerak (`docs/20-fly-deploy.md`): `BLOG_SYNC_GIT_PUSH=1`,
+- Backend Xezner'da (Coolify) ishlab turishi kerak (`docs/25-hetzner-coolify-deploy.md`): `BLOG_SYNC_GIT_PUSH=1`,
   `BLOG_SYNC_REPO_DIR=/app`, `GITHUB_TOKEN` (repo'ga yozish ruxsati bilan). Push o'chiq
   bo'lsa, panel sariq ogohlantirish ko'rsatadi: saqlangan kodlar saytga faqat keyingi deploy
   bilan chiqadi.

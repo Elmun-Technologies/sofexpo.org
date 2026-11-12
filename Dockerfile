@@ -1,5 +1,5 @@
-# Host-agnostic backend image: built the same way on Fly.io (docs/20) and on the Hetzner/
-# Coolify target (docs/25, migration in progress). Nothing below assumes either host.
+# Backend image for the Hetzner/Coolify target (docs/25). Nothing below assumes a specific
+# host, so it would build the same way anywhere else this ever needs to move again.
 FROM node:22-slim
 
 ENV NODE_ENV=production \
